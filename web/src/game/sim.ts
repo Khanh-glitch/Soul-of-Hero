@@ -14,7 +14,7 @@ import { LOOT_CLASSES, lootClass } from './loot-ecology';
 import { BAL, TILE, WW, WH, HOUR, VIEW_W, VIEW_H, T, rngNext, uid, dist, clamp, angDiff, dirFromAngle, type GameState, type RunState, type Creature, type Entity, type Proj, type Haz } from './core';
 import { thermalEnv, thermalEvaluate, thermalStep, thermalBoundaryMs, heatersInReach, coldDamageActive } from './thermal';
 import { calendarAt, climateAt, calendarEventV1, phaseBoundaryAt, seasonTransitionsBetween, normalizeCalendarLedger, type Season, type PrecipWeather } from './calendar';
-import { LADDER_CLIMB_SPEED, ITEMS, CREATURES, passiveWildlife, ELDERS, lookupElderDef, PRIMORDIAL_ELDERS, STRUCTS, SOURCES, stationBurnable, wornProtection } from './catalog';
+import { LADDER_CLIMB_SPEED, ITEMS, CREATURES, isAnimal, passiveWildlife, ELDERS, lookupElderDef, PRIMORDIAL_ELDERS, STRUCTS, SOURCES, stationBurnable, wornProtection } from './catalog';
 import { g1bChestName, G1B_SITES } from './g1b';
 import { getWorld } from './world';
 import { maybeSlideVeyraWindow, windowOrigin } from '../veyra05/continuity';
@@ -696,7 +696,15 @@ function trackEvidence(gs: GameState, m: Creature, speed: number, dt: number, no
   if (dist(m.x, m.y, k.x, k.y) >= 2) { steer(gs, m, k.x, k.y, speed * 0.8, dt, now); return; }
   m.traceIgnore = k.chainId; m.knows = null; m.path = null; m.state = 'wander'; fx('lost', { x: m.x, y: m.y - 10 });
 }
+// Old saves may contain an animal halfway through a trail. Forget only that
+// evidence, not a sighting, hostile hit, or other legitimate combat state.
+function forgetAnimalTrail(m: Creature) {
+  if (!isAnimal(m.type) || m.knows?.kind !== 'trace') return;
+  m.knows = null; m.path = null; delete m.traceIgnore;
+  if (m.state === 'track' || m.state === 'chase') { m.state = 'wander'; m.tx=m.x; m.ty=m.y; m.t=0; m.pathT=0; }
+}
 function encounteredTrace(r: RunState, m: Creature, now: number) {
+  if (isAnimal(m.type)) return undefined;
   let best: RunState['traces'][number] | undefined;
   for (const tr of r.traces) {
     if (tr.life <= 0 || tr.t > now || !tr.id || !tr.chainId || tr.chainId === m.traceIgnore || dist(tr.x, tr.y, m.x, m.y) > BAL.ai.traceSenseRadius || !los(r, m.x, m.y, tr.x, tr.y, true)) continue;
@@ -768,6 +776,7 @@ function tickCreatures(gs: GameState, dtMs: number, now: number) {
   const g = blockGrid(r);
   for (let i = r.creatures.length - 1; i >= 0; i--) {
     const m = r.creatures[i];
+    forgetAnimalTrail(m);
     if (((m as any).floor ?? 0) !== activeFloor(r)) continue;
     if (m.state === 'dead') { m.t += dtMs; if (!m.elder && m.t > 1600) r.creatures.splice(i, 1); continue; }
     if ((m.frozenUntil||0)>now || (m.rootedUntil||0)>now) continue;
@@ -918,8 +927,7 @@ function tickCreatures(gs: GameState, dtMs: number, now: number) {
 
     if (!seesPlayer && aggro && (!m.knows || m.knows.kind==='stimulus') && ['idle', 'wander', 'track', 'chase'].includes(m.state) && (m.t % 500) < dtMs) {
       // Independent encounter: live, identified mark in circular range and line of sight.
-      const R = BAL.ai.traceSenseRadius; let best: RunState['traces'][number] | undefined;
-      for (const tr of r.traces) { if (tr.life <= 0 || tr.t > now || !tr.id || !tr.chainId || tr.chainId === m.traceIgnore || dist(tr.x, tr.y, m.x, m.y) > R || !los(r, m.x, m.y, tr.x, tr.y, true)) continue; if (!best || tr.t > best.t) best = tr; }
+      const best = encounteredTrace(r, m, now);
       if (best) { fx('sniff', { x: m.x, y: m.y - 10 }); m.knows = { kind: 'trace', x: best.x, y: best.y, at: best.t, traceId: best.id, chainId: best.chainId }; m.state = 'track'; }
     }
     if (!seesPlayer && !m.knows && !passiveWild) noticeStimulus(r,m,now);
@@ -1858,6 +1866,7 @@ export function settle(gs: GameState, now: number, silent = false, interruptTran
   for (const e of Object.values(r.entities)) if (e.turret) e.turret.tracking = false;
   // Bounded, deterministic playback starts only at saved positions with actual
   // local evidence. Other roaming/combat remains unresolved, not fabricated.
+  for (const m of r.creatures) forgetAnimalTrail(m);
   const eligible = r.creatures.filter(m => m.offlineUnresolvedAt === undefined && !m.elder && ['idle', 'wander', 'track', 'chase'].includes(m.state) && (!m.knows || m.knows.kind === 'trace') && (m.knows?.kind === 'trace' || !!encounteredTrace(r, m, start)));
   // R5.1 P0-C: one authority rule — a creature selected into `pending` is playback-eligible at the
   // start of the absence, knockback included (it is an impulse, not a state). The unresolved marker is

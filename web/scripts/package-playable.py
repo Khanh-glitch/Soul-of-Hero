@@ -46,6 +46,11 @@ Không cần npm, không cần mạng. Giữ cửa sổ máy chủ mở khi chơ
 
 New run → chọn nhân vật → Begin the 14 days. Di chuyển WASD hoặc phím mũi tên;
 chuột trái để hành động, E tương tác, I túi đồ, M bản đồ. Esc → Save & quit to title.
+Lượt mới cầm sẵn Wood Club (gậy gỗ) ở ô 1. Đứng sát cây hoặc tảng đá, đặt con trỏ
+vào mục tiêu rồi đánh để lấy gỗ hoặc đá. Động vật không lần theo dấu chân.
+Khi gặp NPC, chọn việc muốn làm ở “What do you want to do?”. Trong Talk, chọn câu
+hỏi rồi nhấn Ask question. Hỏi về việc đi cùng không phải là mời gia nhập.
+
 Lần sau chạy lại cùng lệnh và chọn Continue. Dùng cùng trình duyệt, hồ sơ và địa chỉ;
 chế độ ẩn danh hoặc xóa dữ liệu website có thể làm mất save. Save của preview online
 không tự chuyển sang bản chạy trên máy. Ctrl+C trong cửa sổ máy chủ để đóng.

@@ -239,7 +239,7 @@ export const ITEM_DESIGN: Readonly<Record<string, Row>> = Object.freeze({
   fuel_can: ['BOTH', 'Fuel Canister. Burned by the Field Generator and the Motorbike.'],
   grouse_egg: ['WORLD_ONLY', 'Grouse Egg. Food from wild or kept grouse.', FOODRAW],
   // 04 TOOLS / NON-CORE WEAPONS
-  knife: ['SPECIAL_AUTHORITY', 'Survival Knife. The starting tool: cuts plants fast, wood and stone slowly. Repaired at a Workbench.', 'NO_RECIPE_BY_DESIGN (starter issue): every run begins with one and a Workbench repairs it for 1 stone + 1 fiber. Known risk recorded in open questions: no tool-free way to get stone exists if every tool is broken away from a bench.'],
+  knife: ['WORLD_ONLY', 'Survival Knife. Salvagers carry this blade; it cuts plants faster than the club.', 'No hand recipe. Repair at a Workbench for stone and fiber.'],
   stone_pick: ['CRAFT_ONLY', 'Stone Pickaxe. First tool for stone and ore.'],
   iron_pick: ['BOTH', 'Iron Pickaxe. Faster on stone and ore; can free Rich Iron Ore.'],
   industrial_pick: ['CRAFT_ONLY', 'Salvager Pick. The top pick; an Iron Pick rebuilt with refined metal.'],
@@ -247,7 +247,7 @@ export const ITEM_DESIGN: Readonly<Record<string, Row>> = Object.freeze({
   iron_axe: ['BOTH', 'Iron Axe. Faster on trees.'],
   industrial_axe: ['CRAFT_ONLY', 'Salvager Axe. The top axe; an Iron Axe rebuilt with a Blade and refined metal.'],
   torch: ['CRAFT_ONLY', 'Torch. Light and a little warmth; also the flame of a Torch Post.'],
-  wood_club: ['CRAFT_ONLY', 'Wood Club. The first weapon upgrade, made by hand from a lot of wood.'],
+  wood_club: ['BOTH', 'Wood Club. Issued on landing; craft a replacement by hand from wood.'],
   cleaver: ['BOTH', 'Cleaver. A short, quick blade; the first use of a Metal Blade.'],
   machete: ['BOTH', 'Machete. The iron long blade and the best crafted melee weapon.'],
   wood_spear: ['CRAFT_ONLY', 'Fire-hardened Spear. Reach without metal.'],
@@ -526,7 +526,7 @@ export const SYSTEM_CONSUMERS: readonly { item: string; system: string; what: st
   { item: 'torch', system: 'Light and heat', what: 'Held for light and warmth.', anchor: 'catalog.ts ITEMS.torch, thermal.ts' },
   ...['stone_surtur', 'stone_typhon', 'stone_aion', 'stone_atlas', 'stone_argus', 'stone_anubis'].map(item => ({ item, system: 'Primordial Elders', what: 'Claimed from its Elder; the record of that fight.', anchor: 'catalog.ts PRIMORDIAL_ELDERS' })),
   ...['relic_shaleheart', 'ronin_nodachi', 'tidemarshal_trident', 'custodian_lantern'].map(item => ({ item, system: 'Side bosses', what: 'Unique drop of one side boss; equipped and used like any gear.', anchor: 'catalog.ts CREATURES.boss_*.uniqueDrop' })),
-  { item: 'knife', system: 'Starting kit', what: 'Issued at the start of a run; the baseline tool.', anchor: 'catalog.ts ITEMS.knife' },
+  { item: 'wood_club', system: 'Starting kit', what: 'Issued at the start of a run; the baseline tool.', anchor: 'engine.ts startRun' },
 ]);
 
 /** What changed in this assignment, and what it does to the economy. */

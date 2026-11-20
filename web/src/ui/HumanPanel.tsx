@@ -8,6 +8,18 @@ import { BAL, type Stack } from '../game/core';
 import { CREATURES } from '../game/catalog';
 import type { HumanRecord } from '../game/humanworld';
 
+const contactActions = {
+  Talk: ['Talk', 'Ask a question. This does not give an order or exchange items.'],
+  Help: ['Offer help', 'Use your own supplies to meet a need, or pay the listed repair cost.'],
+  Barter: ['Trade items', 'Choose what to give and receive. Nothing changes hands until you accept.'],
+  Confront: ['Make a demand', 'Threaten this survivor. They can refuse or fight back.'],
+  Companion: ['Give companion orders', 'Tell your companion where to go, whom to guard, or what to carry.'],
+} as const;
+const questions = {
+  activity: 'What are you doing?', needs: 'What do you need?', place: 'What is this place?',
+  goods: 'What can you trade?', accompany: 'Would you travel with me?',
+} as const;
+
 export function HumanPanel({ api, actorId, onClose }: { api: Api; actorId: string; onClose: () => void }) {
   const r = api.gs.run;
   const hw = r?.humanWorld;
@@ -24,8 +36,10 @@ function ContactPanel({ api, actorId, onClose }: { api: Api; actorId: string; on
   const [demandUid,setDemandUid]=useState('');
   const [demand, setDemand] = useState<'back_off' | 'disarm' | 'item' | 'stop_attack'>('back_off');
   const [section, setSection] = useState<'Talk'|'Help'|'Barter'|'Confront'|'Companion'>('Talk');
+  const [topic,setTopic]=useState<keyof typeof questions>('activity');
   const [reply, setReply] = useState('');
   const [cargoQty,setCargoQty]=useState('');
+  const [order,setOrder]=useState<'follow'|'hold'|'retreat'|'home'|'carry'|'defend'|'engage'>('follow');
   const [orderTarget,setOrderTarget]=useState('');
   const [offer,setOffer] = useState<BarterLine[]>([]), [ask,setAsk] = useState<BarterLine[]>([]);
   const [review,setReview]=useState<string>();
@@ -72,14 +86,18 @@ function ContactPanel({ api, actorId, onClose }: { api: Api; actorId: string; on
         <div style={{ color: '#b8c6a8' }}>Trust {Math.round(h.trust ?? 50)} · {Math.round(h.hp)}/{h.maxHp} HP</div>
       </div>
     </div>
-    {sections.length > 1 && <div role="group" aria-label="Survivor actions" style={{display:'flex',flexWrap:'wrap',gap:3,marginBottom:5}}>
-      {sections.map(s=><button key={s} className="btn sm" aria-pressed={s===visible} style={s===visible?{borderColor:'#c59b4c',color:'#ffe4a2'}:undefined} onClick={()=>{setSection(s);setReview(undefined);setReply('');}}>{s}</button>)}
-    </div>}
+    {sections.length > 1 && <label style={{display:'block'}}>What do you want to do?
+      <select aria-label="Survivor action" value={visible} style={{width:'100%'}} onChange={e=>{setSection(e.target.value as keyof typeof contactActions);setReview(undefined);setReply('');}}>
+        {sections.map(s=><option key={s} value={s}>{contactActions[s][0]}</option>)}
+      </select>
+    </label>}
+    {visible && <p style={{color:'#dacda9',margin:'4px 0 7px'}}>{contactActions[visible][1]}</p>}
     {visible === 'Talk' && <>
-      <div style={{ display: 'flex', gap: 3, flexWrap: 'wrap', marginBottom: 5 }}>
-        {([['activity', 'Work?'], ['needs', 'Need?'], ['place', 'Place?'], ['goods', 'Goods?'], ['accompany', 'Join?']] as const).map(([topic, label]) => <button key={topic} className="btn sm" onClick={() => respond('humanTalk', { topic })}>{label}</button>)}
-        <button className="btn sm" onClick={() => respond(h.following ? 'humanDismiss' : 'humanRecruit')}>{h.following ? 'Dismiss' : 'Recruit'}</button>
-      </div>
+      <label>Question <select aria-label="Conversation topic" value={topic} style={{width:'100%'}} onChange={e=>{setTopic(e.target.value as keyof typeof questions);setReply('');}}>
+        {Object.entries(questions).map(([id,label])=><option key={id} value={id}>{label}</option>)}
+      </select></label>
+      <button className="btn sm" onClick={() => respond('humanTalk', { topic })}>Ask question</button>
+      {topic==='accompany' && !h.following && <button className="btn sm" onClick={()=>respond('humanRecruit')}>Invite to join you</button>}
     </>}
     {visible === 'Confront' && <>
       <div style={{ display: 'flex', gap: 3, alignItems: 'center', marginBottom: 4 }}>
@@ -90,7 +108,7 @@ function ContactPanel({ api, actorId, onClose }: { api: Api; actorId: string; on
           {h.state === 'FIGHTING' && <option value="stop_attack">Stop attacking</option>}
         </select>
         {demand==='item' && <select aria-label="Demanded item" value={choice?.s.uid??''} onChange={e=>setDemandUid(e.target.value)}><option value="">Choose item</option>{personal.map(({s,where})=><option key={s.uid} value={s.uid}>{ITEMS[s.key]?.name} ×{s.qty} · {where}</option>)}</select>}
-        <button className="btn sm" disabled={demand==='item'&&!choice || demand==='disarm'&&!h.equip.weapon || demand==='stop_attack'&&h.state!=='FIGHTING'} onClick={() => respond('humanThreaten', { demand, stackUid: demand==='item'?choice?.s.uid:demand==='disarm'?h.equip.weapon?.uid:undefined })}>Confront</button>
+        <button className="btn sm" disabled={demand==='item'&&!choice || demand==='disarm'&&!h.equip.weapon || demand==='stop_attack'&&h.state!=='FIGHTING'} onClick={() => respond('humanThreaten', { demand, stackUid: demand==='item'?choice?.s.uid:demand==='disarm'?h.equip.weapon?.uid:undefined })}>Issue threat</button>
       </div>
     </>}
     {reply && <div role="status" aria-live="polite" style={{ color: '#ffe4a2', borderLeft: '2px solid #bd8d47', padding: '3px 5px', margin: '3px 0 5px', lineHeight: 1.25 }}>{reply}</div>}
@@ -123,22 +141,24 @@ function ContactPanel({ api, actorId, onClose }: { api: Api; actorId: string; on
     </> : null}
     {visible==='Companion' && <div style={{marginTop:5,borderTop:'1px solid #66543c',paddingTop:4}}>
       <div style={{color:'#a8d8a0'}}>Companion · {h.intent?.kind==='follow'?'Following':h.intent?.target==='home'?'Returning home':h.state.toLowerCase()}</div>
-      <div style={{display:'flex',gap:3,flexWrap:'wrap',margin:'3px 0'}}>
-        {(['follow','hold','retreat','home','carry'] as const).map(order=><button key={order} className="btn sm" onClick={()=>respond('humanOrder',{order})}>{({follow:'Follow',hold:'Hold',retreat:'Retreat',home:'Return home',carry:'Carry'})[order]}</button>)}
-      </div>
-      <select aria-label="Companion visible target" value={visibleTarget} onChange={e=>setOrderTarget(e.target.value)} style={{width:'100%'}}>
+      <label>Order <select value={order} onChange={e=>setOrder(e.target.value as typeof order)} style={{width:'100%'}}>
+        {Object.entries({follow:'Follow me',hold:'Wait here',retreat:'Fall back',home:'Return home',carry:'Follow with cargo',defend:'Guard me',engage:'Attack a nearby target'}).map(([id,label])=><option key={id} value={id}>{label}</option>)}
+      </select></label>
+      {order==='engage' && <select aria-label="Companion visible target" value={visibleTarget} onChange={e=>setOrderTarget(e.target.value)} style={{width:'100%'}}>
         <option value="">Choose a nearby target</option>
         {targets.map(t=><option key={t.id} value={t.id}>{t.name}</option>)}
-      </select>
-      <button className="btn sm" onClick={()=>respond('humanOrder',{order:'defend'})}>Guard me</button>{' '}
-      <button className="btn sm" disabled={!visibleTarget} onClick={()=>respond('humanOrder',{order:'engage',target:visibleTarget})}>Engage</button>
+      </select>}
+      <button className="btn sm" disabled={order==='engage'&&!visibleTarget} onClick={()=>respond('humanOrder',order==='engage'?{order,target:visibleTarget}:{order})}>Give order</button>
+      <details><summary>Manage carried items</summary>
       <div style={{marginTop:4}}>Cargo · {cargo.slots.filter(Boolean).length}/{cargo.slots.length} slots · {cargo.slots.reduce((n,s)=>n+(s?ITEMS[s.key].w*s.qty:0),0).toFixed(1)}/{BAL.cart.maxWeight} kg</div>
       <label>Quantity <input type="number" min="1" step="1" value={cargoQty} placeholder="All" style={{width:48}} onChange={e=>setCargoQty(e.target.value)} /></label>
       {selectedPlayer&&<select aria-label="Companion cargo item" value={selectedPlayer.i} onChange={e=>setPlayerSlot(Number(e.target.value))}>{playerStacks.map(({s,i})=><option key={s.uid} value={i}>{ITEMS[s.key]?.name} ×{s.qty}</option>)}</select>}
       {selectedPlayer&&<button className="btn sm" disabled={cargoUnavailable(selectedPlayer.s)} onClick={()=>respond('humanCargo',{direction:'give',stackUid:selectedPlayer.s.uid,qty:cargoCount(selectedPlayer.s)})}>Carry {ITEMS[selectedPlayer.s.key]?.name} ×{cargoCount(selectedPlayer.s)}</button>}
       {r.custody[h.inv.cartId]?.slots.filter((s):s is Stack=>!!s).map(s=><button key={s.uid} className="btn sm" disabled={cargoUnavailable(s)} onClick={()=>respond('humanCargo',{direction:'return',stackUid:s.uid,qty:cargoCount(s)})}>Take back {ITEMS[s.key]?.name} ×{cargoCount(s)}</button>)}
       {h.community && hw.communities[h.community]?.storeEntityId && <button className="btn sm" disabled={!!h.intent?.delivery || !r.custody[h.inv.cartId]?.slots.some(Boolean)} onClick={()=>respond('humanOrder',{order:'carry',target:hw.communities[h.community!].storeEntityId})}>Deliver load to home warehouse</button>}
-      {h.intent?.delivery && <div>Delivering to the warehouse · Hold to cancel</div>}
+      {h.intent?.delivery && <div>Delivering to the warehouse · order “Wait here” to cancel</div>}
+      </details>
+      <button className="btn sm" onClick={()=>respond('humanDismiss')}>End companionship</button>
       {h.intent?.blockReason&&<div style={{color:'#e69484'}}>{h.intent.blockReason}</div>}
     </div>}
     {visible==='Companion' && h.followOrder && <div style={{ opacity: .75, marginTop: 3 }}>{h.followOrder.result}: {h.followOrder.reason}</div>}

@@ -64,7 +64,7 @@ function sourceSummary(i: OntologyItem): string {
     parts.push(s && v ? k : `${k}(${s ? 'shipping' : 'veyra'} only)`);
   }
   if (!parts.length && i.acquisition_types.fixture.length) parts.push(`TEST_FIXTURE_ONLY[${i.acquisition_types.fixture.join(' ')}]`);
-  if (!parts.length) parts.push(i.id === 'knife' || i.id === 'water_flask' || i.id === 'torch' ? 'starter kit' : 'none found in graph');
+  if (!parts.length) parts.push(i.id === 'wood_club' || i.id === 'water_flask' || i.id === 'berries' ? 'starter kit' : 'none found in graph');
   return parts.join('; ');
 }
 

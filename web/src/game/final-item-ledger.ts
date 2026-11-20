@@ -34,7 +34,7 @@ const UNIT = 'Unit rule (bulk divisors).';
 
 /** Keyed by SOH recipe id (or `struct:<type>` for a build cost). */
 export const LI_RECIPE_LEDGER: Readonly<Record<string, LedgerRow>> = Object.freeze({
-  wood_club: R('wood_club', 'DIRECT', { wood: 300 }, '0', 'LI_SCALED', UNIT, '12 wood = two or three trees with a knife: the first weapon upgrade, hand-made, no station.'),
+  wood_club: R('wood_club', 'DIRECT', { wood: 300 }, '0', 'LI_SCALED', UNIT, 'The starting club can be replaced by hand with 12 wood; no station needed.'),
   cleaver: R('cleaver', 'DIRECT', { iron_ingot: 15, metal_blade: 1 }, '1', 'LI_SCALED', UNIT, 'First use of a Metal Blade outside the Salvager Axe. Bench tier 1; the blade itself needs a level-2 bench.'),
   machete: R('machete', 'DIRECT', { iron_ingot: 100, metal_blade: 3 }, '2', 'LI_SCALED', UNIT, 'Replaces Iron Sword (5 ingots + 1 leather). Dearer: 4 ingots + 3 blades (9 more ingots inside the blades since recipe revision 6; 12 before). Same combat stats as the sword it replaces.'),
   needle_thread: R('needle_thread', 'LEGACY_CLAIM', { cloth: 10, iron_ingot: 5 }, null, 'LI_SCALED', UNIT + ' LI output count and station are not recorded: 2 per craft at a level-1 bench is an SOH trial value.', 'Gate material for all eight LI armour pieces. A full iron-plate head + chest set needs 6 thread = 6 cloth (36 fiber) + 3 ingots.'),
@@ -93,7 +93,7 @@ export const DRAFT_RECIPES_NOT_LIVE: Readonly<Record<string, { li: Record<string
 /** K3 source rows for ids that enter the world as loot or drops (not as a recipe output). */
 export interface SourceRow { source_id: string; kind: 'node' | 'creature' | 'garden'; yields: string; condition: string; reserve: string; respawn: string; veyra: string; antiFarm: string }
 export const ITEM_SOURCE: Readonly<Record<string, readonly SourceRow[]>> = Object.freeze({
-  seed_sunroot: [{ source_id: 'SOURCES.grass', kind: 'node', yields: '8% per stock unit', condition: 'any tool with plant power (the starting knife: 3)', reserve: '2 stock per tuft', respawn: 'regrows (300 s base, seasonal crop table)', veyra: 'Tall Grass is placed in the meadow, lakeshore and coast windows', antiFarm: 'node stock and regrow timer are saved per tile; a reload never refills a tuft' }],
+  seed_sunroot: [{ source_id: 'SOURCES.grass', kind: 'node', yields: '8% per stock unit', condition: 'any tool with plant power (the starting wood club: 1)', reserve: '2 stock per tuft', respawn: 'regrows (300 s base, seasonal crop table)', veyra: 'Tall Grass is placed in the meadow, lakeshore and coast windows', antiFarm: 'node stock and regrow timer are saved per tile; a reload never refills a tuft' }],
   seed_bitterleaf: [{ source_id: 'SOURCES.herb', kind: 'node', yields: '30% per stock unit', condition: 'plant power', reserve: '2 stock', respawn: 'regrows (600 s base, herb table)', veyra: 'wild Bitterleaf patches', antiFarm: 'saved per tile' }],
   seed_wildberry: [{ source_id: 'SOURCES.bush', kind: 'node', yields: '30% per stock unit', condition: 'plant power', reserve: '3 stock', respawn: 'regrows (420 s base)', veyra: 'Berry Bushes', antiFarm: 'saved per tile' }],
   animal_fat: [

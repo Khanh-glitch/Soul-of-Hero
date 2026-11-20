@@ -122,7 +122,7 @@ describe('salt-shale source + dried meat content chain', () => {
     expect(approach).toBeTruthy(); tp(gs, (tx + approach![0]) * TILE + 8, (ty + approach![1]) * TILE + 8);
     const px = r.player.x, py = r.player.y, aim = idle(tx * TILE + 8, ty * TILE + 8);
     const swing = (now: number) => { tick(gs, { ...aim, attackPressed: true }, 16, now); for (let frame = 0; frame < 32; frame++) tick(gs, aim, 16, now + 16 * (frame + 1)); };
-    swing(T0); // starting knife cannot harvest ore
+    swing(T0); // starting club cannot harvest ore
     expect(sourceAt(r, tx, ty)?.stock).toBe(SOURCES.salt_shale.stock); // wrong tool did not debit source
     addItem(r, 'inv', 'stone_pick', 1); const pickSlot = C(r, 'inv').slots.findIndex(s => s?.key === 'stone_pick'); r.player.active = pickSlot;
     for (let hit = 0; hit < 6 && !Object.values(r.entities).some(e => e.kind === 'drop' && e.c && C(r, e.c).slots[0]?.key === 'raw_salt'); hit++) swing(T0 + 1000 * (hit + 1));
@@ -172,13 +172,13 @@ describe('C01/C05 harvesting & shared hit rules', () => {
     const aim=idle(tx*TILE+8,ty*TILE+8);tick(gs,{...aim,attackPressed:true},16,T0+1);for(let i=1;i<=24;i++)tick(gs,aim,16,T0+1+i*16);
     expect(sourceAt(r,tx,ty)?.hp).toBe(17);expect(r.sources[ty*WW+tx+1].stock).toBe(0);setActiveLayout('shipping');
   });
-  it('the starting knife can bootstrap finite stone without yielding ore or duplicating stock', () => {
-    const gs=fresh(),r=gs.run!,w=getWorld();r.creatures=[];const i=w.sourceV3.findIndex((key,j)=>key==='rock'&&[[-1,0],[1,0],[0,-1],[0,1]].some(([dx,dy])=>!blockedAt(r,j%WW+dx,Math.floor(j/WW)+dy)));
-    expect(i).toBeGreaterThanOrEqual(0);const tx=i%WW,ty=Math.floor(i/WW),offset=[[-1,0],[1,0],[0,-1],[0,1]].find(([dx,dy])=>!blockedAt(r,tx+dx,ty+dy))!;tp(gs,(tx+offset[0])*TILE+8,(ty+offset[1])*TILE+8);const aim=idle(tx*TILE+8,ty*TILE+8),stock=sourceAt(r,tx,ty)!.stock,stone=totalItems(gs,'stone');
-    for(let hit=0;hit<SOURCES.rock.hp+3;hit++){const at=T0+hit*1000;tick(gs,{...aim,attackPressed:true},16,at);for(let frame=0;frame<32;frame++)tick(gs,aim,16,at+16*(frame+1));}
-    expect(sourceAt(r,tx,ty)!.stock).toBe(0);expect(totalItems(gs,'stone')-stone).toBe(stock);expect(C(r,'inv').slots[0]?.dur).toBeLessThan(300);
+  it.each([['rock','stone'],['oak','wood']] as const)('the starting club harvests finite %s', (source,item) => {
+    const gs=fresh(),r=gs.run!,w=getWorld();r.creatures=[];const i=w.sourceV3.findIndex((key,j)=>key===source&&[[-1,0],[1,0],[0,-1],[0,1]].some(([dx,dy])=>!blockedAt(r,j%WW+dx,Math.floor(j/WW)+dy)));
+    expect(i).toBeGreaterThanOrEqual(0);const tx=i%WW,ty=Math.floor(i/WW),offset=[[-1,0],[1,0],[0,-1],[0,1]].find(([dx,dy])=>!blockedAt(r,tx+dx,ty+dy))!;tp(gs,(tx+offset[0])*TILE+8,(ty+offset[1])*TILE+8);const aim=idle(tx*TILE+8,ty*TILE+8),stock=sourceAt(r,tx,ty)!.stock,initial=totalItems(gs,item);expect(C(r,'inv').slots[0]?.key).toBe('wood_club');
+    for(let hit=0;hit<SOURCES[source].hp+3 && sourceAt(r,tx,ty)!.stock>0;hit++){const at=T0+hit*1000;tick(gs,{...aim,attackPressed:true},16,at);for(let frame=0;frame<32;frame++)tick(gs,aim,16,at+16*(frame+1));}
+    expect(sourceAt(r,tx,ty)!.stock).toBe(0);expect(totalItems(gs,item)-initial).toBe(stock);expect(C(r,'inv').slots[0]?.dur).toBeLessThan(ITEMS.wood_club.dur!);
   });
-  it('the same knife swing damages a creature through the real input path', () => {
+  it('the same club swing damages a creature through the real input path', () => {
     const gs = fresh(); const r = gs.run!; const p = r.player;
     r.creatures = r.creatures.filter(c => c.elder); const m = { ...r.creatures[0], id: 'mx', type: 'boar', elder: undefined, hp: 40, maxHp: 40, x: p.x + 12, y: p.y, state: 'wander' as const }; r.creatures.push(m as any);
     const inp = { ...idle(p.x + 30, p.y), attackPressed: true }; tick(gs, inp, 16, T0 + 16);
@@ -250,11 +250,11 @@ describe('C08/C14 traces & AI knowledge', () => {
   });
   it('a creature with no sensed trail never learns where the player/home is; a real trail is followed', () => {
     const gs = fresh(); const r = gs.run!; const p = r.player; r.creatures = r.creatures.filter(c => c.elder);
-    const m: any = { id: 'w1', type: 'wolf', x: p.x + 200, y: p.y, hp: 30, maxHp: 30, homeX: p.x + 200, homeY: p.y, state: 'wander', t: 0, tx: p.x + 200, ty: p.y, angle: 0, dir: 0, knows: null, path: null, pathT: 0, cd: 0, kbx: 0, kby: 0, flash: 0 };
+    const m: any = { id: 'w1', type: 'orc_1', x: p.x + 200, y: p.y, hp: 30, maxHp: 30, homeX: p.x + 200, homeY: p.y, state: 'wander', t: 0, tx: p.x + 200, ty: p.y, angle: 0, dir: 0, knows: null, path: null, pathT: 0, cd: 0, kbx: 0, kby: 0, flash: 0 };
     r.creatures.push(m); r.traces = [];
     for (let k = 0; k < 120; k++) tick(gs, idle(p.x, p.y), 16, T0 + k * 16);
     expect(m.knows === null || m.knows.kind !== 'trace').toBe(true);
-    // lay a physical trail from the wolf toward the player
+    // lay a physical trail from the tracker toward the player
     r.traces = []; for (let k = 0; k <= 20; k++) r.traces.push({ id: `trail${k}`, chainId: 'trail0', prevId: k ? `trail${k - 1}` : undefined, x: m.x - k * 9, y: m.y, t: T0 + 1900, life: 999999, a: Math.PI, s: T.GRASS });
     let tracked = false; for (let k = 0; k < 200; k++) { tick(gs, idle(p.x, p.y), 16, T0 + 1920 + k * 16); if (m.knows?.kind === 'trace') tracked = true; }
     expect(tracked).toBe(true);

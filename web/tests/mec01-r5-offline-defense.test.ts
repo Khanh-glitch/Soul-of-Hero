@@ -6,7 +6,7 @@
 //              collision-resolved player movement (tick + right:true), the door is opened/closed
 //              by real interact intents, and discovery/tracking/bashing/prov/turret fire are all
 //              the shipped online laws executed offline by settle().
-//   FIXTURE  — placement-only fixtures (the boar is spawned standing on the trail; structures are
+//   FIXTURE  — placement-only fixtures (the raider is spawned standing on the trail; structures are
 //              placed directly). NO trace, sight or stimulus knowledge is pre-seeded in any NATURAL case.
 //   CONTROL  — negative controls: one lawful prerequisite removed at a time, everything else identical.
 //
@@ -63,7 +63,7 @@ function freshRun(seed = 5511) {
   PROJ.length = 0; HAZ.length = 0;
   const gs = newGame();
   expect(act(gs, 'startRun', { character: 'female', seed }, T0).ok).toBe(true);
-  gs.run!.qaOffset = 12 * 60000;               // in-run clock t=0.8 (a day is 24 in-run minutes here) → darkness ≈ 0.76 — the shipped night-aggro law for boars. Calm phase, no Ragnarok side effects.
+  gs.run!.qaOffset = 12 * 60000;               // in-run clock t=0.8 (a day is 24 in-run minutes here) → darkness ≈ 0.76 — the shipped night-aggro law for raiders. Calm phase, no Ragnarok side effects.
   const patch = wintryPatch(gs, 8, true);
   return { gs, ...patch };
 }
@@ -91,7 +91,8 @@ function poweredTurret(gs: GameState, tx: number, ty: number, opts: { arrows?: n
   const arrowBox = mkContainer(r, 'chest', 3).id;   // shipped: an arrow_turret is built with a 3-slot chest
   const turret = mkStruct(r, 'arrow_turret', tx, ty, 120, {
     c: arrowBox,
-    turret: { enabled: true, cooldown: 0, angle: Math.PI / 2 },
+    // A hostile raider can be targeted on sight. Start reloading so the trail reaches the door first.
+    turret: { enabled: true, cooldown: 3500, angle: Math.PI / 2 },
   });
   r.entities[turret.id] = turret;
   const [gx, gy] = opts.generatorAt ?? [tx, ty - 1];
@@ -141,49 +142,49 @@ describe('MEC-01 R5 — offline consequence of a real player action (NATURAL wor
     expect(walkEnd).toBeGreaterThan(T0);
   });
 
-  it('[NATURAL] a trail discovered after logout leads the boar back home: it tracks the path and batters the door', () => {
+  it('[NATURAL] a trail discovered after logout leads the raider back home: it tracks the path and batters the door', () => {
     const { gs, px, py } = freshRun(7072); const r = gs.run!;
     const door = homestead(gs, px, py);
     const walkEnd = walkHome(gs);
     expect(act(gs, 'door', { eid: door.id }, walkEnd).ok).toBe(true);
     expect(r.entities[door.id]!.open).toBe(false);
     const spawnX = (px - 1) * TILE + 8;
-    const boar = mkCreature(r, 'boar', spawnX, py * TILE + 8, 40); boar.state = 'wander';
-    r.creatures.push(boar);
-    expect(boar.knows ?? null).toBeNull();          // zero knowledge injected — discovery must happen in settlement
+    const raider = mkCreature(r, 'orc_2', spawnX, py * TILE + 8, 40); raider.state = 'wander';
+    r.creatures.push(raider);
+    expect(raider.knows ?? null).toBeNull();          // zero knowledge injected — discovery must happen in settlement
     settle(gs, walkEnd + 6 * 60000, true);
     const d = r.entities[door.id];
     const doorDamaged = d === undefined || d.hp! < 140;   // the door was either destroyed or battered
     expect(doorDamaged).toBe(true);
-    expect(destroyedOnce(r, 'door_wood by boar')).toBe(1);          // destroyed exactly once, never twice
+    expect(destroyedOnce(r, 'door_wood by orc_2')).toBe(1);          // destroyed exactly once, never twice
     expect(r.entities[door.id]).toBeUndefined();                     // the entity is gone (destroyed by the bash, not despawned)
     expect(doorHits(r, door.id).length).toBeGreaterThanOrEqual(3);   // physical bashes, each debited once
-    for (const q of doorHits(r, door.id)) expect(q.detail).toContain(':boar:');
-    const m = r.creatures.find(c => c.id === boar.id)!;
+    for (const q of doorHits(r, door.id)) expect(q.detail).toContain(':orc_2:');
+    const m = r.creatures.find(c => c.id === raider.id)!;
     expect(m.x).toBeGreaterThan((px + 3) * TILE);                    // it advanced deep along the trail on its own
     expect(r.player.hp).toBeGreaterThan(0);                          // offline time never fabricates live melee
   });
 
-  it('[NATURAL] powered, supplied, wired turret fires during settlement — real arrows, real order: bash (prov) precedes fire', () => {
+  it('[NATURAL] powered, supplied, wired turret fires during settlement — real arrows, real order: door impact during reload precedes fire', () => {
     const { gs, px, py } = freshRun(7073); const r = gs.run!;
     const door = homestead(gs, px, py);
     const walkEnd = walkHome(gs);
     expect(act(gs, 'door', { eid: door.id }, walkEnd).ok).toBe(true);
-    // The boar finds the trail and will batter the door; the turret north of the doorway covers the approach.
+    // The raider finds the trail and will batter the door; the turret north of the doorway covers the approach.
     const { turret, arrowBox, fuelBox } = poweredTurret(gs, px + 5, py - 1, { arrows: 8, fuel: 40, energy: 0 });
-    const boar = mkCreature(r, 'boar', (px - 1) * TILE + 8, py * TILE + 8, 40); boar.state = 'wander';
-    r.creatures.push(boar);
+    const raider = mkCreature(r, 'orc_2', (px - 1) * TILE + 8, py * TILE + 8, 40); raider.state = 'wander';
+    r.creatures.push(raider);
     settle(gs, walkEnd + 6 * 60000, true);
     const fires = fireCount(r);
     expect(fires).toBeGreaterThanOrEqual(3);        // 16 dmg × 3 ≥ 40 hp — the lawful lethal sequence
     expect(countItem(r, arrowBox, 'arrow')).toBe(8 - fires);          // EXACT arrow accounting: 1 per fire, nothing else moves arrows
-    const m = r.creatures.find(c => c.id === boar.id)!;
+    const m = r.creatures.find(c => c.id === raider.id)!;
     expect(m.state).toBe('dead');                                      // the turret killed it, offline
     expect(countItem(r, fuelBox, 'wood')).toBeLessThan(40); // the generator was fed physical fuel that the offline clock burned
-    expect(destroyedOnce(r, 'door_wood by boar')).toBe(0);             // the home was defended: the door survives
+    expect(destroyedOnce(r, 'door_wood by orc_2')).toBe(0);             // the home was defended: the door survives
     expect(r.entities[door.id]).toBeTruthy();
     expect(door.hp!).toBeLessThan(140);                                // but the bash before the kill left its mark
-    // Causal ORDER: a bash embodies prov; the first lawful turret shot cannot precede prov.
+    // The turret was reloading on approach. The door is hit before the first shot.
     const firstHit = r.receipts.findIndex((q: any) => q.kind === 'struct.hit' && String(q.detail).startsWith(door.id));
     const firstFire = r.receipts.findIndex((q: any) => q.kind === 'turret.fire');
     expect(firstHit).toBeGreaterThanOrEqual(0);
@@ -197,13 +198,13 @@ describe('MEC-01 R5 — offline consequence of a real player action (NATURAL wor
     const walkEnd = walkHome(gs);
     expect(act(gs, 'door', { eid: door.id }, walkEnd).ok).toBe(true);
     const { arrowBox } = poweredTurret(gs, px + 5, py - 1, { arrows: 8, fuel: 0, energy: 0 });
-    const boar = mkCreature(r, 'boar', (px - 1) * TILE + 8, py * TILE + 8, 40); boar.state = 'wander';
-    r.creatures.push(boar);
+    const raider = mkCreature(r, 'orc_2', (px - 1) * TILE + 8, py * TILE + 8, 40); raider.state = 'wander';
+    r.creatures.push(raider);
     settle(gs, walkEnd + 6 * 60000, true);
     expect(fireCount(r)).toBe(0);
     expect(countItem(r, arrowBox, 'arrow')).toBe(8);                    // no arrows were ever spent
     expect(doorHits(r, door.id).length).toBeGreaterThanOrEqual(3);      // the approach and bash still happened
-    expect(destroyedOnce(r, 'door_wood by boar')).toBe(1);              // and the door fell — lawfully, once
+    expect(destroyedOnce(r, 'door_wood by orc_2')).toBe(1);              // and the door fell — lawfully, once
     expect(r.player.hp).toBeGreaterThan(0);
   });
 
@@ -213,13 +214,13 @@ describe('MEC-01 R5 — offline consequence of a real player action (NATURAL wor
     const walkEnd = walkHome(gs);
     expect(act(gs, 'door', { eid: door.id }, walkEnd).ok).toBe(true);
     const { arrowBox } = poweredTurret(gs, px + 5, py - 1, { arrows: 0, fuel: 40, energy: 0 });
-    const boar = mkCreature(r, 'boar', (px - 1) * TILE + 8, py * TILE + 8, 40); boar.state = 'wander';
-    r.creatures.push(boar);
+    const raider = mkCreature(r, 'orc_2', (px - 1) * TILE + 8, py * TILE + 8, 40); raider.state = 'wander';
+    r.creatures.push(raider);
     settle(gs, walkEnd + 6 * 60000, true);
     expect(fireCount(r)).toBe(0);
     expect(countItem(r, arrowBox, 'arrow')).toBe(0);
     expect(doorHits(r, door.id).length).toBeGreaterThanOrEqual(1);
-    expect(destroyedOnce(r, 'door_wood by boar')).toBe(1);
+    expect(destroyedOnce(r, 'door_wood by orc_2')).toBe(1);
   });
 
   it('[CONTROL] armed, powered, supplied but SIGHT-BLOCKED — no shot through a wall (lawful LOS required)', () => {
@@ -230,8 +231,8 @@ describe('MEC-01 R5 — offline consequence of a real player action (NATURAL wor
     // Turret at (px+3, py-1): the ray to the doorway crosses the blocking wall placed at (px+4, py-1).
     const { arrowBox } = poweredTurret(gs, px + 3, py - 1, { arrows: 8, fuel: 40, energy: 0 });
     const blocker = mkStruct(r, 'wall_wood', px + 4, py - 1, 140); r.entities[blocker.id] = blocker; markDirty();
-    const boar = mkCreature(r, 'boar', (px - 1) * TILE + 8, py * TILE + 8, 40); boar.state = 'wander';
-    r.creatures.push(boar);
+    const raider = mkCreature(r, 'orc_2', (px - 1) * TILE + 8, py * TILE + 8, 40); raider.state = 'wander';
+    r.creatures.push(raider);
     settle(gs, walkEnd + 6 * 60000, true);
     expect(fireCount(r)).toBe(0);
     expect(countItem(r, arrowBox, 'arrow')).toBe(8);
@@ -245,8 +246,8 @@ describe('MEC-01 R5 — offline consequence of a real player action (NATURAL wor
     expect(act(gs, 'door', { eid: door.id }, walkEnd).ok).toBe(true);
     // Turret far north-west; the door attack happens at ~120 px — outside the engagement circle.
     const { arrowBox } = poweredTurret(gs, px, py - 6, { arrows: 8, fuel: 40, energy: 0 });
-    const boar = mkCreature(r, 'boar', (px - 1) * TILE + 8, py * TILE + 8, 40); boar.state = 'wander';
-    r.creatures.push(boar);
+    const raider = mkCreature(r, 'orc_2', (px - 1) * TILE + 8, py * TILE + 8, 40); raider.state = 'wander';
+    r.creatures.push(raider);
     settle(gs, walkEnd + 6 * 60000, true);
     expect(fireCount(r)).toBe(0);
     expect(countItem(r, arrowBox, 'arrow')).toBe(8);
@@ -294,17 +295,17 @@ describe('MEC-01 R5 — settlement integrity across time partitioning, reload an
     const walkEnd = walkHome(gs);
     expect(act(gs, 'door', { eid: door.id }, walkEnd).ok).toBe(true);
     const { arrowBox } = poweredTurret(gs, px + 5, py - 1, { arrows: 8, fuel: 40, energy: 0 });
-    const boar = mkCreature(r, 'boar', (px - 1) * TILE + 8, py * TILE + 8, 40); boar.state = 'wander';
-    r.creatures.push(boar);
-    return { gs, r, door, walkEnd, arrowBox, boarId: boar.id };
+    const raider = mkCreature(r, 'orc_2', (px - 1) * TILE + 8, py * TILE + 8, 40); raider.state = 'wander';
+    r.creatures.push(raider);
+    return { gs, r, door, walkEnd, arrowBox, raiderId: raider.id };
   };
-  const outcome = (fx: { gs: GameState; door: any; arrowBox: string; boarId: string }) => {
+  const outcome = (fx: { gs: GameState; door: any; arrowBox: string; raiderId: string }) => {
     const r = fx.gs.run!;
-    const boar = r.creatures.find(c => c.id === fx.boarId)!;
+    const raider = r.creatures.find(c => c.id === fx.raiderId)!;
     // Settle slices are split at weather/fire/depletion boundaries; hp accumulates by different
     // float orders in splits. Compare at 1e-6 — beyond any lawful relevance, before float noise.
     const q = (v: number | undefined) => (v === undefined ? -1 : Math.round(v * 1e6) / 1e6);
-    return { doorHp: q(fx.door.hp), doorExists: !!r.entities[fx.door.id], fires: fireCount(r), arrows: countItem(r, fx.arrowBox, 'arrow'), boarState: boar.state, boarHp: q(boar.hp), destroyed: destroyedOnce(r, 'door_wood by boar') };
+    return { doorHp: q(fx.door.hp), doorExists: !!r.entities[fx.door.id], fires: fireCount(r), arrows: countItem(r, fx.arrowBox, 'arrow'), raiderState: raider.state, raiderHp: q(raider.hp), destroyed: destroyedOnce(r, 'door_wood by orc_2') };
   };
 
   it('a single 6-minute settlement equals two 3-minute settlements (time-partition determinism)', () => {
@@ -322,7 +323,7 @@ describe('MEC-01 R5 — settlement integrity across time partitioning, reload an
     expect(validate(reloaded)).toBeTruthy();
     reloaded.run!.clock.lastSimAt = b.walkEnd + 3 * 60000;      // the honest resume point, as the shipped loader restores it
     settle(reloaded, b.walkEnd + 6 * 60000, true);
-    const outB = outcome({ gs: reloaded, door: reloaded.run!.entities[b.door.id] ?? b.door, arrowBox: b.arrowBox, boarId: b.boarId });
+    const outB = outcome({ gs: reloaded, door: reloaded.run!.entities[b.door.id] ?? b.door, arrowBox: b.arrowBox, raiderId: b.raiderId });
     expect(outB).toEqual(outcome(a));
     // And the reload happened with projectile paths either intact or honestly discarded — never duplicated:
     expect(fireCount(reloaded.run!)).toBe(outcome(a).fires);
@@ -330,21 +331,21 @@ describe('MEC-01 R5 — settlement integrity across time partitioning, reload an
 
   it('settle() replayed with the same endpoint is a no-op — no duplicate damage, arrows or deaths', () => {
     const a = build(7082); settle(a.gs, a.walkEnd + 6 * 60000, true);
-    const once = { fires: fireCount(a.r), hits: structHits(a.r).length, arrows: countItem(a.r, a.arrowBox, 'arrow'), destroyed: destroyedOnce(a.r, 'door_wood by boar') };
+    const once = { fires: fireCount(a.r), hits: structHits(a.r).length, arrows: countItem(a.r, a.arrowBox, 'arrow'), destroyed: destroyedOnce(a.r, 'door_wood by orc_2') };
     settle(a.gs, a.walkEnd + 6 * 60000, true);                    // replay with the same end timestamp
     expect(fireCount(a.r)).toBe(once.fires);
     expect(structHits(a.r).length).toBe(once.hits);
     expect(countItem(a.r, a.arrowBox, 'arrow')).toBe(once.arrows);
-    expect(destroyedOnce(a.r, 'door_wood by boar')).toBe(once.destroyed);
+    expect(destroyedOnce(a.r, 'door_wood by orc_2')).toBe(once.destroyed);
   });
 
-  it('[NATURAL] the same lawful outcome offline and live-online: bashes happen, prov precedes fire, arrows are spent in both', () => {
+  it('[NATURAL] a hostile raider damages the door and the turret spends real arrows both online and away', () => {
     const off = build(7083); settle(off.gs, off.walkEnd + 30000, true);
     const on = build(7083);
     for (let i = 1; i <= 600; i++) tick(on.gs, idle(), 50, on.walkEnd + i * 50);   // live play, standing still, 30 in-game seconds
     // The online-only random-wander law steers the approach differently before discovery, so exact
     // hit counts diverge — both worlds must reach the same lawful outcome: a battered door, a spent
-    // turret, arrows debited 1:1 with turret.fire receipts, and prov strictly before the first shot.
+    // turret, and arrows debited 1:1 with turret.fire receipts. The raider is hostile before the bash.
     expect(off.r.entities[off.door.id]?.hp!).toBeLessThan(140);
     expect(on.r.entities[on.door.id]?.hp!).toBeLessThan(140);
     expect(structHits(off.r).filter((q: any) => String(q.detail).startsWith(off.door.id)).length).toBeGreaterThanOrEqual(1);
@@ -353,11 +354,10 @@ describe('MEC-01 R5 — settlement integrity across time partitioning, reload an
     expect(fireCount(on.r)).toBeGreaterThanOrEqual(1);
     expect(countItem(off.r, off.arrowBox, 'arrow')).toBe(8 - fireCount(off.r));
     expect(countItem(on.r, on.arrowBox, 'arrow')).toBe(8 - fireCount(on.r));
-    const order = (r: any) => [
-      r.receipts.findIndex((q: any) => q.kind === 'struct.hit' && String(q.detail).startsWith(off.door.id)),
-      r.receipts.findIndex((q: any) => q.kind === 'turret.fire'),
-    ];
-    for (const r of [off.r, on.r]) { const [hit, fire] = order(r); expect(hit).toBeGreaterThanOrEqual(0); expect(fire).toBeGreaterThan(hit); }
+    for (const fx of [off,on]) {
+      const firstFire=fx.r.receipts.find(q=>q.kind==='turret.fire')!;
+      expect(firstFire.at-fx.walkEnd).toBeGreaterThanOrEqual(3500);
+    }
   });
 });
 
@@ -368,8 +368,8 @@ describe('MEC-01 R5 — aftermath: the consequence survives and must be answered
     const walkEnd = walkHome(gs);
     expect(act(gs, 'door', { eid: door.id }, walkEnd).ok).toBe(true);
     poweredTurret(gs, px + 5, py - 1, { arrows: 8, fuel: 40, energy: 0 });
-    const boar = mkCreature(r, 'boar', (px - 1) * TILE + 8, py * TILE + 8, 40); boar.state = 'wander';
-    r.creatures.push(boar);
+    const raider = mkCreature(r, 'orc_2', (px - 1) * TILE + 8, py * TILE + 8, 40); raider.state = 'wander';
+    r.creatures.push(raider);
     settle(gs, walkEnd + 6 * 60000, true);
     const after = r.entities[door.id];
     expect(after).toBeTruthy();
@@ -390,10 +390,10 @@ describe('MEC-01 R5 — aftermath: the consequence survives and must be answered
     const door = homestead(gs, px, py);
     const walkEnd = walkHome(gs);
     expect(act(gs, 'door', { eid: door.id }, walkEnd).ok).toBe(true);
-    const boar = mkCreature(r, 'boar', (px - 1) * TILE + 8, py * TILE + 8, 40); boar.state = 'wander';
-    r.creatures.push(boar);
+    const raider = mkCreature(r, 'orc_2', (px - 1) * TILE + 8, py * TILE + 8, 40); raider.state = 'wander';
+    r.creatures.push(raider);
     settle(gs, walkEnd + 6 * 60000, true);
-    expect(destroyedOnce(r, 'door_wood by boar')).toBe(1);
+    expect(destroyedOnce(r, 'door_wood by orc_2')).toBe(1);
     expect(r.entities[door.id]).toBeUndefined();
     // The structure is gone: a repair intent cannot bring it back or mint a phantom.
     expect(act(gs, 'repairStructure', { eid: door.id, material: 'wood' }, walkEnd + 6 * 60000 + 2000).ok).toBe(false);

@@ -96,7 +96,7 @@ export const ITEM_DECISIONS: Readonly<Record<string, ItemDecision>> = Object.fre
   sulfur: D('CORE', 'KEEP', 'sulfur_powder', 'Core and essence reagent. LI uses sulfur for AP ammunition, which SOH does not import.'),
   raw_salt: D('SURVIVAL', 'KEEP', 'none', 'Food preservation flavour (Salted Roast) and Canvas treatment.'),
   // ── Tools / weapons / armour ─────────────────────────────────────────────────────────────────
-  knife: D('GEAR', 'KEEP', 'none', 'Starter kit item with no recipe by design; repaired with Scrap.'),
+  knife: D('GEAR', 'KEEP', 'none', 'Carried by salvagers; repair with stone and fiber.'),
   torch: D('GEAR', 'KEEP', 'none', 'Light + ignition; also the Torch Post input.'),
   iron_axe: D('GEAR', 'KEEP', 'iron_axe', 'Iron tool tier.'),
   iron_pick: D('GEAR', 'KEEP', 'none', 'Iron tool tier; unlocks Rich Iron Ore quality.'),

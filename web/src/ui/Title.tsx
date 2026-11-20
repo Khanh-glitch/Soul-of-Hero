@@ -146,7 +146,7 @@ export default function Title({
         {mode === 'select' && <div className="panel absolute fadein" style={{ left: 90, top: 26, width: 460, padding: 8 }}>
           <div className="panel-h" style={{ marginBottom: 4 }}>Choose your Adventurer</div>
           <div className="flex gap-2">{(['female', 'male'] as const).map(h => <button key={h} className={`btn ${hero === h ? 'gold' : 'ghost'}`} style={{ flex: 1, padding: 4, textAlign: 'left' }} onClick={() => { click(); setHero(h); }}>
-            <div className="flex items-center gap-2"><HeroPreview female={h === 'female'} active={hero === h} /><div style={{ fontSize: 11, lineHeight: 1.15 }}><div className="title-font" style={{ fontSize: 13 }}>{h === 'female' ? 'Adventurer ♀' : 'Adventurer ♂'}</div><div>Survival knife, a half-full flask, a few berries. No Core, no map, no orders.</div></div></div></button>)}</div>
+            <div className="flex items-center gap-2"><HeroPreview female={h === 'female'} active={hero === h} /><div style={{ fontSize: 11, lineHeight: 1.15 }}><div className="title-font" style={{ fontSize: 13 }}>{h === 'female' ? 'Adventurer ♀' : 'Adventurer ♂'}</div><div>Wood club, half a flask and a few berries. Strike a tree for wood or a boulder for stone.</div></div></div></button>)}</div>
           <div style={{ fontSize: 11, marginTop: 6, color: '#ffd98a' }}>World</div>
           <div className="flex gap-1" style={{ marginTop: 2 }}>
             <button className={`btn ${selectedLayout === U05_WORLD_LAYOUT_ID ? 'gold' : 'ghost'}`} style={{ fontSize: 10 }} onClick={() => { click(); setSelectedLayout(U05_WORLD_LAYOUT_ID); setRegion(null); }}>VEYRA · Unified World</button>

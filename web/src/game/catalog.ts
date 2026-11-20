@@ -130,7 +130,7 @@ export const ITEMS: Record<string, ItemDef> = {
   fruit_juice: I({ name: 'Fruit Juice', vi: 'Nước ép quả', cat: 'food', icon: 'flask', c1: '#a02a4a', c2: '#ff9ab0', w: 0.3, max: 10, desc: 'Pressed berries. Mostly a drink.', food: { thirst: 26, hunger: 6 } }),
   fruit_wine: I({ name: 'Fruit Wine', vi: 'Rượu quả', cat: 'food', icon: 'flask', c1: '#5a1e4a', c2: '#d88ac8', w: 0.4, max: 10, desc: 'Fermented in a tin by the fire. Warms you through; quenches little.', food: { thirst: 12, warmth: 24, hp: 4 } }),
   jam: I({ name: 'Jam', vi: 'Mứt', cat: 'food', icon: 'can', c1: '#7a1e3a', c2: '#ff7a9a', w: 0.4, max: 10, desc: 'Berries boiled down and sealed under cloth. Dense energy for a long haul.', food: { hunger: 40, stamina: 30 } }),
-  wood_club: I({ name: 'Wood Club', vi: 'Gậy gỗ', cat: 'weapon', icon: 'log', c1: '#7a5a32', c2: '#c9a064', w: 1.2, max: 1, desc: 'A heavy branch. Crude, hand-made, wears out fast.', repair: { station: 'workbench', cost: [['wood', 3]] }, power: { plant: 1 }, dmg: 12, reach: 22, arc: 1.4, swing: 420, dur: 120 }),
+  wood_club: I({ name: 'Wood Club', vi: 'Gậy gỗ', cat: 'weapon', icon: 'log', c1: '#7a5a32', c2: '#c9a064', w: 1.2, max: 1, desc: 'A heavy branch. Strike trees for wood and boulders for stone; an axe or pick works faster.', repair: { station: 'workbench', cost: [['wood', 3]] }, power: { wood: 1, stone: 1, plant: 1 }, dmg: 12, reach: 22, arc: 1.4, swing: 420, dur: 120 }),
   cleaver: I({ name: 'Cleaver', vi: 'Dao phay', cat: 'weapon', icon: 'knife', c1: '#c8d0dc', c2: '#5a3a22', w: 0.9, max: 1, desc: 'Short heavy blade. Quick chops at close reach; clears brush.', repair: { station: 'workbench', cost: [['iron_ingot', 1]] }, power: { plant: 3 }, dmg: 17, reach: 20, arc: 1.3, swing: 330, dur: 260 }),
   machete: I({ name: 'Machete', vi: 'Rựa', cat: 'weapon', icon: 'sword', c1: '#dfe6ee', c2: '#7a4a2a', w: 1.4, max: 1, desc: 'Fast, wide cuts. The iron long blade.', studyRecipe: 'machete', repair: { station: 'workbench', cost: [['iron_ingot', 1], ['metal_blade', 1]] }, salvage: { station: 'workbench', yields: [['iron_ingot', 1]] }, power: { plant: 3 }, dmg: 24, reach: 26, arc: 1.7, swing: 330, dur: 350 }),
   iron_plate_helmet: I({ name: 'Iron Plate Helmet', vi: 'Mũ tấm sắt', cat: 'armor', icon: 'helm', c1: '#4f5a63', c2: '#c9d1d8', w: 1.8, max: 1, desc: '-14% damage.', slot: 'head', armor: 0.14 }),
@@ -291,6 +291,8 @@ export const SOURCES: Record<string, SourceDef> = {
 
 // ---------- Creatures (K5) ----------
 export interface CreatureDef { name: string; hp: number; dmg: number; speed: number; r: number; sight: number; drops: [string, number, number][]; biome: string; style: string; tell: number; aggro: boolean; night?: boolean; leashTiles?: number; uniqueDrop?: string; tamable?: boolean }
+const animals = new Set(['boar','wolf','toad','beetle','crab','deer','hare','grouse','fox']);
+export const isAnimal = (type:string) => animals.has(type);
 export const passiveWildlife = (type:string) => type==='deer' || type==='hare' || type==='grouse';
 export const CREATURES: Record<string, CreatureDef> = {
   boar: { name: 'Bristleback Boar', hp: 40, dmg: 13, speed: 46, r: 6, sight: 90, drops: [['meat', 2, 1], ['hide', 1, 1], ['animal_fat', 1, 0.8], ['boar_tusk', 1, 0.3]], biome: 'meadow', style: 'charge', tell: 650, aggro: false, tamable: true },

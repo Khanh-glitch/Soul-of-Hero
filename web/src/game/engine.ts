@@ -322,7 +322,7 @@ export function startRun(gs: GameState, character: 'male' | 'female', now: numbe
   r.spawnChoice={x:sp.tx,y:sp.ty,contract:'seeded-geographic-v1'};
   r.custody.inv = { id: 'inv', kind: 'inv', slots: Array(24).fill(null) };
   r.custody.eq = { id: 'eq', kind: 'eq', slots: EQ_SLOTS.map(() => null) };
-  r.custody.inv.slots[0] = mkStack(r, 'knife', 1);
+  r.custody.inv.slots[0] = mkStack(r, 'wood_club', 1);
   const fl = mkStack(r, 'water_flask', 1); fl.charge = 2; r.custody.inv.slots[1] = fl;
   r.custody.inv.slots[2] = mkStack(r, 'berries', 3);
   if (VFX_TEST_KIT) { const inv = r.custody.inv.slots; inv[8] = inv[1]; inv[9] = inv[2]; VFX_TEST_CORES.forEach((k, i) => { const s = mkStack(r, k, 1); s.lvl = 3; inv[1 + i] = s; }); r.qaUsed = true; }

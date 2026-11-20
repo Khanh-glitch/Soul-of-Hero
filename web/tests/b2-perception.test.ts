@@ -79,9 +79,20 @@ describe('B2-A existing movement and causal trace authority', () => {
     a.life = 0; expect(nextContiguousTrace([a, next], { traceId: 'a', chainId: 'A' })).toBeUndefined();
     expect(nextContiguousTrace([crossing, next], { traceId: 'c', chainId: 'B' })).toBeUndefined();
   });
+  it('animals neither acquire fresh tracks nor resume a saved trail online or away', () => {
+    const gs = fresh(), r = gs.run!, spot = clearing(gs), x = spot.x * TILE + 8, y = spot.y * TILE + 8;
+    r.player.x = x + 150; r.player.y = y;
+    const tr = mark('a', 'A', undefined, x + 3, y, T0); r.traces = [tr];
+    const animals = ['boar','wolf','toad','beetle','crab','deer','hare','grouse','fox'].map(type => creature(gs, type, x, y));
+    const legacy = () => { for (const m of animals) {m.state='track'; m.knows={kind:'trace',traceId:tr.id,chainId:tr.chainId,x:tr.x,y,at:T0};} };
+    step(gs,idle(),1); expect(animals.every(m=>m.knows?.kind!=='trace')).toBe(true);
+    legacy(); step(gs,idle(),2); expect(animals.every(m=>m.knows?.kind!=='trace')).toBe(true);
+    legacy(); const pos=animals.map(m=>[m.x,m.y]); settle(gs,T0+2000);
+    expect(animals.map(m=>[m.x,m.y])).toEqual(pos); expect(animals.every(m=>m.knows?.kind!=='trace')).toBe(true);
+  });
   it('a creature senses a real nearby mark and continues its own chain, not a newer crossing', () => {
     const gs = fresh(), r = gs.run!, spot = clearing(gs), x = spot.x * TILE + 8, y = spot.y * TILE + 8;
-    r.player.x = x + 140; r.player.y = y; const m = creature(gs, 'wolf', x, y);
+    r.player.x = x + 140; r.player.y = y; const m = creature(gs, 'orc_1', x, y);
     const a = mark('a', 'A', undefined, x + 3, y, T0), b = mark('b', 'A', 'a', x + 15, y, T0 + 10);
     r.traces = [a, b]; step(gs, idle(), 1); expect(m.knows?.traceId).toBe('b');
     r.traces.push(mark('cross', 'B', undefined, m.x + 2, m.y, T0 + 30));
@@ -91,7 +102,7 @@ describe('B2-A existing movement and causal trace authority', () => {
   it('replaces a stale cached path when tracking a different evidence target', () => {
     const gs = fresh(), r = gs.run!, spot = clearing(gs), x = spot.x * TILE + 8, y = spot.y * TILE + 8;
     wall(gs, spot.x + 1, spot.y); r.player.x = x + 140; r.player.y = y;
-    const m = creature(gs, 'wolf', x, y), tr = mark('track', 'A', undefined, x + 40, y, T0);
+    const m = creature(gs, 'orc_1', x, y), tr = mark('track', 'A', undefined, x + 40, y, T0);
     r.traces = [tr]; m.knows = { kind: 'trace', traceId: tr.id, chainId: tr.chainId, x: tr.x, y: tr.y, at: tr.t }; m.state = 'track';
     m.path = [spot.y * WW + spot.x, (spot.y - 1) * WW + spot.x]; m.pathT = 900;
     step(gs, idle(), 1); expect(m.path?.[m.path.length - 1]).toBe(spot.y * WW + spot.x + 3);
@@ -99,7 +110,7 @@ describe('B2-A existing movement and causal trace authority', () => {
   it('does not sense a footprint through a wall or a legacy mark without identity', () => {
     const gs = fresh(), r = gs.run!, spot = clearing(gs), x = spot.x * TILE + 8, y = spot.y * TILE + 8;
     wall(gs, spot.x + 1, spot.y); r.player.x = x + 140; r.player.y = y;
-    const m = creature(gs, 'wolf', x + 1, y); r.traces = [mark('hidden', 'hidden', undefined, x + 19, y, T0)];
+    const m = creature(gs, 'orc_1', x + 1, y); r.traces = [mark('hidden', 'hidden', undefined, x + 19, y, T0)];
     step(gs, idle(), 1); expect(m.knows).toBeNull();
     r.traces = [{ x: m.x, y: m.y, t: T0, life: 100000, a: 0, s: T.GRASS }]; m.t = 480;
     step(gs, idle(), 2); expect(m.knows).toBeNull();
@@ -165,18 +176,18 @@ describe('trace-grounded home safety', () => {
     const a = mark('a', 'A', undefined, x + 6, y, T0), distant = mark('d', 'A', 'a', x + 70, y, T0 + 1);
     expect(nextContiguousTrace([a, distant], { traceId: 'a', chainId: 'A' })).toBeUndefined();
     wall(gs, spot.x + 1, spot.y); r.player.x = x + 150; r.player.y = y;
-    const m = creature(gs, 'wolf', x + 6, y), b = mark('b', 'A', 'a', x + 22, y, T0 + 1);
+    const m = creature(gs, 'orc_1', x + 6, y), b = mark('b', 'A', 'a', x + 22, y, T0 + 1);
     r.traces = [a, b]; step(gs, idle(), 1);
     expect(m.knows?.traceId).not.toBe('b'); expect(m.traceIgnore).toBe('A');
   });
   it('physically walks a sensed connected trail and loses it when the next evidence expires', () => {
     const gs = fresh(), r = gs.run!, spot = clearing(gs), x = spot.x * TILE + 8, y = spot.y * TILE + 8;
-    r.player.x = x + 150; r.player.y = y; const m = creature(gs, 'wolf', x, y);
+    r.player.x = x + 150; r.player.y = y; const m = creature(gs, 'orc_1', x, y);
     r.traces = [mark('a', 'A', undefined, x + 3, y, T0), mark('b', 'A', 'a', x + 15, y, T0 + 1), mark('c', 'A', 'b', x + 30, y, T0 + 2)];
     step(gs, idle(), 1); expect(m.knows?.traceId).toBe('b');
-    for (let i = 2; i <= 5; i++) step(gs, idle(), i);
+    let i = 2; while (i < 20 && m.knows?.traceId !== 'c') step(gs, idle(), i++);
     expect(m.x).toBeGreaterThan(x); expect(m.x).toBeLessThan(x + 30); expect(m.knows?.traceId).toBe('c');
-    r.traces = r.traces.filter(tr => tr.id !== 'c'); step(gs, idle(), 6);
+    r.traces = r.traces.filter(tr => tr.id !== 'c'); step(gs, idle(), i);
     expect(m.knows).toBeNull(); expect(m.traceIgnore).toBe('A');
   });
   it('blocks even a corner-grazing physical interaction', () => {
@@ -206,7 +217,7 @@ describe('trace-grounded home safety', () => {
     const gs = fresh(), r = gs.run!, spot = clearing(gs), x = spot.x * TILE + 8, y = spot.y * TILE + 8;
     const id = uid(r, 'door'); r.entities[id] = { id, kind: 'struct', type: 'door_wood', x: x + 16, y, tx: spot.x + 1, ty: spot.y, hp: 140, maxHp: 140, open: true }; markDirty();
     r.player.x = x + 150; r.player.y = y;
-    const m = creature(gs, 'boar', x + 2, y); (m as any).prov = true; m.tx = x + 40; m.ty = y;
+    const m = creature(gs, 'orc_2', x + 2, y); (m as any).prov = true; m.tx = x + 40; m.ty = y;
     const tr = mark('visible', 'A', undefined, x + 19, y, T0); r.traces = [tr];
     step(gs, idle(), 1); expect(m.knows?.traceId).toBe('visible'); expect(r.entities[id].hp).toBeCloseTo(140,0);
     r.entities[id].open = false; markDirty();
@@ -287,7 +298,7 @@ describe('bounded offline trace consequences', () => {
     const gs = fresh(), r = gs.run!, spot = clearing(gs), x = spot.x * TILE + 8, y = spot.y * TILE + 8;
     r.player.x = x + 600; r.player.y = y;
     const doorId = uid(r, 'e'); r.entities[doorId] = { id: doorId, kind: 'struct', type: 'door_wood', x: x + 64, y, tx: spot.x + 4, ty: spot.y, hp: 140, maxHp: 140, open: false, owner: 'player' }; markDirty();
-    const m = creature(gs, 'boar', x - 8, y); (m as any).prov = true; m.t = 0;
+    const m = creature(gs, 'orc_2', x - 8, y); (m as any).prov = true; m.t = 0;
     r.traces = [3, 15, 27, 39, 51].map((dx, i) => mark('a' + i, 'A', i ? 'a' + (i - 1) : undefined, x + dx, y, T0));
     return { gs, r, m, doorId, x, y, spot };
   }
@@ -359,7 +370,7 @@ describe('bounded offline trace consequences', () => {
   });
   it('persists over-cap and previously sighted actors at their unresolved checkpoints', () => {
     const { gs, r, m, x, y } = setupTrail();
-    for (let i = 1; i < 25; i++) { const q = creature(gs, 'boar', x - 8, y); (q as any).prov = true; }
+    for (let i = 1; i < 25; i++) { const q = creature(gs, 'orc_2', x - 8, y); (q as any).prov = true; }
     const sighted = creature(gs, 'wolf', x - 10, y); sighted.knows = { kind: 'sight', x, y, at: T0 }; sighted.state = 'chase';
     settle(gs, T0 + 50, true);
     expect(m.x).toBeGreaterThan(x - 8); expect(r.creatures[24].x).toBe(x - 8);

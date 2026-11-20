@@ -29,13 +29,13 @@ try{
  if(!p){log.block='No landing within 32 tiles of a conscious resident in the sampled ordinary starts.';console.log(log.block);}
  async function snapshot(){await p.keyboard.press('Escape');await btn('Save now').click();await p.waitForTimeout(300);const r=await p.evaluate(()=>{const k=Object.keys(localStorage).find(k=>/^soh\.state\.v\d+$/.test(k));return JSON.parse(JSON.parse(localStorage.getItem(k)).payload).run;});await p.keyboard.press('Escape');return r;}
  async function conversation(){
-   if(!(await btn('Work?').isVisible()))return false;
+   if(!(await btn('Ask question').isVisible()))return false;
    const panel=p.getByTestId('human-panel');log.contact=await panel.innerText();
-   for(const q of ['Work?','Need?','Place?','Join?']){await btn(q).click();log.talk.push([q,await panel.getByRole('status').last().innerText()]);}
-   await p.screenshot({path:path.join(out,'conversation.png')});await btn('Recruit').click();log.recruit=await panel.getByRole('status').last().innerText();
-   await btn('Help').click();log.help=await panel.innerText();const supply=panel.getByRole('button',{name:/^Offer /}).first();
+   for(const q of ['activity','needs','place','accompany']){await panel.getByLabel('Conversation topic').selectOption(q);await btn('Ask question').click();log.talk.push([q,await panel.getByRole('status').last().innerText()]);}
+   await p.screenshot({path:path.join(out,'conversation.png')});await btn('Invite to join you').click();log.recruit=await panel.getByRole('status').last().innerText();
+   await panel.getByLabel('Survivor action').selectOption('Help');log.help=await panel.innerText();const supply=panel.getByRole('button',{name:/^Offer /}).first();
    if(await supply.isVisible()){await supply.click();await p.waitForTimeout(6500);log.afterHelp=await panel.innerText();}
-   await btn('Barter').click();log.barter=await p.getByText('Barter · personal packs only').isVisible();await p.screenshot({path:path.join(out,'personal-packs.png')});return true;
+   await panel.getByLabel('Survivor action').selectOption('Barter');log.barter=await p.getByText('Barter · personal packs only').isVisible();await p.screenshot({path:path.join(out,'personal-packs.png')});return true;
  }
  const width=200;let target;const excluded=new Set();
  for(let i=0;p && i<45;i++){
