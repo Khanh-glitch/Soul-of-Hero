@@ -7,13 +7,16 @@ const m=read(path.join(shards,'manifest.json')),progress=read(path.join(serial,'
 if(progress&&progress.sha!==m.sha)throw Error('Mixed recovery SHA');
 const relative=t=>m.files.find(f=>t.name===f||t.name.endsWith('/'+f));
 const message=s=>(s??'').replace(/\x1b\[[\d;]*m/g,'').split('\n')[0];
+// Test names can reach several assertions with the same generic message. Match
+// the first project frame as well, ignoring only the checkout's absolute prefix.
+const location=s=>(s??'').split('\n').map(l=>l.match(/\/(src|tests)\/([^():]+:\d+:\d+)\)?$/)).find(Boolean)?.slice(1).join('/')??'';
 const failures=[],files=[];
 // A baseline may be a focused run: skipped asserts in such a run are not evidence.
 const base=parents.flatMap(p=>read(p)?.testResults??[]);
-function compare(t,a){const f=relative(t),rows=base.filter(b=>relative(b)===f);const msg=message(a?a.failureMessages[0]:t.message);
- const candidates=a?rows.flatMap(b=>b.assertionResults).filter(b=>b.fullName===a.fullName):rows;const parent=candidates.find(b=>b.status==='failed'&&msg&&!msg.includes('STACK_TRACE_ERROR')&&message(a?b.failureMessages[0]:b.message)===msg);
+function compare(t,a){const f=relative(t),rows=base.filter(b=>relative(b)===f);const raw=a?a.failureMessages[0]:t.message, msg=message(raw), site=location(raw);
+ const candidates=a?rows.flatMap(b=>b.assertionResults).filter(b=>b.fullName===a.fullName):rows;const parent=candidates.find(b=>b.status==='failed'&&msg&&!msg.includes('STACK_TRACE_ERROR')&&message(a?b.failureMessages[0]:b.message)===msg&&location(a?b.failureMessages[0]:b.message)===site);
  const parentPassed=candidates.some(b=>b.status==='passed');
- return {file:f,assertion:a?.fullName??'<suite>',message:msg,class:/timed out|timeout/i.test(msg)?'ENV-TIMEOUT':parent?'INHERITED':'UNINVESTIGATED',baseline:parent?'same failure':parentPassed?'passed; investigate differential':'missing or different failure'};
+ return {file:f,assertion:a?.fullName??'<suite>',message:msg,site,class:/timed out|timeout/i.test(msg)?'ENV-TIMEOUT':parent?'INHERITED':'UNINVESTIGATED',baseline:parent?'same failure':parentPassed?'passed; investigate differential':'missing or different failure'};
 }
 for(const [i,g] of m.groups.entries()){
  const group=read(path.join(shards,`shard-${i}.json`))?.testResults??[];

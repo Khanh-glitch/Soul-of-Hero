@@ -1,0 +1,20 @@
+// Opt-in runner template. Copied to measured web/ by npc-endurance.mjs.
+import {it,expect} from 'vitest';import fs from 'node:fs';import path from 'node:path';import {gzipSync,gunzipSync} from 'node:zlib';import {createHash} from 'node:crypto';
+import {newGame,startRun,beginReceiptSink,endReceiptSink} from './src/game/engine';import {setActiveLayout} from './src/game/world';import {settle} from './src/game/sim';import {serializeSnapshot,validate} from './src/game/persist';import {profileWorldWork} from './src/game/world-work';
+const T0=Date.UTC(2026,10,15,8),out=process.env.SOH_ENDURANCE_OUT!,sha=process.env.SOH_ENDURANCE_SHA!,target=Number(process.env.SOH_ENDURANCE_END),cp=path.join(out,'checkpoint.json.gz');
+const hash=(s:string)=>createHash('sha256').update(s).digest('hex');const save=(f:string,d:string|Buffer)=>{fs.writeFileSync(f+'.pending',d);fs.renameSync(f+'.pending',f);};
+const counts=(strings:string[])=>strings.reduce<Record<string,number>>((a,k)=>(a[k]=(a[k]??0)+1,a),{});
+it('advances one unchanged generated population with real needs, offline jobs, mortality and strict checkpoints',()=>{
+ let gs=newGame(),minute=0;setActiveLayout('veyra05-greywater');let runId:string,actors:string[],reports:unknown[]=[];
+ if(fs.existsSync(cp)){const data=JSON.parse(gunzipSync(fs.readFileSync(cp)).toString());expect(data.sha).toBe(sha);expect(hash(data.snapshot)).toBe(data.digest);gs=validate(JSON.parse(JSON.parse(data.snapshot).payload))!;expect(gs).toBeTruthy();({minute,runId,actors,reports}=data);if(gs.run)setActiveLayout(gs.run.layoutId!);}
+ else {expect(startRun(gs,'female',T0,null,7606,{tx:100,ty:100}).ok).toBe(true);runId=gs.run!.id;actors=Object.keys(gs.run!.humanWorld!.people).sort();}
+ expect(minute).toBeLessThanOrEqual(target);
+ while(minute<target){const next=Math.min(target,(Math.floor(minute/60)+1)*60),now=T0+next*60000,r=gs.run!;expect(r.id).toBe(runId);expect(r.clock.lastSimAt).toBe(T0+minute*60000);
+   beginReceiptSink();let work,events;try{work=profileWorldWork(()=>settle(gs,now,true));}finally{events=endReceiptSink();}
+   expect(Object.keys(r.humanWorld!.people).sort()).toEqual(actors);expect(r.clock.lastSimAt).toBe(now);
+   if(next<20160){expect(gs.run).toBe(r);expect(r.humanWorld!.lastNeedsAt).toBe(now);const before=hash(JSON.stringify(gs.run));settle(gs,now,true);expect(hash(JSON.stringify(gs.run))).toBe(before);}else{expect(gs.run).toBeNull();expect(gs.profile.history[0]).toMatchObject({runId,ending:'expired'});}
+   const snapshot=serializeSnapshot(gs),digest=hash(snapshot);expect(validate(JSON.parse(JSON.parse(snapshot).payload))).toBeTruthy();
+   reports.push({minute:next,elapsedMs:work.elapsedMs,counts:work.counts,timings:work.timings,playerDead:r.player.dead,states:counts(Object.values(r.humanWorld!.people).map(h=>h.state)),receipts:counts(events.map(e=>e.kind)),saveBytes:Buffer.byteLength(snapshot),digest,history:next===20160?gs.profile.history[0]:undefined});
+   minute=next;save(cp,gzipSync(JSON.stringify({sha,runId,actors,minute,snapshot,digest,reports})));save(path.join(out,'progress.json'),JSON.stringify({sha,seed:7606,runId,actors:actors.length,minute,complete:minute===20160,reports},null,2));console.log('Checkpoint',minute,'minutes; elapsed',Math.round(work.elapsedMs),'ms');
+ }
+},2147483647);

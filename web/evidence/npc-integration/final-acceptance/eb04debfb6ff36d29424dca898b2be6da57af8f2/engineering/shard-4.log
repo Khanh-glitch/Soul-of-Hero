@@ -60,3 +60,123 @@
  }
 ]: expected [ { …(4) }, { …(4) } ] to deeply equal [][39m
  [32m✓[39m tests/arena1-round2-newgame-routes.test.ts[2m > [22mARENA 1 round 2 — New-Game routes on Veyra (engine bot, no grants)[2m > [22mROUTE FOOD (seed 7): one game-hour from spawn on berries, marsh caps and hunted meat — no retired food[33m 324475[2mms[22m[39m
+ [32m✓[39m tests/arena1-round2-newgame-routes.test.ts[2m > [22mARENA 1 round 2 — New-Game routes on Veyra (engine bot, no grants)[2m > [22mROUTE FOOD (seed 11): one game-hour from spawn on berries, marsh caps and hunted meat — no retired food[33m 418267[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 1 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m tests/arena1-round2-newgame-routes.test.ts[2m > [22mARENA 1 round 2 — New-Game routes on Veyra (engine bot, no grants)[2m > [22mROUTE OIL: spawn -> camp at a crude seep -> iron -> Parts -> research Glass -> L2 bench -> Gear + Pipe -> Oil Pump on the seep -> Crude -> Refinery -> Fuel Canister
+[31m[1mAssertionError[22m: [
+ {
+  "stage": "Electric Resistor from a wreck",
+  "status": "PROVEN",
+  "atMinute": 20.2,
+  "detail": {
+   "carried": 2
+  }
+ },
+ {
+  "stage": "Wooden Ladder: study, craft, lean on a cliff, cross on foot",
+  "status": "PROVEN",
+  "atMinute": 26.4,
+  "detail": {
+   "windowsSearched": [
+    {
+     "around": [
+      1881,
+      689
+     ],
+     "cliffTiles": 77,
+     "oneTileFaces": 16
+    }
+   ],
+   "cliffTilesInWindow": 77,
+   "oneTileFaces": 16,
+   "facesTried": 1,
+   "refusals": {},
+   "tilesFromCamp": 139,
+   "crossedFrom": [
+    1822,
+    767
+   ],
+   "over": [
+    1822,
+    768
+   ],
+   "crossedTo": [
+    1822,
+    769
+   ],
+   "farSideNeededADetourBefore": true
+  }
+ },
+ {
+  "stage": "Large Furnace: study, plates, craft, place, smelt",
+  "status": "NOT_PROVEN",
+  "atMinute": 27.1,
+  "detail": "craft {\"recipe\":\"deploy_chest_small\"} refused: Inventory full."
+ },
+ {
+  "stage": "Iron Plate Pants: study, hunt hide, sew, wear",
+  "status": "NOT_PROVEN",
+  "atMinute": 27.9,
+  "detail": "craft {\"recipe\":\"deploy_chest_small\"} refused: Inventory full."
+ }
+]: expected [ { …(4) }, { …(4) } ] to deeply equal [][39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- [][39m
+[31m+ [[39m
+[31m+   {[39m
+[31m+     "atMinute": 27.1,[39m
+[31m+     "detail": "craft {\"recipe\":\"deploy_chest_small\"} refused: Inventory full.",[39m
+[31m+     "stage": "Large Furnace: study, plates, craft, place, smelt",[39m
+[31m+     "status": "NOT_PROVEN",[39m
+[31m+   },[39m
+[31m+   {[39m
+[31m+     "atMinute": 27.9,[39m
+[31m+     "detail": "craft {\"recipe\":\"deploy_chest_small\"} refused: Inventory full.",[39m
+[31m+     "stage": "Iron Plate Pants: study, hunt hide, sew, wear",[39m
+[31m+     "status": "NOT_PROVEN",[39m
+[31m+   },[39m
+[31m+ ][39m
+
+[36m [2m❯[22m tests/arena1-round2-newgame-routes.test.ts:[2m288:82[22m[39m
+    [90m286|[39m     }
+    [90m287|[39m     // Pinned: on this build every extension closes too. A regression …
+    [90m288|[39m     expect(ext.filter(s => s.status !== 'PROVEN'), JSON.stringify(ext,…
+    [90m   |[39m                                                                                  [31m^[39m
+    [90m289|[39m     evidence.route_oil = { seed: 7, startingPack: startInv, startingRe…
+    [90m290|[39m     [34mexpect[39m(stop[33m,[39m [33mJSON[39m[33m.[39m[34mstringify[39m(stages[33m,[39m [35mnull[39m[33m,[39m [34m1[39m))[33m.[39m[34mtoBe[39m([32m''[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯[39m[1m[41m Unhandled Errors [49m[22m[31m⎯⎯⎯⎯⎯⎯[39m
+[31m[1m
+Vitest caught 1 unhandled error during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯[39m[1m[41m Unhandled Error [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+[31m[1mError[22m: [vitest-pool]: Worker forks emitted error.[39m
+[90m [2m❯[22m EventEmitter.onTaskError ../../../home/user/Soul-of-Hero/web/node_modules/vitest/dist/chunks/cli-api.B0Pz1_R7.js:[2m3526:21[22m[39m
+[90m [2m❯[22m EventEmitter.emit node:events:[2m519:28[22m[39m
+[90m [2m❯[22m ChildProcess.emitUnexpectedExit ../../../home/user/Soul-of-Hero/web/node_modules/vitest/dist/chunks/cli-api.B0Pz1_R7.js:[2m3092:22[22m[39m
+[90m [2m❯[22m ChildProcess.emit node:events:[2m519:28[22m[39m
+[90m [2m❯[22m Process.ChildProcess._handle.onexit node:internal/child_process:[2m293:12[22m[39m
+
+[31m[1mCaused by: Error[22m: Worker exited unexpectedly[39m
+[90m [2m❯[22m ChildProcess.emitUnexpectedExit ../../../home/user/Soul-of-Hero/web/node_modules/vitest/dist/chunks/cli-api.B0Pz1_R7.js:[2m3090:33[22m[39m
+[90m [2m❯[22m ChildProcess.emit node:events:[2m519:28[22m[39m
+[90m [2m❯[22m Process.ChildProcess._handle.onexit node:internal/child_process:[2m293:12[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[39m
+
+
+[2m Test Files [22m [90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m2 passed[39m[22m[90m (4)[39m
+[2m     Errors [22m [1m[31m1 error[39m[22m
+[2m   Start at [22m 01:29:54
+[2m   Duration [22m 1473.64s[2m (transform 4.05s, setup 0ms, import 4.72s, tests 0ms, environment 0ms)[22m
+
+JSON report written to /home/user/Soul-of-Hero/tmp/verification/full-eb04deb/shard-4.json

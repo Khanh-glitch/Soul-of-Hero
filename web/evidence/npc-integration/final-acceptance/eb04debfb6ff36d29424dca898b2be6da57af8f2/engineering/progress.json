@@ -260,6 +260,16 @@
       "signal": null,
       "timedOut": true,
       "durationMs": 22434190
+    },
+    {
+      "index": 4,
+      "files": [
+        "tests/arena1-round2-newgame-routes.test.ts"
+      ],
+      "code": 1,
+      "signal": null,
+      "timedOut": false,
+      "durationMs": 1474441
     }
   ]
 }
