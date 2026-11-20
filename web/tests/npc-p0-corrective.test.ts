@@ -21,7 +21,7 @@ import { validate } from '../src/game/persist';
 import { T0 } from './helpers/g1b-kit';
 import {
   tickNeeds, stepHumans, humanHarvest, tradeWithHuman, lootHuman, killHuman, applyDamage, downHuman,
-  treatHuman, boardEvac, advanceEvacuation, resolveOrder, setFollowing, finalizeHumanOutcomes,
+  canPointOut, humanContact, stepPlayerHumanAid, treatHuman, boardEvac, advanceEvacuation, resolveOrder, setFollowing, finalizeHumanOutcomes,
   humanPack, humanHistoryAggregate, humanWorkTick, stepHumanCombat, humanWorldPosition,
   type HumanRecord,
 } from '../src/game/humanworld';
@@ -392,6 +392,35 @@ describe('NPC P0 corrective', () => {
     stepHumanCombat(r, hw, at + 500, undefined, () => hits++);
     expect(hits).toBe(1);
     expect(h.equip.weapon?.dur).toBe(119);
+  });
+
+  it('uses the moving body at talk and aid commit, not the reserved tile; absent bodies have no contact', () => {
+    const gs = startAt(921, 259), r = gs.run!, hw = r.humanWorld!;
+    const h = Object.values(hw.people)[0], grid = blockGrid(r);
+    const i = grid.findIndex((_, i) => i % WW > 5 && i % WW < WW - 6 && [0,1,2,3,4].every(d => grid[i+d] === 0));
+    expect(i).toBeGreaterThan(0);
+    const [ax, ay] = r.sourceMap!.veyra!.originAu, x = i % WW, y = Math.floor(i / WW);
+    r.player.x = (x + .5) * TILE; r.player.y = (y + .5) * TILE;
+    h.gx = ax*2+x+3; h.gy = ay*2+y; h.floor = 0; h.state = 'IDLE'; h.hunger = 10;
+    const food = C(r,'inv').slots.find(s => s?.key === 'berries')!, before = food.qty, trust = h.trust;
+    const send = (type:string,id:string) => dispatch(gs,{type,id,actorId:h.actorId,stackUid:food.uid},T0);
+    expect(send('humanAid','help-in-range').ok).toBe(true);
+    h.motion = {fromGx:h.gx,fromGy:h.gy,toGx:h.gx+1,toGy:h.gy,elapsedMs:10000};
+    expect(send('humanTalk','now-too-far').ok).toBe(false);
+    stepPlayerHumanAid(r,hw,T0+2000);
+    expect(hw.playerAid).toBeUndefined(); expect(food.qty).toBe(before); expect(h.trust).toBe(trust);
+    h.gx++; h.motion = {...h.motion,fromGx:h.gx,toGx:h.gx-1};
+    expect(send('humanTalk','back-in-range').ok).toBe(true);
+    const partner=Object.values(hw.people)[1];partner.gx=ax*2+x;partner.gy=h.gy;partner.floor=0;
+    expect(canPointOut(r,partner,h,T0)).toBe(true);
+    // The companion can still see the actor, but the player cannot point them out through a wall.
+    partner.gx=h.gx-1;
+    r.entities['contact-door']={id:'contact-door',kind:'door',tx:x+1,ty:y,x:(x+1.5)*TILE,y:(y+.5)*TILE,open:false};markDirty();
+    expect(canPointOut(r,partner,h,T0)).toBe(false);expect(humanContact(r,h,T0)).toBeNull();
+    delete r.entities['contact-door'];markDirty();
+    h.transit = {tripId:'away',seat:0,boardedAt:T0};
+    expect(canPointOut(r,partner,h,T0)).toBe(false);expect(humanContact(r,h,T0)).toBeNull(); expect(send('humanRecruit','absent').ok).toBe(false);
+    delete h.transit; h.state = 'ON_VESSEL'; expect(humanContact(r,h,T0)).toBeNull();
   });
 
   it('rejects remote human social actions without success receipts or state changes', () => {

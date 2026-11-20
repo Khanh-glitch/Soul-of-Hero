@@ -42,7 +42,7 @@ import { FieldNoteCard, FieldNotesPanel } from './FieldNotes';
 import { ReturnDigest } from './ReturnChronicle';
 import { RestPanel } from './RestPanel';
 import { HumanPanel } from './HumanPanel';
-import { humanWorldPosition } from '../game/humanworld';
+import { humanContact } from '../game/humanworld';
 import { InventoryPanel, ContainerPanel, CraftPanel, BuildPanel, MapPanel, SkillsPanel, MenuPanel, VendorPanel, EscrowPanel, EvacPanel, ReportPanel } from './panels';
 import { deriveCues } from '../game/presentation-cues';
 import { experienceForPhase, experienceFromCue, stagedExperience, type ExperienceEvent } from '../game/experience';
@@ -308,9 +308,9 @@ export default function Game({
     return best;
   };
 
-  const interact = () => {
+  const interact = (stairsOnly = false) => {
     const r = gs.run; if (!r) return;
-    if (r.layoutId?.startsWith('veyra05-') && !r.player.dead && !r.player.vehicle && !panelRef.current) {
+    if ((stairsOnly || !target.current) && r.layoutId?.startsWith('veyra05-') && !r.player.dead && !r.player.vehicle && !panelRef.current) {
       const ww = getWindowWorld(r.layoutId);
       const tx = Math.floor(r.player.x / TILE), ty = Math.floor(r.player.y / TILE);
       const [ox, oy] = windowOrigin(r);
@@ -326,6 +326,7 @@ export default function Game({
         }
       }
     }
+    if (stairsOnly) return;
     const t = target.current;
     if (!t) {
       const anim = findNearAnimal(r);
@@ -392,7 +393,7 @@ export default function Game({
           else if(e.code==='KeyE' && !ITEMS[s?.key||'']?.creatorCore && !panelRef.current) interact();
           break;
         }
-        case 'KeyF': { if (panelRef.current) break; if(r.player.vehicle){act('vehicleExit',{});break;} if(e.shiftKey || r.player.pulling){const c = Object.values(r.entities).find(x => x.kind === 'cart' && onActiveFloor(r, x) && Math.hypot(x.x-r.player.x,x.y-r.player.y)<34); if(c) act('grabCart',{eid:c.id}); else if(r.player.pulling) act('grabCart',{eid:r.player.pulling}); else toast('No cart within reach.');} else if(target.current || r.layoutId?.startsWith('veyra05-')) { const c=!target.current && Object.values(r.entities).find(x=>x.kind==='cart' && onActiveFloor(r, x) && Math.hypot(x.x-r.player.x,x.y-r.player.y)<34); if(c) act('grabCart',{eid:c.id}); else interact(); } else {const c=Object.values(r.entities).find(x=>x.kind==='cart' && onActiveFloor(r, x) && Math.hypot(x.x-r.player.x,x.y-r.player.y)<34);if(c)act('grabCart',{eid:c.id});} break; }
+        case 'KeyF': { if (panelRef.current) break; if(r.player.vehicle){act('vehicleExit',{});break;} if(e.altKey){e.preventDefault();interact(true);break;} if(e.shiftKey || r.player.pulling){const c = Object.values(r.entities).find(x => x.kind === 'cart' && onActiveFloor(r, x) && Math.hypot(x.x-r.player.x,x.y-r.player.y)<34); if(c) act('grabCart',{eid:c.id}); else if(r.player.pulling) act('grabCart',{eid:r.player.pulling}); else toast('No cart within reach.');} else if(target.current || r.layoutId?.startsWith('veyra05-')) { const c=!target.current && Object.values(r.entities).find(x=>x.kind==='cart' && onActiveFloor(r, x) && Math.hypot(x.x-r.player.x,x.y-r.player.y)<34); if(c) act('grabCart',{eid:c.id}); else interact(); } else {const c=Object.values(r.entities).find(x=>x.kind==='cart' && onActiveFloor(r, x) && Math.hypot(x.x-r.player.x,x.y-r.player.y)<34);if(c)act('grabCart',{eid:c.id});} break; }
         case 'KeyI': case 'KeyC': if (buildModeRef.current) exitBuild(); fieldActionsRef.current.add('survivor'); toggle(e.code === 'KeyC' ? 'craft' : 'inv'); break;
         case 'KeyM': toggle('map'); break;
         case 'KeyN': toggle('notes'); break;
@@ -714,6 +715,7 @@ export default function Game({
     }
     return null;
   })();
+  const contacts = !panel && !buildMode && !p.vehicle && r.humanWorld ? Object.values(r.humanWorld.people).filter(h => humanContact(r, h, now)) : [];
   const nearAnimal = findNearAnimal(r);
   const tgt = target.current; const targetEntity = tgt?.eid ? r.entities[tgt.eid] : undefined;
   const targetHp = targetEntity?.kind === 'struct' && targetEntity.hp !== undefined && targetEntity.maxHp !== undefined && targetEntity.hp < targetEntity.maxHp ? ` · HP ${Math.ceil(targetEntity.hp)}/${targetEntity.maxHp}` : '';
@@ -788,7 +790,10 @@ export default function Game({
         <WorldClock r={r} now={now} secured={gs.profile.securedCash} />
         <div style={{ display: 'flex', gap: 3, alignItems: 'center' }}>
           {ph === 'calm' && hrs > 230 && <span className="chip pulse" style={{ color: 'var(--warn)' }}>RAGNAROK IN {(264 - hrs).toFixed(1)}h</span>}
-          {r.humanWorld && (() => { const [ox, oy] = windowOrigin(r); const companion = Object.values(r.humanWorld.people).filter(h => h.following && h.state !== 'DOWNED' && h.floor === activeFloor(r)).map(h => ({ h, p: humanWorldPosition(h, now) })).find(v => Math.hypot((v.p.gx - ox - (p.x / TILE)) * TILE, (v.p.gy - oy - (p.y / TILE)) * TILE) <= 6 * TILE); return companion ? <button className="btn sm" style={{ color: '#a8d8a0' }} title="Open companion orders and status" onClick={() => setPanel({ kind: 'human', actorId: companion.h.actorId })}>With you · {companion.h.name}</button> : null; })()}
+          {!panel && !buildMode && contacts.length > 0 && <select aria-label="Nearby survivors" value="" className="btn sm" style={{maxWidth:120}} onChange={e => { if (e.target.value) setPanel({kind:'human', actorId:e.target.value}); }}>
+            <option value="" disabled>Survivors ({contacts.length})</option>
+            {contacts.map(h => <option key={h.actorId} value={h.actorId}>{h.name}{h.following ? ' · companion' : h.state === 'DOWNED' ? ' · downed' : ''}</option>)}
+          </select>}
           {qaMode && <button className={`btn sm ${qaOpen ? 'gold' : ''}`} title="Visual Experience QA Lab [F9]" onClick={() => setQaOpen(v => !v)}>QA [F9]</button>}
           <button className={`btn sm jbtn ${panel?.kind === 'journey' ? 'gold' : ''}`} title="Journey ledger: Fieldcraft, Waypoints, Chronicle [J]" onClick={() => setPanel(pp => pp?.kind === 'journey' ? null : { kind: 'journey' })}>Journey [J]{unseenCount > 0 && <i>{unseenCount}</i>}</button>
           <button className={`btn sm ${panel?.kind === 'notes' ? 'gold' : ''}`} title="Contextual Field Notes & Reference [N]" onClick={() => setPanel(pp => pp?.kind === 'notes' ? null : { kind: 'notes' })}>Notes [N]</button>
@@ -834,9 +839,10 @@ export default function Game({
       {coreAim && !(activeStack(r)?.key==='core_demon' && coreAim.mode==='signature') && !(['core_meteor','core_dragon','core_elsa'].includes(activeStack(r)?.key||'') && coreAim.mode==='signature') && (()=>{const px=p.x-Math.round(cam.x),py=p.y-Math.round(cam.y),len=rayLen(r,p.x,p.y,p.aim,['core_meteor','core_dragon','core_elsa'].includes(activeStack(r)?.key||'')?Math.min(activeStack(r)?.key==='core_meteor'?180:157,Math.hypot(mouse.current.x+Math.round(cam.x)-p.x,mouse.current.y+Math.round(cam.y)-p.y)):coreAim.mode==='refined'?120:195);return <svg className="absolute" width={VIEW_W} height={VIEW_H} style={{left:0,top:0,pointerEvents:'none'}}><line x1={px} y1={py} x2={px+Math.cos(p.aim)*len} y2={py+Math.sin(p.aim)*len} stroke="#ffd98a" strokeWidth="1" strokeDasharray="4 3"/><circle cx={px+Math.cos(p.aim)*len} cy={py+Math.sin(p.aim)*len} r="4" fill="none" stroke="#ffd98a"/></svg>;})()}
 
       {/* interaction prompt */}
-      {(tgt || nearStair || nearAnimal) && ts && !panel && !buildMode && !(tgt?.kind === 'human' && r.humanWorld?.people[tgt.eid ?? '']?.following) && <div className="prompt absolute" style={{ left: Math.max(60, Math.min(VIEW_W - 60, Math.round(ts.x))), top: Math.round(ts.y) - 34, transform: 'translateX(-50%)', pointerEvents: 'none' }}>
+      {(tgt || nearStair || nearAnimal) && ts && !panel && !buildMode && <div className="prompt absolute" style={{ left: Math.max(60, Math.min(VIEW_W - 60, Math.round(ts.x))), top: Math.round(ts.y) - 34, transform: 'translateX(-50%)', pointerEvents: 'none' }}>
         <span className="key">{bike || tgt || nearStair ? 'F' : 'T'}</span>
         {tgt ? tgt.label : nearStair ? nearStair.stair.label : (() => { const sexSym = (nearAnimal!.husbandry?.sex ?? deterministicAnimalSex(nearAnimal!.id)) === 'f' ? '♀' : '♂'; const spName = CREATURES[nearAnimal!.type]?.name || nearAnimal!.type; return nearAnimal!.husbandry?.tamed ? `${nearAnimal!.husbandry.following ? 'Release' : 'Lead'} ${sexSym} ${nearAnimal!.husbandry.stage === 'juvenile' ? 'Juvenile ' : ''}${spName} (${nearAnimal!.husbandry.penned ? 'Penned' : 'Open'} · FD ${Math.round(nearAnimal!.husbandry.hunger)}%) · [Shift+T] Butcher` : `Feed ${spName} (${sexSym})`; })()}
+        {tgt && nearStair && <span> · [Alt+F] {nearStair.stair.label}</span>}
         {targetHp && <span style={{ color: 'var(--warn)' }}>{targetHp}</span>}
       </div>}
 

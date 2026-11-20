@@ -5,6 +5,7 @@ import {swingTiming,castTiming} from './combat-timing';
 import {observeRecipeSources,serviceRecipeBoard,recipeBoardDestination,requestedSourceReports,communityFoodDeficit,type FoodRequest,type SourceReport} from './human-procurement';
 import {timedWorldWork} from './world-work';
 import {globalSourceCandidates, globalBaseGeometry} from '../veyra05/window';
+import {windowOrigin} from '../veyra05/continuity';
 import {inFrame} from '../veyra05/frame';
 import {isVeyra05Layout} from '../veyra05/scenes';
 import {ensureArchivedElderActor} from '../veyra05/ecosystem';
@@ -32,7 +33,7 @@ import {countWorldWork} from './world-work';
 import { BAL, TILE, WW, WH, HOUR, clamp, uid, type RunState, type Stack, type Container, type Entity, type Dir, type Creature } from './core';
 import { SOURCES, STRUCTS, RECIPES, ITEMS, ARMOR_CAP, wornProtection, CREATURES, ELDERS, lookupElderDef, PRIMORDIAL_ELDERS } from './catalog';
 import {type CoreEffectCast} from './core-ray';
-import {coreCastBlock,coreCastCommit, carryLimit, invWeight, addItem, addStack, removeItem, mkStack, mkContainer, receipt, pushLog, spawnDrop, C, sourceAt, effTile, entsAt, blockGrid, clearPhysicalLine, isSheltered, roofRoom, findRunEntity, markDirty, spaceFor, globalFreshWater, globalSourceAt, destroyStructure } from './engine';
+import {owned, hasAll, coreCastBlock,coreCastCommit, carryLimit, invWeight, addItem, addStack, removeItem, mkStack, mkContainer, receipt, pushLog, spawnDrop, C, sourceAt, effTile, entsAt, blockGrid, clearPhysicalLine, isSheltered, roofRoom, findRunEntity, markDirty, spaceFor, globalFreshWater, globalSourceAt, destroyStructure } from './engine';
 import { rngNext, mulberry, hash2 } from './core';
 import { phaseOf, isRagnarok, runHours } from './engine';
 import { humanCanUseEntity, humanEntityTile, executeHumanWork, dispatchMedicalResponse, planHumanOccupation, type HumanWorkTask } from './human-jobs';
@@ -222,7 +223,7 @@ export interface HumanRecord {
   lastWorkBlock?: string;
   defenseTrustReceipt?:string;
   tradeTrustReceipts?: Record<string, number>;
-  helpTrustReceipts?: Partial<Record<'food'|'water'|'medical',string>>;
+  helpTrustReceipts?: Partial<Record<'food'|'water'|'medical'|'repair',string>>;
   confrontationAttempt?: { scene: string; at: number; attempts: number; demand: string; reaction: string; message: string };
   /** Threat-coverage evidence: what this body actually lived through during the final assault
    *  interval. Presence here never implies survival; it records reached threats and who absorbed them. */
@@ -1407,6 +1408,47 @@ function faceTowardPlayer(r: RunState, h: HumanRecord): void {
   const ox = o ? Math.round(o[0] / 0.5) : 0, oy = o ? Math.round(o[1] / 0.5) : 0;
   faceHumanToward(h, ox + r.player.x / TILE, oy + r.player.y / TILE);
 }
+/** The same body and collision ray gate the HUD, conversation and its commits.
+ * DOWNED remains present: aid/robbery have their own eligibility checks. */
+export function humanContact(r: RunState, h: HumanRecord, now: number) {
+  if (r.player.dead || r.spiritTransit || h.transit || h.floor !== (r.veyraFloor ?? 0) ||
+      h.state === 'DEAD' || h.state === 'EVACUATED' || h.state === 'ON_VESSEL') return null;
+  const [ox, oy] = windowOrigin(r), pos = humanWorldPosition(h, now);
+  const body = { x: (pos.gx - ox) * TILE, y: (pos.gy - oy) * TILE };
+  if (Math.hypot(body.x - r.player.x, body.y - r.player.y) > 3.2 * TILE || playerAtSea(r)) return null;
+  return clearPhysicalLine(r, r.player, body, true) ? body : null;
+}
+/** Only offer a meaningful repair: the resident retains the worn UID and the
+ * player pays the ordinary catalogue bill at a station they may operate. */
+export function humanRepairOffers(r: RunState, h: HumanRecord, now: number) {
+  const body = humanContact(r,h,now);
+  if (!body || h.state === 'DOWNED' || h.state === 'FIGHTING' || r.player.action || r.humanWorld?.playerAid) return [];
+  const items = [...Object.values(h.equip), ...humanPack(r,h).slots];
+  return items.flatMap(item => {
+    if (!item || item.qty !== 1 || item.production || item.dur === undefined || item.dur < 0) return [];
+    const def = ITEMS[item.key], rule = def.repair;
+    if (!rule || !def.dur || item.dur > def.dur / 2 || !hasAll(r,'inv',rule.cost)) return [];
+    const station = Object.values(r.entities).find(e => e.kind === 'struct' && e.type === rule.station && e.station && owned(e) &&
+      (e.hp ?? 1) > 0 && (e.floor ?? 0) === h.floor && Math.hypot(r.player.x-e.x,r.player.y-e.y) <= 3*TILE &&
+      Math.hypot(body.x-e.x,body.y-e.y) <= 3*TILE && clearPhysicalLine(r,body,e,true,true) && clearPhysicalLine(r,r.player,e,true,true));
+    return station ? [{item,station,cost:rule.cost,max:def.dur}] : [];
+  });
+}
+export function repairHumanGear(r: RunState, hw: HumanWorld, h: HumanRecord, stackUid: string, stationId: string, id: string, now: number) {
+  const offer = humanRepairOffers(r,h,now).find(o=>o.item.uid === stackUid && o.station.id === stationId);
+  if (!offer) return false;
+  const before = offer.item.dur;
+  for (const [key,qty] of offer.cost) removeItem(r,'inv',key,qty);
+  offer.item.dur = offer.max;
+  rewardHelpOnce(hw,h,'repair',id,3);
+  receipt(r,now,'human.repair',JSON.stringify({actor:h.actorId,stationId,stackUid,before,after:offer.max,cost:offer.cost}));
+  return true;
+}
+function rewardHelpOnce(hw:HumanWorld,h:HumanRecord,kind:keyof NonNullable<HumanRecord['helpTrustReceipts']>,id:string,amount:number) {
+  const selfCaused=h.disposition_known.incidents.some(key=>{const inc=hw.incidents[key];return inc?.aggressor==='player' && inc.kind!=='trade';});
+  h.helpTrustReceipts??={};
+  if(!selfCaused && !h.helpTrustReceipts[kind]){h.trust=clamp((h.trust??50)+amount,0,100);h.helpTrustReceipts[kind]=id;}
+}
 export function startHumanAid(r:RunState,hw:HumanWorld,h:HumanRecord,id:string,stackUid:string,now:number): {ok:boolean;reason?:string;msg?:string} {
   if(hw.playerAid)return {ok:false,reason:'Finish or cancel your current aid first.'};
   if(['DEAD','EVACUATED','FIGHTING'].includes(h.state))return {ok:false,reason:'It is not safe to help right now.'};
@@ -1422,9 +1464,7 @@ export function startHumanAid(r:RunState,hw:HumanWorld,h:HumanRecord,id:string,s
 export function stepPlayerHumanAid(r:RunState,hw:HumanWorld,now:number):void {
   const a=hw.playerAid;if(!a)return;
   const h=hw.people[a.actorId],s=C(r,'inv').slots.find(s=>s?.uid===a.stackUid);
-  const o=r.sourceMap?.veyra?.originAu,ox=o?Math.round(o[0]/.5):0,oy=o?Math.round(o[1]/.5):0;
-  const dest=h?{x:(h.gx-ox+.5)*TILE,y:(h.gy-oy+.5)*TILE}:undefined;
-  if(!h||!s||r.player.dead||r.player.hp<a.hp||['DEAD','EVACUATED','FIGHTING'].includes(h.state)||h.floor!==(r.veyraFloor??0)||a.floor!==h.floor||Math.hypot(r.player.x-a.px,r.player.y-a.py)>TILE||!dest||Math.hypot(r.player.x-dest.x,r.player.y-dest.y)>TILE*3.2||!clearPhysicalLine(r,r.player,dest,true)){
+  if(!h||!s||!humanContact(r,h,now)||r.player.hp<a.hp||h.state==='FIGHTING'||a.floor!==h.floor||Math.hypot(r.player.x-a.px,r.player.y-a.py)>TILE){
     delete hw.playerAid;receipt(r,now,'human.aid.cancel',a.id);return;
   }
   if(now<a.dueAt)return;
@@ -1435,9 +1475,7 @@ export function stepPlayerHumanAid(r:RunState,hw:HumanWorld,now:number):void {
   if(a.kind==='food'&&d.food?.hunger&&h.hunger<35&&h.state!=='DOWNED'){h.hunger=Math.min(100,h.hunger+d.food.hunger);h.thirst=Math.min(100,h.thirst+(d.food.thirst??0));useful=true;}
   if(!useful){receipt(r,now,'human.aid.cancel',`${a.id}:need changed`);return;}
   if(a.kind!=='water'&&--s.qty===0)C(r,'inv').slots[C(r,'inv').slots.indexOf(s)]=null;
-  const selfCaused=h.disposition_known.incidents.some(id=>{const i=hw.incidents[id];return i?.aggressor==='player'&&i.kind!=='trade';});
-  h.helpTrustReceipts??={};
-  if(!selfCaused&&!h.helpTrustReceipts[a.kind]){h.trust=clamp((h.trust??50)+(a.kind==='medical'?5:3),0,100);h.helpTrustReceipts[a.kind]=a.id;}
+  rewardHelpOnce(hw,h,a.kind,a.id,a.kind==='medical'?5:3);
   receipt(r,now,'human.aid.commit',`${a.id}:${h.actorId}:${a.kind}:${s.uid}`);
 }
 /** Only the injured person who actually sees the player stop their assailant
@@ -1495,7 +1533,7 @@ export function talkToHuman(r: RunState, hw: HumanWorld, h: HumanRecord, now: nu
     : topic === 'needs' ? needs.join(' ')
     : topic === 'place' ? news??place
     : topic === 'goods' ? packSummary
-    : topic === 'accompany' ? (h.following ? 'I am already traveling with you.' : h.disposition === 'predatory' ? 'No. I will not travel with you.' : recentWarning(hw,h,now)??((h.trust ?? 50) < 55 ? 'I do not know you well enough to travel together. Show me I can rely on you first.' : 'I would consider traveling with you. Ask me to join when you are ready.'))
+    : topic === 'accompany' ? (h.following ? 'I am already traveling with you.' : recruitmentRefusal(hw,h,now) ?? 'I would consider traveling with you. Ask me to join when you are ready.')
     : facts.slice(0, 4).join(' ');
   receipt(r, now, 'human.talk', `${h.actorId}:${topic ?? 'status'}`);
   return response;
@@ -1591,13 +1629,19 @@ function recentWarning(hw:HumanWorld,h:HumanRecord,now:number){
     if(i?.aggressor==='player' && !i.resolved && victim && (victim.community===h.community || h.protectedPeople.includes(victim.actorId)) && now-i.at<=30*60000)return 'Someone here reported that you hurt or robbed one of ours. I am staying with them.';
   }
 }
+function recruitmentRefusal(hw:HumanWorld,h:HumanRecord,now:number):string | undefined {
+  if (h.following) return 'already a companion';
+  if (h.state === 'DOWNED' || h.state === 'DEAD' || h.state === 'EVACUATED' || h.state === 'FIGHTING') return 'not available to recruit';
+  if(h.transit||h.state==='ON_VESSEL')return 'I am already aboard.';
+  const warning=recentWarning(hw,h,now);if(warning)return warning;
+  if (h.disposition === 'predatory') return 'this survivor will not join you';
+  if ((h.trust ?? 50) < 55) return 'I do not know you well enough yet. Show that I can rely on you first.';
+  if (h.intent?.work || h.intent?.delivery || h.harvestJob || h.intent?.kind === 'evacuate')
+    return 'I have to finish my current duty before I can leave. Ask me again afterwards.';
+}
 export function recruitHuman(r: RunState, hw: HumanWorld, h: HumanRecord, now: number): { ok: boolean; reason?: string } {
-  if (h.following) return { ok: false, reason: 'already a companion' };
-  if (h.state === 'DOWNED' || h.state === 'DEAD' || h.state === 'EVACUATED' || h.state === 'FIGHTING') return { ok: false, reason: 'not available to recruit' };
-  if(h.transit||h.state==='ON_VESSEL')return {ok:false,reason:'I am already aboard.'};
-  const warning=recentWarning(hw,h,now);if(warning)return {ok:false,reason:warning};
-  if (h.disposition === 'predatory') return { ok: false, reason: 'this survivor will not join you' };
-  if ((h.trust ?? 50) < 55) return { ok: false, reason: 'I do not know you well enough yet. Show that I can rely on you first.' };
+  const reason=recruitmentRefusal(hw,h,now);
+  if(reason)return {ok:false,reason};
   faceTowardPlayer(r, h);
   setFollowing(r, hw, h, true, now);
   return { ok: true };
@@ -1617,6 +1661,23 @@ export function setFollowing(r: RunState, hw: HumanWorld, h: HumanRecord, follow
   receipt(r, now, 'human.follow', `${h.actorId}:${follow ? 'on' : 'off'}`);
 }
 
+/** Naming a target requires both participants to see the actual body. This
+ * read-only query never teaches a companion about an unseen aggressor. */
+export function canPointOut(r: RunState, h: HumanRecord, target: HumanRecord | Creature, now: number) {
+  if (h === target || (target.floor ?? 0) !== h.floor || h.floor !== (r.veyraFloor ?? 0)) return false;
+  const [ox,oy] = windowOrigin(r);
+  const local = (person: HumanRecord) => { const pos=humanWorldPosition(person,now);return {x:(pos.gx-ox)*TILE,y:(pos.gy-oy)*TILE}; };
+  let dest: {x:number;y:number};
+  if ('actorId' in target) {
+    if (target.transit || ['DEAD','EVACUATED','ON_VESSEL'].includes(target.state)) return false;
+    dest=local(target);
+  } else {
+    if (target.state==='dead' || target.atk?.burrow || target.elder?.submerged) return false;
+    dest=target;
+  }
+  if (dest.x<0 || dest.y<0 || dest.x>=WW*TILE || dest.y>=WH*TILE) return false;
+  return [r.player,local(h)].every(origin => Math.hypot(dest.x-origin.x,dest.y-origin.y)<=10*TILE && clearPhysicalLine(r,origin,dest,true));
+}
 /** Resolve one companion order. Hard physical impossibility and protected relations are checked
  *  BEFORE risk/obedience. The decision persists for one orderId (no per-frame reroll). */
 export function resolveOrder(r: RunState, hw: HumanWorld, h: HumanRecord, orderId: string, order: CompanionCommand, now: number, targetActorId?: string): { result: OrderResult; reason: string } {
@@ -1649,12 +1710,7 @@ export function resolveOrder(r: RunState, hw: HumanWorld, h: HumanRecord, orderI
     const p=targetActorId ? hw.people[targetActorId] : undefined;
     const m=r.creatures.find(m=>m.id===targetActorId && m.state!=='dead');
     if(!p&&!m)return finish('CANNOT_EXECUTE','identify a visible target first');
-    const floor=p?.floor ?? m!.floor ?? r.veyraFloor ?? 0;
-    if(floor!==h.floor || h.floor!==(r.veyraFloor??0))return finish('CANNOT_EXECUTE','cannot reach that floor');
-    const o=r.sourceMap?.veyra?.originAu,ox=o?Math.round(o[0]/.5):0,oy=o?Math.round(o[1]/.5):0;
-    const origin={x:(h.gx-ox+.5)*TILE,y:(h.gy-oy+.5)*TILE};
-    const dest=p?{x:(p.gx-ox+.5)*TILE,y:(p.gy-oy+.5)*TILE}:m!;
-    if(Math.hypot(dest.x-origin.x,dest.y-origin.y)>TILE*10 || !clearPhysicalLine(r,origin,dest,true))return finish('CANNOT_EXECUTE','target is not in sight');
+    if(!canPointOut(r,h,p??m!,now))return finish('CANNOT_EXECUTE','target is not in sight');
     if(p && (h.protectedPeople.includes(p.actorId)||!!h.community&&p.community===h.community))return finish('PROTECT_TARGET',"I will not harm someone I protect.");
     if(p && ['DOWNED','DEAD','EVACUATED'].includes(p.state))return finish('REFUSE_WITH_REASON','I will not attack an incapacitated person.');
     const blocked=combatEquipmentBlock(r,h,now);if(blocked)return finish('CANNOT_EXECUTE',blocked);

@@ -4,6 +4,7 @@ import {setActiveLayout} from '../src/game/world';
 import {usingHumanBed,resolveOrder,commandHuman,stepHumans,stepHumanCombat,startHumanAid,stepPlayerHumanAid,killHuman} from '../src/game/humanworld';
 import {humanEntityTile,moveHumanGoods} from '../src/game/human-jobs';
 import {validate} from '../src/game/persist';
+import {ITEMS} from '../src/game/catalog';
 import {T0} from './helpers/g1b-kit';
 import {TILE,type Entity} from '../src/game/core';
 function scene(){setActiveLayout('veyra05-greywater');const gs=newGame();expect(startRun(gs,'female',T0,null,7606,{tx:100,ty:100}).ok).toBe(true);return gs;}
@@ -19,6 +20,24 @@ describe('physical housing and production rights',()=>{
   expect(send('return','cargo-return').ok).toBe(true);expect(inv.slots.some(s=>s?.uid===uid)).toBe(true);expect(cart.slots.some(s=>s?.uid===uid)).toBe(false);
   for(let i=0;i<cart.slots.length;i++)cart.slots[i]=mkStack(r,'knife',1);
   const before=JSON.stringify(inv.slots);expect(send('load','cargo-full').ok).toBe(false);expect(JSON.stringify(inv.slots)).toBe(before);
+ });
+ it('repairs the same worn UID for actual materials; duty can still veto recruitment above 55 Trust',()=>{
+  const gs=scene(),r=gs.run!,hw=r.humanWorld!,h=Object.values(hw.people)[0],o=r.sourceMap!.veyra!.originAu;
+  const grid=blockGrid(r),i=grid.findIndex((b,i)=>b===0&&i%200>4&&i%200<195&&i>1000&&grid[i+1]===0);
+  const tx=i%200,ty=Math.floor(i/200);h.gx=o[0]*2+tx;h.gy=o[1]*2+ty;h.floor=0;h.state='IDLE';h.trust=52;h.disposition='neutral';
+  r.player.x=(tx+.5)*TILE;r.player.y=(ty+.5)*TILE;
+  const tool=mkStack(r,'wood_club',1);tool.dur=1;h.equip.weapon=tool;
+  const bench:Entity={id:'local-bench',kind:'struct',type:'workbench',owner:'player',tx:tx+1,ty,x:r.player.x+TILE,y:r.player.y,station:{queue:[],burn:0,fuelC:mkContainer(r,'fuel',1).id,outC:mkContainer(r,'out',1).id}};
+  r.entities[bench.id]=bench;
+  const inv=C(r,'inv');inv.slots.fill(null);const send=(id:string,type='humanRepair')=>dispatch(gs,{type,id,actorId:h.actorId,stackUid:tool.uid,eid:bench.id},T0);
+  expect(send('no-materials').ok).toBe(false);expect(tool.dur).toBe(1);
+  addItem(r,'inv','wood',6);bench.owner='other';expect(send('not-yours').ok).toBe(false);expect(inv.slots[0]!.qty).toBe(6);
+  bench.owner='player';expect(send('paid').ok).toBe(true);expect(h.equip.weapon).toBe(tool);expect(tool.dur).toBe(ITEMS[tool.key].dur);
+  expect(inv.slots[0]!.qty).toBe(3);expect(h.trust).toBe(55);expect(send('nothing-to-fix').ok).toBe(false);
+  tool.dur=1;expect(send('paid-again').ok).toBe(true);expect(h.trust).toBe(55);expect(inv.slots.filter(Boolean)).toHaveLength(0);
+  h.intent={actorId:h.actorId,intentId:'deliver',kind:'move',preconditions:[],reserved:[],startAt:T0,dueAt:T0+100,delivery:{storeId:'store',containerId:'box',cargo:[]}};
+  const decision=send('on-duty','humanRecruit');expect(decision).toMatchObject({ok:false,reason:expect.stringContaining('duty')});expect(h.intent.intentId).toBe('deliver');
+  h.intent=undefined;expect(send('off-duty','humanRecruit').ok).toBe(true);expect(h.following).toBe(true);
  });
  it('beds are unique real furniture, never custody chests; shortages do not mint or remove people',()=>{
   const gs=scene(),r=gs.run!,hw=r.humanWorld!,assigned=Object.values(hw.people).filter(h=>h.bedId);

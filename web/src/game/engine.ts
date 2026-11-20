@@ -39,7 +39,7 @@ import {
 import { syncVeyraEcosystemActors, VEYRA_PRIMORDIAL_SITES, resolvePrimordialGlobalTile } from '../veyra05/ecosystem';
 import { cleanupPrimordialBoss } from './primordials/host-bridge';
 import { TAMING_SPECIES, BUTCHER_YIELDS, createTamedState, deterministicAnimalSex, inspectPenAt } from './husbandry';
-import { newHumanWorld, seedPopulation, tickNeeds, advanceElderPressure, defeatElder, finalizeHumanOutcomes, humanHistoryAggregate, playerBoardEvac, leaveEvacBerth, nearestEvacTrip, startHumanAid, commandHuman, talkToHuman, threatenHuman, recruitHuman, setFollowing, observeRobbedDeposit, commitHumanBarter, exchangeHumanStacks, lootHuman, type HumanWorld, type HumanDemand, type HumanTalkTopic } from './humanworld';
+import { repairHumanGear, humanContact, newHumanWorld, seedPopulation, tickNeeds, advanceElderPressure, defeatElder, finalizeHumanOutcomes, humanHistoryAggregate, playerBoardEvac, leaveEvacBerth, nearestEvacTrip, startHumanAid, commandHuman, talkToHuman, threatenHuman, recruitHuman, setFollowing, observeRobbedDeposit, commitHumanBarter, exchangeHumanStacks, lootHuman, type HumanWorld, type HumanDemand, type HumanTalkTopic } from './humanworld';
 import { NPC_POI_CENSUS } from './npc-census';
 // CAL-01: one authoritative two-year/eight-season calendar (pure; engine-free module).
 import { CALENDAR_VERSION, runClockMs, calendarAt, climateAt, climateAtPx, climateFromCell, cropSeasonFactor, normalizeCalendarLedger, phaseBoundaryAt, phaseMs, phaseCount, seasonTransitionsBetween, seasonWeatherWeights, seasonLabel, calendarView, seasonOfPhase, type Season, type CalendarLedgerV1 } from './calendar';
@@ -2427,14 +2427,16 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
   const p = r.player; const ok = (kind: string, detail: string, msg?: string): Result => ({ ok: true, receipt: receipt(r, now, kind, detail), msg });
   if (p.dead && !['respawn', 'abandon', 'qaAdvance'].includes(it.type)) return fail('You are dead.');
   switch (it.type) {
-    case 'humanAid': case 'humanOrder': case 'humanCargo': case 'humanTalk': case 'humanThreaten': case 'humanRecruit': case 'humanDismiss': case 'humanExchange': case 'humanLoot': {
+    case 'humanRepair': case 'humanAid': case 'humanOrder': case 'humanCargo': case 'humanTalk': case 'humanThreaten': case 'humanRecruit': case 'humanDismiss': case 'humanExchange': case 'humanLoot': {
       const hw = r.humanWorld as HumanWorld | undefined;
       const h = hw?.people[it.actorId];
       if (!hw || !h) return fail('Survivor is no longer here.');
-      const [ox, oy] = windowOrigin(r);
-      const hx = (h.gx - ox + 0.5) * TILE, hy = (h.gy - oy + 0.5) * TILE;
-      if (h.floor !== activeFloor(r) || Math.hypot(p.x - hx, p.y - hy) > 3.2 * TILE || !clearWallLine(r, p, { x: hx, y: hy })) return fail('Move closer; the survivor is not reachable from here.');
+      if (!humanContact(r, h, now)) return fail('Move closer; the survivor is not reachable from here.');
       const latestReceipt = () => r.receipts.at(-1)?.id ?? it.id;
+      if(it.type==='humanRepair') {
+        if (!repairHumanGear(r,hw,h,it.stackUid,it.eid,it.id,now)) return fail('No eligible damaged item, supplies or reachable station.');
+        return {ok:true,receipt:latestReceipt(),msg:'Gear repaired with your materials.'};
+      }
       if(it.type==='humanAid') {
         const out=startHumanAid(r,hw,h,it.id,typeof it.stackUid==='string'?it.stackUid:'',now);
         return out.ok?{ok:true,receipt:latestReceipt(),msg:out.msg}:fail(out.reason??'Cannot help.');

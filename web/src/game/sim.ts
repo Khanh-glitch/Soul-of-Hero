@@ -24,7 +24,7 @@ import { computeCreatureEnvFactors } from '../veyra05/ecosystem';
 import { stepHusbandry, inspectPenAt } from './husbandry';
 import { stepPrimordialHost, damagePrimordialSummonsMelee, damagePrimordialSummonsProjectile, damagePrimordialSummonsAoE } from './primordials/host-bridge';
 import { beginDailyOfflineSettle, dateKey, endDailyOfflineSettle, syncRunDailyLedger } from './journey';
-import { tickNeeds, witnessPlayerDefense, advanceElderPressure, advanceEvacuation, playerAtSea, elderCanonicalCreature, elderBodyArchived, recordArchivedElderDefeat, stepHumans, humanEventBoundary, stepHumanCombat, applyDamage as applyHumanDamage, humanWorldPosition, type ElderVolleyShot, type HumanShot } from './humanworld';
+import { humanContact, tickNeeds, witnessPlayerDefense, advanceElderPressure, advanceEvacuation, playerAtSea, elderCanonicalCreature, elderBodyArchived, recordArchivedElderDefeat, stepHumans, humanEventBoundary, stepHumanCombat, applyDamage as applyHumanDamage, humanWorldPosition, type ElderVolleyShot, type HumanShot } from './humanworld';
 import { stepG1b, settleCoreOwed, g1bGateOf, g1bDoorLabel, g1bEta, coreCastBlock, coreCastCommit, ensureOilSeeps, regrowNote, settleRegrowthAt, irSensorStatus, irSensorDownstream, restStep, dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, stepTenders, stepTenderStates, tenderBoundary, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit, carryLimit, invWeight, clearInteraction, clearPhysicalLine, withRunEntityRead, allRunEntities, stepBasePower, basePowerBoundary, powerAllocation, turretStatus, syncElectricDoors, electricDoorPowered, electricInterior, stepLootRespawn, migrateLootRespawn, initializeCabinets, territoryBoundary, territoryForecast, stepTerritory, spawnDrop } from './engine';
 
 export interface Input { up: boolean; down: boolean; left: boolean; right: boolean; mx: number; my: number; attack: boolean; attackPressed: boolean; roll: boolean; cancel: boolean; skill?: 'refined' | 'signature'; skillAim?: { uid:string; slot:number; mx:number; my:number; viewX:number; viewY:number }; viewX?: number; viewY?: number }
@@ -2080,15 +2080,12 @@ export function findInteract(gs: GameState, now: number): Interact | null {
     bd = d; best = { kind, label, eid: e.id, x: e.x, y: e.y };
   }
   if (r.humanWorld) {
-    const [ox, oy] = windowOrigin(r);
     for (const h of Object.values(r.humanWorld.people)) {
-      if (h.state === 'DEAD' || h.state === 'EVACUATED' || h.floor !== activeFloor(r)) continue;
-      const pos = humanWorldPosition(h, now);
-      const x = (pos.gx - ox) * TILE, y = (pos.gy - oy) * TILE;
-      const d = dist(fx0, fy0, x, y);
-      if (d > bd || !clearInteraction(r, { x, y })) continue;
+      const body = humanContact(r, h, now); if (!body) continue;
+      const { x, y } = body, d = dist(fx0, fy0, x, y);
+      if (d > bd) continue;
       bd = d;
-      best = { kind: 'human', label: `${h.name} · ${h.state.toLowerCase()} · F talk`, eid: h.actorId, x, y };
+      best = { kind: 'human', label: `${h.name} · ${h.state.toLowerCase()} · ${h.state === 'DOWNED' ? 'Offer help' : 'F talk'}`, eid: h.actorId, x, y };
     }
   }
   for (const key in r.sources) { const st=r.sources[key]; if(!st.fire || st.fire<=r.clock.simMs)continue; const i=+key,x=(i%WW)*TILE+8,y=Math.floor(i/WW)*TILE+8,d=dist(fx0,fy0,x,y); if(d<bd && dist(p.x,p.y,x,y)<=2.2*TILE && clearInteraction(r,{x,y})){bd=d;best={kind:'fire',label:'Douse burning tree (1 flask water)',x,y};} }
