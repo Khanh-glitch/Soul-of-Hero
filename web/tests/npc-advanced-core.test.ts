@@ -1,8 +1,9 @@
+import {groveCells,spiritDestination} from "../src/game/core-sites";
 import {describe,it,expect} from 'vitest';
 import {BAL,TILE,WW,type GameState} from '../src/game/core';
-import {addItem,C,blockGrid,mkStack,newGame,startRun,mkCreature} from '../src/game/engine';
-import {humanPack,stepHumanCombat} from '../src/game/humanworld';
-import {bindCombat,HAZ,PROJ,releaseCoreEffect,settle,tick,tickHaz,tickProj} from '../src/game/sim';
+import {clearPhysicalLine,addItem,C,blockGrid,mkStack,newGame,startRun,mkCreature} from '../src/game/engine';
+import {applyDamage,humanPack,stepHumanCombat,stepHumans} from '../src/game/humanworld';
+import {bindCombat,damageCreature,HAZ,PROJ,releaseCoreEffect,settle,tick,tickHaz,tickProj} from '../src/game/sim';
 import {validate} from '../src/game/persist';
 import {setActiveLayout} from '../src/game/world';
 import {T0} from './helpers/g1b-kit';
@@ -108,4 +109,71 @@ describe('Dragon refined flight',()=>{
     const before=enemy.hp;enemy.floor=1;r.veyraFloor=1;tickProj(gs,2000,T0+2301);
     expect(enemy.hp).toBe(before);expect(PROJ).toHaveLength(0);
   });
+});
+
+describe('other combat modes share the owned Core release',()=>{
+  it.each([['core_blast','fire'],['core_earthmother','nature'],['core_elsa','water'],['core_dragon','fire'],['core_meteor','fire']])('%s spends energy and matching essence once for a visible group', (key,element)=>{
+    const {gs,r,h,enemy,slots,x,y}=setup();enemy.floor=1;r.player.x=16;r.player.y=16;
+    const core=slots[0]=mkStack(r,key,1);core.lvl=3;core.dur=100;slots[2]=mkStack(r,'essence_'+element,2);
+    const a=mkCreature(r,'boar',x+6*TILE,y,500),b=mkCreature(r,'boar',x+7*TILE,y,500);a.state=b.state='chase';r.creatures=[a,b];h.intent!.target=a.id;
+    combat(gs,T0+1);expect(h.intent!.coreCast?.mode).toBe('signature');combat(gs,T0+301);combat(gs,T0+302);
+    expect([slots[1]?.qty,slots[2]?.qty]).toEqual([1,1]);expect(core.cd?.signature).toBeGreaterThan(T0+302);
+    if(key==='core_dragon'){expect(r.dragonDive).toMatchObject({owner:h.actorId,coreUid:core.uid,ids:[a.id,b.id]});expect(validate(JSON.parse(JSON.stringify(gs)))).not.toBeNull();}
+    if(key==='core_earthmother'){expect(HAZ[0].effect).toBe('natureRoot');tickHaz(gs,100,T0+401);expect(a.hp).toBeLessThan(500);expect(a.rootedUntil).toBeGreaterThan(T0+401);}
+    if(key==='core_elsa'){expect(a.frozenUntil).toBe(T0+301+BAL.creatorCoreElsa.enemyMs);expect(b.frozenUntil).toBe(a.frozenUntil);expect(r.player.iceUntil).toBeFalsy();}
+    if(key==='core_meteor'){expect(HAZ).toHaveLength(BAL.creatorCoreMeteor.stormCount);expect(HAZ.every(q=>q.owner===h.actorId && q.floor===h.floor && q.coreUid===core.uid)).toBe(true);}
+    if(key==='core_blast'){expect(PROJ[0].kind).toBe('blast_signature');for(let i=1;i<=15;i++)tickProj(gs,50,T0+301+i*50);expect(a.hp).toBeLessThan(500);expect(HAZ.some(q=>q.effect==='blastTrail'&&q.owner===h.actorId&&q.coreUid===core.uid)).toBe(true);}
+  });
+  it('retains ownership on every paid bomb fragment; a nearby friend cancels before the fuse starts',()=>{
+    const {gs,r,h,friend,enemy,slots}=setup();const core=slots[0]=mkStack(r,'core_blast',1);core.lvl=2;core.dur=100;enemy.gx=h.gx+7;
+    combat(gs,T0+1);expect(h.intent!.coreCast?.mode).toBe('refined');Object.assign(friend,{gx:enemy.gx+1,gy:h.gy,floor:0});combat(gs,T0+301);expect(core.dur).toBe(100);expect(PROJ).toHaveLength(0);
+    friend.floor=1;combat(gs,T0+302);combat(gs,T0+602);for(let i=1;i<=24;i++)tickProj(gs,50,T0+602+i*50);
+    expect(PROJ).toHaveLength(BAL.creatorCoreBlast.fragmentCount);expect(PROJ.every(q=>q.kind==='blast_round'&&q.owner===h.actorId&&q.from==='human'&&q.coreUid===core.uid)).toBe(true);
+  });
+  it.each(['core_elsa','core_demon'])('%s binds a defensive cast to the caster and observes interruption/expiry',key=>{
+    const {gs,r,h,enemy,slots}=setup();const core=slots[0]=mkStack(r,key,1);core.lvl=2;core.dur=100;enemy.gx=h.gx+(key==='core_elsa'?1:6);
+    combat(gs,T0+1);combat(gs,T0+301);expect(slots[1]?.qty).toBe(1);expect(core.cd?.refined).toBeGreaterThan(T0+301);
+    const hp=h.hp;
+    if(key==='core_elsa'){expect(h.iceUntil).toBe(T0+301+BAL.creatorCoreElsa.selfMs);expect(applyDamage(r,r.humanWorld!,h,3,0,T0+401,'enemy')).toBe(false);expect(h.hp).toBe(hp);expect(applyDamage(r,r.humanWorld!,h,3,0,h.iceUntil!,'enemy')).toBe(true);}
+    else{expect(h.channelUntil).toBe(T0+301+BAL.creatorCoreDemon.beamMs);expect(HAZ[0].effect).toBe('spiritBeam');const before=enemy.hp;applyDamage(r,r.humanWorld!,h,3,0,T0+401,'enemy');tickHaz(gs,100,T0+401);expect(HAZ).toHaveLength(0);expect(enemy.hp).toBe(before);}
+  });
+});
+
+describe('utility casts are physical commitments, not instant attacks',()=>{
+  it('plants all ten trees or none, and cannot debit when the grove capacity changes during windup',()=>{
+    const {gs,r,h,enemy,slots}=setup(),o=r.sourceMap!.veyra!.originAu;
+    const grid=blockGrid(r);let found=false;
+    for(let y=20;y<150&&!found;y+=3)for(let x=25;x<150&&!found;x+=3){
+      if(!grid.slice(y*WW+x,y*WW+x+8).every(v=>!v))continue;
+      const body={x:(x+.5)*TILE,y:(y+.5)*TILE},ax=body.x+7*TILE;
+      if(groveCells(r,ax,body.y,body).length!==10 || !clearPhysicalLine(r,body,{x:ax,y:body.y},true))continue;
+      Object.assign(h,{gx:o[0]*2+x,gy:o[1]*2+y});Object.assign(enemy,{gx:h.gx+7,gy:h.gy});found=true;
+    }
+    expect(found).toBe(true);const core=slots[0]=mkStack(r,'core_earthmother',1);core.lvl=2;core.dur=100;
+    combat(gs,T0+1);expect(h.intent!.coreCast?.mode).toBe('refined');r.natureTrees=Array.from({length:95},()=>({tx:1,ty:1,until:90000}));combat(gs,T0+301);
+    expect(slots[1]?.qty).toBe(2);expect(core.dur).toBe(100);r.natureTrees=[];combat(gs,T0+401);combat(gs,T0+701);
+    expect(r.natureTrees).toHaveLength(10);expect(new Set(r.natureTrees.map(t=>t.tx+','+t.ty)).size).toBe(10);expect(slots[1]?.qty).toBe(1);
+  });
+  it.each([false,true])('a wounded Demon caster pays to retreat to observed land; occupied at arrival: %s',blocked=>{
+    const {gs,r,h,enemy,slots,friend}=setup(),o=r.sourceMap!.veyra!.originAu;h.hp=h.maxHp*.3;
+    const grid=blockGrid(r);let found=false;
+    for(let y=20;y<155&&!found;y+=2)for(let x=12;x<150&&!found;x+=2){
+      if(!grid.slice(y*WW+x-5,y*WW+x+7).every(v=>!v))continue;
+      const body={x:(x+.5)*TILE,y:(y+.5)*TILE,owner:h.actorId};
+      if(spiritDestination(r,body.x-4*TILE,body.y,body)||!clearPhysicalLine(r,body,{x:body.x+5*TILE,y:body.y},true))continue;
+      Object.assign(h,{gx:o[0]*2+x,gy:o[1]*2+y});Object.assign(enemy,{gx:h.gx+5,gy:h.gy});found=true;
+    }
+    expect(found).toBe(true);const core=slots[0]=mkStack(r,'core_demon',1);core.lvl=3;core.dur=100;slots[2]=mkStack(r,'essence_spirit',2);const from=h.gx;
+    combat(gs,T0+1);expect(h.intent!.coreCast?.mode).toBe('signature');combat(gs,T0+301);expect(h.gx).toBe(from);const trip=h.spiritStep!;expect(trip.gx).toBeLessThan(from);
+    if(blocked)Object.assign(friend,{gx:trip.gx,gy:trip.gy,floor:0});const loaded=validate(JSON.parse(JSON.stringify(gs)))!;expect(loaded).not.toBeNull();const hw=loaded.run!.humanWorld!,body=hw.people[h.actorId];
+    stepHumans(loaded.run!,hw,trip.arriveAt);expect(body.gx).toBe(blocked?from:trip.gx);expect(body.spiritStep).toBeUndefined();
+    expect(loaded.run!.receipts.filter(e=>e.kind===(blocked?'core.spirit.abort':'core.spirit.arrive')&&e.detail===core.uid)).toHaveLength(1);expect([slots[1]?.qty,slots[2]?.qty]).toEqual([1,1]);
+  });
+});
+
+it('attributes witnessed defense to the actual player contact, not a nearby guard or remote player',()=>{
+  const {gs,r,h,x,y}=setup();r.player.x=x+3*TILE;r.player.y=y;h.trust=50;
+  const attack=(byPlayer:boolean)=>{const m=mkCreature(r,'boar',x+TILE,y,5);r.creatures=[m];applyDamage(r,r.humanWorld!,h,3,0,T0+1,'enemy',m.id,0);damageCreature(gs,m,10,0,T0+5,0,byPlayer?undefined:'other-guard',byPlayer);};
+  attack(false);expect(h.trust).toBe(50);r.player.x+=10*TILE;attack(true);expect(h.trust).toBe(50);
+  r.player.x=x+3*TILE;attack(true);expect(h.trust).toBe(53);attack(true);expect(h.trust).toBe(53);expect(r.receipts.filter(e=>e.kind==='human.defense.seen')).toHaveLength(1);
 });

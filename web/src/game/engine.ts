@@ -1748,6 +1748,7 @@ export function settleCore(s: Stack, now: number) { if (s.upg && now >= s.upg.re
 export function coreCastBlock(r: RunState, s: Stack, mode: CoreMode, now: number, packId = 'inv'): string | null {
   const d = ITEMS[s.key]; if (!d?.creatorCore) return 'Not a Creator Core.';
   if(packId!=='inv' && (!r.custody[packId]?.slots.includes(s) || s.production))return 'Core is not available in this pack.';
+  if(s.key==='core_dragon' && mode==='signature' && r.dragonDive)return 'A dragon is already in flight.';
   const free=VFX_TEST_KIT && packId==='inv';
   settleCore(s, now);
   if (s.upg) return `${d.name} is being upgraded: ${Math.ceil((s.upg.readyAt - now) / 1000)}s left.`;

@@ -49,6 +49,12 @@ describe('causal human biology and transaction-scoped housing (fixtures)',()=>{
   other.state='EVACUATED';ctx=humanNeedsContext(r,hw);expect(usingHumanBed(r,hw,h,ctx.shelter,ctx.bedClaims)).toBe(true);
   bed.hp=0;ctx=humanNeedsContext(r,hw);expect(usingHumanBed(r,hw,h,ctx.shelter,ctx.bedClaims)).toBe(false);
  });
+ it('does not postpone a committed board visit behind the discretionary planner',()=>{
+  const r=scene(),hw=r.humanWorld!,h=Object.values(hw.people)[0];hw.people={[h.actorId]:h};
+  h.state='IDLE';h.intent=undefined;h.following=false;h.hunger=h.thirst=100;h.rest=0;h.nextThinkAt=T0+350;hw.plannerAt=T0+1000;
+  expect(humanEventBoundary(r,hw,T0,60000)).toBe(1000);h.recipeBoardPending=true;
+  expect(humanEventBoundary(r,hw,T0,60000)).toBe(350);
+ });
  it('retains the exact movement/work deadlines instead of coarsening contact',()=>{
   const r=scene(),hw=r.humanWorld!,h=Object.values(hw.people)[0];hw.people={[h.actorId]:h};
   h.state='WORKING';h.intent={intentId:'timed-contact',actorId:h.actorId,kind:'work',preconditions:[],reserved:[],startAt:T0,dueAt:T0+1500};

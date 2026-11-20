@@ -315,7 +315,10 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
       if (wx < cx - 40 || wx > cx + VIEW_W + 40 || wy < cy - 40 || wy > cy + VIEW_H + 60) continue;
       if (life.undergroundHides(r, wx, wy)) continue;
       const moving = h.state === 'MOVING' || (h.intent?.route?.length ?? 0) > 0;
-      list.push({ y: wy + 4, f: () => { drawNpcShadow(g, wx, wy + 2, 6, 3, 0.32); drawNpcSprite(g, h, wx, wy, now / 1000, moving); } });
+      list.push({ y: wy + 4, f: () => { drawNpcShadow(g, wx, wy + 2, 6, 3, 0.32); drawNpcSprite(g, h, wx, wy, now / 1000, moving);
+        if((h.iceUntil??0)>now){g.save();g.globalAlpha=.7;g.drawImage(A.st.icepillar,Math.round(wx)-8,Math.round(wy)-16);g.restore();}
+        if(h.spiritStep && h.spiritStep.arriveAt>now)pixCircle(g,Math.round(wx),Math.round(wy)-6,8,'#bc97ed',2);
+      } });
     }
   }
   // Evacuation vessels: a real hull at the authored berth while it is actually there. A vessel

@@ -1,3 +1,4 @@
+import {spiritDestination} from './core-sites';
 import {availableCore,chooseHumanCast,humanCastReach,safeAreaAim} from './human-core-tactics';
 import type {CoreMode} from './g1b';
 import {swingTiming,castTiming} from './combat-timing';
@@ -188,6 +189,9 @@ export interface HumanRecord {
   orderDecisions?: Record<string, {orderId:string;result:OrderResult;reason:string;at:number;order:CompanionCommand;target?:string}>;
   /** Persistent social standing with the player; changes only through witnessed social acts. */
   trust?: number;
+  spiritStep?:{uid:string;gx:number;gy:number;floor:number;arriveAt:number};
+  rootedUntil?:number;burnHitNext?:number;
+  iceUntil?:number;channelUntil?:number;
   attackReadyAt?:number; // recovery follows the body across a change of intent
   lastAttackAt?: number;
   lastDamageAt?: number;
@@ -216,6 +220,7 @@ export interface HumanRecord {
   gameDrop?: {entityId:string;stackUid:string;creatureId:string};
   nextMedicalReviewAt?: number;
   lastWorkBlock?: string;
+  defenseTrustReceipt?:string;
   tradeTrustReceipts?: Record<string, number>;
   helpTrustReceipts?: Partial<Record<'food'|'water'|'medical',string>>;
   confrontationAttempt?: { scene: string; at: number; attempts: number; demand: string; reaction: string; message: string };
@@ -1052,6 +1057,8 @@ export function applyDamage(r: RunState, hw: HumanWorld, h: HumanRecord, dmg: nu
   const activeFloor = r.veyraFloor ?? 0;
   const sourceFloor = attackerFloor ?? activeFloor;
   if (h.floor !== sourceFloor && source !== 'hazard') return false;
+  if((h.iceUntil??0)>now || (h.spiritStep?.arriveAt??0)>now)return false;
+  if(h.channelUntil)delete h.channelUntil;
   const worn = humanArmor(h);
   const biological = source === 'starvation' || source === 'untreated_bleeding';
   dmg = biological ? dmg : Math.max(1, Math.round(dmg * (1 - worn.armor)));
@@ -1433,6 +1440,21 @@ export function stepPlayerHumanAid(r:RunState,hw:HumanWorld,now:number):void {
   if(!selfCaused&&!h.helpTrustReceipts[a.kind]){h.trust=clamp((h.trust??50)+(a.kind==='medical'?5:3),0,100);h.helpTrustReceipts[a.kind]=a.id;}
   receipt(r,now,'human.aid.commit',`${a.id}:${h.actorId}:${a.kind}:${s.uid}`);
 }
+/** Only the injured person who actually sees the player stop their assailant
+ * learns this. A turret, another survivor, or an offscreen kill earns nothing. */
+export function witnessPlayerDefense(r:RunState,m:Creature,now:number){
+  const hw=r.humanWorld;if(!hw||r.player.dead||playerAtSea(r))return;
+  const o=r.sourceMap?.veyra?.originAu,ox=(o?.[0]??0)*2,oy=(o?.[1]??0)*2;
+  for(const incident of Object.values(hw.incidents)){
+    if(incident.aggressor!==m.id || incident.kind!=='assault'||!incident.injury||incident.resolved || now<incident.at || now-incident.at>10000)continue;
+    const h=incident.victim?hw.people[incident.victim]:undefined;
+    if(!h || h.defenseTrustReceipt || h.transit || ['DEAD','EVACUATED','DOWNED'].includes(h.state) || h.floor!==(r.veyraFloor??0))continue;
+    if(h.disposition_known.incidents.some(id=>{const i=hw.incidents[id];return i?.aggressor==='player' && i.victim===h.actorId && !i.resolved;}))continue;
+    const pos=humanWorldPosition(h),body={x:(pos.gx-ox)*TILE,y:(pos.gy-oy)*TILE};
+    if([m,r.player].some(p=>Math.hypot(p.x-body.x,p.y-body.y)>TILE*8 || !clearPhysicalLine(r,body,p,true)))continue;
+    h.defenseTrustReceipt=incident.id;h.trust=clamp((h.trust??50)+3,0,100);receipt(r,now,'human.defense.seen',`${h.actorId}:${incident.id}:${m.id}`);
+  }
+}
 export type HumanTalkTopic = 'activity' | 'needs' | 'place' | 'goods' | 'accompany';
 export function talkToHuman(r: RunState, hw: HumanWorld, h: HumanRecord, now: number, topic?: HumanTalkTopic): string {
   if (h.state === 'DEAD' || h.state === 'EVACUATED') return 'No response.';
@@ -1709,7 +1731,8 @@ export function commandHuman(r:RunState,hw:HumanWorld,h:HumanRecord,id:string,or
     if(dest)route=humanRouteToAdjacent(r,h,dest[0],dest[1],grid,ox,oy,occupied,bed?.floor??h.floor);
   } else {
     // Retreat is a real walk to a reachable nearby tile farther from perceived danger.
-    const threats=r.creatures.filter(m=>['attack','chase'].includes(m.state)&&(m.floor??0)===h.floor);
+    const observer={x:(h.gx-ox+.5)*TILE,y:(h.gy-oy+.5)*TILE};
+    const threats=r.creatures.filter(m=>['attack','chase'].includes(m.state)&&(m.floor??0)===h.floor&&!m.husbandry?.tamed && Math.hypot(observer.x-m.x,observer.y-m.y)<=TILE*18 && clearPhysicalLine(r,observer,m,true));
     const score=(gx:number,gy:number)=>threats.length?Math.min(...threats.map(m=>Math.hypot(gx-ox-m.x/TILE,gy-oy-m.y/TILE))):Math.hypot(gx-ox-r.player.x/TILE,gy-oy-r.player.y/TILE);
     const current=score(h.gx,h.gy);
     const options=[] as {gx:number;gy:number;score:number}[];
@@ -2824,6 +2847,11 @@ function plannerSources(r: RunState): Set<string> {
 }
 /** Next proven human event bounds the shared world integrator; distant movement uses
  * the same tile duration as visible movement, never one tile per weather slot. */
+/** A committed delivery or job retries on its own clock. Only discretionary
+ * planning is rate limited by the island's rotating planner. */
+function committedRetry(h:HumanRecord){
+  return !h.deliveryWait && !!(h.harvestJob || h.recipeBoardPending || h.intent?.work || h.workOutputs && Object.values(h.workOutputs).some(q=>q>0));
+}
 export function humanEventBoundary(r:RunState,hw:HumanWorld,at:number,maximum:number):number {return timedWorldWork('humanEventBoundary',()=>{
  let dt=maximum;
  for(const h of Object.values(hw.people)){
@@ -2833,6 +2861,9 @@ export function humanEventBoundary(r:RunState,hw:HumanWorld,at:number,maximum:nu
   const m=(h.state==='WORKING'||h.state==='FIGHTING'||h.state==='MOVING')?1.25:1;
   // Only the nearest lower threshold can be the next boundary. Avoid
   // constructing eight temporary tuples/arrays per actor on every move slice.
+  if((h.spiritStep?.arriveAt??0)>at)dt=Math.min(dt,h.spiritStep!.arriveAt-at);
+  if((h.iceUntil??0)>at)dt=Math.min(dt,h.iceUntil!-at);
+  if((h.channelUntil??0)>at)dt=Math.min(dt,h.channelUntil!-at);
   const hungerThreshold=h.hunger>40?40:h.hunger>25?25:h.hunger>5?5:0;
   const thirstThreshold=h.thirst>40?40:h.thirst>25?25:h.thirst>5?5:0;
   if(h.hunger>0&&BAL.player.offlineHungerPerHour>0)dt=Math.min(dt,(h.hunger-hungerThreshold)/(BAL.player.offlineHungerPerHour*m)*HOUR);
@@ -2845,7 +2876,9 @@ export function humanEventBoundary(r:RunState,hw:HumanWorld,at:number,maximum:nu
   if(h.state==='MOVING'&&h.intent?.route?.length)dt=Math.min(dt,Math.max(.001,TILE/PROFILES[h.profile].speed*1000-(h.motion?.elapsedMs??0)));
   if(h.state==='WORKING'&&h.intent&&h.intent.dueAt>at)dt=Math.min(dt,h.intent.dueAt-at);
   if(!h.following&&h.state==='IDLE'&&(!h.intent||!!h.intent.work)){
-   const due=Math.max(hw.plannerAt??at,h.nextThinkAt??at);dt=Math.min(dt,Math.max(1,due-at));
+   const review=h.nextThinkAt??at;
+   const due=committedRetry(h)?review:Math.max(hw.plannerAt??at,review);
+   dt=Math.min(dt,Math.max(1,due-at));
   }
  }
  // An Elder approach arrival or the next lawful wave is a causal instant of the same clock.
@@ -3198,6 +3231,7 @@ export function finishHumanPlanReview(h:HumanRecord,now:number):void {
   h.blockedPlanCount=Math.min(7,(h.blockedPlanCount??0)+1);
   h.nextThinkAt=Math.max(h.nextThinkAt??now,now+Math.min(300000,6000*2**(h.blockedPlanCount-1)));
 }
+function coreImmobilized(h:HumanRecord,now:number){return !!h.spiritStep || (h.iceUntil??0)>now || (h.channelUntil??0)>now;}
 export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {return timedWorldWork('stepHumans',()=>{
   const lastStepAt = hw.lastStepAt ?? hw.lastResolvedAt;
   const dtMs = now - lastStepAt;
@@ -3205,6 +3239,13 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {retu
   hw.lastStepAt = now;
   stepPlayerHumanAid(r,hw,now);
   const actors = Object.values(hw.people);
+  for(const h of actors){
+    const trip=h.spiritStep;if(!trip || trip.arriveAt>now)continue;
+    delete h.spiritStep;const o=r.sourceMap?.veyra?.originAu,ox=(o?.[0]??0)*2,oy=(o?.[1]??0)*2;
+    const refused=h.state!=='FIGHTING'||h.transit||trip.floor!==h.floor||trip.floor!==(r.veyraFloor??0)||spiritDestination(r,(trip.gx-ox+.5)*TILE,(trip.gy-oy+.5)*TILE,{x:(h.gx-ox+.5)*TILE,y:(h.gy-oy+.5)*TILE,owner:h.actorId});
+    if(!refused){h.gx=trip.gx;h.gy=trip.gy;h.motion=undefined;if(h.intent)h.intent.route=[];}
+    receipt(r,now,refused?'core.spirit.abort':'core.spirit.arrive',trip.uid);
+  }
   for(const patient of actors){
     if(patient.state!=='DOWNED'||!patient.community||(patient.nextMedicalReviewAt??0)>now)continue;
     patient.nextMedicalReviewAt=now+30000;
@@ -3222,11 +3263,17 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {retu
   // Full-store work is waiting on a custody change, not a physical action every
   // thirty seconds. Direct edits, consumption and restored saves all re-read the
   // actual container; urgent needs continue to own their biological boundaries.
-  for(const h of actors)if(h.deliveryWait){const wait=h.deliveryWait,c=r.custody[wait.containerId],comm=h.community?hw.communities[h.community]:undefined,e=comm?.storeEntityId?findRunEntity(r,comm.storeEntityId):undefined;if(!c||!comm?.storeContainers.includes(wait.containerId)||!e||e.owner!==comm.id||(e.hp??1)<=0||JSON.stringify(c.slots)!==wait.signature){delete h.deliveryWait;h.nextThinkAt=now;}}
+  const storeSignatures=new Map<string,string>();
+  for(const h of actors)if(h.deliveryWait){
+    const wait=h.deliveryWait,c=r.custody[wait.containerId],comm=h.community?hw.communities[h.community]:undefined,e=comm?.storeEntityId?findRunEntity(r,comm.storeEntityId):undefined;
+    let signature=storeSignatures.get(wait.containerId);
+    if(c && signature===undefined){signature=JSON.stringify(c.slots);storeSignatures.set(wait.containerId,signature);}
+    if(!c||!comm?.storeContainers.includes(wait.containerId)||!e||e.owner!==comm.id||(e.hp??1)<=0||signature!==wait.signature){delete h.deliveryWait;h.nextThinkAt=now;}
+  }
   // A selected physical commitment owns its retry deadline. Do not enqueue an
   // interrupted delivery/source/board visit behind another complete census of
   // discretionary jobs. Same route authority and physical entry checks apply.
-  const commitments=actors.filter(h=>h.state==='IDLE'&&(!h.intent||!!h.intent.work)&&!h.deliveryWait&&!h.following&&(h.nextThinkAt??0)<=now&&(h.harvestJob||h.recipeBoardPending||!!h.intent?.work||Object.values(h.workOutputs??{}).some(q=>q>0)));
+  const commitments=actors.filter(h=>h.state==='IDLE'&&(!h.intent||!!h.intent.work)&&!h.following&&(h.nextThinkAt??0)<=now&&committedRetry(h));
   if(commitments.length)withHumanNavigationRead(r,()=>{for(const h of commitments){
    if(h.intent?.work){h.nextThinkAt=now+3000;planHumanOccupation(r,hw,h,now,(gx,gy,floor)=>humanNavigation(r).route(h,{tx:gx,ty:gy,floor}));continue;}
    if(!h.harvestJob&&Object.values(h.workOutputs??{}).some(q=>q>0)){
@@ -3309,7 +3356,7 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {retu
     if (h.state !== 'FIGHTING' || h.intent?.kind !== 'fight' || h.floor !== (r.veyraFloor ?? 0)) continue;
     const enemy=humanCombatTarget(r,hw,h.intent.target,h.floor);
     if (!enemy) { h.intent= h.following?{intentId:`follow:${h.actorId}:${now}`,actorId:h.actorId,kind:'follow',preconditions:[],reserved:[],startAt:now,dueAt:now}:undefined;h.state='IDLE';continue; }
-    if(h.intent.swing || h.intent.coreCast)continue; // committed aim: do not turn or chase through windup
+    if(h.intent.swing || h.intent.coreCast || coreImmobilized(h,now) || (h.rootedUntil??0)>now)continue; // committed aim: do not turn or chase through windup
     faceHumanToward(h, ox + enemy.x / TILE, oy + enemy.y / TILE);
     const weapon = humanWeapon(h);
     const origin={x:(h.gx-ox+.5)*TILE,y:(h.gy-oy+.5)*TILE};
@@ -3341,6 +3388,7 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {retu
   let navigation: ReturnType<typeof humanNavigation>|undefined;
   for (const h of actors) {
     if (h.state === 'DEAD' || h.state === 'EVACUATED' || h.state === 'ON_VESSEL') continue;
+    if(coreImmobilized(h,now))continue;
     // 1. Survival consume: eat when hungry, drink when thirsty.
     if (h.hunger < 40) humanConsume(r, hw, h, 'food', now);
     if (h.thirst < 40) humanConsume(r, hw, h, 'water', now);
@@ -3351,6 +3399,7 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {retu
     if (h.intent?.kind === 'work' && h.intent.target === 'store' && h.state === 'IDLE') {
       depositHumanOutputs(r, h, now); if((h as HumanRecord).state==='IDLE')h.intent = undefined; h.nextThinkAt = Math.max(h.nextThinkAt??0,now + 6000);
     }
+    if((h.rootedUntil??0)>now)continue; // no route step or boarding through active roots
     // 3. Evacuation: the named service must actually be berthed and taking passengers, and the
     //    body must stand at its berth. A closed window is an honest failure, never a silent seat.
     if (h.intent?.kind === 'evacuate' && h.state === 'IDLE') {
@@ -3468,18 +3517,18 @@ export function stepHumanCombat(r: RunState, hw: HumanWorld, now: number, hitCre
     if(h.state!=='FIGHTING' || h.transit || h.floor!==activeFloor || h.stamina<3 || h.gx<ox || h.gy<oy || h.gx>=ox+WW || h.gy>=oy+WH || (intent.guardPlayer&&!threatensPlayer(r,hw,h,intent.target,now))){
       delete intent.swing;delete intent.coreCast;continue;
     }
-    if((h.attackReadyAt??0)>now)continue;
+    if(coreImmobilized(h,now) || (h.attackReadyAt??0)>now)continue;
     if(emitCore && !intent.swing){
       const pending=intent.coreCast,pack=humanPack(r,h),target=humanCombatTarget(r,hw,intent.target,h.floor);
       const x=(h.gx-ox+.5)*TILE,y=(h.gy-oy+.5)*TILE,origin={x,y};
       if(target && (!target.human || (!h.protectedPeople.includes(intent.target)&&(!h.community||target.human.community!==h.community))) && clearPhysicalLine(r,origin,target,true)){
-        const choice=pending?{core:pack.slots.find(s=>s?.uid===pending.uid),mode:pending.mode??'basic'}:chooseHumanCast(r,h,origin,target,now);
+        const choice=pending?{core:pack.slots.find(s=>s?.uid===pending.uid),mode:pending.mode??'basic',aim:undefined}:chooseHumanCast(r,h,origin,target,now);
         if(choice?.core){
           const {core,mode}=choice,reach=humanCastReach(core,mode),distance=Math.hypot(target.x-x,target.y-y);
           const timing=castTiming(ITEMS[core.key].creatorCore!,mode);
           if(!pending && distance<=reach){
-            faceHumanToward(h,ox+target.x/TILE,oy+target.y/TILE);
-            intent.coreCast={uid:core.uid,mode,victim:intent.target,floor:h.floor,angle:Math.atan2(target.y-y,target.x-x),distance,readyAt:now+timing.contact};continue;
+            const aim=choice.aim??target;faceHumanToward(h,ox+aim.x/TILE,oy+aim.y/TILE);
+            intent.coreCast={uid:core.uid,mode,victim:intent.target,floor:h.floor,angle:Math.atan2(aim.y-y,aim.x-x),distance:Math.hypot(aim.x-x,aim.y-y),readyAt:now+timing.contact};continue;
           }
           if(pending && pending.victim===intent.target && pending.floor===h.floor && distance<=reach && reach>0 && !coreCastBlock(r,core,mode,now,pack.id)){
             if(now<pending.readyAt)continue;

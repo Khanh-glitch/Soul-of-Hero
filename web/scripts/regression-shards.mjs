@@ -2,7 +2,8 @@
  * synchronous code (Vitest's in-process timeout cannot interrupt a blocked event loop).
  * No omitted suite: the natural-route file is an explicit extra shard. Exit 2 means
  * incomplete/timeout; exit 1 means completed failures; only exit 0 means all green.
- * Usage: node scripts/regression-shards.mjs <output-directory>
+ * Usage: node scripts/regression-shards.mjs <output-directory> [--manifest-only]
+ * On a small machine use --manifest-only, then regression-serial.mjs on this manifest.
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -17,6 +18,7 @@ const sha=execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim();
 const hash=crypto.createHash('sha256');for(const f of [...walk('src'),...walk('tests')].sort()){hash.update(f);hash.update(fs.readFileSync(f));}
 const manifest={sha,sourceAndTestsSHA256:hash.digest('hex'),files,groups,watchdogSeconds:1800,maxConcurrent:2,startedAt:new Date().toISOString()};
 fs.writeFileSync(path.join(out,'manifest.json'),JSON.stringify(manifest,null,2));
+if(process.argv.includes('--manifest-only')){console.log(`Inventoried ${files.length} files at ${sha}; no suites run.`);process.exit(0);}
 let next=0;const results=[];
 async function run(index){return new Promise(resolve=>{
  const output=fs.openSync(path.join(out,`shard-${index}.log`),'w'),started=Date.now();let timedOut=false;

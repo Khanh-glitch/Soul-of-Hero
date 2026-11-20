@@ -249,14 +249,14 @@ export function validate(raw: any): GameState | null {
     // A survivor's arrow carries the body that fired it; an unattributed human arrow is not a lawful rule.
     if (c.projectiles.some((q: any) => q.from === 'human' && (typeof q.owner !== 'string' || !q.owner || !raw.run?.humanWorld?.people?.[q.owner]))) return null;
     // A survivor's shot names who it was aimed at; that name must be a body (or the player) in this run.
-    // A paid, non-homing tornado can outlive its original creature. Its victim
+    // A paid, non-homing Core projectile can outlive its original creature. Its victim
     // is historical provenance for settlement, not a target to reacquire.
     if (c.projectiles.some((q: any) => q.from === 'human' && (typeof q.victim !== 'string' || !q.victim ||
-      (q.victim !== 'player' && !(q.kind==='fire_tornado' && q.coreUid && q.floor!==undefined && !q.homing) && !raw.run?.humanWorld?.people?.[q.victim] && !(raw.run?.creatures ?? []).some((m: any) => m?.id === q.victim))))) return null;
+      (q.victim !== 'player' && !(['fire_tornado','blast_bomb','blast_signature','blast_round'].includes(q.kind) && q.coreUid && q.floor!==undefined && !q.homing) && !raw.run?.humanWorld?.people?.[q.victim] && !(raw.run?.creatures ?? []).some((m: any) => m?.id === q.victim))))) return null;
     // The UID is provenance, not a claim that the caster must still own the item at impact.
     if(c.projectiles.some((q:any)=>q.coreUid!==undefined&&(typeof q.coreUid!=='string'||!q.coreUid)))return null;
     if(c.hazards.some((h:any)=>h?.coreUid!==undefined && (typeof h.coreUid!=='string'||!h.coreUid||h.owner!=='player'&&(!r.humanWorld?.people?.[h.owner]||typeof h.victim!=='string'))))return null;
-    if (c.hazards.some((h: any) => !obj(h) || !['circle','line','ring','wave','sweep','pool'].includes(h.kind) || !['x','y','t','tell','dur','dmg'].every(k => finite(h[k])) || typeof h.style !== 'string' || (h.elder !== undefined && !lookupElderDef(h.elder)) || ['r','angle','len','w','tickAcc','a0','a1','expiresSimMs'].some(k => h[k] !== undefined && !finite(h[k])))) return null;
+    if (c.hazards.some((h: any) => !obj(h) || h.floor!==undefined&&![-1,0,1,2].includes(h.floor) || !['circle','line','ring','wave','sweep','pool'].includes(h.kind) || !['x','y','t','tell','dur','dmg'].every(k => finite(h[k])) || typeof h.style !== 'string' || (h.elder !== undefined && !lookupElderDef(h.elder)) || ['r','angle','len','w','tickAcc','a0','a1','expiresSimMs'].some(k => h[k] !== undefined && !finite(h[k])))) return null;
   }
   if (r.sourceLayoutVersion === 3) for (const [key, st] of Object.entries(r.sources) as [string, any][]) {
     const i=Number(key); if (!Number.isInteger(i) || String(i)!==key || i<0 || i>=activeSources.length || !activeSources[i] || !obj(st)) return null;
@@ -403,6 +403,7 @@ export function validate(raw: any): GameState | null {
       const source=r.entities[k.sourceId.split(':')[2]];if(source&&(source.kind!=='airdrop'||source.airdrop?.index!==k.eventIndex||source.x!==k.x||source.y!==k.y))return null;
     }
   }
+  if(r.dragonDive?.owner!==undefined && (r.dragonDive.owner!=='player' && !r.humanWorld?.people?.[r.dragonDive.owner] || typeof r.dragonDive.coreUid!=='string' || !r.dragonDive.coreUid || ![-1,0,1,2].includes(r.dragonDive.floor)))return null;
   if (r.dragonDive !== undefined && (!obj(r.dragonDive) || !Array.isArray(r.dragonDive.ids) || new Set(r.dragonDive.ids).size !== r.dragonDive.ids.length || r.dragonDive.ids.some((id: any) => typeof id !== 'string' || !id) || !finite(r.dragonDive.x) || !finite(r.dragonDive.y) || !finite(r.dragonDive.left) || r.dragonDive.left <= 0 || r.dragonDive.left > BAL.creatorCoreDragon.collectMs || (r.dragonDive.route !== undefined && (!Array.isArray(r.dragonDive.route) || r.dragonDive.route.length>500 || r.dragonDive.route.length!==r.dragonDive.ids.length || r.dragonDive.route.some((q:any,i:number)=>!obj(q)||q.id!==r.dragonDive.ids[i]||!finite(q.x)||!finite(q.y)) || !Number.isInteger(r.dragonDive.index) || r.dragonDive.index<0 || r.dragonDive.index>r.dragonDive.route.length || !finite(r.dragonDive.dragonX) || !finite(r.dragonDive.dragonY) || !['traverse','gather','dive'].includes(r.dragonDive.phase) || !Array.isArray(r.dragonDive.hitIds) || new Set(r.dragonDive.hitIds).size!==r.dragonDive.hitIds.length || r.dragonDive.hitIds.some((id:any)=>!r.dragonDive.ids.includes(id)))))) return null;
   if (r.natureTrees !== undefined && (!Array.isArray(r.natureTrees) || r.natureTrees.length>100 || new Set(r.natureTrees.map((q:any)=>`${q.tx},${q.ty}`)).size!==r.natureTrees.length || r.natureTrees.some((q:any)=>!obj(q)||!integer(q.tx)||!integer(q.ty)||q.tx<0||q.ty<0||q.tx>=WW||q.ty>=WW||!finite(q.until)||q.until<=0))) return null;
   if(r.spiritTransit!==undefined && (!obj(r.spiritTransit)||!finite(r.spiritTransit.x)||!finite(r.spiritTransit.y)||r.spiritTransit.x<TILE||r.spiritTransit.y<TILE||r.spiritTransit.x>=(WW-1)*TILE||r.spiritTransit.y>=(WW-1)*TILE||!finite(r.spiritTransit.arriveAt)||r.spiritTransit.arriveAt<r.startedAt-r.qaOffset||r.spiritTransit.arriveAt>r.clock.lastSimAt+BAL.creatorCoreDemon.teleportMs||typeof r.spiritTransit.uid!=='string'||!/^s[0-9a-z]+$/.test(r.spiritTransit.uid)||!beforeNext(r.spiritTransit.uid,/^s([a-z0-9]+)$/)))return null;
@@ -790,7 +791,9 @@ export function validate(raw: any): GameState | null {
       if(d!==undefined && (!obj(d)||typeof d.storeId!=='string'||typeof d.containerId!=='string'||!Array.isArray(d.cargo)||!d.cargo.length||d.cargo.some((q:any)=>!obj(q)||typeof q.uid!=='string'||!integer(q.qty)||q.qty<1)||new Set(d.cargo.map((q:any)=>q.uid)).size!==d.cargo.length))return null;
       const swing=h.intent?.swing;
       if(swing!==undefined && (!obj(swing)||typeof swing.uid!=='string'||typeof swing.victim!=='string'||!Number.isInteger(swing.floor)||![swing.angle,swing.distance,swing.contactAt].every(finite)||swing.distance<0))return null;
-      if(h.attackReadyAt!==undefined&&!finite(h.attackReadyAt))return null;
+      if(h.defenseTrustReceipt!==undefined && (typeof h.defenseTrustReceipt!=='string'||!h.defenseTrustReceipt))return null;
+      if(h.spiritStep!==undefined && (!obj(h.spiritStep)||typeof h.spiritStep.uid!=='string'||!h.spiritStep.uid||![h.spiritStep.gx,h.spiritStep.gy].every(integer)||![-1,0,1,2].includes(h.spiritStep.floor)||!finite(h.spiritStep.arriveAt)))return null;
+      if(['attackReadyAt','iceUntil','channelUntil','burnHitNext','rootedUntil'].some(k=>h[k]!==undefined&&!finite(h[k])))return null;
       const cast=h.intent?.coreCast;
       if(cast!==undefined && (!obj(cast)||typeof cast.uid!=='string'||typeof cast.victim!=='string'||!Number.isInteger(cast.floor)||!finite(cast.angle)||!finite(cast.readyAt)))return null;
       if(cast?.mode!==undefined && (!['basic','refined','signature'].includes(cast.mode)||!finite(cast.distance)||cast.distance<0))return null;

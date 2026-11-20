@@ -18,7 +18,7 @@ export const HOUR = 3600_000;
 export interface Proj { x: number; y: number; vx: number; vy: number; life: number; dmg: number; from: 'player' | 'enemy' | 'human'; kind: string; r: number; delay?: number; homing?: number; owner?: string;
   /** A survivor's declared victim: a human actorId, 'player', or a creature id. A shot that misses is a miss. */
   victim?: string; coreUid?: string; floor?:number; summonTornadoNext?:number }
-export interface Haz { kind: 'circle' | 'line' | 'ring' | 'wave' | 'sweep' | 'pool'; x: number; y: number; r?: number; angle?: number; len?: number; w?: number; t: number; tell: number; dur: number; dmg: number; style: string; effect?: string; hit?: boolean; tickAcc?: number; a0?: number; a1?: number; done?: boolean; owner?: string; coreUid?:string; victim?:string; elder?: string; expiresSimMs?:number }
+export interface Haz { floor?:number; kind: 'circle' | 'line' | 'ring' | 'wave' | 'sweep' | 'pool'; x: number; y: number; r?: number; angle?: number; len?: number; w?: number; t: number; tell: number; dur: number; dmg: number; style: string; effect?: string; hit?: boolean; tickAcc?: number; a0?: number; a1?: number; done?: boolean; owner?: string; coreUid?:string; victim?:string; elder?: string; expiresSimMs?:number }
 
 // ---------- Seeded RNG ----------
 export function mulberry(seed: number) {
@@ -304,7 +304,7 @@ export interface RunState {
   /** Additive: absent in old saves; physical combat remains unresolved while away. */
   combat?: { projectiles: Proj[]; hazards: Haz[] };
   /** Committed Dragon collection continues only during physical combat frames. */
-  dragonDive?: { ids: string[]; x: number; y: number; left: number; route?: { id:string; x:number; y:number }[]; index?: number; dragonX?:number; dragonY?:number; phase?: 'traverse'|'gather'|'dive'; hitIds?:string[] };
+  dragonDive?: { owner?:string;coreUid?:string;floor?:number;ids: string[]; x: number; y: number; left: number; route?: { id:string; x:number; y:number }[]; index?: number; dragonX?:number; dragonY?:number; phase?: 'traverse'|'gather'|'dive'; hitIds?:string[] };
   traceWalk?: TraceWalk;
   discovered: number[]; // 4x4-tile cells
   poiSeen: string[];

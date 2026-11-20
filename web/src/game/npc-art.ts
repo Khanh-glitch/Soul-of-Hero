@@ -149,7 +149,9 @@ function drawNpcActionMark(g: CanvasRenderingContext2D, h: HumanRecord, X: numbe
   } else if (rf.clip === 'attack') {
     // The equipped item's hand remains attached to the same body; unarmed strikes show no weapon.
     if (h.intent?.coreCast){
-      const hx=X+8+fx*6,hy=Y+18+fy*3;g.fillStyle='#72bbef';g.fillRect(hx-1,hy-1,3,3);g.fillStyle='#f2faff';g.fillRect(hx,hy,1,1);
+      const hx=X+8+fx*6,hy=Y+18+fy*3;const mode=h.intent.coreCast.mode;g.fillStyle=mode==='signature'?'#efae53':mode==='refined'?'#b796eb':'#72bbef';g.fillRect(hx-1,hy-1,3,3);
+      if(mode==='signature'){g.fillRect(hx-3,hy,1,1);g.fillRect(hx+3,hy,1,1);g.fillRect(hx,hy-3,1,1);}
+      g.fillStyle='#f2faff';g.fillRect(hx,hy,1,1);
     } else if(h.intent?.swing){
       // Raised hand before actual contact; no slash or muzzle flash yet.
       const hx=X+8-fx*4,hy=Y+13-fy*2;g.fillStyle='#b89162';g.fillRect(hx,hy,2,6);

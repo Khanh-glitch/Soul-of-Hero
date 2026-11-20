@@ -17,7 +17,7 @@ export function coreRayProjectile(run:RunState,spec:RaySpec,x:number,y:number,a:
   return {...source,coreUid,x,y,vx:Math.cos(a)*spec.speed,vy:Math.sin(a)*spec.speed,life:spec.life,dmg:spec.dmg,r:spec.r,kind:spec.kind};
 }
 
-export interface CoreEffectCast {mode?:'basic'|'refined'|'signature';distance?:number;key:string;uid:string;x:number;y:number;angle:number;owner:string;victim?:string}
+export interface CoreEffectCast {viewX?:number;viewY?:number;mode?:'basic'|'refined'|'signature';distance?:number;key:string;uid:string;x:number;y:number;angle:number;owner:string;victim?:string}
 export function basicCoreReach(key:string){
   const ray=basicCoreRay(key);if(ray)return ray.speed*ray.life;
   switch(ITEMS[key]?.creatorCore){case 'mjolnir':return BAL.creatorCoreMjolnir.punchRange;case 'dragon':return BAL.creatorCoreDragon.flameLength;default:return 0;}
