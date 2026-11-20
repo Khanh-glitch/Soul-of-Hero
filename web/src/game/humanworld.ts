@@ -855,6 +855,14 @@ function reachableHumanStores(r: RunState, hw: HumanWorld, h: HumanRecord): Cont
   return [r.custody[e.c]];
 }
 
+// Planning and consumption must agree about what can actually be served.
+function canServe(s:Stack|null,kind:'food'|'water'):boolean {
+  if (!s || s.production || s.qty <= 0) return false;
+  const d = ITEMS[s.key];
+  if (d.charge != null && (s.charge ?? 0) <= 0) return false;
+  return kind === 'food' ? (d.food?.hunger ?? 0) > 0 : (d.food?.thirst ?? 0) > 0 || !!d.waterContainer;
+}
+
 /** Eat/drink from carried or community stock (real item custody).
  *  Water is consumed by CHARGE (a flask holds N drinks), not by qty; an empty flask grants no thirst. */
 export function humanConsume(r: RunState, hw: HumanWorld, h: HumanRecord, kind: 'food' | 'water', now: number): boolean {
@@ -862,7 +870,7 @@ export function humanConsume(r: RunState, hw: HumanWorld, h: HumanRecord, kind: 
   const containers: Container[] = [humanPack(r, h)];
   // Do not construct physical navigation for a stock that cannot satisfy this
   // need. This is a live custody read each call, not a stale failed-plan cache.
-  const edible=(s:Stack|null)=>!!s&&!s.production&&s.qty>0&&(kind==='food'?!!ITEMS[s.key].food?.hunger:!!(ITEMS[s.key].food?.thirst||ITEMS[s.key].waterContainer)&&(ITEMS[s.key].charge==null||(s.charge??0)>0));
+  const edible=(s:Stack|null)=>canServe(s,kind);
   if(!containers[0].slots.some(edible)){
     const comm=h.community?hw.communities[h.community]:undefined;
     if(comm?.foodStores.some(id=>r.custody[id]?.slots.some(edible)))containers.push(...reachableHumanStores(r,hw,h));
@@ -874,7 +882,6 @@ export function humanConsume(r: RunState, hw: HumanWorld, h: HumanRecord, kind: 
       // a berry debits the same berry and feeds the same body as eating it.
       const d = ITEMS[s.key], food = d.food;
       const charged = d.charge != null;
-      if (charged && (s.charge ?? 0) <= 0) continue;
       h.hunger = clamp(h.hunger + (food?.hunger ?? 0), 0, 100);
       h.thirst = clamp(h.thirst + (food?.thirst ?? (d.waterContainer ? 30 : 0)), 0, 100);
       h.hp = clamp(h.hp + (food?.hp ?? 0), 0, h.maxHp);
@@ -3124,11 +3131,11 @@ function planAutonomousWork(r: RunState, hw: HumanWorld, h: HumanRecord, now: nu
   if (planEvacuation(r, hw, h, now, occupied)) return;
   if (!h.community) return;
   const comm = hw.communities[h.community]; if (!comm) return;
-  const need = h.thirst < 40 ? 'drink' : h.hunger < 40 ? 'eat' : undefined;
-  if (need && comm.storeTile) {
-    const stock = comm.foodStores.flatMap(id => r.custody[id]?.slots ?? []);
-    const hasSupply = stock.some(s => s && (need === 'eat' ? (ITEMS[s.key].food?.hunger ?? 0) > 0 : (ITEMS[s.key].food?.thirst ?? 0) > 0 && (ITEMS[s.key].charge == null || (s.charge ?? 0) > 0)));
-    if (hasSupply && !reachableHumanStores(r, hw, h).length) {
+  if ((h.thirst < 40 || h.hunger < 40) && comm.storeTile) {
+    const hasServing = (kind:'food'|'water') => comm.foodStores.some(id => r.custody[id]?.slots.some(s => canServe(s,kind)));
+    const need = h.thirst < 40 && hasServing('water') ? 'drink'
+      : h.hunger < 40 && hasServing('food') ? 'eat' : undefined;
+    if (need && !reachableHumanStores(r, hw, h).length) {
       // The nearest edge of a finite pantry can be occupied while another
       // side is open. Prefer the open approach for a personal food/water trip;
       // actual entry and consumption still require legal physical contact.

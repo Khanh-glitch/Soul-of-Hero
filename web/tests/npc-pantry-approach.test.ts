@@ -21,3 +21,19 @@ it('a thirsty mechanic uses the free side of a stocked pantry rather than walkin
   expect(Math.abs(h.gx-tx)+Math.abs(h.gy-ty)).toBe(1);
   expect(h.thirst).toBe(42);expect(h.hunger).toBe(74);expect(berries.qty).toBe(qty-3);expect([colleague.gx,colleague.gy]).toEqual([short.tx,short.ty]);
 });
+
+it('can walk for food when thirsty too, but the pantry has no available drink',()=>{
+  setActiveLayout('veyra05-world');const gs=newGame();expect(startRun(gs,'female',T0,null,7606).ok).toBe(true);
+  const r=gs.run!,hw=r.humanWorld!,c=hw.communities['com:po_greywater'],[tx,ty]=c.storeTile!,h=hw.people.h2;
+  for(const p of Object.values(hw.people))p.nextThinkAt=T0+60000;
+  h.gx=tx+1;h.gy=ty+1;h.floor=0;h.nextThinkAt=T0;h.intent=undefined;h.state='IDLE';h.thirst=h.hunger=30;
+  const pantry=C(r,c.storeContainers[0]);pantry.slots.fill(null);
+  const meal={uid:'test-meal',key:'cooked_meat',qty:2};pantry.slots[0]=meal;
+  pantry.slots[1]={uid:'test-flask',key:'water_flask',qty:1,charge:0};
+  pantry.slots[2]={uid:'test-delivery',key:'berries',qty:1,production:{jobId:'hj1',workerId:'h5'}};
+  stepHumans(r,hw,T0+1);expect(hw.people.h2.intent).toMatchObject({kind:'eat',target:c.storeEntityId});
+  expect(meal.qty).toBe(2);expect(h.hunger).toBe(30);
+  for(let ms=100;ms<=2000&&meal.qty===2;ms+=100)stepHumans(r,hw,T0+ms);
+  expect(Math.abs(h.gx-tx)+Math.abs(h.gy-ty)).toBe(1);expect(meal.qty).toBe(1);expect(h.hunger).toBe(64);expect(h.thirst).toBe(30);
+  expect(pantry.slots[1]?.charge).toBe(0);expect(pantry.slots[2]?.qty).toBe(1);
+});
