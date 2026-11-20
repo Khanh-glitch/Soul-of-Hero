@@ -24,7 +24,7 @@ import { computeCreatureEnvFactors } from '../veyra05/ecosystem';
 import { stepHusbandry, inspectPenAt } from './husbandry';
 import { stepPrimordialHost, damagePrimordialSummonsMelee, damagePrimordialSummonsProjectile, damagePrimordialSummonsAoE } from './primordials/host-bridge';
 import { beginDailyOfflineSettle, dateKey, endDailyOfflineSettle, syncRunDailyLedger } from './journey';
-import { humanContact, tickNeeds, witnessPlayerDefense, advanceElderPressure, advanceEvacuation, playerAtSea, elderCanonicalCreature, elderBodyArchived, recordArchivedElderDefeat, stepHumans, humanEventBoundary, stepHumanCombat, applyDamage as applyHumanDamage, humanWorldPosition, type ElderVolleyShot, type HumanShot } from './humanworld';
+import { humanContact, tickNeeds, witnessPlayerDefense, advanceElderPressure, advanceEvacuation, playerAtSea, playerVoyage, elderCanonicalCreature, elderBodyArchived, recordArchivedElderDefeat, stepHumans, humanEventBoundary, stepHumanCombat, applyDamage as applyHumanDamage, humanWorldPosition, type ElderVolleyShot, type HumanShot } from './humanworld';
 import { stepG1b, settleCoreOwed, g1bGateOf, g1bDoorLabel, g1bEta, coreCastBlock, coreCastCommit, ensureOilSeeps, regrowNote, settleRegrowthAt, irSensorStatus, irSensorDownstream, restStep, dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, stepTenders, stepTenderStates, tenderBoundary, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit, carryLimit, invWeight, clearInteraction, clearPhysicalLine, withRunEntityRead, allRunEntities, stepBasePower, basePowerBoundary, powerAllocation, turretStatus, syncElectricDoors, electricDoorPowered, electricInterior, stepLootRespawn, migrateLootRespawn, initializeCabinets, territoryBoundary, territoryForecast, stepTerritory, spawnDrop } from './engine';
 
 export interface Input { up: boolean; down: boolean; left: boolean; right: boolean; mx: number; my: number; attack: boolean; attackPressed: boolean; roll: boolean; cancel: boolean; skill?: 'refined' | 'signature'; skillAim?: { uid:string; slot:number; mx:number; my:number; viewX:number; viewY:number }; viewX?: number; viewY?: number }
@@ -83,7 +83,7 @@ export function rayLen(r: RunState, x: number, y: number, a: number, max: number
 
 // ---------- player damage ----------
 export function hurtPlayer(gs: GameState, dmg: number, fx0: number, fy0: number, cause: string, now: number, kb = 140, groundHit = cause === 'fire' || cause === 'lava') {
-  const r = gs.run!; const p = r.player; if (p.dead) return false;
+  const r = gs.run!; const p = r.player; if (p.dead || playerAtSea(r)) return false;
   if ((r.spiritTransit && now < r.spiritTransit.arriveAt) || p.invuln > 0 || (p.iceUntil !== undefined && now < p.iceUntil) || p.action?.kind === 'roll') { fx('dodge', { x: p.x, y: p.y }); return false; }
   // Item set v3 armour model: head + body + legs + feet add into the capped general reduction; boots additionally cut
   // damage that comes from the ground, and leg armour cuts knock-back and the hurt stagger.
@@ -748,7 +748,7 @@ function traceOnly(gs: GameState, m: Creature, dtMs: number, now: number): 'adva
   if (!['idle', 'wander', 'track', 'chase'].includes(m.state) || (m.knows && m.knows.kind !== 'trace')) return 'defer';
   // Player combat and in-flight effects require the full actor simulation, not a guess.
   const sight = (darkness(r, now) > 0.45 ? BAL.ai.sightNight : BAL.ai.sightDay) * (d.sight / 100) * (weatherAt(r, now) === 'fog' ? 0.6 : 1) * (p.sheltered ? 0.5 : 1);
-  if (!p.dead && dist(m.x, m.y, p.x, p.y) < sight && los(r, m.x, m.y, p.x, p.y)) return 'defer';
+  if (!p.dead && !playerAtSea(r) && dist(m.x, m.y, p.x, p.y) < sight && los(r, m.x, m.y, p.x, p.y)) return 'defer';
   if (r.combat && (r.combat.projectiles.length || r.combat.hazards.length)) return 'defer';
   for (const key in r.sources) { const st = r.sources[key]; if (st.fire && st.fire > r.clock.simMs && dist(m.x, m.y, (+key % WW) * TILE + 8, Math.floor(+key / WW) * TILE + 8) < 26) return 'defer'; }
   const tr = m.knows?.kind === 'trace' ? null : encounteredTrace(r, m, now);
@@ -1521,7 +1521,7 @@ export function tickHaz(gs: GameState, dtMs: number, now: number, offlineHumanOn
         }
       }
     }
-    else {
+    else if (!playerAtSea(r)) {
       const dot = h.kind === 'pool' || h.effect === 'dot' || h.kind === 'sweep' || h.style === 'burn';
       if (dot) { h.tickAcc = (h.tickAcc || 0) - dtMs; if (h.tickAcc <= 0 && inHaz(h, p.x, p.y)) { h.tickAcc = h.kind === 'pool' ? 500 : 220; hurtPlayer(gs, h.kind === 'pool' ? 5 : h.dmg * 0.45, h.x, h.y, h.elder ? (lookupElderDef(h.elder)?.name ?? 'hazard') : 'hazard', now, 30, h.kind === 'pool' || h.style === 'burn'); if (h.kind === 'pool') p.rad = Math.min(100, p.rad + 4); } }
       else if (!h.hit && inHaz(h, p.x, p.y)) { if (hurtPlayer(gs, h.dmg, h.x, h.y, h.elder ? (lookupElderDef(h.elder)?.name ?? 'hazard') : 'hazard', now, h.effect === 'knock' ? 320 : 140)) { h.hit = true; if (h.effect === 'slow') slowTimer = 2200; if (h.effect === 'root') rootTimer = 900; if (h.effect === 'pull') { const a = Math.atan2(h.y - p.y, h.x - p.x); moveBody(r, p, Math.cos(a) * 14, Math.sin(a) * 14, 4, 'player'); } } }
@@ -1690,7 +1690,7 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
       const evac = advanceEvacuation(r, r.humanWorld, t);
       // A confirmed arrival ashore is the only event that ends the player's run by sea; it stops
       // this settlement slice so no later slice can act after the run is finalized.
-      if (evac.playerArrived) break;
+      if (evac.playerArrived) return;
       stepHumans(r, r.humanWorld, t);
     }
     syncDrops(t);
@@ -1765,29 +1765,34 @@ export function tick(gs: GameState, inp: Input, dtMs: number, now: number) {
   const weather = weatherAt(r, now);
   const slot = Math.floor((now - r.startedAt + r.qaOffset) / (BAL.weather.slotMinutes * 60000));
   if (slot !== r.clock.weatherSlot) { r.clock.weatherSlot = slot; fx('weather', { w: weather }); }
-  // A body aboard a vessel at sea cannot walk, roll or swing: the voyage owns its position.
-  tickPlayer(gs, playerAtSea(r) ? { ...inp, up: false, down: false, left: false, right: false, attack: false, attackPressed: false, roll: false, cancel: false, skill: undefined } : inp, dtMs, now);
-  if (activeFloor(r) === 0) maybeSlideVeyraWindow(gs, markDirty);
-  tickCreatures(gs, dtMs, now);
+  // The last island projection stays loaded for NPCs and committed defenses;
+  // it is no longer a player-centred encounter, movement or discovery window.
+  const atSea = playerAtSea(r);
+  if (!atSea) {
+    tickPlayer(gs, inp, dtMs, now);
+    if (activeFloor(r) === 0) maybeSlideVeyraWindow(gs, markDirty);
+    tickCreatures(gs, dtMs, now);
+  }
   if(r.humanWorld){const [ox,oy]=windowOrigin(r);for(const h of Object.values(r.humanWorld.people))if((h.iceUntil??0)>now && !h.transit && h.state!=='DEAD' && h.state!=='EVACUATED' && h.floor===activeFloor(r))freezeAura(r,(h.gx-ox+.5)*TILE,(h.gy-oy+.5)*TILE,now);}
   if (r.humanWorld) stepHumanCombat(r, r.humanWorld, now, (m, dmg, angle, attacker) => damageCreature(gs, m, dmg, angle, now,130,attacker.actorId), (h, dmg) => { const [ox, oy] = windowOrigin(r); hurtPlayer(gs, dmg, (h.gx - ox + 0.5) * TILE, (h.gy - oy + 0.5) * TILE, h.name, now, 200); }, (shot) => spawnHumanShot(gs, shot), cast=>releaseCoreEffect(gs,cast,now));
   tickDragonDive(gs, dtMs, now);
   tickTurrets(gs, dtMs, now);
-  tickProj(gs, dtMs, now);
+  tickProj(gs, dtMs, now, atSea ? { inertEnemy: true } : undefined);
   tickHaz(gs, dtMs, now);
-  tickSurvival(gs, dtMs, now);
+  if (!atSea) tickSurvival(gs, dtMs, now);
   stepFires(gs, now, dtMs);
   // drops: physics + magnet + auto pickup through the dispatcher
   const p = r.player;
   for (const e of Object.values(r.entities)) {
     if (e.kind !== 'drop' || !onActiveFloor(r, e)) continue;
     if (e.vx || e.vy) { e.x += e.vx! * dtMs / 1000; e.y += e.vy! * dtMs / 1000; e.vx! *= 0.88; e.vy! *= 0.88; if (Math.abs(e.vx!) + Math.abs(e.vy!) < 2) { e.vx = 0; e.vy = 0; } }
-    if (p.dead || e.manual) continue; // G1B: something put down on purpose stays put; F picks it up
+    if (atSea || p.dead || e.manual) continue; // G1B: something put down on purpose stays put; F picks it up
     const d = dist(e.x, e.y, p.x, p.y); const age = now - (e.born || 0);
     if (age > 380 && d < 30) { const s = C(r, e.c!)?.slots[0]; if (!s) continue; const full = ITEMS[s.key].max > 1 && !s.meta ? false : !C(r, 'inv').slots.includes(null);
       if (full) continue; e.x += (p.x - e.x) * Math.min(1, dtMs / 90); e.y += (p.y - e.y) * Math.min(1, dtMs / 90);
       if (d < 9) { const key = s.key, q = s.qty; const res = dispatch(gs, { id: 'ap_' + e.id + '_' + q, type: 'pickup', eid: e.id }, now); if (res.ok) fx('pickup', { x: p.x, y: p.y, key, q }); else e.born = now + 1500; } }
   }
+  if (atSea) return;
   // bag recovery achievement
   // legal renewing population
   r.clock.respawnAcc += dtMs;
@@ -1849,7 +1854,7 @@ export function settle(gs: GameState, now: number, silent = false, interruptTran
   if(interruptTransit && r.spiritTransit && gap>BAL.creatorCoreDemon.teleportMs){delete r.spiritTransit;receipt(r,start,'core.spirit.offline_abort','Transit interrupted while away');if(!silent)report.push('Teleport interrupted while away; you remained at the departure point.');}
   initializeCabinets(r);
   markDirty(); // Continue may replace the run object while retaining its ID.
-  let sheltered = isSheltered(r, p.x, p.y); p.sheltered = sheltered;
+  let sheltered = !playerAtSea(r) && isSheltered(r, p.x, p.y); p.sheltered = sheltered;
   for (const e of Object.values(r.entities)) if (e.turret) e.turret.tracking = false;
   // Bounded, deterministic playback starts only at saved positions with actual
   // local evidence. Other roaming/combat remains unresolved, not fabricated.
@@ -1883,6 +1888,7 @@ export function settle(gs: GameState, now: number, silent = false, interruptTran
   const territoryBefore = new Map(Object.values(r.entities).filter(e=>e.kind==='struct' && (e.owner===undefined||e.owner==='player') && e.hp!==undefined).map(e=>[e.id,{name:STRUCTS[e.type!]?.name||e.type||'Structure',hp:e.hp!}]));
   // Minute-sized survival integration, not frame replay; world helper splits further at weather/fire boundaries.
   while (t < end) {
+    const atSea = playerAtSea(r);
     const slotMs = BAL.weather.slotMinutes * 60000;
     const nextWeather = r.startedAt - r.qaOffset + (Math.floor((t - r.startedAt + r.qaOffset) / slotMs) + 1) * slotMs;
     let dtMs = Math.min(60000, end - t, nextWeather - t, seasonBoundaryAt(r, t));
@@ -1918,7 +1924,7 @@ export function settle(gs: GameState, now: number, silent = false, interruptTran
     const protectedByMask = C(r, 'eq').slots.some(s => s && ITEMS[s.key].mask);
     const radRate = zone === 7 ? 6 * (protectedByMask ? 0.8 / 7 : 1) * unit : 0;
     let damageRate = 0;
-    if (!p.dead) {
+    if (!atSea && !p.dead) {
       if (p.hunger < 1e-9) p.hunger = 0; if (p.thirst < 1e-9) p.thirst = 0;
       if (p.hunger > 0) dtMs = Math.min(dtMs, p.hunger / hungerRate);
       if (p.thirst > 0) dtMs = Math.min(dtMs, p.thirst / thirstRate);
@@ -1937,7 +1943,7 @@ export function settle(gs: GameState, now: number, silent = false, interruptTran
     }
     // B03-A: the thermal target is constant inside a slice; heater exhaustion and cold crossings end it.
     const thermalNow = thermalEvaluate(r, thermalEnvAt(t, sheltered));
-    if (!p.dead) dtMs = Math.min(dtMs, thermalBoundaryMs(r, thermalEnvAt(t, sheltered), p.warmth, thermalNow.target));
+    if (!atSea && !p.dead) dtMs = Math.min(dtMs, thermalBoundaryMs(r, thermalEnvAt(t, sheltered), p.warmth, thermalNow.target));
     // Date.now has finite precision; avoid a non-advancing sub-millisecond loop.
     const until = Math.min(end, nextWeather, t + Math.max(dtMs, 0.001)); dtMs = until - t;
     if (seasonClimate.wet) wetMs += dtMs;
@@ -1965,14 +1971,18 @@ export function settle(gs: GameState, now: number, silent = false, interruptTran
     } else {
       for (const e of Object.values(r.entities)) { const tc = e.turret; if (tc) tc.cooldown = Math.max(0, tc.cooldown - dtMs); }
     }
+    // If this settlement slice contained cast-off, integrate shore exposure
+    // only until the manifest left. Passage is provisioned from the vessel hold.
+    const voyage = playerVoyage(r);
+    const shoreMs = atSea ? 0 : voyage ? Math.max(0, Math.min(until, voyage.departAt ?? t) - t) : dtMs;
     if (r.rest) restStep(r, until);
-    if (!p.dead) p.warmth = thermalStep(p.warmth, thermalNow.target, dtMs / 60000);
-    for (const { e, st } of heatersInReach(r, { x: p.x, y: p.y })) {
+    if (shoreMs && !p.dead) p.warmth = thermalStep(p.warmth, thermalNow.target, shoreMs / 60000);
+    for (const { e, st } of voyage ? [] : heatersInReach(r, { x: p.x, y: p.y })) {
       const was = heatPrev.get(e.id);
       if (was && !st.active) receipt(r, until, 'heat.out', `${e.id}:${st.kind}:${st.code}`);
       heatPrev.set(e.id, st.active);
     }
-    if (shelterPrev && !isSheltered(r, p.x, p.y)) receipt(r, until, 'heat.shelter_lost', `${p.x.toFixed(0)},${p.y.toFixed(0)}`);
+    if (!voyage && shelterPrev && !isSheltered(r, p.x, p.y)) receipt(r, until, 'heat.shelter_lost', `${p.x.toFixed(0)},${p.y.toFixed(0)}`);
     if (pending.length && frames < 2400) {
       frames++; offlineImpacts = impacts; offlineQuiet = true;
       try {
@@ -1984,12 +1994,12 @@ export function settle(gs: GameState, now: number, silent = false, interruptTran
       if (frames === 2400) for (const m of pending) m.offlineUnresolvedAt = until;
     }
     t = until; r.clock.lastSimAt = t;
-    if (structureEpoch !== offlineStructureChange) { structureEpoch = offlineStructureChange; sheltered = isSheltered(r, p.x, p.y); p.sheltered = sheltered; }
+    if (structureEpoch !== offlineStructureChange) { structureEpoch = offlineStructureChange; sheltered = !voyage && isSheltered(r, p.x, p.y); p.sheltered = sheltered; }
     shelterPrev = sheltered;
-    if (p.dead) continue;
-    p.hunger = Math.max(0, p.hunger - hungerRate * dtMs); p.thirst = Math.max(0, p.thirst - thirstRate * dtMs);
-    if (radRate) p.rad = Math.min(100, p.rad + radRate * dtMs);
-    p.hp -= damageRate * dtMs;
+    if (!shoreMs || p.dead) continue;
+    p.hunger = Math.max(0, p.hunger - hungerRate * shoreMs); p.thirst = Math.max(0, p.thirst - thirstRate * shoreMs);
+    if (radRate) p.rad = Math.min(100, p.rad + radRate * shoreMs);
+    p.hp -= damageRate * shoreMs;
     if (Math.abs(p.hp - 1) < 1e-8) p.hp = 1;
     if (p.hp <= 1e-8) { killPlayer(gs, t, 'exposure while offline'); if (!silent) report.push('You did not survive the time away. Your bag lies where you rested.'); }
   }
@@ -2019,7 +2029,8 @@ export function settle(gs: GameState, now: number, silent = false, interruptTran
   report.push('Nearby evidenced trails may be followed while away; other encounters remain unresolved.');
   for (const t of standbyTurrets) report.push(`Turret ${t.tx},${t.ty} was armed on a generator with fuel when you left: it kept its power reservation while fuel lasted. While away it engages lawful targets — same sight, range, cooldown and arrow cost as while you play.`);
   for (const impact of impacts.values()) report.push(impact.destroyed ? `${impact.name} was destroyed while away.` : `${impact.name}: ${Math.round(impact.before)} → ${Math.round(impact.after)} HP while away.`);
-  if (!p.dead) {
+  if (playerAtSea(r)) report.push('You are still at sea.');
+  else if (!p.dead) {
     const nearby = r.traces.filter(tr => dist(p.x, p.y, tr.x, tr.y) <= 64 && los(r, p.x, p.y, tr.x, tr.y, true)).length;
     report.push(`Here: ${sheltered ? 'sheltered' : 'not sheltered'}; ${weatherAt(r, end)}; ${nearby} visible nearby footprint${nearby === 1 ? '' : 's'}.`);
   }
@@ -2048,7 +2059,7 @@ export function bearTrapPrompt(r: RunState, e: Entity): string {
   return `Bear trap unarmed · ${t.uses} hits · E arms for 1 ${plate}`;
 }
 export function findInteract(gs: GameState, now: number): Interact | null {
-  const r = gs.run!; const p = r.player; if (p.dead) return null; let best: Interact | null = null; let bd = 30;
+  const r = gs.run!; const p = r.player; if (p.dead || playerAtSea(r)) return null; let best: Interact | null = null; let bd = 30;
   const fx0 = p.x + Math.cos(p.aim) * 6, fy0 = p.y + Math.sin(p.aim) * 6;
   for (const e of Object.values(r.entities)) {
     if ((e.kind === 'drop' && !e.manual) || !onActiveFloor(r, e)) continue; const d = dist(fx0, fy0, e.x, e.y); if (d > bd || !clearInteraction(r, e)) continue;

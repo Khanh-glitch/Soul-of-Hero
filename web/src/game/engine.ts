@@ -2357,6 +2357,7 @@ export function dispatch(gs: GameState, it: Intent, now: number): Result {
   if (now < r.clock.lastSimAt) return { ok: false, reason: 'Command predates the committed world clock.' };
   // No command can transact after the run boundary while the caller awaits settlement.
   if (phaseOf(r, now) === 'expired') return { ok: false, reason: 'Run has expired.' };
+  if (playerAtSea(r) && it.type !== 'abandon') return { ok: false, reason: 'Already at sea. Island actions are unavailable during the voyage.' };
   const res = apply(gs, r, it, now);
   if (res.ok) {
     // Only a successful withdrawal/use/drop can empty a public crate. Its authored

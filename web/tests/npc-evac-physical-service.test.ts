@@ -13,7 +13,10 @@
  */
 import { describe, expect, it } from 'vitest';
 import { HOUR, WW, type GameState } from '../src/game/core';
-import { newGame, startRun, mkStack, dispatch, markDirty } from '../src/game/engine';
+import { newGame, startRun, mkStack, dispatch, markDirty, spawnDrop } from '../src/game/engine';
+import { bindCombat, findInteract, HAZ, hurtPlayer, settle, tick, type Input } from '../src/game/sim';
+import { settleWithReturn } from '../src/game/return-report';
+import { validate } from '../src/game/persist';
 import { setActiveLayout } from '../src/game/world';
 import { layoutIdAt } from '../src/veyra05/scenes';
 import { auToTile, windowAround } from '../src/veyra05/frame';
@@ -199,6 +202,63 @@ describe('physical evacuation service', () => {
     expect(t.playerAboard).toBe(false);expect(t.manifest).toHaveLength(0);expect(t.departures).toHaveLength(0);
     r.player.x=x;expect(playerBoardEvac(r,hw,t.tripId,at+2).ok).toBe(true);const item=mkStack(r,'wood',2);r.custody.inv.slots[0]=item;
     expect(departEvac(r,hw,t.tripId,at+3).ok).toBe(true);expect(t.departures![0].passengers[0].cargo).toContainEqual({uid:item.uid,key:'wood',qty:2});
+  });
+  function playerAtQuay() {
+    const gs=runAt(),r=gs.run!,hw=r.humanWorld!,t=trip(hw),at=atHour(gs,evacSchedule().openHour);
+    const [ax,ay]=r.sourceMap!.veyra!.originAu;
+    r.player.x=(t.siteGx-ax*2+.5)*16;r.player.y=(t.siteGy-ay*2+.5)*16;
+    r.clock.lastSimAt=at;
+    expect(playerBoardEvac(r,hw,t.tripId,at).ok).toBe(true);
+    return {gs,r,hw,t,at};
+  }
+  it('removes the shore body at cast-off, not when booking the seat',()=>{
+    const {gs,r,hw,t,at}=playerAtQuay(),p=r.player;
+    const drop=spawnDrop(r,'wood',1,p.x,p.y,at-1000,undefined,false);
+    const tx=(id:string)=>dispatch(gs,{type:'pickup',eid:drop.id,id},at);
+    expect(hurtPlayer(gs,1,p.x,p.y,'quay',at,0)).toBe(true);
+    p.action={kind:'roll',angle:0,t:5,dur:400};p.vx=45;
+    expect(departEvac(r,hw,t.tripId,at).ok).toBe(true);
+    expect(p.action).toBeNull();expect(p.vx).toBe(0);
+    expect(tx('remote-pickup')).toMatchObject({ok:false,reason:expect.stringContaining('at sea')});
+    expect(hurtPlayer(gs,999,p.x,p.y,'quay',at+1)).toBe(false);
+    expect(findInteract(gs,at+1)).toBeNull();
+    const before=[p.x,p.y,p.hp,p.rad,p.warmth,p.thirst,p.hunger];
+    bindCombat(r);HAZ.push({kind:'pool',style:'pool',x:p.x,y:p.y,r:20,t:0,tell:0,dur:3000,dmg:9,owner:'quay-test'});
+    const input:Input={up:false,down:false,left:false,right:true,mx:p.x+40,my:p.y,attack:true,attackPressed:true,roll:true,cancel:false};
+    tick(gs,input,50,at+50);
+    expect([p.x,p.y,p.hp,p.rad,p.warmth,p.thirst,p.hunger]).toEqual(before);
+    expect(r.entities[drop.id]).toBeDefined();expect(p.action).toBeNull();
+    expect(r.clock.lastSimAt).toBe(at+50);expect(HAZ.find(h=>h.owner==='quay-test')?.t).toBe(50);
+  });
+  it.each([false,true])('does not settle dock exposure or thaw island commands after reload (stranded=%s)',stranded=>{
+    const {gs,r,hw,t,at}=playerAtQuay();expect(departEvac(r,hw,t.tripId,at).ok).toBe(true);
+    if(stranded)expect(failEvacTrip(r,hw,t.tripId,at,'disabled offshore').ok).toBe(true);
+    r.player.warmth=2;r.player.thirst=0;r.player.hp=1;
+    const copy=validate(JSON.parse(JSON.stringify(gs)));expect(copy).not.toBeNull();
+    const saved=copy!.run!,p=saved.player,ticket=saved.humanWorld!.evacuation[t.tripId];
+    settle(copy!,at+1000,true);expect(p.hp).toBe(1);expect(p.warmth).toBe(2);expect(p.dead).toBe(false);
+    expect(ticket.manifest).toEqual(t.manifest);expect(ticket.phase).toBe(stranded?'FAILED':'IN_TRANSIT');
+    expect(saved.humanWorld!.playerEvacArrivedAt).toBeUndefined();
+    expect(dispatch(copy!,{id:'remote',type:'drop',c:'inv',slot:0},at+1000).ok).toBe(false);
+    expect(dispatch(copy!,{id:'quit',type:'abandon'},at+1000).ok).toBe(true);expect(copy!.run).toBeNull();
+  });
+  it('reports a confirmed offshore arrival, not a 336-hour expiry, when Continue crosses its deadline',()=>{
+    const {gs,r,hw,t,at}=playerAtQuay();expect(departEvac(r,hw,t.tripId,at).ok).toBe(true);
+    // Controlled last 50 ms of the logged voyage; not a full campaign replay.
+    r.clock.lastSimAt=t.arriveAt!-50;
+    const {report}=settleWithReturn(gs,t.arriveAt!+500);
+    expect(gs.run).toBeNull();expect(gs.profile.history[0].ending).toBe('evacuated');
+    expect(report!.away.toAt).toBe(t.arriveAt);expect(report!.away.expired).toBe(false);expect(report!.summary).toMatch(/safe water/);
+  });
+  it('rejects a save with an unlogged departure, switched passenger or invented player arrival',()=>{
+    const {gs,r,hw,t,at}=playerAtQuay();expect(departEvac(r,hw,t.tripId,at).ok).toBe(true);
+    for(const corrupt of ['missing leg','swapped seat','early arrival']) {
+      const copy=JSON.parse(JSON.stringify(gs)),world=copy.run.humanWorld,service=world.evacuation[t.tripId];
+      if(corrupt==='missing leg')service.departures=[];
+      else if(corrupt==='swapped seat')service.departures[0].passengers[0].seat++;
+      else {world.playerEvacArrivedAt=at;world.playerEvacTripId=t.tripId;}
+      expect(validate(copy)).toBeNull();
+    }
   });
   it('loads a real ration from the player, only at the matching berth and before departure',()=>{
     const gs=runAt(),r=gs.run!,hw=r.humanWorld!,t=trip(hw),at=atHour(gs,evacSchedule().openHour);

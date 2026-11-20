@@ -42,7 +42,8 @@ import { FieldNoteCard, FieldNotesPanel } from './FieldNotes';
 import { ReturnDigest } from './ReturnChronicle';
 import { RestPanel } from './RestPanel';
 import { HumanPanel } from './HumanPanel';
-import { humanContact } from '../game/humanworld';
+import { VoyageView } from './VoyageView';
+import { humanContact, playerAtSea, playerVoyage } from '../game/humanworld';
 import { InventoryPanel, ContainerPanel, CraftPanel, BuildPanel, MapPanel, SkillsPanel, MenuPanel, VendorPanel, EscrowPanel, EvacPanel, ReportPanel } from './panels';
 import { deriveCues } from '../game/presentation-cues';
 import { experienceForPhase, experienceFromCue, stagedExperience, type ExperienceEvent } from '../game/experience';
@@ -309,7 +310,7 @@ export default function Game({
   };
 
   const interact = (stairsOnly = false) => {
-    const r = gs.run; if (!r) return;
+    const r = gs.run; if (!r || playerAtSea(r)) return;
     if ((stairsOnly || !target.current) && r.layoutId?.startsWith('veyra05-') && !r.player.dead && !r.player.vehicle && !panelRef.current) {
       const ww = getWindowWorld(r.layoutId);
       const tx = Math.floor(r.player.x / TILE), ty = Math.floor(r.player.y / TILE);
@@ -372,6 +373,7 @@ export default function Game({
     const down = (e: KeyboardEvent) => {
       if (e.target instanceof HTMLElement && (e.target.matches('input, textarea, select') || e.target.isContentEditable)) { if (e.code === 'Escape') e.target.blur(); return; }
       initAudio(); const r = gs.run; if (!r) return;
+      if (playerAtSea(r)) { if (e.code === 'Escape') setPanel(current=>current ? null : {kind:'menu'}); return; }
       if (keyMap[e.code]) { if (!panelRef.current) (inp.current as any)[keyMap[e.code]] = true; e.preventDefault(); return; }
       if (e.code === 'Tab') { e.preventDefault(); toggle('skills'); return; }
       if (e.code === 'F9') {
@@ -435,7 +437,7 @@ export default function Game({
     };
     const up = (e: KeyboardEvent) => { if (keyMap[e.code]) (inp.current as any)[keyMap[e.code]] = false; const a=coreAimRef.current;if(a && a.code===e.code){coreAimRef.current=null;setCoreAim(null);const selected=gs.run && activeStack(gs.run);if(!panelRef.current && selected?.uid===a.uid && gs.run && !gs.run.player.dead){const vx=Math.round(cam.x),vy=Math.round(cam.y),spirit=selected.key==='core_demon' && a.mode==='signature';const dest=spiritTarget.current;if(spirit && (!dest||dest.uid!==a.uid)){toast('Open M and select explored safe ground first.');return;}inp.current.skill=a.mode;inp.current.skillAim={uid:a.uid,slot:gs.run.player.active,mx:spirit?dest!.x:mouse.current.x+vx,my:spirit?dest!.y:mouse.current.y+vy,viewX:vx,viewY:vy};}} };
     const blur = () => { const i = inp.current; i.up = i.down = i.left = i.right = i.attack = false; i.skill=undefined;i.cancel=true;coreAimRef.current=null;setCoreAim(null); };
-    const wheel = (e: WheelEvent) => { const r = gs.run; if (!r || panelRef.current) return; if (buildModeRef.current) { setBuildTool(t => { const all: BuildTool[] = [...BUILD_KIT, 'upgrade', 'repair', 'reclaim']; const nx = all[(all.indexOf(t) + (e.deltaY > 0 ? 1 : all.length - 1)) % all.length]; applyTool(nx); return nx; }); return; } r.player.active = (r.player.active + (e.deltaY > 0 ? 1 : 7)) % 8; rerender(); };
+    const wheel = (e: WheelEvent) => { const r = gs.run; if (!r || panelRef.current || playerAtSea(r)) return; if (buildModeRef.current) { setBuildTool(t => { const all: BuildTool[] = [...BUILD_KIT, 'upgrade', 'repair', 'reclaim']; const nx = all[(all.indexOf(t) + (e.deltaY > 0 ? 1 : all.length - 1)) % all.length]; applyTool(nx); return nx; }); return; } r.player.active = (r.player.active + (e.deltaY > 0 ? 1 : 7)) % 8; rerender(); };
     const vis = () => { if (document.hidden) { if (!qaMode) { if (saveSync(gs)) flushJourney(gs, false, journeyRef.current); void save(gs); } blur(); } };
     window.addEventListener('keydown', down); window.addEventListener('keyup', up); window.addEventListener('blur', blur); window.addEventListener('wheel', wheel, { passive: true }); document.addEventListener('visibilitychange', vis); window.addEventListener('beforeunload', vis as any);
     return () => { window.removeEventListener('keydown', down); window.removeEventListener('keyup', up); window.removeEventListener('blur', blur); window.removeEventListener('wheel', wheel); document.removeEventListener('visibilitychange', vis); window.removeEventListener('beforeunload', vis as any); };
@@ -540,7 +542,7 @@ export default function Game({
       target.current = findInteract(gs, now);
       pfx.update(simDt,now);vfxDirector.update(simDt);pfx.tickStats(dt);
       consumeFX(e => { if(!vfxDirector.onEvent(e,gs)) pfxFromSimEvent(e); sfx(e); if(e.type==='spiritDepart'){spiritTarget.current=null;setToasts(t=>t.filter(v=>!v.text.startsWith('Destination set.')));toast('Departed. The cart stays behind.');} else if(e.type==='spiritArrive'){setToasts(t=>t.filter(v=>!v.text.startsWith('Destination set.')&&!v.text.startsWith('Departed.')));toast('Arrived — Signature charge spent.','ok');scheduleSave();} else if (e.type === 'toast') toast(e.text); else if (e.type === 'hitstop') hitstop.current = Math.max(hitstop.current, e.ms); else if (e.type === 'banner') setBanner({ text: e.text, sub: e.sub, id: now }); else if (e.type === 'discover') setBanner({ text: e.name, sub: 'Discovered', id: now }); else if (e.type === 'region') setBanner(b => (b && now - b.id < 2500 ? b : { text: e.name, id: now })); else if (e.type === 'pickup') { fieldActionsRef.current.add('harvested'); scheduleSave(); } else if (e.type === 'struct.destroyed') scheduleSave(); });
-      draw(g, gs, now, dt, { buildType: buildRef.current, reclaim: reclaimRef.current || repairRef.current || upgradeRef.current, mouseX: i.mx, mouseY: i.my, target: target.current, time: t, working: panelRef.current?.kind === 'container' });
+      if (!playerAtSea(gs.run)) draw(g, gs, now, dt, { buildType: buildRef.current, reclaim: reclaimRef.current || repairRef.current || upgradeRef.current, mouseX: i.mx, mouseY: i.my, target: target.current, time: t, working: panelRef.current?.kind === 'container' });
       // close container panels when walking away
       const P = panelRef.current; if (P?.eid && gs.run.entities[P.eid]) { const e = gs.run.entities[P.eid]; if ((Math.hypot(e.x - gs.run.player.x, e.y - gs.run.player.y) > 3.4 * TILE || (e.kind === 'struct' && !clearWallLine(gs.run, gs.run.player, e)))) setPanel(null); } else if (P?.eid && !gs.run.entities[P.eid]) setPanel(null);
       // VISUAL ARENA audio: listener follows the camera; music is scheduled at
@@ -585,7 +587,7 @@ export default function Game({
   const onMouseMove = (e: React.MouseEvent) => { const s = scaleRef.current; mouse.current = { x: (e.clientX - offRef.current.x) / s, y: (e.clientY - offRef.current.y) / s }; };
   const onMouseDown = (e: React.MouseEvent) => {
     const shiftHeld = e.shiftKey; // B01: Shift+click in repair mode reinforces a wall/door with one Iron Plate
-    initAudio(); const r = gs.run; if (!r) return; onMouseMove(e);
+    initAudio(); const r = gs.run; if (!r || playerAtSea(r)) return; onMouseMove(e);
     if (e.button === 2) { setBuildMode(false); coreAimRef.current=null;setCoreAim(null);inp.current.skill=undefined;inp.current.cancel = true; setBuildType(null); setReclaim(false); setRepairMode(false); setUpgradeMode(false); return; }
     if (e.button !== 0) return;
     if (panel || coreAimRef.current) return;
@@ -771,9 +773,11 @@ export default function Game({
   // A suggestion that has actually been displayed counts as "seen" (never as progress).
   useEffect(() => { if (trackView?.ref.type === 'lesson' && lessonState(journeyRef.current, trackView.ref.id).status === 'unseen') { const id = trackView.ref.id; setJourney({ ...journeyRef.current, lessons: { ...journeyRef.current.lessons, [id]: { ...lessonState(journeyRef.current, id), status: 'seen' } } }); } }, [trackView?.ref.id]);
 
+  const voyage = playerVoyage(r);
   return <div style={{ position: 'fixed', inset: 0, cursor: buildType || reclaim || repairMode || upgradeMode ? 'cell' : 'crosshair' }} onMouseMove={onMouseMove} onMouseDown={onMouseDown} onMouseUp={onMouseUp} onContextMenu={e => e.preventDefault()}>
     <div ref={stageRef} className="stage" style={{ transform: `translate(${off.x}px, ${off.y}px) scale(${scale})` }}>
       <canvas ref={cvRef} className="px" width={VIEW_W} height={VIEW_H} style={{ width: VIEW_W, height: VIEW_H, imageRendering: 'pixelated' }} />
+      {voyage ? <VoyageView trip={voyage} at={r.clock.lastSimAt} onMenu={()=>setPanel({kind:'menu'})} /> : <>
       {criticalEdge && <div className={`danger-vignette ${vp.reduceFlash ? 'soft' : ''}`} aria-hidden="true" />}
 
       {/* TOP-LEFT COLUMN: Vitals + Urgent Danger Rail + Thermal Context Card */}
@@ -886,7 +890,6 @@ export default function Game({
         onJump={handleJump}
         onClose={() => setPanel(null)} onOpenNotes={() => setPanel({ kind: 'notes' })} />}
       {panel?.kind === 'skills' && <SkillsPanel api={api} />}
-      {panel?.kind === 'menu' && <MenuPanel api={api} qaMode={qaMode} returnHistory={returnHistory} onSave={() => qaMode ? Promise.resolve(false) : save(gs)} onQuit={async () => { if (qaMode) { onExit(); return; } if (await save(gs)) onExit(); else toast('Save failed; staying in the run.', 'bad'); }} />}
       {panel?.kind === 'menu' && <div className="panel absolute fadein scroll" style={{ left: 6, top: 34, width: 198, maxHeight: 306, overflowY: 'auto', padding: 6 }} onMouseDown={e => e.stopPropagation()}>
         <div className="panel-h" style={{ marginBottom: 4 }}>Presentation</div>
         <PresentationPanel />
@@ -896,7 +899,7 @@ export default function Game({
       {panel?.kind === 'rest' && panel.eid && <RestPanel api={api} eid={panel.eid} />}
       {panel?.kind === 'evac' && panel.eid && <EvacPanel api={api} eid={panel.eid} />}
       {panel?.kind === 'human' && panel.actorId && <HumanPanel key={panel.actorId} api={api} actorId={panel.actorId} onClose={() => setPanel(null)} />}
-      {panel?.kind === 'report' && <ReportPanel api={api} lines={panel.lines || []} report={panel.report ?? null} history={returnHistory} />}
+
       <DragGhost />
       {p.dead && <DeathRecoveryOverlay gs={gs} onRespawn={() => act('respawn')} />}
       {qaOpen && !p.dead && !panel && <QaSandboxDrawer
@@ -921,6 +924,9 @@ export default function Game({
         bikeDemoState={bikeDemoState}
         onClose={() => setQaOpen(false)}
       />}
+      </>}
+      {panel?.kind === 'report' && <ReportPanel api={api} lines={panel.lines || []} report={panel.report ?? null} history={returnHistory} />}
+      {panel?.kind === 'menu' && <MenuPanel api={api} qaMode={qaMode} returnHistory={returnHistory} onSave={() => qaMode ? Promise.resolve(false) : save(gs)} onQuit={async () => { if (qaMode) { onExit(); return; } if (await save(gs)) onExit(); else toast('Save failed; staying in the run.', 'bad'); }} />}
     </div>
     {import.meta.env.VITE_FX_TEST === '1' && <SpiritVfxEditor gs={gs} top={off.y + Math.round(62 * scale) + 4} right={Math.max(0, window.innerWidth - off.x - VIEW_W * scale) + 8} viewport={{left:off.x,top:off.y,scale,width:VIEW_W,height:VIEW_H}} />}
   </div>;

@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { playerAtSea } from '../game/humanworld';
 import { HOUR } from '../game/core';
 import {
   classifyOfflineReturn,
@@ -287,7 +288,7 @@ export function ReturnChronicle({
           {activeReport.next.length ? activeReport.next.slice(0, 2).join(' ') : grouped.criticalCount || grouped.warnCount ? 'Review the current alerts before heading out.' : 'No urgent physical follow-up recorded. Choose your next step.'}
         </div>
         <button className="btn gold" style={{ fontSize: 11, flex: '0 0 auto' }} onClick={() => api.open(null)}>
-          Enter the Island
+          {api.gs.run && playerAtSea(api.gs.run) ? 'Return to vessel' : 'Enter the Island'}
         </button>
       </div>
     </Panel>

@@ -13,7 +13,7 @@ import { ReturnChronicle } from './ReturnChronicle';
 import { CabinetReadout } from './HomeStatus';
 import { StationConsole } from './StationConsole';
 import { ResearchFamilies } from './ResearchFamilies';
-import { serviceAtBeacon, evacBerthStatus } from '../game/humanworld';
+import { serviceAtBeacon, evacBerthStatus, playerAtSea } from '../game/humanworld';
 import { C, countItem, invWeight, isRagnarok, runHours, cartWeight, cartLimit, carryLimit, spaceFor, phaseOf, tenderStatus, gardenEnvironment, weatherAt, isWet, isSheltered, wetOutlook, turretStatus, industrialStatus, powerAllocation, connectedPower, offlineSurvivalEstimate, territoryForecast, claimAt, structureRepairCost } from '../game/engine';
 import { getWorld, ZONES } from '../game/world';
 import { recipeOutputs } from '../game/engine';
@@ -541,18 +541,18 @@ export function MenuPanel({ api, onQuit, onSave, qaMode = false, returnHistory =
     <div className="flex flex-wrap gap-1">
       <button className="btn gold" onClick={() => api.open(null)}>Resume</button>
       {!qaMode && <button className="btn" onClick={async () => { const ok = await onSave(); api.toast(ok ? 'Saved locally.' : 'Save failed. Your changes are not confirmed on disk.'); }}>Save now</button>}
-      <button className="btn" onClick={() => api.open({ kind: 'notes' })}>Field Notes [N]</button>
+      {!playerAtSea(r) && <button className="btn" onClick={() => api.open({ kind: 'notes' })}>Field Notes [N]</button>}
       {returnHistory.length > 0 && <button className="btn" onClick={() => api.open({ kind: 'report', lines: [], report: returnHistory[0].report })}>Return Log ({returnHistory.length})</button>}
       <button className="btn" onClick={onQuit}>{qaMode ? 'Leave QA to title' : 'Save & quit to title'}</button>
     </div>
     {qaMode && <div className="console-col" style={{ marginTop: 4, color: 'var(--warn)', fontSize: 9 }}>ISOLATED QA SESSION · autosave, manual save and browser-exit writes are disabled. Your production save is untouched.</div>}
-    <div style={{ fontSize: 10, marginTop: 5, color: '#e6d9bc', lineHeight: 1.2 }}>
+    {playerAtSea(r) ? <p>At sea. The voyage clock and hull condition continue while you are away; island hazards cannot reach this vessel.</p> : <div style={{ fontSize: 10, marginTop: 5, color: '#e6d9bc', lineHeight: 1.2 }}>
       <b>Before you leave</b> · {isSheltered(r, r.player.x, r.player.y) ? 'Sheltered here' : 'Not sheltered here'} · Weather: {weatherAt(r, api.now())}.<br />
       Hunger {Math.round(r.player.hunger)} / thirst {Math.round(r.player.thirst)} / HP {Math.round(r.player.hp)}. Without new hazards: hunger empty ~{survival.hungerHours.toFixed(1)}h; thirst empty ~{survival.thirstHours.toFixed(1)}h; estimated survival ~{survival.survivalHours.toFixed(1)}h. This is not a guarantee: cold, radiation, fire, monsters, changing shelter or run expiry can end it sooner. Shelter prevents hunger-only death, not thirst or other hazards.<br />
       Next {Math.round(outlook.hours)}h outlook: ~{Math.round(outlook.wetHours)}h wet (global schedule estimate). Footprints fade; rain washes them faster. Change route, clear nearby creatures, wait, or use doors and terrain. No home is required.<br />
       {cabinets.length>0 && <>{cabinets.map(c=>{const f=territoryForecast(r,c);return <span key={c.id}>Cabinet {c.tx},{c.ty}: {f.funded ? `${f.hours.toFixed(1)}h upkeep` : 'UNFUNDED — structures decay'}. </span>})}<br /></>}
       While away: weather, fire, production and exposure advance. Limited trace playback can damage reachable structures; other encounters remain unresolved.
-    </div>
+    </div>}
     <div style={{ fontSize: 10, marginTop: 6 }} className="flex items-center gap-2">Volume <input type="range" min={0} max={1} step={0.05} value={pf.settings.volume} onChange={e => { pf.settings.volume = +e.target.value; setVolume(pf.settings.volume, pf.settings.muted); api.rerender(); }} /><label><input type="checkbox" checked={pf.settings.muted} onChange={e => { pf.settings.muted = e.target.checked; setVolume(pf.settings.volume, pf.settings.muted); api.rerender(); }} /> mute</label></div>
     <div style={{ fontSize: 10, marginTop: 6, color: '#cfc2dc', lineHeight: 1.15 }}>WASD move · mouse aim · LMB attack/use · Space dodge-roll · E interact · V repair structure · F pull cart · 1–8 / wheel quickbar · I inventory · C craft · B build (X reclaim) · R research · M map · Tab skills · RMB cancel cast/build · Esc menu</div>
     {qaMode && <div className="panel" style={{ padding: 4, marginTop: 6, background: '#1a0e10' }}><div style={{ fontSize: 10, color: '#ff9a7a' }}>QA time acceleration — marks this run QA · LOCAL/UNVERIFIED (not real elapsed time)</div>

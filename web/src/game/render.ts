@@ -326,7 +326,7 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
   if (r.humanWorld) {
     const [vox, voy] = isVeyra05Layout(r.layoutId || '') ? windowOrigin(r) : [0, 0];
     for (const trip of Object.values(r.humanWorld.evacuation)) {
-      if (trip.phase !== 'BOARDING' && trip.phase !== 'BERTHED') continue;
+      if (trip.phase !== 'BOARDING') continue; // BERTHED is the pilot's return leg, not an open dock
       const wx = (trip.siteGx - vox) * TILE, wy = (trip.siteGy - voy) * TILE;
       if (wx < cx - 60 || wx > cx + VIEW_W + 60 || wy < cy - 60 || wy > cy + VIEW_H + 60) continue;
       if (life.undergroundHides(r, wx, wy)) continue;

@@ -6,6 +6,7 @@ import { BAL, HOUR, TILE, type GameState, type RunState } from './core';
 import { ITEMS, STRUCTS, RECIPES } from './catalog';
 import { C, countItem, territoryForecast, tenderState, weatherAt, beginReceiptSink, endReceiptSink, owned } from './engine';
 import { settle } from './sim';
+import { playerVoyage, evacBerthStatus } from './humanworld';
 
 export type ReturnTone = 'ok' | 'gold' | 'warn' | 'bad' | 'muted';
 export interface ReturnRow {
@@ -149,6 +150,7 @@ function receiptRows(gs: GameState, receipts: { id: string; at: number; kind: st
 export function buildOfflineReturn(gs: GameState, before: Snap | null, receipts: { id: string; at: number; kind: string; detail: string }[], start: number, end: number, expired: boolean): OfflineReturnV1 {
   const out: Record<ReturnSectionId, Omit<ReturnRow, "source">[]> = { body: [], home: [], production: [], loss: [], world: [] };
   const r = gs.run; const after = captureReturnSnapshot(gs);
+  const voyage = r && playerVoyage(r);
   const gapMs = Math.max(0, end - start);
   // A duration by itself never proves that something happened. Quiet is decided
   // after comparing actual physical snapshots and committed receipts below.
@@ -163,7 +165,8 @@ export function buildOfflineReturn(gs: GameState, before: Snap | null, receipts:
     const shifts = ([['HP', bp.hp, ap.hp], ['Hunger', bp.hunger, ap.hunger], ['Thirst', bp.thirst, ap.thirst], ['Warmth', bp.warmth, ap.warmth]] as const)
       .filter(([, before, after]) => before - after >= 15);
     if (shifts.length) out.body.push({ id: 'shift:vitals', tone: vitalsDanger ? 'bad' : 'warn', text: `Observed decline: ${shifts.map(([name, before, after]) => `${name} ${r1(before)} → ${r1(after)}`).join(' · ')}`, receipts: [] });
-    out.body.push({ id: 'shelter', tone: ap.sheltered ? 'ok' : 'warn', text: ap.sheltered ? 'Sheltered now (roofed, enclosed).' : 'Not sheltered now.', receipts: [] });
+    if (voyage) out.body.push({id:'voyage',tone:voyage.vessel?.stranded?'bad':'muted',text:evacBerthStatus(voyage),receipts:[]});
+    else out.body.push({ id: 'shelter', tone: ap.sheltered ? 'ok' : 'warn', text: ap.sheltered ? 'Sheltered now (roofed, enclosed).' : 'Not sheltered now.', receipts: [] });
     if (ap.dead) {
       const deadBag = r && Object.values(r.entities).find(x => x.kind === 'bag' && x.c && Math.floor(x.x / TILE) === Math.floor(r.player.x / TILE) && Math.floor(x.y / TILE) === Math.floor(r.player.y / TILE));
       out.body.push({ id: 'dead', tone: 'bad', text: deadBag ? `You are dead. A bag (${deadBag.id}) is on the ground where you fell.` : 'You are dead. No surviving bag is confirmed at your death tile.', receipts: [] });
@@ -193,7 +196,7 @@ export function buildOfflineReturn(gs: GameState, before: Snap | null, receipts:
   }
   if (r) receiptRows(gs, receipts, start, out);
   // Known-world rows: public signals and locally sensed footprints only (no hidden enemy positions).
-  if (r) {
+  if (r && !voyage) {
     const nearby = r.traces.filter(tr => Math.hypot(tr.x - r.player.x, tr.y - r.player.y) <= 64).length;
     out.world.push({ id: 'weather', tone: 'muted', text: `Weather now: ${weatherAt(r, end)}. ${nearby} footprint${nearby === 1 ? '' : 's'} visible in the immediate area.`, receipts: [] });
   }
@@ -216,11 +219,12 @@ export function buildOfflineReturn(gs: GameState, before: Snap | null, receipts:
   const measuredChange = out.body.some(x => x.id === 'food' || x.id.startsWith('shift:')) ||
     out.home.some(x => x.id.startsWith('hp:') || (x.id.startsWith('cab:') && !x.text.includes('stock unchanged'))) ||
     out.loss.some(x => x.id.startsWith('lost:') || x.id.startsWith('gone:'));
-  quiet = !expired && receipts.length === 0 && !measuredChange;
+  const rescued = !r && gs.profile.history[0]?.ending==='evacuated';
+  quiet = !rescued && !expired && receipts.length === 0 && !measuredChange;
   // Tag provenance: rows with receipts are events; rows derived from the read-only snapshot are current state.
   for (const k of Object.keys(out) as ReturnSectionId[]) out[k] = out[k].map(row => ({ ...row, source: row.receipts.length ? 'event' : 'state' }));
-  const summary = expired ? 'The 336-hour run ended while you were away.' : quiet ? `No recorded production or asset changes during ${gapMs >= HOUR ? (gapMs / HOUR).toFixed(1) + ' h' : Math.round(gapMs / 60000) + ' min'} away. Current condition is shown separately.` : `Away ${gapMs >= HOUR ? (gapMs / HOUR).toFixed(1) + ' h' : Math.round(gapMs / 60000) + ' min'}. ${receipts.length} timed event${receipts.length === 1 ? '' : 's'} recorded; observed changes and current conditions are separated below.`;
-  return { version: 'offline-return-v1', away: { fromAt: start, toAt: end, gapMs, expired, quiet }, summary, sections: out as Record<ReturnSectionId, ReturnRow[]>, next: next.slice(0, 6), receiptCount: receipts.length };
+  const summary = rescued ? 'Your evacuation vessel reached safe water while you were away.' : expired ? 'The 336-hour run ended while you were away.' : quiet ? `No recorded production or asset changes during ${gapMs >= HOUR ? (gapMs / HOUR).toFixed(1) + ' h' : Math.round(gapMs / 60000) + ' min'} away. Current condition is shown separately.` : `Away ${gapMs >= HOUR ? (gapMs / HOUR).toFixed(1) + ' h' : Math.round(gapMs / 60000) + ' min'}. ${receipts.length} timed event${receipts.length === 1 ? '' : 's'} recorded; observed changes and current conditions are separated below.`;
+  return { version: 'offline-return-v1', away: { fromAt: start, toAt: end, gapMs, expired, quiet }, summary, sections: out as Record<ReturnSectionId, ReturnRow[]>, next: voyage ? [] : next.slice(0, 6), receiptCount: receipts.length };
 }
 
 export type ReturnSeverity = 'minimal' | 'notable' | 'critical';
@@ -293,8 +297,7 @@ export function settleWithReturn(gs: GameState, now: number): { lines: string[];
   let receipts: { id: string; at: number; kind: string; detail: string }[] = [];
   try { lines = settle(gs, now, false); } finally { receipts = endReceiptSink(); }
   if (!before) return { lines, report: null };
-  // settle() ends the run exactly at expiry (endRun clears gs.run); that is the only expiry signal used here.
-  const expired = !gs.run;
-  const report = buildOfflineReturn(gs, before, receipts, start, now, expired);
+  const ending = gs.run ? undefined : gs.profile.history[0];
+  const report = buildOfflineReturn(gs, before, receipts, start, ending?.endedAt ?? now, ending?.ending === 'expired');
   return { lines, report };
 }

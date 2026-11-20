@@ -2033,7 +2033,7 @@ export function serviceAtBeacon(r:RunState,e:Entity|undefined) {
   return Object.values(r.humanWorld.evacuation).find(t=>t.siteGx===gx && t.siteGy===gy && (!e.poi || t.site===e.poi));
 }
 function atPlayerBerth(r:RunState,trip:EvacTrip) {
-  if(r.player.dead || r.player.vehicle || r.spiritTransit || (r.veyraFloor??0)!==0)return false;
+  if(r.player.dead || r.player.vehicle || r.spiritTransit || r.rest || (r.veyraFloor??0)!==0)return false;
   const [ox,oy]=windowOrigin(r),dock={x:(trip.siteGx-ox+.5)*TILE,y:(trip.siteGy-oy+.5)*TILE};
   return Math.hypot(r.player.x-dock.x,r.player.y-dock.y)<=evacSchedule().playerRadius*TILE && clearPhysicalLine(r,r.player,dock,true,true);
 }
@@ -2108,8 +2108,15 @@ function departEvacTrip(r: RunState, hw:HumanWorld, trip: EvacTrip, now: number)
   receipt(r,now,'evac.provision',`${trip.tripId}:${round}:${helm}:${hold.id}:${food.uid}:${water.uid}`);
   const arriveAt = now + S.transitMs;
   const log: EvacDepartureLog = { round, departAt: now, arriveAt, departedReceipt: `evac.depart:${trip.tripId}:${round}:${Math.round(now)}`, passengers: manifest };
+  trip.manifest = manifest.map(p => ({ ...p }));
   (trip.departures ??= []).push(log);
   trip.phase = 'IN_TRANSIT'; trip.phaseAt = now; trip.departAt = now; trip.arriveAt = arriveAt;
+  if (trip.playerAboard) {
+    // The berth coordinates remain a map anchor, not a second body on shore.
+    r.player.action = null; r.player.vx = r.player.vy = 0;
+    r.player.pulling = null; r.player.sheltered = false;
+    delete r.player.channelUntil; delete r.traceWalk;
+  }
   trip.departed = true; trip.receipt = log.departedReceipt;
   receipt(r, now, 'evac.depart', `${trip.tripId}:round${round}:${manifest.length}/${trip.capacity}:arrive@${Math.round(arriveAt)}`);
   pushLog(r, now, `An evacuation vessel leaves ${evacSiteName(trip.site)} with ${manifest.length} aboard.`, 'gold');
@@ -2288,11 +2295,11 @@ export function nearestEvacTrip(hw: HumanWorld, gx: number, gy: number): EvacTri
 }
 
 /** True while the player is physically aboard a vessel that is at sea (island input is suspended). */
-export function playerAtSea(r: RunState): boolean {
-  const hw = r.humanWorld; if (!hw) return false;
-  for (const trip of Object.values(hw.evacuation)) if (trip.playerAboard && (trip.phase === 'IN_TRANSIT'||trip.vessel?.stranded)) return true;
-  return false;
+export function playerVoyage(r: RunState): EvacTrip | undefined {
+  if (r.humanWorld) return Object.values(r.humanWorld.evacuation).find(trip =>
+    trip.playerAboard && (trip.phase === 'IN_TRANSIT' || trip.vessel?.stranded));
 }
+export function playerAtSea(r: RunState): boolean { return !!playerVoyage(r); }
 
 /** Player-facing status line for the current berth (truthful, no invented capacity). */
 export function evacBerthStatus(trip: EvacTrip): string {
@@ -2916,7 +2923,7 @@ function canHumanOccupy(r: RunState, h: HumanRecord, gx: number, gy: number, gri
   const lx = gx - ox, ly = gy - oy;
   if (h.floor !== (r.veyraFloor??0) || lx < 0 || ly < 0 || lx >= WW || ly >= WH) return true; // caller checked the global collision adapter
   const px = (lx + 0.5) * TILE, py = (ly + 0.5) * TILE;
-  if (!r.player.dead && Math.hypot(px - r.player.x, py - r.player.y) < TILE * 0.7) return false;
+  if (!r.player.dead && !playerAtSea(r) && Math.hypot(px - r.player.x, py - r.player.y) < TILE * 0.7) return false;
   if (r.creatures.some(m => m.state !== 'dead' && (m.floor ?? 0) === h.floor && Math.hypot(px - m.x, py - m.y) < TILE * 0.7)) return false;
   const cell = grid[ly * WW + lx];
   return cell === 0 || cell === 4;
@@ -3322,7 +3329,7 @@ function combatEquipmentBlock(r:RunState,h:HumanRecord,now:number){
   if(!availableCore(r,h,now))return w?'no ammunition':'no usable weapon';
 }
 function threatensPlayer(r:RunState,hw:HumanWorld,h:HumanRecord,id:string,now:number){
-  if(h.floor!==(r.veyraFloor??0)||r.player.dead||h.hp<h.maxHp*.3 || h.stamina<3)return false;
+  if(h.floor!==(r.veyraFloor??0)||r.player.dead||playerAtSea(r)||h.hp<h.maxHp*.3 || h.stamina<3)return false;
   const target=humanCombatTarget(r,hw,id,h.floor);
   if(!target || Math.hypot(target.x-r.player.x,target.y-r.player.y)>4*TILE)return false;
   const enemy=target.human;
@@ -3413,7 +3420,7 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {retu
   if(hasMovement)for(const h of actors){if(h.state==='DEAD'||h.state==='EVACUATED'||h.state==='ON_VESSEL')continue;occupied.add(humanCellKey(h.floor,h.gx,h.gy));if(h.motion)occupied.add(humanCellKey(h.motion.toFloor??h.floor,h.motion.toGx,h.motion.toGy));}
   const playerGx = ox + Math.floor(r.player.x / TILE), playerGy = oy + Math.floor(r.player.y / TILE);
   if(hasMovement){
-    if(!r.player.dead)occupied.add(humanCellKey(r.veyraFloor??0,playerGx,playerGy));
+    if(!r.player.dead && !playerAtSea(r))occupied.add(humanCellKey(r.veyraFloor??0,playerGx,playerGy));
     for(const m of r.creatures)if(m.state!=='dead')occupied.add(humanCellKey(m.floor??0,ox+Math.floor(m.x/TILE),oy+Math.floor(m.y/TILE)));
   }
   for(const h of actors) {

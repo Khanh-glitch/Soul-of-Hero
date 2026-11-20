@@ -886,12 +886,26 @@ export function validate(raw: any): GameState | null {
           if (d.arrivedAt !== undefined && !finite(d.arrivedAt)) return null;
         }
       }
+      // A live passage must match its sealed departure, not just a phase flag.
+      // Older manifests may still list boarding-time cargo; identity and seat
+      // do not change, and the departure log owns the cast-off quantities.
+      if (trip.vessel && (trip.phase === 'IN_TRANSIT' || trip.vessel.stranded && trip.playerAboard)) {
+        const leg = trip.departures?.at(-1);
+        if (!leg || leg.arrivedAt !== undefined || !manifest.length || leg.departAt !== trip.departAt ||
+            leg.arriveAt !== trip.arriveAt || leg.arriveAt <= leg.departAt || leg.departedReceipt !== trip.receipt ||
+            leg.passengers.length !== manifest.length || !manifest.every((seat:any) => leg.passengers.some((p:any) =>
+              p?.actorId === seat.actorId && p.seat === seat.seat))) return null;
+      }
     }
     for (const [aid, body] of Object.entries(hw.people ?? {}) as [string, any][]) {
       if (body.state !== 'ON_VESSEL') { if (body.transit !== undefined) return null; continue; }
       if (!obj(body.transit) || typeof body.transit.tripId !== 'string' || !hw.evacuation[body.transit.tripId] || !seated.has(aid)) return null;
     }
-    if (hw.playerEvacArrivedAt !== undefined && !finite(hw.playerEvacArrivedAt)) return null;
+    if (hw.playerEvacArrivedAt !== undefined) {
+      const service = hw.evacuation[hw.playerEvacTripId];
+      if (!finite(hw.playerEvacArrivedAt) || !service?.departures?.some((leg:any) =>
+        leg.arrivedAt === hw.playerEvacArrivedAt && leg.arrivalReceipt && leg.passengers.some((p:any)=>p?.actorId==='player'))) return null;
+    }
     // Elder assault ledger: one entry per canonical Elder id, timed approach/contact records only.
     // HP, defeat and patterns stay on the canonical Creature; a save cannot carry a second health.
     if (!obj(hw.elderPressure)) return null;
