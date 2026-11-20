@@ -1095,6 +1095,12 @@ export function applyDamage(r: RunState, hw: HumanWorld, h: HumanRecord, dmg: nu
     }, now);
     formGrievance(r, hw, h, attackerId, now, incident.id);
   }
+  // A landed hostile hit interrupts first aid even when the responder has no
+  // weapon with which to retaliate. Unpaid medicine stays in their pack.
+  if(h.intent?.work?.kind==='medical' && (source==='human'||source==='player'||source==='enemy')){
+    receipt(r,now,'human.medical.interrupted',`${h.intent.intentId}:${h.actorId}:${h.intent.work.patientId}`);
+    h.intent=undefined;h.motion=undefined;h.state='IDLE';h.nextThinkAt=now+3000;
+  }
   if(h.hp>0 && attackerId && (source==='human'||source==='player'||source==='enemy') && h.state!=='DOWNED' && (humanWeapon(h)||availableCore(r,h,now))) {
     h.motion=undefined;h.state='FIGHTING';h.intent={intentId:`defend:${h.actorId}:${now}`,actorId:h.actorId,kind:'fight',target:attackerId,preconditions:['direct physical assault'],reserved:[],startAt:now,dueAt:now};
   }

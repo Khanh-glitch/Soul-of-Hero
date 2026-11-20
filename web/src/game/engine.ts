@@ -2407,14 +2407,9 @@ function near(r: RunState, e: { x: number; y: number }, tiles = 2.2) { return on
 /** Grid traversal visits every crossed cell, including both sides of a corner.
  * Interaction targets may themselves occupy a blocking cell; intervening cells never may. */
 export function clearPhysicalLine(r: RunState, p: { x: number; y: number }, e: { x: number; y: number }, blockTrees = true, excludeEnd = false, wallsOnly = false): boolean {
-  const grid = blockGrid(r), sx = Math.floor(p.x / TILE), sy = Math.floor(p.y / TILE);
-  const ex = Math.floor(e.x / TILE), ey = Math.floor(e.y / TILE);
-  let x = sx, y = sy; const dx = e.x - p.x, dy = e.y - p.y, stepx = Math.sign(dx), stepy = Math.sign(dy);
-  const txStep = dx ? TILE / Math.abs(dx) : Infinity, tyStep = dy ? TILE / Math.abs(dy) : Infinity;
-  let tx = dx ? ((stepx > 0 ? (x + 1) * TILE : x * TILE) - p.x) / dx : Infinity;
-  let ty = dy ? ((stepy > 0 ? (y + 1) * TILE : y * TILE) - p.y) / dy : Infinity;
-  const clear = (cx: number, cy: number) => {
-    if (cx === sx && cy === sy || excludeEnd && cx === ex && cy === ey) return true;
+  const grid=blockGrid(r),ex=Math.floor(e.x/TILE),ey=Math.floor(e.y/TILE);
+  return clearGridRay(p,e,(cx,cy)=>{
+    if (excludeEnd && cx===ex && cy===ey)return true;
     if (cx < 0 || cy < 0 || cx >= WW || cy >= WH) return false;
     if (wallsOnly) {
       // Windows, railings and half walls are visible through in the 2D ray
@@ -2427,7 +2422,16 @@ export function clearPhysicalLine(r: RunState, p: { x: number; y: number }, e: {
         raw!==T.PWALL && raw!==T.CLIFF;
     }
     const b = grid[cy * WW + cx]; return b !== 1 && b !== 3 && b !== 5 && (!blockTrees || b !== 2);
-  };
+  });
+}
+/** Same corner rule for local physics and offscreen survivor perception. */
+function clearGridRay(p:{x:number;y:number},e:{x:number;y:number},clear:(cx:number,cy:number)=>boolean){
+  const sx = Math.floor(p.x / TILE), sy = Math.floor(p.y / TILE);
+  const ex = Math.floor(e.x / TILE), ey = Math.floor(e.y / TILE);
+  let x = sx, y = sy; const dx = e.x - p.x, dy = e.y - p.y, stepx = Math.sign(dx), stepy = Math.sign(dy);
+  const txStep = dx ? TILE / Math.abs(dx) : Infinity, tyStep = dy ? TILE / Math.abs(dy) : Infinity;
+  let tx = dx ? ((stepx > 0 ? (x + 1) * TILE : x * TILE) - p.x) / dx : Infinity;
+  let ty = dy ? ((stepy > 0 ? (y + 1) * TILE : y * TILE) - p.y) / dy : Infinity;
   while (x !== ex || y !== ey) {
     if (Math.abs(tx - ty) < 1e-10) {
       if (!clear(x + stepx, y) || !clear(x, y + stepy)) return false;
@@ -2437,6 +2441,11 @@ export function clearPhysicalLine(r: RunState, p: { x: number; y: number }, e: {
     if (!clear(x, y)) return false;
   }
   return true;
+}
+export function clearSurvivorSight(r:RunState,from:{gx:number;gy:number;floor:number},to:{gx:number;gy:number;floor:number}){
+  if(from.floor!==to.floor || !(Math.hypot(from.gx-to.gx,from.gy-to.gy)<=8))return false;
+  const center=(p:typeof from)=>({x:(p.gx+.5)*TILE,y:(p.gy+.5)*TILE});
+  return clearGridRay(center(from),center(to),(gx,gy)=>![1,2,3,5].includes(globalCellTileAndClass(r,gx,gy,from.floor).cls));
 }
 export function clearSegment(r: RunState, p: { x: number; y: number }, e: { x: number; y: number }) {
   return clearPhysicalLine(r, p, e, true, true);

@@ -3,7 +3,7 @@
 import { materialPayment } from './material-payment';
 import { WW, WH, TILE, uid, type RunState, type Entity, type Stack } from './core';
 import { ITEMS, RECIPES, STRUCTS, GARDEN_CROPS, isGardenCrop, stationBurnable } from './catalog';
-import { authoredStationFootprint,globalCellTileAndClass,mkStack,mkContainer,C, addItem, addStack, queuePaidRecipe, structureRepairCost, receipt, markDirty, clearPhysicalLine, productionFits, findRunEntity, allRunEntities } from './engine';
+import { authoredStationFootprint,globalCellTileAndClass,mkStack,mkContainer,C, addItem, addStack, queuePaidRecipe, structureRepairCost, receipt, markDirty, clearSurvivorSight, clearPhysicalLine, productionFits, findRunEntity, allRunEntities } from './engine';
 import { VEYRA_RECYCLER_SITE } from './world';
 import { recoveryPlan, recoveryPlanFor } from './recycler';
 import type { HumanRecord, HumanWorld } from './humanworld';
@@ -14,6 +14,7 @@ export interface HumanWorkTask {
   phase: 'fetch' | 'travel' | 'act' | 'machine' | 'collect';
   inputs: [string, number][]; duration: number;
   machineJobId?: string; readyAt?: number; outputs?: [string, number][];
+  observedPatient?:{gx:number;gy:number;floor:number};
   gardenAction?:'plant'|'water'|'harvest'; sowingId?:string;
   rebuildSite?:string;
   resumePhase?:'machine';
@@ -50,11 +51,11 @@ export function moveHumanGoods(r: RunState, from: string, into: string, key: str
   }
   return moved;
 }
-/** At the warehouse, stage a mechanic's whole bill against copies of the two
+/** At the warehouse, stage the whole bill against copies of the two
  * inventories. A vanished last ingredient or a full pack must not withdraw the
  * first ingredient. Use the same transfer rules (including splits and merges)
  * for preflight and commit; never publish preview UIDs or advance live nextId. */
-function fetchRepairMaterials(r:RunState, from:string, into:string, bill:[string,number][], workerId:string, orderId:string, now:number) {
+function fetchWorkMaterials(r:RunState, from:string, into:string, bill:[string,number][], workerId:string, orderId:string, now:number) {
   const copy=(id:string)=>({...C(r,id), slots:C(r,id).slots.map(s=>s?{...s}:null)});
   const trial={...r,custody:{[from]:copy(from),[into]:copy(into)}};
   const missing:[string,number][]=[];
@@ -198,14 +199,21 @@ function taskCandidates(r: RunState, hw: HumanWorld, h: HumanRecord): HumanWorkT
     const posts=entities.filter(e=>e.kind==='door'||e.id===comm.storeEntityId).sort((a,b)=>a.id.localeCompare(b.id));
     if(posts.length)tasks.push(start('guard',posts[(h.patrolPostIndex??0)%posts.length],[],8000));
   }
-  if (h.occupation === 'medic') for (const patient of Object.values(hw.people)) {
-    if (patient.actorId===h.actorId || patient.community!==h.community || patient.floor!==h.floor || patient.transit || ['DEAD','EVACUATED','ON_VESSEL','FIGHTING'].includes(patient.state)) continue;
-    if (patient.state==='DOWNED' || patient.wounds.some(w=>!w.treated)) {
-      const key = available('bandage',1) ? 'bandage' : available('herb',1) ? 'herb' : undefined;
-      if(key) tasks.push({...start('medical',undefined,[[key,1]],6000),patientId:patient.actorId});
+  if (h.occupation === 'medic') {
+    const seen=comm.memberIds.map(id=>hw.people[id]).filter(p=>eligiblePatient(h,p) && clearSurvivorSight(r,h,p) &&
+      !comm.memberIds.some(id=>hw.people[id]?.intent?.work?.patientId===p.actorId));
+    seen.sort((a,b)=>Number(b.state==='DOWNED')-Number(a.state==='DOWNED') || a.hp-b.hp || a.actorId.localeCompare(b.actorId));
+    for(const p of seen){
+      const key=available('bandage',1)?'bandage':available('herb',1)?'herb':undefined;
+      if(key)tasks.push({...start('medical',undefined,[[key,1]],6000),patientId:p.actorId,observedPatient:patientTile(p)});
     }
   }
   return tasks;
+}
+const patientTile=(p:HumanRecord)=>({gx:p.gx,gy:p.gy,floor:p.floor});
+function eligiblePatient(h:HumanRecord,p:HumanRecord|undefined):p is HumanRecord {
+  return !!p && p!==h && p.community===h.community && p.floor===h.floor && !p.transit &&
+    !['DEAD','EVACUATED','ON_VESSEL','FIGHTING'].includes(p.state) && (p.state==='DOWNED'||p.wounds.some(w=>!w.treated));
 }
 function target(r: RunState, hw: HumanWorld, h: HumanRecord, task: HumanWorkTask): [number,number,number] | null {
   if (task.phase==='fetch') {
@@ -213,10 +221,15 @@ function target(r: RunState, hw: HumanWorld, h: HumanRecord, task: HumanWorkTask
     return e?[...humanEntityTile(r,e),e.floor??0]:null;
   }
   if(task.rebuildSite){const site=h.community?hw.communities[h.community]?.lostWorksites?.[task.rebuildSite]:undefined;return site?[site.tx,site.ty,site.floor]:null;}
-  if (task.patientId) { const p=hw.people[task.patientId]; return p && p.floor===h.floor ? [p.gx,p.gy,p.floor] : null; }
+  if (task.patientId) {
+    // Legacy tasks had no sighting. Reacquire locally rather than tracking the
+    // patient's current coordinates from a pre-observation save.
+    if(!task.observedPatient){const p=hw.people[task.patientId];if(!eligiblePatient(h,p)||!clearSurvivorSight(r,h,p))return null;task.observedPatient=patientTile(p);}
+    const p=task.observedPatient;return p.floor===h.floor?[p.gx,p.gy,p.floor]:null;
+  }
   const e=task.entityId && findRunEntity(r,task.entityId); return e ? [...humanEntityTile(r,e),e.floor??0] : null;
 }
-/** A casualty calls their community. Only a real route starts a response;
+/** A nearby responder must see the body. Only a real route starts a response;
  * a fetched dose remains in the responder's custody on interruption. */
 export function dispatchMedicalResponse(r:RunState,hw:HumanWorld,p:HumanRecord,now:number,route:(h:HumanRecord,...dest:[number,number,number])=>ReturnType<Router>){
   const c=p.community && hw.communities[p.community];if(!c || p.state!=='DOWNED')return;
@@ -224,8 +237,9 @@ export function dispatchMedicalResponse(r:RunState,hw:HumanWorld,p:HumanRecord,n
   const helpers=c.memberIds.map(id=>hw.people[id]).filter(h=>h && h.community===p.community && h.floor===p.floor && !h.following && !h.motion && !h.intent?.work &&
     (h.state==='IDLE'||(h.harvestJob?.phase==='source' && ['WORKING','MOVING'].includes(h.state))) && !h.transit && (!h.intent || h.intent.target?.startsWith('global-harvest:')))
     .sort((a,b)=>Number(b.occupation==='medic')-Number(a.occupation==='medic') || distance(a)-distance(b) || a.actorId.localeCompare(b.actorId));
-  let hasDose=false;
+  let hasDose=false,witnessed=false;
   for(const h of helpers){
+    if(!clearSurvivorSight(r,h,p))continue;witnessed=true;
     const medicine=['bandage','herb'];let key=medicine.find(k=>count(r,h.inv.packId,k)>0),phase:HumanWorkTask['phase']='travel';
     let dest:[number,number,number]=[p.gx,p.gy,p.floor];
     if(!key && h.occupation==='medic'){
@@ -235,10 +249,10 @@ export function dispatchMedicalResponse(r:RunState,hw:HumanWorld,p:HumanRecord,n
       }
     }
     if(!key)continue;hasDose=true;const path=route(h,...dest);if(!path)continue;
-    h.intent={intentId:uid(r,'hw'),actorId:h.actorId,kind:'work',target:'occupation:medical',reserved:[],preconditions:['community casualty','physical treatment and one dose'],startAt:now,dueAt:now+(phase==='fetch'?800:6000),route:path,work:{kind:'medical',phase,inputs:[[key,1]],duration:6000,patientId:p.actorId}};
+    h.intent={intentId:uid(r,'hw'),actorId:h.actorId,kind:'work',target:'occupation:medical',reserved:[],preconditions:['community casualty','physical treatment and one dose'],startAt:now,dueAt:now+(phase==='fetch'?800:6000),route:path,work:{kind:'medical',phase,inputs:[[key,1]],duration:6000,patientId:p.actorId,observedPatient:patientTile(p)}};
     h.state=path.length?'MOVING':'WORKING';receipt(r,now,'human.medical.respond',`${h.actorId}:${p.actorId}:${phase}:${path.length}`);return;
   }
-  p.lastWorkBlock=hasDose?'No certified medical route yet.':'No available community responder with medicine.';
+  p.lastWorkBlock=hasDose?'No certified medical route yet.':witnessed?'No available community responder with medicine.':'No available responder has seen the casualty.';
 }
 export function planHumanOccupation(r: RunState, hw: HumanWorld, h: HumanRecord, now: number, route: Router): boolean {
   if (h.following || !h.community) return false;
@@ -271,7 +285,7 @@ export function planHumanOccupation(r: RunState, hw: HumanWorld, h: HumanRecord,
     h.intent=undefined;h.state='IDLE';h.nextThinkAt=now+3000;return false;
   }
   const path=route(...dest); if(!path){
-    if((task.kind==='repair_item'||task.kind==='garden') && (h.routeSearch?.status==='NO_PATH'||h.routeSearch?.status==='SEARCH_LIMIT')){
+    if((task.kind==='repair_item'||task.kind==='garden'||task.kind==='medical') && (h.routeSearch?.status==='NO_PATH'||h.routeSearch?.status==='SEARCH_LIMIT')){
       h.lastWorkBlock='No confirmed work route; retaining carried supplies.';
       receipt(r,now,'human.work.blocked',`${h.actorId}:${h.intent!.intentId}:${h.lastWorkBlock}`);
       h.intent=undefined;h.state='IDLE';h.nextThinkAt=now+30000;
@@ -299,6 +313,7 @@ export function executeHumanWork(r: RunState, hw: HumanWorld, h: HumanRecord, no
   if(task.phase==='fetch') {
     const store=comm.storeEntityId && findRunEntity(r,comm.storeEntityId);
     if(!store || !store.c || !comm.storeContainers.includes(store.c) || store.owner!==comm.id || !humanCanUseEntity(r,h,store))return fail('cannot reach authorized store');
+    if(task.kind==='medical' && !eligiblePatient(h,hw.people[task.patientId??'']))return fail('patient no longer needs this dose');
     if(task.kind==='recycle') {
       const stock=C(r,store.c),slot=stock.slots.findIndex(s=>s?.uid===task.itemUid),s=stock.slots[slot];
       const into=pack(r,h),empty=into.slots.indexOf(null);
@@ -313,8 +328,10 @@ export function executeHumanWork(r: RunState, hw: HumanWorld, h: HumanRecord, no
       const item=[...pack(r,h).slots,...Object.values(h.equip)].find(s=>s?.uid===task.itemUid);
       const rule=repairRule(item,e,comm.id);
       if(!rule || !e || !(comm.workStations.includes(e.id) || e.poi===comm.poi && e.owner===comm.id))return fail('repair target or workbench changed');
-      if(!fetchRepairMaterials(r,store.c,h.inv.packId,rule.cost,h.actorId,intent.intentId,now))return fail('repair supplies unavailable or pack full');
+      if(!fetchWorkMaterials(r,store.c,h.inv.packId,rule.cost,h.actorId,intent.intentId,now))return fail('repair supplies unavailable or pack full');
       task.inputs=rule.cost; // resume with the same canonical bill that was admitted
+    } else if(task.kind==='medical'){
+      if(!fetchWorkMaterials(r,store.c,h.inv.packId,task.inputs,h.actorId,intent.intentId,now))return fail('medicine missing, reserved or pack full');
     } else for(const [key,qty] of task.inputs) {
       const need=Math.max(0,qty-count(r,h.inv.packId,key));
       if(need){const before=C(r,store.c).slots.filter((s):s is Stack=>!!s).map(s=>({uid:s.uid,qty:s.qty,key:s.key}));const moved=moveHumanGoods(r,store.c,h.inv.packId,key,need);if(moved)receipt(r,now,'human.work.input',JSON.stringify({workerId:h.actorId,orderId:intent.intentId,containerId:store.c,into:h.inv.packId,inputs:before.flatMap(s=>{const qty=s.qty-(C(r,store.c!).slots.find(v=>v?.uid===s.uid)?.qty??0);return qty>0?[{...s,qty}]:[];})}));}
@@ -325,17 +342,15 @@ export function executeHumanWork(r: RunState, hw: HumanWorld, h: HumanRecord, no
   }
   if(task.patientId) {
     const p=hw.people[task.patientId];
-    if(!p || p.transit || p.community!==h.community || p.floor!==h.floor || Math.abs(p.gx-h.gx)+Math.abs(p.gy-h.gy)>1 || ['DEAD','EVACUATED','ON_VESSEL','FIGHTING'].includes(p.state))return fail('patient moved or cannot be treated');
-    const o=r.sourceMap?.veyra?.originAu,ox=o?Math.round(o[0]/.5):0,oy=o?Math.round(o[1]/.5):0;
-    if(p.floor===(r.veyraFloor??0) && p.gx>=ox && p.gx<ox+WW && p.gy>=oy && p.gy<oy+WH && !clearPhysicalLine(r,{x:(h.gx-ox+.5)*TILE,y:(h.gy-oy+.5)*TILE},{x:(p.gx-ox+.5)*TILE,y:(p.gy-oy+.5)*TILE},true))return fail('patient obstructed');
-    if(p.state!=='DOWNED' && p.wounds.every(w=>w.treated))return fail('patient already treated');
+    if(!eligiblePatient(h,p) || Math.abs(p.gx-h.gx)+Math.abs(p.gy-h.gy)>1 || !clearSurvivorSight(r,h,p))return fail('patient moved, obstructed or no longer needs treatment');
     const medicine = task.inputs.length===1 && task.inputs[0][1]===1 && ['bandage','herb'].includes(task.inputs[0][0]) ? task.inputs : [];
     const inputs=medicine.length && materialPayment(pack(r,h),medicine,true);
     if(!inputs)return fail('medicine missing or reserved');
     delete p.nextMedicalReviewAt;delete p.lastWorkBlock;
+    const hpBefore=p.hp;
     p.wounds.forEach(w=>{w.treated=true;w.bleeding=false;});p.hp=Math.min(p.maxHp,p.hp+30);
     if(p.state==='DOWNED'){p.downedAt=undefined;p.state='IDLE';}
-    receipt(r,now,'human.medical.payment',JSON.stringify({worker:h.actorId,patient:p.actorId,job:intent.intentId,inputs}));
+    receipt(r,now,'human.medical.payment',JSON.stringify({worker:h.actorId,patient:p.actorId,job:intent.intentId,seen:task.observedPatient,at:patientTile(p),hpBefore,hpAfter:p.hp,inputs}));
     receipt(r,now,'human.treat',`${h.actorId}:${p.actorId}:${medicine.map(m=>m[0]).join('+')}`);
   } else if(task.kind==='build' && task.rebuildSite){
     const old=task.rebuildSite,site=comm.lostWorksites?.[old];
