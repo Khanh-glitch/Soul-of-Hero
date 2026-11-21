@@ -119,6 +119,16 @@ Chi tiết: `endurance-hourly-census.csv`, `endurance-campaign-gate.json`.
 5. **Sửa toàn bộ fixture** theo luật mới, không loại test.
 6. Final = nhánh 25e24231 hiện tại; **không nhập thêm PR nào** đang mở.
 
+**Quyết định bổ sung trong giai đoạn sửa lỗi (cùng ngày, ghi lại những mục làm thay đổi danh sách ở mục 8):**
+
+- Elder **được vượt biển** để tới khu dân cư ("cho vượt biển luôn"); khi bơi đi **80 ô/giờ**, gấp đôi đi bộ (phương án 3).
+- Mục A2 **bỏ**: người sống sót chưa bị Elder chạm tới vẫn ghi "Sống sót trên đảo".
+- Mục A3 **bỏ**: bến `po_evac_south` và `po_evac_hook` được phép không có chuyến trong lượt không người chơi; chứng minh bằng lượt người chơi hộ tống.
+- Mục A6: **ẩn Classic Island** khỏi màn chọn thế giới (đã làm ở `ba9894a`).
+- Mục A9: **để nguyên 9 PR cũ đang mở**, chỉ ghi chú là không thuộc final.
+
+Tiến độ thực hiện từng mục: xem `TIEN_DO_SUA_LOI.md` cùng thư mục.
+
 ## 8. Việc còn thiếu để tới final
 
 ### A. Tích hợp
