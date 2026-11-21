@@ -14,6 +14,8 @@ type Pending = Checked & {
   points: Map<string, Point>;
   expanded: number;
   blocked: Map<string, Point>;
+  /** Run seconds when an actor last asked about this search (0 in saves from wire version 1). */
+  touched?: number;
 };
 type Failed = Checked & { blocked: Point[]; status: 'NO_PATH' | 'SEARCH_LIMIT'; expanded: number };
 type Component = Checked & { access: string; points: Set<string>; blocked: Point[]; expanded: number };
@@ -136,11 +138,12 @@ export function saveNavigation(r: RunState): string | undefined {
     components = componentFailures.get(r);
   if (!pending?.size && !failed?.size && !components?.length) return;
   const w = new Writer();
-  w.n(1);
+  w.n(2);
   w.n(pending?.size ?? 0);
   for (const [id, s] of pending ?? []) {
     w.text(id);
     w.n(s.expanded);
+    w.n(s.touched ?? 0);
     const keys = [...s.points.keys()],
       index = new Map(keys.map((k, i) => [k, i]));
     w.points([...s.points.values()]);
@@ -176,7 +179,8 @@ export function saveNavigation(r: RunState): string | undefined {
 export function loadNavigation(r: RunState, encoded: unknown) {
   check(typeof encoded === 'string' && encoded.length > 0 && encoded.length <= (MAX_BYTES * 4) / 3);
   const b = new Reader(atob(encoded));
-  check(b.n() === 1);
+  const version = b.n();
+  check(version === 1 || version === 2);
   const pending = new Map<string, Pending>(),
     failed = new Map<string, Failed>(),
     components: Component[] = [];
@@ -185,6 +189,7 @@ export function loadNavigation(r: RunState, encoded: unknown) {
   for (let count = b.n(512); count; count--) {
     const id = b.text(),
       expanded = b.n(48256),
+      touched = version >= 2 ? b.n() : 0,
       ps = b.points(),
       keys = ps.map(key),
       points = new Map(ps.map((p, i) => [keys[i], p]));
@@ -207,7 +212,7 @@ export function loadNavigation(r: RunState, encoded: unknown) {
     const heap: Node[] = [];
     for (let n = b.n(MAX_LIST); n; n--) heap.push({ p: ps[b.n(ps.length - 1)], g: b.n(), score: b.n() });
     const blocked = new Map(b.points().map((p) => [key(p), p]));
-    pending.set(id, { expanded, points, costs, parent, heap, blocked, checked: '' });
+    pending.set(id, { expanded, points, costs, parent, heap, blocked, checked: '', touched });
   }
   for (let n = b.n(512); n; n--) {
     const id = b.text(),
