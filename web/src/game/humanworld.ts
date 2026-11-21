@@ -3220,7 +3220,18 @@ function committedRetry(h:HumanRecord){
   // below neither unloads that pack nor releases its deliveryWait.
   return !!h.intent?.work || !h.deliveryWait && !!(h.harvestJob || h.recipeBoardPending || h.workOutputs && Object.values(h.workOutputs).some(q=>q>0));
 }
-export function humanEventBoundary(r:RunState,hw:HumanWorld,at:number,maximum:number):number {return timedWorldWork('humanEventBoundary',()=>{
+/** Offline settlement (absence, long catch-up) resolves the three dense, latency-tolerant human
+ *  instants — plan reviews, medical reviews and tile arrivals — on one shared one-second beat of the
+ *  run clock instead of ending a whole-world slice at each of them. With 286 residents those instants
+ *  used to cut the first offline hour into ~60,000 slices. Causal deadlines (work completion, needs
+ *  thresholds, bleeding, Elder waves, vessel berths) keep their exact instants. Live frames
+ *  (`coarse` false) are unchanged. Creator decision 2026-11-21. */
+export const OFFLINE_HUMAN_BEAT_MS=1000;
+const nextHumanBeat=(r:RunState,at:number,due:number):number=>{
+ const origin=r.startedAt,k=Math.ceil((Math.max(due,at)-origin)/OFFLINE_HUMAN_BEAT_MS);
+ let beat=origin+k*OFFLINE_HUMAN_BEAT_MS;if(!(beat>at))beat+=OFFLINE_HUMAN_BEAT_MS;return beat-at;
+};
+export function humanEventBoundary(r:RunState,hw:HumanWorld,at:number,maximum:number,coarse=false):number {return timedWorldWork('humanEventBoundary',()=>{
  let dt=maximum;
  for(const h of Object.values(hw.people)){
   if(h.state==='DEAD'||h.state==='EVACUATED')continue;
@@ -3240,14 +3251,14 @@ export function humanEventBoundary(r:RunState,hw:HumanWorld,at:number,maximum:nu
   if(starving&&BAL.player.starveDamagePerMin>0)dt=Math.min(dt,Math.max(1,h.hp)/(starving*BAL.player.starveDamagePerMin)*60000);
   for(const w of h.wounds)if(w.bleeding&&!w.treated&&w.bleedingUntil){const due=w.bleedingUntil+12*60000;if(due>at)dt=Math.min(dt,due-at);}
   if(h.rest<.5)dt=Math.min(dt,(.5-h.rest)*8*HOUR);
-  if((h.state==='DOWNED'||needsFollowup(h)) && h.nextMedicalReviewAt!==undefined && h.nextMedicalReviewAt>at)dt=Math.min(dt,h.nextMedicalReviewAt-at);
-  if(h.state==='MOVING'&&h.intent?.route?.length)dt=Math.min(dt,Math.max(.001,TILE/PROFILES[h.profile].speed*1000-(h.motion?.elapsedMs??0)));
+  if((h.state==='DOWNED'||needsFollowup(h)) && h.nextMedicalReviewAt!==undefined && h.nextMedicalReviewAt>at)dt=Math.min(dt,coarse?nextHumanBeat(r,at,h.nextMedicalReviewAt):h.nextMedicalReviewAt-at);
+  if(h.state==='MOVING'&&h.intent?.route?.length)dt=Math.min(dt,coarse?nextHumanBeat(r,at,at):Math.max(.001,TILE/PROFILES[h.profile].speed*1000-(h.motion?.elapsedMs??0)));
   if(h.following && h.state==='IDLE' && h.intent && (returningHome(h.intent)||h.intent.delivery) && h.intent.dueAt>at)dt=Math.min(dt,h.intent.dueAt-at);
   if(h.state==='WORKING'&&h.intent&&h.intent.dueAt>at)dt=Math.min(dt,h.intent.dueAt-at);
   if(!h.following&&h.state==='IDLE'&&(!h.intent||!!h.intent.work)){
    const review=h.nextThinkAt??at;
    const due=committedRetry(h)?review:Math.max(hw.plannerAt??at,review);
-   dt=Math.min(dt,Math.max(1,due-at));
+   dt=Math.min(dt,coarse?nextHumanBeat(r,at,due):Math.max(1,due-at));
   }
  }
  // An Elder approach arrival or the next lawful wave is a causal instant of the same clock.
@@ -3681,7 +3692,7 @@ export function finishHumanPlanReview(h:HumanRecord,now:number):void {
   h.nextThinkAt=Math.max(h.nextThinkAt??now,now+Math.min(300000,6000*2**(h.blockedPlanCount-1)));
 }
 function coreImmobilized(h:HumanRecord,now:number){return !!h.spiritStep || (h.iceUntil??0)>now || (h.channelUntil??0)>now;}
-export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {return timedWorldWork('stepHumans',()=>{
+export function stepHumans(r: RunState, hw: HumanWorld, now: number, coarse = false): void {return timedWorldWork('stepHumans',()=>{
   const lastStepAt = hw.lastStepAt ?? hw.lastResolvedAt;
   const dtMs = now - lastStepAt;
   if (dtMs <= 0) return;
@@ -3865,7 +3876,7 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {retu
     h.intent.route = route; h.state = route.length ? 'MOVING' : 'IDLE'; h.intent.blockReason = undefined;
   }
   let navigation: ReturnType<typeof humanNavigation>|undefined;
-  for (const h of actors) {
+  actorLoop: for (const h of actors) {
     if (h.state === 'DEAD' || h.state === 'EVACUATED' || h.state === 'ON_VESSEL') continue;
     if(coreImmobilized(h,now))continue;
     // 1. Survival consume: eat when hungry, drink when thirsty.
@@ -3892,10 +3903,17 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {retu
     }
     // 4. Continuous movement along a legal cardinal tile route. Logical occupancy changes only
     // at tile boundaries; rendered motion advances at the profile's physical px/s speed.
+    // Offline beat (`coarse`): a slice can span several tiles. The time left over after an arrival is
+    // carried straight into the next tile of the same route, so a walker covers exactly speed x time
+    // whatever the slice length; every tile still passes the same entry and occupancy checks, in order.
+    // In a live frame the slice ends at the arrival itself, `spare` is 0 and this runs exactly once.
+    let carry: number | undefined;
+    for (let hop = 0; hop < 32; hop++) {
     const moveIntent = h.intent, moveRoute = moveIntent?.route;
-    if (h.state === 'MOVING' && moveIntent && moveRoute?.length) {
+    if (!(h.state === 'MOVING' && moveIntent && moveRoute?.length)) break;
+    {
       const next = moveRoute[0];
-      let beganStep = false;
+      let beganStep = false, spare = 0;
       if (!h.motion) {
         const dx = next.tx - h.gx, dy = next.ty - h.gy;
         const key = humanCellKey(h.floor, h.gx, h.gy); occupied.delete(key);
@@ -3916,7 +3934,7 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {retu
               const [tx,ty]=humanEntityTile(r,store);
               if(Math.abs(h.gx-tx)+Math.abs(h.gy-ty)<=6){
                 const nav=humanNavigation(r,occupied,true),alternate=nav.route(h,{tx,ty,floor:h.floor});
-                if(alternate?.length && nav.legalEdge(h,alternate[0])){moveIntent.route=alternate;delete moveIntent.blockReason;continue;}
+                if(alternate?.length && nav.legalEdge(h,alternate[0])){moveIntent.route=alternate;delete moveIntent.blockReason;continue actorLoop;}
               }
             }
           }
@@ -3925,7 +3943,9 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {retu
           else { if(moveIntent.work){if(moveIntent.work.phase==='act')moveIntent.work.phase='travel';moveRoute.length=0;}else h.intent=undefined;h.state='IDLE';h.nextThinkAt=now+3000; }
         } else {
           const intentStart = Number.isFinite(moveIntent.startAt) ? Math.max(lastStepAt, moveIntent.startAt) : lastStepAt;
-          const initialElapsed = clamp(now - intentStart, 0, TILE / PROFILES[h.profile].speed * 1000);
+          const available = carry ?? now - intentStart;
+          const initialElapsed = clamp(available, 0, TILE / PROFILES[h.profile].speed * 1000);
+          if (coarse) spare = Math.max(0, available - TILE / PROFILES[h.profile].speed * 1000);
           h.motion = { fromGx: h.gx, fromGy: h.gy, toGx: next.tx, toGy: next.ty, toFloor:next.floor, elapsedMs: initialElapsed, updatedAt: now };
           occupied.add(key);occupied.add(humanCellKey(next.floor,next.tx,next.ty));
           beganStep = true;
@@ -3933,14 +3953,16 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {retu
         }
       }
       if (h.motion) {
-        if (!beganStep) h.motion.elapsedMs += dtMs;
-        h.motion.updatedAt = now;
         const travelMs = TILE / PROFILES[h.profile].speed * 1000;
+        if (!beganStep) { h.motion.elapsedMs += dtMs; if (coarse) spare = Math.max(0, h.motion.elapsedMs - travelMs); }
+        h.motion.updatedAt = now;
         if (h.motion.elapsedMs >= travelMs) {
+          // The body reached the tile `spare` ms before this slice ended; timed work starts from that instant.
+          const arrivedAt = now - spare;
           const destinationKey=humanCellKey(next.floor,next.tx,next.ty);occupied.delete(destinationKey);
           if(!(navigation??=humanNavigation(r,occupied)).enter(h,next,now)){
             h.motion=undefined;h.state='IDLE';moveIntent.blockReason='The physical step became blocked before arrival.';h.lastWorkBlock=moveIntent.blockReason;if(moveIntent.delivery || returningHome(moveIntent) || moveIntent.kind==='follow'){moveRoute.length=0;moveIntent.dueAt=now+750;}else if(moveIntent.work){if(moveIntent.work.phase==='act')moveIntent.work.phase='travel';moveRoute.length=0;}else h.intent=undefined;h.nextThinkAt=now+3000;
-            continue;
+            continue actorLoop;
           }
           const key = humanCellKey(h.floor, h.gx, h.gy); occupied.delete(key);
           h.gx = h.motion.toGx; h.gy = h.motion.toGy; h.floor = h.motion.toFloor ?? h.floor; h.motion = undefined; moveRoute.shift();
@@ -3951,13 +3973,13 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {retu
           if (!moveRoute.length) {
             if (moveIntent.kind === 'fight') { h.state = 'FIGHTING'; h.nextThinkAt = now; }
             else if (moveIntent.kind === 'follow' || moveIntent.delivery || returningHome(moveIntent)) { h.state = 'IDLE'; moveRoute.length = 0; }
-            else if(moveIntent.kind==='eat'&&moveIntent.target?.startsWith('forage:')){h.state='WORKING';moveIntent.dueAt=now+1500;}
-            else if(moveIntent.kind==='drink'&&moveIntent.target?.match(/^(water|barrel):/)){h.state='WORKING';moveIntent.dueAt=now+2000;}
-            else if (moveIntent.work) { h.state = 'WORKING'; moveIntent.dueAt = now + (moveIntent.work.phase === 'fetch' ? 800 : moveIntent.work.duration); }
+            else if(moveIntent.kind==='eat'&&moveIntent.target?.startsWith('forage:')){h.state='WORKING';moveIntent.dueAt=arrivedAt+1500;}
+            else if(moveIntent.kind==='drink'&&moveIntent.target?.match(/^(water|barrel):/)){h.state='WORKING';moveIntent.dueAt=arrivedAt+2000;}
+            else if (moveIntent.work) { h.state = 'WORKING'; moveIntent.dueAt = arrivedAt + (moveIntent.work.phase === 'fetch' ? 800 : moveIntent.work.duration); }
             else if (moveIntent.kind === 'work' && moveIntent.target?.match(/^(global-harvest|harvest):/)) {
               const target = moveIntent.target.match(/^(?:global-harvest:(-?\d+):|harvest:)(\d+),(\d+)$/);
               if (target) faceHumanToward(h, Number(target[2])+(target[1]===undefined?ox:0),Number(target[3])+(target[1]===undefined?oy:0));
-              h.state = 'WORKING'; moveIntent.dueAt = now + 1500;
+              h.state = 'WORKING'; moveIntent.dueAt = arrivedAt + 1500;
             }
             else if(moveIntent.kind==='evacuate'){h.state='IDLE';const tid=moveIntent.target;const trip=tid?hw.evacuation[tid]:undefined;const boarded=trip?boardEvac(r,hw,h,tid!,now):{ok:false,reason:'the service closed before you arrived'};h.intent=undefined;if(!boarded.ok){h.lastWorkBlock=boarded.reason??'cannot board';h.nextThinkAt=now+2000;}}
             else if(moveIntent.target==='recipe-board'){h.state='IDLE';h.intent=undefined;serviceRecipeBoard(r,hw,h,now);h.recipeBoardPending=false;h.nextThinkAt=now;}
@@ -3966,6 +3988,9 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {retu
           }
         }
       }
+      if (!(spare > 0)) break;
+      carry = spare;
+    }
     }
     // Stamina recovers while actually idle/resting.
     if (h.state === 'IDLE') h.stamina = clamp(h.stamina + dtMs / HOUR * 4, 0, h.maxStamina);

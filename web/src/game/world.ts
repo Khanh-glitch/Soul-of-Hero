@@ -98,8 +98,12 @@ export function setActiveLayout(id: string): boolean {
 export function hasLayout(id: string): boolean {
   return (isVeyra05Layout(id) && !!windowForLayout(id)) || id === 'shipping' || id === 'dev_delta' || id === 'shipping_fresh' || id === 'dev_delta_fresh' || VEYRA_LAYOUTS.includes(id as any) || external.has(id);
 }
+/** Layout ids already proven to name a Veyra window. `windowForLayout` is a pure function of the id, but it
+ *  scans the scene table, runs a regex and allocates a window spec — far too much for a per-tile read. */
+const knownVeyraWindows = new Set<string>();
 export function getWorld(layout: string = activeLayout): World {
-  if (isVeyra05Layout(layout) && windowForLayout(layout)) return getWindowWorld(layout).world;
+  if (knownVeyraWindows.has(layout)) return getWindowWorld(layout).world;
+  if (isVeyra05Layout(layout) && windowForLayout(layout)) { if (knownVeyraWindows.size > 4096) knownVeyraWindows.clear(); knownVeyraWindows.add(layout); return getWindowWorld(layout).world; }
   let world = cached.get(layout);
   if (!world) { const p=external.get(layout); if (p) world=instantiateMapPackage(p); else if (VEYRA_LAYOUTS.includes(layout as any)) world=projectVeyra(layout); else if (layout === 'shipping_fresh' || layout === 'dev_delta_fresh') world=genWorld(layout === 'shipping_fresh' ? 'shipping' : 'dev_delta',true); else if (layout === 'shipping' || layout === 'dev_delta') world=genWorld(layout); else throw new Error(`Map package ${layout} is not installed`); if (!world.packageContract && !world.veyra) world.accessCorridors=deriveAccessCorridors(world); cached.set(layout, world); }
   return world;

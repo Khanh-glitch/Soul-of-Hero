@@ -1645,7 +1645,7 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
         if (fuelled) dt = Math.min(dt, fuel);
         if (job && job.left > 0) dt = Math.min(dt, job.left / (powered.has(e.id) ? BAL.industrialPower.workSpeedMultiplier : 1));
       }
-      if(r.humanWorld)dt=humanEventBoundary(r,r.humanWorld,t,dt);
+      if(r.humanWorld)dt=humanEventBoundary(r,r.humanWorld,t,dt,!visual);
       dt = airdropBoundary(r,t,dt);
       dt = basePowerBoundary(r, dt, visual);
       dt = territoryBoundary(r, dt);
@@ -1699,7 +1699,7 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
       // A confirmed arrival ashore is the only event that ends the player's run by sea; it stops
       // this settlement slice so no later slice can act after the run is finalized.
       if (evac.playerArrived) return;
-      stepHumans(r, r.humanWorld, t);
+      stepHumans(r, r.humanWorld, t, !visual);
     }
     syncDrops(t);
     stepNatureTrees(r,t);

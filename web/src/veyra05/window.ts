@@ -535,7 +535,12 @@ export function resetWindowToGround(ww: WindowWorld) {
 }
 
 const cache = new Map<string, WindowWorld>();
+/** Most recent answer of `getWindowWorld`. Per-tile readers ask for the same window millions of times in a
+ *  row; this skips the key build and Map lookup. It is dropped whenever the cache below changes, so it can
+ *  never outlive the cached object it mirrors. */
+let lastWindowId: string | undefined, lastWindowRules: VeyraPlacementRules | undefined, lastWindow: WindowWorld | undefined;
 export function getWindowWorld(layoutId: string, rules: VeyraPlacementRules = placementRules): WindowWorld {
+  if (lastWindow && layoutId === lastWindowId && rules === lastWindowRules) return lastWindow;
   const key = rules === 3 ? layoutId : `${layoutId}|r${rules}`;
   let w = cache.get(key);
   if (!w) {
@@ -543,6 +548,7 @@ export function getWindowWorld(layoutId: string, rules: VeyraPlacementRules = pl
     cache.set(key, w);
     if (cache.size > 16) cache.delete(cache.keys().next().value!);
   }
+  lastWindowId = layoutId; lastWindowRules = rules; lastWindow = w;
   return w;
 }
 
