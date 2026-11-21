@@ -26,7 +26,9 @@ it('normal population naturally selects real harvest and delivers exact physical
  console.log(JSON.stringify({case:'natural-harvest-120s',...sample,completed,deliveries:events.filter(e=>e.kind==='human.cargo.deliver'),selected:events.filter(e=>e.kind==='human.harvest.select').slice(0,8),stages:[...stages]}));
  expect(Object.keys(hw.people)).toEqual(ids);expect([...stages].sort()).toEqual(['delivery','planning','travel','work']);expect(completed.length).toBeGreaterThan(0);
  const jobIds=completed.map(e=>e.detail.split(':')[0]);expect(new Set(jobIds).size).toBe(jobIds.length);
- const ledger=Object.values(hw.communities).flatMap(c=>Object.values(c.cargoLedger??{}).flat());expect(ledger.length).toBeGreaterThan(0);expect(ledger.every(l=>l.qty>0&&!!l.sourceId)).toBe(true);
+ // Harvest deliveries only: a cook's first paid meal can reach the same warehouse ledger inside these two
+ // minutes, and that row names its station and recipe instead of a source.
+ const ledger=Object.values(hw.communities).flatMap(c=>Object.values(c.cargoLedger??{}).flat()).filter(l=>!l.recipe);expect(ledger.length).toBeGreaterThan(0);expect(ledger.every(l=>l.qty>0&&!!l.sourceId)).toBe(true);
  const actors=completed.map(e=>e.detail.split(':').slice(1,-1).join(':'));
  expect(actors.some(id=>{const p=starting[id];return p&&p.gx>=ox&&p.gx<ox+200&&p.gy>=oy&&p.gy<oy+200;})).toBe(true);
  expect(actors.some(id=>{const p=starting[id];return p&&(p.gx<ox||p.gx>=ox+200||p.gy<oy||p.gy>=oy+200);})).toBe(true);

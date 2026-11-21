@@ -74,17 +74,20 @@ it('makes one Hook stew from the first garden lot and a hunted boar; only inter-
  const cook=()=>r().humanWorld!.people[pay.workerId];
  const end=r().clock.lastSimAt+150000;
  while(!cook().deliveryWait && r().clock.lastSimAt<end) settle(gs,r().clock.lastSimAt+2000,true);
- const waiting=()=>{
+ const waiting=(reach=1)=>{
    const h=cook(),c=stock(),[sx,sy]=community().storeTile!;
    expect(h.deliveryWait?.containerId).toBe(c.id);
-   expect(Math.abs(h.gx-sx)+Math.abs(h.gy-sy)).toBeLessThanOrEqual(1);
+   expect(Math.abs(h.gx-sx)+Math.abs(h.gy-sy)).toBeLessThanOrEqual(reach);
    expect(c.slots).toHaveLength(12);expect(c.slots.every(Boolean)).toBe(true);
    expect(h.workOutputs?.[pickup[0].uid]).toBe(1);
    expect(C(r(),packId).slots.find(s=>s?.uid===pickup[0].uid)).toMatchObject({key:'stew',qty:1,production:{jobId:saved}});
    expect(Object.values(community().cargoLedger??{}).flat().some(row=>row.jobId===saved)).toBe(false);
    return {at:r().clock.lastSimAt,position:[h.gx,h.gy,h.floor],store:[sx,sy],containerId:c.id,reason:h.lastWorkBlock,occupied:c.slots.filter(Boolean).length,carried:pickup[0].uid};
  };
- const arrival=waiting();gs=validate(JSON.parse(JSON.stringify(gs)))!;waiting();settle(gs,arrival.at+30000,true);const afterReload=waiting();
+ const arrival=waiting();gs=validate(JSON.parse(JSON.stringify(gs)))!;waiting();settle(gs,arrival.at+30000,true);
+ // A cook waiting with a full pack is still a colleague: asked by someone with an errand at the counter,
+ // the cook steps aside (never back onto the counter) and keeps the lot and the wait.
+ const afterReload=waiting(3);
  console.log('HOOK_STEW_RETURN',JSON.stringify({seed:r().seed,start:T0,jobId:saved,worker:pay.workerId,arrival,afterReload}));
  console.log('HOOK_BOAR_STEW',JSON.stringify({seed:r().seed,start:T0,scope:'player hunt; controlled inter-region arrival; autonomous cooking',crop,game,pack:rows('human.kitchen.repack'),gift,bill,pay,saved,finish,pickup}));
  if(process.env.SOH_HOOK_WATCH)watchPantry(gs,pay.workerId,saved,pickup[0].uid,process.env.SOH_HOOK_WATCH);

@@ -536,8 +536,9 @@ export function resetWindowToGround(ww: WindowWorld) {
 
 const cache = new Map<string, WindowWorld>();
 /** Most recent answer of `getWindowWorld`. Per-tile readers ask for the same window millions of times in a
- *  row; this skips the key build and Map lookup. It is dropped whenever the cache below changes, so it can
- *  never outlive the cached object it mirrors. */
+ *  row; this skips the key build and Map lookup. Every call that reaches the cache replaces it, and eviction
+ *  only ever removes the oldest entry while a newer one is being added, so it always names the object the
+ *  cache would return for the same arguments. */
 let lastWindowId: string | undefined, lastWindowRules: VeyraPlacementRules | undefined, lastWindow: WindowWorld | undefined;
 export function getWindowWorld(layoutId: string, rules: VeyraPlacementRules = placementRules): WindowWorld {
   if (lastWindow && layoutId === lastWindowId && rules === lastWindowRules) return lastWindow;

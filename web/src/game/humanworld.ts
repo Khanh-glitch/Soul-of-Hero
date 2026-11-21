@@ -226,6 +226,8 @@ export interface HumanRecord {
   lastWatchAt?: number;
   guardedEntityId?: string;
   nextPerceptionAt?: number;
+  /** The cell this resident last stepped off to let a colleague through, and when. */
+  yieldedFrom?: {tx:number;ty:number;floor:number;at:number};
   lastTalkAt?: number;
   gameDrop?: {entityId:string;stackUid:string;creatureId:string};
   nextMedicalReviewAt?: number;
@@ -3928,7 +3930,17 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number, coarse = fa
           const colleague=actors.find(p=>p.actorId!==h.actorId&&p.community===h.community&&p.floor===next.floor&&p.gx===next.tx&&p.gy===next.ty&&p.state==='IDLE'&&!p.intent&&!p.following);
           let roomComing=false;
           if(colleague){const nav=humanNavigation(r,occupied);
-           const sidestep=(p:HumanRecord,away:HumanRecord)=>[[1,0],[-1,0],[0,1],[0,-1]].map(([dx,dy])=>({tx:p.gx+dx,ty:p.gy+dy,floor:p.floor})).filter(q=>nav.legalEdge(p,q)).sort((a,b)=>(Math.abs(b.tx-away.gx)+Math.abs(b.ty-away.gy))-(Math.abs(a.tx-away.gx)+Math.abs(a.ty-away.gy)))[0];
+           // Where to step aside. Farthest from the body being let through, but first of all: not onto the
+           // lane the walker is about to take, not onto the warehouse counter (the cells other residents
+           // need for the store and its request board), and not straight back onto the cell this resident
+           // was asked to leave a moment ago. Without these, two walkers with errands in different
+           // directions pushed one idle colleague back and forth between their two next cells for good.
+           const lane=new Set(moveRoute.slice(0,8).map(c=>humanCellKey(c.floor,c.tx,c.ty)));
+           const depot=h.community?findRunEntity(r,hw.communities[h.community]?.storeEntityId):undefined,counter=depot&&(depot.hp??1)>0?humanEntityTile(r,depot):undefined;
+           const awkward=(p:HumanRecord,q:{tx:number;ty:number;floor:number})=>(lane.has(humanCellKey(q.floor,q.tx,q.ty))?4:0)
+            +(counter&&q.floor===(depot!.floor??0)&&Math.abs(q.tx-counter[0])+Math.abs(q.ty-counter[1])<=1?2:0)
+            +(p.yieldedFrom&&now-p.yieldedFrom.at<10000&&p.yieldedFrom.tx===q.tx&&p.yieldedFrom.ty===q.ty&&p.yieldedFrom.floor===q.floor?1:0);
+           const sidestep=(p:HumanRecord,away:HumanRecord)=>[[1,0],[-1,0],[0,1],[0,-1]].map(([dx,dy])=>({tx:p.gx+dx,ty:p.gy+dy,floor:p.floor})).filter(q=>nav.legalEdge(p,q)).sort((a,b)=>awkward(p,a)-awkward(p,b)||(Math.abs(b.tx-away.gx)+Math.abs(b.ty-away.gy))-(Math.abs(a.tx-away.gx)+Math.abs(a.ty-away.gy)))[0];
            let mover=colleague,side=sidestep(colleague,h);
            // A colleague hemmed in on every side by other idle colleagues (the usual knot beside a warehouse)
            // cannot sidestep, and the walker behind would retry the same step for ever. The outer ring makes
@@ -3937,7 +3949,7 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number, coarse = fa
             if(q===h||q===colleague||q.community!==h.community||q.floor!==colleague.floor||q.state!=='IDLE'||q.intent||q.following||Math.abs(q.gx-colleague.gx)+Math.abs(q.gy-colleague.gy)!==1)continue;
             const room=sidestep(q,colleague);if(room){mover=q;side=room;break;}
            }
-           if(side){mover.intent={intentId:`yield:${mover.actorId}:${now}`,actorId:mover.actorId,kind:'move',target:'colleague-yield',preconditions:['physical sidestep for a blocked community colleague'],reserved:[],startAt:now,dueAt:now,route:[side]};mover.state='MOVING';roomComing=true;receipt(r,now,'human.access.yield',JSON.stringify({actorId:mover.actorId,for:h.actorId,from:[mover.gx,mover.gy],into:side}));}
+           if(side){mover.yieldedFrom={tx:mover.gx,ty:mover.gy,floor:mover.floor,at:now};mover.intent={intentId:`yield:${mover.actorId}:${now}`,actorId:mover.actorId,kind:'move',target:'colleague-yield',preconditions:['physical sidestep for a blocked community colleague'],reserved:[],startAt:now,dueAt:now,route:[side]};mover.state='MOVING';roomComing=true;receipt(r,now,'human.access.yield',JSON.stringify({actorId:mover.actorId,for:h.actorId,from:[mover.gx,mover.gy],into:side}));}
           }
 
           // If a committed colleague cannot yield on the final approach, try
@@ -3956,8 +3968,14 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number, coarse = fa
           // edge): a walker on a longer errand looks once for another physical lane to the same destination
           // and takes it only if its first step is open right now. Otherwise the ordinary back-off applies.
           if(!roomComing && moveRoute.length>1 && moveIntent.kind!=='fight' && moveIntent.kind!=='follow' && occupied.has(humanCellKey(next.floor,next.tx,next.ty))){
-            const goal=moveRoute[moveRoute.length-1],nav=humanNavigation(r,occupied,true),alternate=nav.route(h,goal);
+            // `route()` stops on the goal or on any cell beside it. The errand was planned to stand on `goal`
+            // itself (the cell from which the patient, bench or plot is in reach), so a lane that ends beside
+            // it is completed with that last step. This probe is not the errand's own search: its status and
+            // message are put back unless the lane is taken.
+            const goal=moveRoute[moveRoute.length-1],nav=humanNavigation(r,occupied,true),search=h.routeSearch,message=h.lastWorkBlock,alternate=nav.route(h,goal);
+            if(alternate?.length){const end=alternate[alternate.length-1];if(end.tx!==goal.tx||end.ty!==goal.ty||end.floor!==goal.floor)alternate.push(goal);}
             if(alternate?.length && !(alternate[0].tx===next.tx&&alternate[0].ty===next.ty&&alternate[0].floor===next.floor) && nav.legalEdge(h,alternate[0])){moveIntent.route=alternate;delete moveIntent.blockReason;continue actorLoop;}
+            h.routeSearch=search;h.lastWorkBlock=message;
           }
           if (moveIntent.kind === 'follow' || moveIntent.delivery || returningHome(moveIntent)){moveRoute.length=0;h.state='IDLE';moveIntent.dueAt=now+750;}
           else if (moveIntent.kind === 'fight') { h.state = 'FIGHTING'; h.motion = undefined; moveRoute.length = 0; h.nextThinkAt = now + 750; }
