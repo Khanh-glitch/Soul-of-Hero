@@ -89,7 +89,23 @@ Từng Elder: Surtur → `po_saltpans` (2 đợt, sau khi bơi qua biển), Typh
 
 ## Kiểm thử (sau commit này)
 
-Trong 22 tệp còn đỏ ở `01021db`: **21 tệp đã xanh**, còn 1 tệp đỏ thật (`npc-runtime-throughput`, xem dưới). `typecheck` và `typecheck:tests` sạch. Chưa chạy lại toàn bộ 260 tệp.
+Trong 22 tệp còn đỏ ở `01021db`: **21 tệp đã xanh**, còn 1 tệp đỏ thật (`npc-runtime-throughput`, xem dưới). `typecheck` và `typecheck:tests` sạch.
+
+**Regression trên `d743ffa`** (mỗi tệp một tiến trình, giới hạn 900 giây; 255 trong 261 tệp — 6 tệp chậm chạy riêng):
+
+| | `6d2dec8` (260 tệp) | `d743ffa` (255 tệp) |
+|---|---|---|
+| Tệp đạt | 203 | 241 |
+| Tệp đỏ thật | 38 | 1 (`npc-runtime-throughput`, quá 90 giây) |
+| Tệp chỉ có bài tự chọn bật (toàn bộ bỏ qua) | 13 | 13 |
+| Tệp quá 900 giây | 6 | (6 tệp này không nằm trong lượt chạy) |
+| Bài đạt / hỏng | 1.330 / 143 | 1.519 / 1 |
+
+Không tệp nào từng xanh ở `6d2dec8` mà nay đỏ. Kết quả ở `/home/user/acc/reg2` (ngoài repo).
+
+`g1b-lifecycle` chạy riêng tới hết (55 phút): 9/11 đạt; 2 bài còn lại chạy xong không lỗi kiểm chứng nhưng vượt giới hạn 300 giây ghi trong tệp (mất 18 và 36 phút). Bốn tệp chậm còn lại đang chạy riêng; `economic-network-m2` chưa chạy lại (ước tính nhiều giờ).
+
+Sáu tệp bằng chứng được Git theo dõi vẫn bị bài kiểm thử ghi đè mỗi lần chạy (`evidence/g1a/tool-matrix.json`, `evidence/item-network/*`, `reports/economic-network/SOH_ECONOMIC_GRAPH.json`, `SOH_ITEM_FUNCTION_AUDIT.csv`, `reports/mec01-five-chain-benchmark.json`) — chưa xử lý.
 
 Nguyên nhân chung: bài kiểm thử viết cho luật cũ, game đã đổi luật. Các thay đổi đáng chú ý:
 
@@ -111,6 +127,6 @@ Nguyên nhân chung: bài kiểm thử viết cho luật cũ, game đã đổi l
 ## Chưa làm
 
 - Tăng tốc mô phỏng dân cư (hoặc quyết định khác cho 7 tệp trên).
-- Chạy lại toàn bộ 260 tệp trên một SHA đã khoá.
+- Chạy lại đủ 261 tệp trên SHA cuối cùng (lượt trên là để dò lỗi sớm, chưa phải lượt khoá SHA).
 - Kiểm tra trên trình duyệt: cộng dồn gỗ (mới có bài kiểm thử đơn vị), cảnh A–I, xây dựng, chiến đấu, giao dịch, sơ tán thủ công; Elder bơi qua biển chưa từng được nhìn thấy trên màn hình.
 - ZIP phát hành, Vercel, tài liệu hướng dẫn, PR vào `main`.
