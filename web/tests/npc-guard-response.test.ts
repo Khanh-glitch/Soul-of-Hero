@@ -9,10 +9,13 @@ import {TILE} from '../src/game/core';
 import {validate} from '../src/game/persist';
 import {setActiveLayout} from '../src/game/world';
 import {T0} from './helpers/g1b-kit';
+// Away from the player the guard is planned on the first one-second beat (T0+1 s), walks to the post and
+// completes the first watch at T0+12.1 s. Every later instant in this file is counted from this checkpoint.
+const CP=13000;
 function checkpoint(){
  setActiveLayout('veyra05-world');const gs=newGame();expect(startRun(gs,'female',T0,null,7606).ok).toBe(true);const r=gs.run!,hw=r.humanWorld!,comm=hw.communities['com:po_vend_gulf'];
  const h=comm.memberIds.map(id=>hw.people[id]).find(h=>h.occupation==='guard')!,post=r.entities[comm.storeEntityId!];
- for(let sec=2;sec<=12;sec+=2)settle(gs,T0+sec*1000,true);expect(h.guardedEntityId).toBe(post.id);expect(h.lastWatchAt).toBeGreaterThan(T0);expect(humanCanUseEntity(r,h,post)).toBe(true);
+ for(let sec=2;sec<=12;sec+=2)settle(gs,T0+sec*1000,true);settle(gs,T0+CP,true);expect(h.guardedEntityId).toBe(post.id);expect(h.lastWatchAt).toBeGreaterThan(T0);expect(humanCanUseEntity(r,h,post)).toBe(true);
  return {gs,r,hw,h,post};
 }
 function encounter(){const {gs,r,hw,h,post}=checkpoint();const [ax,ay]=r.sourceMap!.veyra!.originAu;
@@ -27,7 +30,7 @@ it('responds to a staged wolf, reloads away from the post, and resumes the origi
  const r=()=>gs.run!,h=()=>r().humanWorld!.people[id],wolf=()=>r().creatures.find(m=>m.id===mid)!;
  const start=[h().gx,h().gy],weapon=h().equip.weapon!,dur=weapon.dur!,hits:{at:number;before:number;after:number;gx:number;gy:number}[]=[];
  let saved=0,job='',events:ReturnType<typeof endReceiptSink>;beginReceiptSink();try{
- for(let ms=12250;ms<=60000;ms+=250){const now=T0+ms;settle(gs,now,true);
+ for(let ms=CP+250;ms<=CP+48000;ms+=250){const now=T0+ms;settle(gs,now,true);
    if(!saved && h().intent?.watchResponse && h().intent?.kind==='fight' && !humanCanUseEntity(r(),h(),r().entities[pid])){
      saved=ms;job=h().intent!.intentId;gs=validate(JSON.parse(JSON.stringify(gs)))!;expect(gs).toBeTruthy();expect(h().intent).toMatchObject({intentId:job,watchResponse:{postId:pid,enemyId:mid}});
    }
@@ -40,17 +43,17 @@ it('responds to a staged wolf, reloads away from the post, and resumes the origi
  console.log('CONTROLLED_GUARD',JSON.stringify({seed:r().seed,start:T0,post:pid,guard:id,from:start,saved,weapon:weapon.uid,durBefore:dur,durAfter:h().equip.weapon?.dur,hits,trace}));
 },120000);
 it('does not alert on a passive, out-of-floor, tamed, or occluded creature',()=>{
- const {gs,r,h,wolf,ax,ay}=encounter();wolf.state='wander';settle(gs,T0+13000,true);expect(h.intent?.target).not.toBe(wolf.id);
- wolf.state='chase';wolf.floor=1;settle(gs,T0+14000,true);expect(h.intent?.target).not.toBe(wolf.id);
- wolf.floor=0;wolf.husbandry={tamed:true} as typeof wolf.husbandry;settle(gs,T0+15000,true);expect(h.intent?.target).not.toBe(wolf.id);delete wolf.husbandry;
+ const {gs,r,h,wolf,ax,ay}=encounter();wolf.state='wander';settle(gs,T0+CP+1000,true);expect(h.intent?.target).not.toBe(wolf.id);
+ wolf.state='chase';wolf.floor=1;settle(gs,T0+CP+2000,true);expect(h.intent?.target).not.toBe(wolf.id);
+ wolf.floor=0;wolf.husbandry={tamed:true} as typeof wolf.husbandry;settle(gs,T0+CP+3000,true);expect(h.intent?.target).not.toBe(wolf.id);delete wolf.husbandry;
  const gx=Math.floor(wolf.x/TILE),gy=Math.floor(wolf.y/TILE),tx=gx-Math.sign(gx-h.gx+ax*2),ty=gy-Math.sign(gy-h.gy+ay*2);
  r.entities.shutter={id:'shutter',kind:'door',open:false,tx,ty,x:(tx+.5)*TILE,y:(ty+.5)*TILE};markDirty();expect(clearPhysicalLine(r,{x:(h.gx-ax*2+.5)*TILE,y:(h.gy-ay*2+.5)*TILE},wolf,true)).toBe(false);
- settle(gs,T0+16000,true);expect(h.intent?.target).not.toBe(wolf.id);expect(r.receipts.some(e=>e.kind==='human.guard.alert')).toBe(false);
+ settle(gs,T0+CP+4000,true);expect(h.intent?.target).not.toBe(wolf.id);expect(r.receipts.some(e=>e.kind==='human.guard.alert')).toBe(false);
 });
 it('cancels a pending swing when the wolf disengages and never reports duty at a captured warehouse',()=>{
  const {gs,r,h,hw,post,wolf}=encounter(),last=h.lastWatchAt,dur=h.equip.weapon!.dur;
  let pending=false;beginReceiptSink();let trace:ReturnType<typeof endReceiptSink>;
- try{for(let ms=12250;ms<=18000;ms+=100){const now=T0+ms;settle(gs,now,true);stepHumanCombat(r,hw,now);if(!h.intent?.swing)continue;
+ try{for(let ms=CP+250;ms<=CP+6000;ms+=100){const now=T0+ms;settle(gs,now,true);stepHumanCombat(r,hw,now);if(!h.intent?.swing)continue;
    pending=true;expect(h.intent.watchResponse?.postId).toBe(post.id);expect(humanCanUseEntity(r,h,post)).toBe(false);
    const bad=JSON.parse(JSON.stringify(gs));bad.run.humanWorld.people[h.actorId].intent.watchResponse.enemyId='other';expect(validate(bad)).toBeNull();
    wolf.state='wander';stepHumanCombat(r,hw,h.intent.swing.contactAt,()=>{throw Error('landed a stale swing');});expect(h.intent.swing).toBeUndefined();

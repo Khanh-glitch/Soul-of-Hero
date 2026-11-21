@@ -51,7 +51,8 @@ it('makes one Hook stew from the first garden lot and a hunted boar; only inter-
    r().player.y=store.y+16;expect(dispatch(gs,cmd,start).ok).toBe(true);expect(dispatch(gs,cmd,start)).toMatchObject({ok:false,dup:true});
    expect(C(r(),'inv').slots.find(s=>s?.uid===game.uid)?.qty).toBe(1);const bins=stock().slots.length;expect(bins).toBe(12);
    const fireId=community().workStations.find(id=>r().entities[id]?.type==='campfire')!,fire=()=>r().entities[fireId];
-   for(let s=2;s<=150;s+=2){settle(gs,start+s*1000,true);const job=fire().station!.queue.find(j=>j.recipe==='stew');
+   // The cook's route to the campfire is searched 256 cells per review; allow five minutes for the pot to be lit.
+   for(let s=2;s<=300;s+=2){settle(gs,start+s*1000,true);const job=fire().station!.queue.find(j=>j.recipe==='stew');
      if(!saved&&job){saved=job.id;gs=validate(JSON.parse(JSON.stringify(gs)))!;expect(fire().station!.queue.find(j=>j.id===saved)?.left).toBe(job.left);expect(dispatch(gs,cmd,start+s*1000)).toMatchObject({ok:false,dup:true});}
      if(saved&&Object.values(r().custody).some(c=>c.slots.some(v=>v?.key==='stew'&&v.production?.jobId===saved)&&c.id!==fire().station!.outC))break;
    }

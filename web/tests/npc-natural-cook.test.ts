@@ -22,7 +22,8 @@ it('normal New Game has no opening meal inputs; only a physical delivery can clo
  const opening=auditStock();expect(opening.length).toBeGreaterThan(0);
  expect(opening.every(a=>a.recipes.every(rc=>rc.missing.length>0))).toBe(true);
  beginReceiptSink();let receipts:ReturnType<typeof endReceiptSink>;
- try{measureWorldWork(()=>settle(gs,T0+180000,true));}finally{receipts=endReceiptSink();}
+ // First checkpoint, one minute in: the ingredient has arrived but nothing has been cooked yet.
+ try{measureWorldWork(()=>settle(gs,T0+60000,true));}finally{receipts=endReceiptSink();}
  expect(Object.keys(hw.people)).toHaveLength(286);
  const audit=auditStock();expect(audit.every(a=>a.candidateCount===0)).toBe(true);
  const supplied=audit.flatMap(a=>a.recipes.filter(rc=>!rc.missing.length).map(rc=>({actor:a.actor,recipe:rc.recipe})));
@@ -31,12 +32,24 @@ it('normal New Game has no opening meal inputs; only a physical delivery can clo
  const drops=Object.values(c.cargoLedger??{}).flat().filter(row=>row.workerId==='hm'&&row.key==='mushroom');
  expect(drops).toHaveLength(1);const [drop]=drops;
  expect(drop).toMatchObject({sourceId:'0:2738558',qty:1});expect(drop.intoUid).toBe(drop.fromUid);
- // The warehouse ledger is history, not present custody. By 180s hm has
+ // The warehouse ledger is history, not present custody. By 60s hm has
  // fetched the bill back out and is checking the route to the campfire.
  expect(receipts.some(e=>e.at>=drop.at&&e.kind==='human.work.fetch'&&e.detail.startsWith('hm:')&&e.detail.endsWith(':'+c.storeEntityId))).toBe(true);
  expect(C(r,hw.people.hm.inv.packId).slots.filter(s=>s?.uid===drop.intoUid)).toMatchObject([{key:'mushroom',qty:1}]);
  expect(c.storeContainers.flatMap(id=>C(r,id).slots).some(s=>s?.uid===drop.intoUid)).toBe(false);
  expect(hw.people.hm.intent?.work).toMatchObject({kind:'cook',recipe:'grilled_mushroom',phase:'travel'});
  expect(receipts.some(e=>e.kind==='human.production.pay')).toBe(false); // the ingredient is not a paid meal
- console.log(JSON.stringify({case:'natural-cook-supply',openingDeficits:opening.length,supplied,drop,paidMeals:0}));
+ // Follow the same cook, half a minute at a time, until that one delivered mushroom has become one paid meal
+ // at the campfire and the meal has been carried to the warehouse. Only the clock is driven.
+ const mealRows=()=>Object.values(c.cargoLedger??{}).flat().filter(row=>row.workerId==='hm'&&row.key==='grilled_mushroom');
+ beginReceiptSink();let later:ReturnType<typeof endReceiptSink>,deliveredBy=0;
+ try{for(let sec=90;sec<=900&&!deliveredBy;sec+=30){settle(gs,T0+sec*1000,true);if(mealRows().length)deliveredBy=sec;}}finally{later=endReceiptSink();}
+ expect(deliveredBy).toBeGreaterThan(0);expect(Object.keys(hw.people)).toHaveLength(286);
+ const paid=later.filter(e=>e.kind==='human.production.pay').map(e=>JSON.parse(e.detail)).filter(p=>p.workerId==='hm');
+ expect(paid).toHaveLength(1);expect(paid[0]).toMatchObject({workerId:'hm',recipe:'grilled_mushroom',inputs:[{uid:drop.intoUid,key:'mushroom',qty:1}]});
+ const meals=mealRows();
+ expect(meals).toHaveLength(1);expect(meals[0]).toMatchObject({jobId:paid[0].jobId,recipe:'grilled_mushroom',qty:1});expect(meals[0].at).toBeGreaterThan(drop.at);
+ expect(c.storeContainers.flatMap(id=>C(r,id).slots).filter(s=>s?.uid===meals[0].intoUid)).toMatchObject([{key:'grilled_mushroom',qty:1}]);
+ expect([...C(r,hw.people.hm.inv.packId).slots,...c.storeContainers.flatMap(id=>C(r,id).slots)].some(s=>s?.uid===drop.intoUid)).toBe(false); // the mushroom was consumed, not duplicated
+ console.log(JSON.stringify({case:'natural-cook-supply',openingDeficits:opening.length,supplied,drop,paidMeals:paid.length,deliveredBy,meal:meals[0]}));
 },90000);

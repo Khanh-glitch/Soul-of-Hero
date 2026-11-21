@@ -3699,6 +3699,10 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number, coarse = fa
   hw.lastStepAt = now;
   stepPlayerHumanAid(r,hw,now);
   const actors = Object.values(hw.people);
+  // Offline beat: who was already walking which route when this slice began. Only they have been on the
+  // move during the slice; a route chosen at this instant starts from a standstill (see section 4).
+  const walkingAtSliceStart = new Map<HumanRecord, unknown>();
+  if (coarse) for (const h of actors) if (h.state === 'MOVING' && h.intent?.route?.length) walkingAtSliceStart.set(h, h.intent.route);
   for(const h of actors){
     const trip=h.spiritStep;if(!trip || trip.arriveAt>now)continue;
     delete h.spiritStep;const o=r.sourceMap?.veyra?.originAu,ox=(o?.[0]??0)*2,oy=(o?.[1]??0)*2;
@@ -3922,8 +3926,18 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number, coarse = fa
           // Cooperate at a shared access point without swapping/teleporting bodies.
           // Only an idle colleague with no committed action can accept a sidestep.
           const colleague=actors.find(p=>p.actorId!==h.actorId&&p.community===h.community&&p.floor===next.floor&&p.gx===next.tx&&p.gy===next.ty&&p.state==='IDLE'&&!p.intent&&!p.following);
-          if(colleague){const nav=humanNavigation(r,occupied),side=[[1,0],[-1,0],[0,1],[0,-1]].map(([dx,dy])=>({tx:colleague.gx+dx,ty:colleague.gy+dy,floor:colleague.floor})).filter(p=>nav.legalEdge(colleague,p)).sort((a,b)=>(Math.abs(b.tx-h.gx)+Math.abs(b.ty-h.gy))-(Math.abs(a.tx-h.gx)+Math.abs(a.ty-h.gy)))[0];
-           if(side){colleague.intent={intentId:`yield:${colleague.actorId}:${now}`,actorId:colleague.actorId,kind:'move',target:'colleague-yield',preconditions:['physical sidestep for a blocked community colleague'],reserved:[],startAt:now,dueAt:now,route:[side]};colleague.state='MOVING';receipt(r,now,'human.access.yield',JSON.stringify({actorId:colleague.actorId,for:h.actorId,from:[colleague.gx,colleague.gy],into:side}));}
+          let roomComing=false;
+          if(colleague){const nav=humanNavigation(r,occupied);
+           const sidestep=(p:HumanRecord,away:HumanRecord)=>[[1,0],[-1,0],[0,1],[0,-1]].map(([dx,dy])=>({tx:p.gx+dx,ty:p.gy+dy,floor:p.floor})).filter(q=>nav.legalEdge(p,q)).sort((a,b)=>(Math.abs(b.tx-away.gx)+Math.abs(b.ty-away.gy))-(Math.abs(a.tx-away.gx)+Math.abs(a.ty-away.gy)))[0];
+           let mover=colleague,side=sidestep(colleague,h);
+           // A colleague hemmed in on every side by other idle colleagues (the usual knot beside a warehouse)
+           // cannot sidestep, and the walker behind would retry the same step for ever. The outer ring makes
+           // room first: one idle neighbour steps away, so the next retry finds the colleague free to yield.
+           if(!side)for(const q of actors){
+            if(q===h||q===colleague||q.community!==h.community||q.floor!==colleague.floor||q.state!=='IDLE'||q.intent||q.following||Math.abs(q.gx-colleague.gx)+Math.abs(q.gy-colleague.gy)!==1)continue;
+            const room=sidestep(q,colleague);if(room){mover=q;side=room;break;}
+           }
+           if(side){mover.intent={intentId:`yield:${mover.actorId}:${now}`,actorId:mover.actorId,kind:'move',target:'colleague-yield',preconditions:['physical sidestep for a blocked community colleague'],reserved:[],startAt:now,dueAt:now,route:[side]};mover.state='MOVING';roomComing=true;receipt(r,now,'human.access.yield',JSON.stringify({actorId:mover.actorId,for:h.actorId,from:[mover.gx,mover.gy],into:side}));}
           }
 
           // If a committed colleague cannot yield on the final approach, try
@@ -3938,12 +3952,22 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number, coarse = fa
               }
             }
           }
+          // Nobody is making room (the body ahead is committed to its own errand, or the knot has no free
+          // edge): a walker on a longer errand looks once for another physical lane to the same destination
+          // and takes it only if its first step is open right now. Otherwise the ordinary back-off applies.
+          if(!roomComing && moveRoute.length>1 && moveIntent.kind!=='fight' && moveIntent.kind!=='follow' && occupied.has(humanCellKey(next.floor,next.tx,next.ty))){
+            const goal=moveRoute[moveRoute.length-1],nav=humanNavigation(r,occupied,true),alternate=nav.route(h,goal);
+            if(alternate?.length && !(alternate[0].tx===next.tx&&alternate[0].ty===next.ty&&alternate[0].floor===next.floor) && nav.legalEdge(h,alternate[0])){moveIntent.route=alternate;delete moveIntent.blockReason;continue actorLoop;}
+          }
           if (moveIntent.kind === 'follow' || moveIntent.delivery || returningHome(moveIntent)){moveRoute.length=0;h.state='IDLE';moveIntent.dueAt=now+750;}
           else if (moveIntent.kind === 'fight') { h.state = 'FIGHTING'; h.motion = undefined; moveRoute.length = 0; h.nextThinkAt = now + 750; }
           else { if(moveIntent.work){if(moveIntent.work.phase==='act')moveIntent.work.phase='travel';moveRoute.length=0;}else h.intent=undefined;h.state='IDLE';h.nextThinkAt=now+3000; }
         } else {
           const intentStart = Number.isFinite(moveIntent.startAt) ? Math.max(lastStepAt, moveIntent.startAt) : lastStepAt;
-          const available = carry ?? now - intentStart;
+          // A walker continuing its route has been moving for the whole slice. Offline, a route chosen during
+          // this very call gets no head start for time the body spent working or waiting before the choice.
+          const standingStart = coarse && walkingAtSliceStart.get(h) !== moveRoute && !(Number.isFinite(moveIntent.startAt) && moveIntent.startAt > lastStepAt);
+          const available = carry ?? (standingStart ? 0 : now - intentStart);
           const initialElapsed = clamp(available, 0, TILE / PROFILES[h.profile].speed * 1000);
           if (coarse) spare = Math.max(0, available - TILE / PROFILES[h.profile].speed * 1000);
           h.motion = { fromGx: h.gx, fromGy: h.gy, toGx: next.tx, toGy: next.ty, toFloor:next.floor, elapsedMs: initialElapsed, updatedAt: now };

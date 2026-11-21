@@ -17,7 +17,9 @@ it('normal population physically procures and delivers a positive-hunger paid re
  // This is a new 30min gameplay trajectory, NOT a changed h1 test or timeout.
  for(let at=start+60000;at<=start+1800000;at+=60000){
   settle(gs,at,true);
-  const delivered=Object.values(gs.run!.humanWorld!.communities).some(c=>Object.values(c.cargoLedger??{}).flat().some(v=>v.recipe&&(ITEMS[v.key]?.food?.hunger??0)>0));
+  // Stop at the first delivered meal whose bill needed procurement (a salvaged Tin Can). A cook who only had to
+  // forage one mushroom finishes a plain grilled mushroom minutes earlier; that is not the chain under test.
+  const delivered=Object.values(gs.run!.humanWorld!.communities).some(c=>Object.values(c.cargoLedger??{}).flat().some(v=>v.recipe&&(ITEMS[v.key]?.food?.hunger??0)>0&&v.inputs?.some(i=>i.key==='tin_can')));
   if(delivered)break;
  }
  const events=endReceiptSink(),r=gs.run!,hw=r.humanWorld!;
@@ -30,7 +32,10 @@ it('normal population physically procures and delivers a positive-hunger paid re
  expect(deliveries.length).toBeGreaterThan(0);
  if(!input){
   const paid=events.filter(e=>e.kind==='human.production.pay').map(e=>JSON.parse(e.detail!));expect(paid.length).toBeGreaterThan(0);
-  for(const d of deliveries)for(const s of d.lineage){expect(s.recipe).toBeTruthy();expect((ITEMS[s.key].food?.hunger??0)>0).toBe(true);expect(paid.some(p=>p.jobId===s.jobId)).toBe(true);expect(C(r,d.containerId).slots.some(v=>v!==null&&v.uid===s.intoUid&&v.qty>=s.qty)).toBe(true);}
+  for(const d of deliveries)for(const s of d.lineage){expect(s.recipe).toBeTruthy();expect((ITEMS[s.key].food?.hunger??0)>0).toBe(true);expect(paid.some(p=>p.jobId===s.jobId)).toBe(true);
+   // Present custody is checked for the delivery that ended the run; an earlier meal may already have been eaten.
+   if(s.at>r.clock.lastSimAt-60000)expect(C(r,d.containerId).slots.some(v=>v!==null&&v.uid===s.intoUid&&v.qty>=s.qty)).toBe(true);}
+  expect(deliveries.some(d=>d.lineage.some((s:{at:number;inputs?:{key:string}[]})=>s.at>r.clock.lastSimAt-60000&&s.inputs?.some(i=>i.key==='tin_can')))).toBe(true);
   const paidTin=paid.flatMap(p=>p.inputs).find(v=>v.key==='tin_can');expect(paidTin).toBeTruthy();
   const tin=events.filter(e=>e.kind==='human.harvest.output').map(e=>JSON.parse(e.detail!)).find(e=>e.uid===paidTin.uid&&e.key==='tin_can');expect(tin).toBeTruthy();
   const transfer=events.filter(e=>e.kind==='human.cargo.lineage').map(e=>JSON.parse(e.detail!)).flatMap(d=>d.lineage).find(v=>v.fromUid===tin.uid&&v.intoUid===paidTin.uid&&v.sourceId===tin.sourceId);expect(transfer).toBeTruthy();
