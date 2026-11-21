@@ -2528,11 +2528,15 @@ function elderRouteExists(r: RunState, fromGx: number, fromGy: number, toGx: num
 // Elder march — Creator decisions 2026-11-21: an awakened Elder LEAVES its lair and travels to the
 // nearest inhabited place, and open sea does not stop it (second decision, same day: "cho vượt
 // biển luôn"). Distance, not a fixed radius and not a coastline, decides who is struck before h336.
-// The march is real travel: the body moves tile by tile along its route at the march pace, over
-// ground and water alike, and it is never repositioned instantly.
+// The march is real travel: the body moves tile by tile along its route — walking pace on ground,
+// swimming pace in open water — and it is never repositioned instantly.
 // ---------------------------------------------------------------------------
-/** SOH_PROVISIONAL march pace (tiles per hour), the same over open country and open water. */
+/** SOH_PROVISIONAL march pace (tiles per hour) over ground. */
 function elderMarchTilesPerHour(): number { return 40; }
+/** SOH_PROVISIONAL pace in open water: twice the walking pace (Creator decision 2026-11-21, so an
+ *  Elder alone on a far island can still reach people before h336 without the mainland Elders
+ *  arriving any sooner than they already do). */
+function elderSwimTilesPerHour(): number { return 80; }
 /** The march ends this close to the settlement's people; the timed assault wave takes over from there. */
 function elderMarchHaltTiles(): number { return 24; }
 /** Ground an Elder stands on: anything inside an authored land ring (it wades rivers and lake
@@ -2656,7 +2660,7 @@ function advanceElderMarch(r: RunState, hw: HumanWorld, elder: ElderAssault, now
     return;
   }
   const halt = elderMarchHaltTiles();
-  let left = elderMarchTilesPerHour() * dt / HOUR;
+  let leftMs = dt;
   march.lastAt = now;
   let at = marchPointAt(march.path, march.walked), arrived: ElderSettlement | undefined, ended = false;
   // It halts where it can stand: an Elder in open water keeps swimming until it makes landfall (or
@@ -2665,10 +2669,13 @@ function advanceElderMarch(r: RunState, hw: HumanWorld, elder: ElderAssault, now
     ? elderSettlements(hw, x, y).find(c => Math.hypot(c.gx - x, c.gy - y) <= halt && !march.ignore?.includes(c.poi)) : undefined;
   let ashore = elderGroundAt(at[0], at[1]);
   arrived = nearby(at[0], at[1]);
-  while (!arrived && left > 0) {
-    const step = Math.min(left, 4, march.length - march.walked);
-    if (step <= 0) { ended = true; break; }
-    march.walked += step; left -= step;
+  while (!arrived && leftMs > 0) {
+    if (march.length - march.walked <= 1e-9) { ended = true; break; }
+    // The pace belongs to what is under the body right now: walking on ground, swimming in the sea.
+    const pace = (ashore ? elderMarchTilesPerHour() : elderSwimTilesPerHour()) / HOUR;
+    const step = Math.min(leftMs * pace, 4, march.length - march.walked);
+    if (step <= 1e-9) break;
+    march.walked += step; leftMs -= step / pace;
     at = marchPointAt(march.path, march.walked);
     const ground = elderGroundAt(at[0], at[1]);
     if (ground !== ashore) {

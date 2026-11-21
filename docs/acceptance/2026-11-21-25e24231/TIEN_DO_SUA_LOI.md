@@ -53,7 +53,21 @@ Chạy lại h288 → h336 (seed 7606, không có người chơi):
 | Dân bị đe doạ / bị trúng / được lính che và sống | 11 / 8 / 3 | 16 / 12 / 5 |
 | Save lớn nhất | 4,11 MB | 4,11 MB |
 
-**Surtur vẫn không kịp đánh:** khu dân cư gần nhất (`po_saltpans`) cách 1.063 ô, cần khoảng 26,6 giờ ở 40 ô/giờ, mà từ lúc thức (h312) tới hết ván chỉ có 24 giờ. Lúc h335 Surtur đã lên bờ bên kia nhưng còn cách dân 145 ô.
+Ở 40 ô/giờ Surtur không kịp: khu dân cư gần nhất (`po_saltpans`) cách 1.063 ô, cần khoảng 26,6 giờ trong khi chỉ có 24 giờ.
+
+### Bơi nhanh gấp đôi đi bộ (quyết định Creator 2026-11-21, phương án 3)
+
+Trên đất vẫn 40 ô/giờ; trong biển 80 ô/giờ. Chạy lại h312 → h336 từ save h312 của lần chạy trên:
+
+| | Vượt biển, 40 ô/giờ | Bơi 80 ô/giờ |
+|---|---|---|
+| Sơ tán / sống sót / chết | 6 / 34 / 246 | 6 / 34 / 246 |
+| Elder chạm khu dân cư | 5 | 6 (cả sáu) |
+| Surtur | còn cách dân 145 ô lúc h335 | đánh `po_saltpans` 2 đợt |
+| Atlas | đánh `po_netcamp` 2 đợt | đánh `po_netcamp` 4 đợt |
+| Dân bị đe doạ / bị trúng / được lính che và sống | 16 / 12 / 5 | 18 / 15 / 5 |
+
+Bốn Elder trên đất liền (Aion, Typhon, Argus, Anubis) đánh đúng số đợt như trước.
 
 ## Chưa làm
 
@@ -61,5 +75,4 @@ Chạy lại h288 → h336 (seed 7606, không có người chơi):
 - Chạy lại toàn bộ 260 tệp trên một SHA đã khoá; endurance 336 giờ chính thức và `npc-campaign-gate`.
 - Kiểm tra trên trình duyệt: cộng dồn gỗ (mới có bài kiểm thử đơn vị), cảnh A–I, xây dựng, chiến đấu, giao dịch, sơ tán thủ công.
 - Save lớn nhất 4,11 MB mới đo bằng mô phỏng, chưa thử lưu thật trong trình duyệt ở giờ đó.
-- Surtur chưa kịp tới nơi ở tốc độ 40 ô/giờ; cần Creator quyết có tăng tốc độ hay không.
 - ZIP phát hành, Vercel, tài liệu hướng dẫn, PR vào `main`.

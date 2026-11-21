@@ -350,12 +350,13 @@ describe('elder overland march', () => {
       if (!sampleTile(Math.round(path[0] + (path[2] - path[0]) * t), Math.round(path[1] + (path[3] - path[1]) * t)).land) seaSamples++;
     }
     expect((e.march!.sea ?? 0) > 0).toBe(seaSamples > 0);
+    const cap = (seaSamples > 0 ? 80 : 40) + 2;                      // walking 40 tiles/h, swimming 80
     // One hour of walking covers one hour of ground — never the whole distance.
     let prev = [e.gx!, e.gy!];
     advanceElderPressure(r, hw, at + HOUR_MS);
     const step = Math.hypot(e.gx! - prev[0], e.gy! - prev[1]);
     expect(step).toBeGreaterThan(0);
-    expect(step).toBeLessThanOrEqual(40 + 2);
+    expect(step).toBeLessThanOrEqual(cap);
     expect(tileOf(gs, 'typhon')).toEqual([e.gx, e.gy]);               // the one body is where the ledger says
     // A save taken mid-march is a valid save and carries the leg.
     const again = validate(JSON.parse(JSON.stringify(gs)));
@@ -367,7 +368,7 @@ describe('elder overland march', () => {
       advanceElderPressure(r, hw, at + h * HOUR_MS);
       const inFlight = (e.events ?? []).some(ev => ev.state === 'APPROACH');
       const struck = (e.events ?? []).find(ev => ev.state === 'CONTACT');
-      if (!struck && !inFlight) expect(Math.hypot(e.gx! - prev[0], e.gy! - prev[1])).toBeLessThanOrEqual(40 + 2);
+      if (!struck && !inFlight) expect(Math.hypot(e.gx! - prev[0], e.gy! - prev[1])).toBeLessThanOrEqual(cap);
       if (struck) { contact = true; expect(struck.targetPoi).toBe(poi); expect(struck.launchedAt).toBeGreaterThan(at); }
     }
     expect(contact).toBe(true);
@@ -389,16 +390,18 @@ describe('elder overland march', () => {
     expect(e.events![0].state).toBe('BLOCKED');
     expect(e.events![0].blockReason).toContain('open sea');
     const seen = (kind: string) => r.receipts.filter(x => x.kind === kind && x.detail.startsWith('atlas:'));
-    let contact = false, swam = false;
+    let contact = false, swam = false, fastest = 0;
     for (let h = 1; h <= 23 && !contact; h++) {
       const prev = [e.gx!, e.gy!];
       advanceElderPressure(r, hw, at + h * HOUR_MS);
       const inFlight = (e.events ?? []).some(ev => ev.state === 'APPROACH');
       const struck = (e.events ?? []).find(ev => ev.state === 'CONTACT');
-      // Water is crossed at the march pace, tile by tile: never a jump across the strait.
-      if (!struck && !inFlight) expect(Math.hypot(e.gx! - prev[0], e.gy! - prev[1])).toBeLessThanOrEqual(40 + 2);
+      // Water is crossed tile by tile at the swimming pace (80 tiles/h): never a jump across the strait.
+      const moved = Math.hypot(e.gx! - prev[0], e.gy! - prev[1]);
+      if (!struck && !inFlight) expect(moved).toBeLessThanOrEqual(80 + 2);
       if (e.march && !sampleTile(e.gx!, e.gy!).land) {
         swam = true;
+        if (!sampleTile(prev[0], prev[1]).land) fastest = Math.max(fastest, moved);
         // An Elder in open water has not halted and strikes nobody from there.
         expect(inFlight).toBe(false);
         expect(struck).toBeUndefined();
@@ -406,6 +409,7 @@ describe('elder overland march', () => {
       if (struck) { contact = true; expect(struck.targetPoi).toBe(poi); }
     }
     expect(swam).toBe(true);
+    expect(fastest).toBeGreaterThan(40 + 2);                           // it swims faster than it walks
     expect(seen('elder.march.sea').length).toBeGreaterThan(0);
     expect(seen('elder.march.landfall').length).toBeGreaterThan(0);
     expect(contact).toBe(true);
@@ -419,12 +423,12 @@ describe('elder overland march', () => {
     const gs = runAt();
     const r = gs.run!; const hw = r.humanWorld!;
     const e = assault(gs, 'surtur');
-    onlySettlement(gs, (_p, gx, gy) => Math.hypot(gx - e.lairGx, gy - e.lairGy) > 1100);
+    onlySettlement(gs, (_p, gx, gy) => Math.hypot(gx - e.lairGx, gy - e.lairGy) > 2000);   // beyond 24 h even of swimming
     const at = atHour(gs, 312);
     expect(e.march).toBeDefined();
     for (let h = 1; h <= 23; h++) advanceElderPressure(r, hw, at + h * HOUR_MS);
     expect(Math.hypot(e.gx! - e.lairGx, e.gy! - e.lairGy)).toBeGreaterThan(800);   // it did set out…
-    expect(Math.hypot(e.gx! - e.lairGx, e.gy! - e.lairGy)).toBeLessThanOrEqual(23 * 40 + 2);   // …at its pace
+    expect(Math.hypot(e.gx! - e.lairGx, e.gy! - e.lairGy)).toBeLessThanOrEqual(23 * 80 + 2);   // …at its pace
     for (const ev of e.events ?? []) expect(ev.state).toBe('BLOCKED');
     expect(Object.values(hw.people).some(h => (h.threat?.waves ?? 0) > 0 && h.threat?.lastWaveId?.includes('surtur'))).toBe(false);
   });
