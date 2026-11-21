@@ -5,6 +5,7 @@ if (typeof (globalThis as any).document === 'undefined') {
 }
 
 import { renderToStaticMarkup } from 'react-dom/server';
+import { dispatchCarryingPack } from './helpers/build-kit';
 import { afterEach, describe, expect, it } from 'vitest';
 import { BAL, TILE, WW, type GameState } from '../src/game/core';
 import {
@@ -439,12 +440,12 @@ describe('Final Journey Durability Corrective — Durable Run-Authoritative Dail
     r.player.x = (spots[0][0] + 1) * TILE + 8;
     r.player.y = spots[0][1] * TILE + 8;
     now += 200;
-    expect(dispatch(gs, { id: 'red2-build-wb', type: 'build', struct: 'workbench', tx: spots[0][0], ty: spots[0][1] }, now).ok).toBe(true);
+    expect(dispatchCarryingPack(gs, { id: 'red2-build-wb', type: 'build', struct: 'workbench', tx: spots[0][0], ty: spots[0][1] }, now).ok).toBe(true);
 
     r.player.x = (spots[1][0] + 1) * TILE + 8;
     r.player.y = spots[1][1] * TILE + 8;
     now += 200;
-    expect(dispatch(gs, { id: 'red2-build-bed', type: 'build', struct: 'bed_straw', tx: spots[1][0], ty: spots[1][1] }, now).ok).toBe(true);
+    expect(dispatchCarryingPack(gs, { id: 'red2-build-bed', type: 'build', struct: 'bed_straw', tx: spots[1][0], ty: spots[1][1] }, now).ok).toBe(true);
 
     // Also loot & learn real blueprint(s) from authored map loot crates after midnight so recipe-gated objectives unlock live too
     for (const lt of Object.values(r.entities)) {
@@ -729,7 +730,7 @@ describe('Final Journey Durability Corrective — Durable Run-Authoritative Dail
     r.player.x = (ftx + 1) * TILE + 8;
     r.player.y = fty * TILE + 8;
     now += 200;
-    expect(dispatch(gs, { id: 'bound-build-bench', type: 'build', struct: 'workbench', tx: ftx, ty: fty }, now).ok).toBe(true);
+    expect(dispatchCarryingPack(gs, { id: 'bound-build-bench', type: 'build', struct: 'workbench', tx: ftx, ty: fty }, now).ok).toBe(true);
     const bench = Object.values(r.entities).find(e => e.kind === 'struct' && e.type === 'workbench')!;
     expect(bench).toBeDefined();
 

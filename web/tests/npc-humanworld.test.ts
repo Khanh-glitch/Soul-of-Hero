@@ -56,7 +56,10 @@ describe('NPC HumanWorld ledger', () => {
       }
       for (const stationId of comm.workStations) {
         expect(allEntities[stationId]?.kind).toBe('struct');
-        expect(allEntities[stationId]?.station).toBeTruthy();
+        // A community's work site is a crafting station, or one of the two production sites added
+        // later: the Hook garden plot (npc-hook-garden) and the Iron Mine generator (npc-natural-foundry).
+        const site = allEntities[stationId];
+        expect(site?.station ?? site?.garden ?? site?.basePower).toBeTruthy();
       }
     }
     expect(Object.values(hw.communities).some(c => c.storeEntityId)).toBe(true);

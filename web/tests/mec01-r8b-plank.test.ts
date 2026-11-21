@@ -4,7 +4,7 @@
 import {dispatchCarryingPack} from './helpers/build-kit';
 import {describe,it,expect,afterEach} from 'vitest';
 import {type GameState,type RunState,type Entity,TILE} from '../src/game/core';
-import {RECIPES,STRUCTS} from '../src/game/catalog';
+import {RECIPES,STRUCTS,PA1_UPGRADE_ONLY_GEOMETRY,STRUCTURE_UPGRADES} from '../src/game/catalog';
 import {addItem,countItem,dispatch,markDirty,newGame,stepStations,buildReason} from '../src/game/engine';
 import {setActiveLayout} from '../src/game/world';
 import {serializeSnapshot,validate} from '../src/game/persist';
@@ -33,12 +33,13 @@ function craftPlank(g:GameState,bench:Entity,at:number){
 describe('MEC-01 R8B plank chain', () => {
   it('two wood make one plank at the bench, after 6 real seconds; too little wood is refused with no change', () => {
     const g=start();const r=g.run!;
-    addItem(r,'inv','wood',14);addItem(r,'inv','stone',4);
+    // PA1: the bench is placed from its packed device, so the pack holds no spare wood afterwards
     const sp=legalTileNear(g,r.player.x/TILE|0,r.player.y/TILE|0,'workbench');
     expect(act(g,'build',{struct:'workbench',tx:sp[0],ty:sp[1]},START+20).ok).toBe(true);
+    expect(countItem(r,'inv','wood')).toBe(0);
     const bench=Object.values(r.entities).find(e=>e.kind==='struct'&&e.type==='workbench')!;
     // NEGATIVE: 1 wood is not enough for a plank; nothing is consumed and no job starts
-    addItem(r,'inv','wood',1);                          // 1 wood in the pack (bench consumed the 14)
+    addItem(r,'inv','wood',1);                          // exactly 1 wood in the pack
     place(r,bench.tx!-1,bench.ty!);
     const refused=act(g,'craft',{eid:bench.id,recipe:'plank'},START+30);
     expect(refused.ok).toBe(false);
@@ -56,30 +57,28 @@ describe('MEC-01 R8B plank chain', () => {
     expect(JSON.stringify(back)).toContain('"plank"');
   });
 
-  it('a plank wall needs three real planks: with two it is refused and nothing is spent; with three it builds at 240 HP', () => {
+  // PA1 (design ledger §24) made the Plank Wall upgrade-only geometry, and no upgrade path leads to it
+  // (STRUCTURE_UPGRADES: wall_wood -> wall_stone), so today a Plank Wall cannot be placed at all. The
+  // rule this test protects is the part that still holds: real planks are never spent on a refusal.
+  it('a plank wall cannot be placed directly: the build is refused, no plank is spent and no wall appears', () => {
     const g=start();const r=g.run!;
-    addItem(r,'inv','wood',14);addItem(r,'inv','stone',4);
     const sp=legalTileNear(g,r.player.x/TILE|0,r.player.y/TILE|0,'workbench');
-    act(g,'build',{struct:'workbench',tx:sp[0],ty:sp[1]},START+20);
+    expect(act(g,'build',{struct:'workbench',tx:sp[0],ty:sp[1]},START+20).ok).toBe(true);
     const bench=Object.values(r.entities).find(e=>e.kind==='struct'&&e.type==='workbench')!;
     addItem(r,'inv','wood',6);
-    craftPlank(g,bench,START+40);craftPlank(g,bench,START+60);
-    expect(countItem(r,'inv','plank')).toBe(2);
+    craftPlank(g,bench,START+40);craftPlank(g,bench,START+60);craftPlank(g,bench,START+80);
+    expect(countItem(r,'inv','plank')).toBe(3);
     // Per wood: plank wall 240/6 = 40 HP per wood; log wall 160/5 = 32 HP per wood
     expect(STRUCTS.wall_plank.hp/(STRUCTS.wall_plank.cost[0][1]*2)).toBeGreaterThan(STRUCTS.wall_wood.hp/STRUCTS.wall_wood.cost[0][1]);
-    const wp=legalTileNear(g,r.player.x/TILE|0,r.player.y/TILE|0,'wall_plank');
-    // NEGATIVE: two planks are not enough; refused, no plank spent, no wall entity
-    const before=countItem(r,'inv','plank');
+    expect(PA1_UPGRADE_ONLY_GEOMETRY).toContain('wall_plank');
+    expect(Object.values(STRUCTURE_UPGRADES)).not.toContain('wall_plank');
+    const wp=legalTileNear(g,r.player.x/TILE|0,r.player.y/TILE|0,'wall_wood');
+    place(r,wp[0]-1,wp[1]);
+    expect(buildReason(g,'wall_plank',wp[0],wp[1])).toMatch(/Build the wooden form first/);
     const refused=act(g,'build',{struct:'wall_plank',tx:wp[0],ty:wp[1]},START+100);
     expect(refused.ok).toBe(false);
-    expect(countItem(r,'inv','plank')).toBe(before);
+    expect(countItem(r,'inv','plank')).toBe(3);
     expect(Object.values(r.entities).some(e=>e.type==='wall_plank')).toBe(false);
-    // CRAFTED third plank, then the build spends exactly three
-    craftPlank(g,bench,START+200);
-    expect(act(g,'build',{struct:'wall_plank',tx:wp[0],ty:wp[1]},START+300).ok).toBe(true);
-    const wall=Object.values(r.entities).find(e=>e.kind==='struct'&&e.type==='wall_plank')!;
-    expect(wall.maxHp).toBe(240);
-    expect(countItem(r,'inv','plank')).toBe(0);
   });
 
   it('shelter stays buildable from raw wood alone: a log wall needs no plank', () => {

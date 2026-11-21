@@ -4,13 +4,13 @@ import { BAL, TILE, WW, type GameState } from '../src/game/core';
 import { ITEMS } from '../src/game/catalog';
 import {
   addItem, blockGrid, C, countItem, dispatch, gardenEnvironment, harvestHit,
-  isWet, markDirty, newGame, sourceAt, tenderStatus, weatherAt,
+  isWet, markDirty, newGame, sourceAt, tenderStatus, weatherAt, beginReceiptSink, endReceiptSink,
 } from '../src/game/engine';
 import {
   DAILY_BY_ID, dailySaltFor, dateKey, freshStore, generateDaily, ingestJourney, rerollDaily as uiReroll,
 } from '../src/game/journey';
 import { serializeSnapshot, validate } from '../src/game/persist';
-import { settle, syncWorld, tick } from '../src/game/sim';
+import { settle as rawSettle, syncWorld as rawSyncWorld, tick } from '../src/game/sim';
 import { getWorld, setActiveLayout } from '../src/game/world';
 import { U05_WORLD_LAYOUT_ID } from '../src/veyra05/scenes';
 import { shiftVeyraWindowBy } from '../src/veyra05/continuity';
@@ -26,8 +26,23 @@ const cloneViaSave = (gs: GameState): GameState => {
   const outer = JSON.parse(snap);
   const parsed = validate(JSON.parse(outer.payload));
   expect(parsed).toBeTruthy();
+  TENDER_LOG.set(parsed!, [...tenderLog(gs)]);   // a reloaded copy inherits the history recorded so far
   return parsed!;
 };
+// The run's own receipt log keeps only its latest 250 entries, and the resident population now writes
+// thousands of receipts an hour, so a Garden Tender receipt is gone from `r.receipts` within a minute or
+// two. A fixture that audits tender work over 20+ minutes records those receipts as the engine commits
+// them (the engine's receipt sink), instead of reading them back out of the bounded log.
+type TenderEvent = { kind: string; detail: string; at: number };
+const TENDER_LOG = new WeakMap<GameState, TenderEvent[]>();
+function tenderLog(gs: GameState): TenderEvent[] { let log = TENDER_LOG.get(gs); if (!log) TENDER_LOG.set(gs, log = []); return log; }
+function recording<R>(gs: GameState, work: () => R): R {
+  beginReceiptSink();
+  try { return work(); }
+  finally { tenderLog(gs).push(...endReceiptSink().filter(e => e.kind.startsWith('tender.')).map(e => ({ kind: e.kind, detail: e.detail, at: e.at }))); }
+}
+const syncWorld: typeof rawSyncWorld = (gs, ...rest) => recording(gs, () => rawSyncWorld(gs, ...rest));
+const settle: typeof rawSettle = (gs, ...rest) => recording(gs, () => rawSettle(gs, ...rest));
 
 function collectNearbyDrops(gs: GameState, now: number, filterKeys?: string[]): number {
   const r = gs.run!;
@@ -383,7 +398,7 @@ function buildRealVeyraHomestead(seed = 404) {
   for (const [k, n] of [
     ['wood', 100], ['stone', 40], ['fiber', 30], ['rope', 8],
     ['iron_ingot', 10], ['mechanical_parts', 10], ['fasteners', 8], ['spares', 8],
-    ['seed', 6],
+    ['seed_sunroot', 6],
   ] as const) {
     addItem(r, 'inv', k, n);
   }
@@ -409,7 +424,7 @@ function buildRealVeyraHomestead(seed = 404) {
   const barrel = buildAt('barrel', 0, 2);
   const chest = buildAt('chest_small', 1, 1);
 
-  const seedSlot = C(r, 'inv').slots.findIndex(s => s?.key === 'seed');
+  const seedSlot = C(r, 'inv').slots.findIndex(s => s?.key === 'seed_sunroot');
   expect(seedSlot).toBeGreaterThanOrEqual(0);
   r.player.x = chest.x; r.player.y = chest.y - TILE;
   act('move', { from: 'inv', fs: seedSlot, to: chest.c!, qty: 6 });
@@ -449,6 +464,10 @@ function buildRealVeyraHomestead(seed = 404) {
   };
 }
 
+// These two walk about an hour of world time with the whole resident population alive. The old 30 s
+// budget predates that population; the time limit is a hang guard, not a performance claim (offline
+// catch-up speed is measured by the endurance run and the browser perf gate).
+const WP2_BUDGET_MS = 900_000;
 describe('WP2 — Complete Veyra Offscreen Garden Tender (B6 Corrective)', () => {
   it('WP2-1..5 & 8 (RED->GREEN): completes full offscreen plant->grow->harvest->chest-transfer->replant cycles across repeated window shifts, save/reload, overnight settle, and full storage', () => {
     const h = buildRealVeyraHomestead(404);
@@ -456,7 +475,7 @@ describe('WP2 — Complete Veyra Offscreen Garden Tender (B6 Corrective)', () =>
     let now = h.now;
 
     expect(r.entities[ids.garden].garden?.crop).toBe('crop');
-    expect(countItem(r, containers.chestC, 'seed')).toBe(5);
+    expect(countItem(r, containers.chestC, 'seed_sunroot')).toBe(5);
 
     // Install cold frame before leaving so rain cannot water the plot directly — every cycle MUST pump physical barrel water!
     addItem(r, 'inv', 'glass', 1);
@@ -482,12 +501,12 @@ describe('WP2 — Complete Veyra Offscreen Garden Tender (B6 Corrective)', () =>
     }
 
     // Show the existing failure explicitly: crop matured to growth === 1, yet harvest + transfer + replant stopped!
-    const harvestsAfterOnline = r.receipts.filter(rc => rc.kind === 'tender.harvest').length;
-    const plantsAfterOnline = r.receipts.filter(rc => rc.kind === 'tender.plant').length;
+    const harvestsAfterOnline = tenderLog(gs).filter(rc => rc.kind === 'tender.harvest').length;
+    const plantsAfterOnline = tenderLog(gs).filter(rc => rc.kind === 'tender.plant').length;
     expect(harvestsAfterOnline, `offscreen plot growth=${r.veyraOffscreenEntities![ids.garden].garden?.growth}, chestCrop=${countItem(r, containers.chestC, 'crop')}`).toBeGreaterThanOrEqual(2);
     expect(countItem(r, containers.chestC, 'crop')).toBe(harvestsAfterOnline * 3);
-    expect(countItem(r, containers.chestC, 'seed')).toBe(6 - plantsAfterOnline + harvestsAfterOnline * 2);
-    expect(r.receipts.filter(rc => rc.kind === 'tender.water').length).toBeGreaterThanOrEqual(1);
+    expect(countItem(r, containers.chestC, 'seed_sunroot')).toBe(6 - plantsAfterOnline + harvestsAfterOnline);   // item set v2: a harvest returns the one seed it grew from
+    expect(tenderLog(gs).filter(rc => rc.kind === 'tender.water').length).toBeGreaterThanOrEqual(1);
     expect(countItem(r, containers.tenderC, 'wood')).toBeLessThan(5);
 
     // Zero-water physical cost check while offscreen: empty barrel + plot water -> pauses with no free growth!
@@ -508,7 +527,7 @@ describe('WP2 — Complete Veyra Offscreen Garden Tender (B6 Corrective)', () =>
     const sr = saved.run!;
     settle(saved, now + 20 * 60_000, true);
     now += 20 * 60_000;
-    const harvestsAfterSettle = sr.receipts.filter(rc => rc.kind === 'tender.harvest').length;
+    const harvestsAfterSettle = tenderLog(saved).filter(rc => rc.kind === 'tender.harvest').length;
     expect(harvestsAfterSettle).toBeGreaterThan(harvestsAfterOnline);
     expect(countItem(sr, containers.chestC, 'crop')).toBe(harvestsAfterSettle * 3);
     expect(sr.veyraOffscreenEntities![ids.garden].hp).toBe(sr.veyraOffscreenEntities![ids.garden].maxHp);
@@ -555,7 +574,7 @@ describe('WP2 — Complete Veyra Offscreen Garden Tender (B6 Corrective)', () =>
     expect(sr.entities[ids.garden].garden!.crop).toBe('crop');
     expect(sr.entities[ids.garden].garden!.growth).toBeLessThan(1);
     expect(validate(cloneViaSave(saved))).toBeTruthy();
-  }, 30_000);
+  }, WP2_BUDGET_MS);
 
   it('WP2-6,7,9 (RED->GREEN): enforces exact onscreen vs offscreen parity (Map climate, soil, cold-frame, roof, evaporation, links across window edge)', () => {
     const base = buildRealVeyraHomestead(515);
@@ -616,14 +635,14 @@ describe('WP2 — Complete Veyra Offscreen Garden Tender (B6 Corrective)', () =>
       const r = g.run!;
       return {
         crop: countItem(r, containers.chestC, 'crop'),
-        seed: countItem(r, containers.chestC, 'seed'),
+        seed: countItem(r, containers.chestC, 'seed_sunroot'),
         wood: countItem(r, containers.tenderC, 'wood'),
         energy: r.entities[ids.tender].farm!.energy,
         barrelWater: r.entities[ids.barrel].water,
         plotWater: r.entities[ids.garden].garden!.water,
         plotGrowth: r.entities[ids.garden].garden!.growth,
         plotCrop: r.entities[ids.garden].garden!.crop,
-        tenderEvents: r.receipts
+        tenderEvents: tenderLog(g)
           .filter(rc => rc.kind.startsWith('tender.'))
           .map(rc => [rc.kind, rc.detail, Math.round(rc.at)]),
       };
@@ -634,7 +653,17 @@ describe('WP2 — Complete Veyra Offscreen Garden Tender (B6 Corrective)', () =>
     const sStraddle = summarize(straddleGs);
 
     expect(sStay.crop).toBeGreaterThanOrEqual(6);
-    expect(sAway).toEqual(sStay);
-    expect(sStraddle).toEqual(sStay);
-  }, 30_000);
+    // Counted things must match exactly. Water, growth and energy are integrated over time slices, and the
+    // slice boundaries depend on which residents are inside the window, so those agree to rounding
+    // (1e-9) and the same receipt lands within one millisecond; nothing coarser is tolerated.
+    const sameAs = (other: ReturnType<typeof summarize>) => {
+      expect({ crop: other.crop, seed: other.seed, wood: other.wood, plotCrop: other.plotCrop })
+        .toEqual({ crop: sStay.crop, seed: sStay.seed, wood: sStay.wood, plotCrop: sStay.plotCrop });
+      for (const k of ['energy', 'barrelWater', 'plotWater', 'plotGrowth'] as const) expect(Math.abs(Number(other[k]) - Number(sStay[k])), k).toBeLessThan(1e-9);
+      expect(other.tenderEvents.map(e => [e[0], e[1]])).toEqual(sStay.tenderEvents.map(e => [e[0], e[1]]));
+      other.tenderEvents.forEach((e, i) => expect(Math.abs(Number(e[2]) - Number(sStay.tenderEvents[i][2])), `${e[0]} #${i}`).toBeLessThanOrEqual(1));
+    };
+    sameAs(sAway);
+    sameAs(sStraddle);
+  }, WP2_BUDGET_MS);
 });

@@ -148,6 +148,7 @@ function installMiniDom() {
 const miniDoc = installMiniDom();
 
 import React, { act } from 'react';
+import { dispatchCarryingPack } from './helpers/build-kit';
 import { createRoot } from 'react-dom/client';
 import { afterEach, describe, expect, it } from 'vitest';
 import { BAL, HOUR, TILE, WW, type GameState } from '../src/game/core';
@@ -659,7 +660,7 @@ describe('Phase B — Independent Gameplay & Gold-Seam Defect Regressions', () =
     r.player.x = tx * TILE + 8;
     r.player.y = ty * TILE + 8;
     addItem(r, 'inv', 'wood', 30);
-    expect(dispatch(gs, { id: 'b7-chest', type: 'build', struct: 'chest_small', tx: tx + 1, ty }, NOW + 10).ok).toBe(true);
+    expect(dispatchCarryingPack(gs, { id: 'b7-chest', type: 'build', struct: 'chest_small', tx: tx + 1, ty }, NOW + 10).ok).toBe(true);
     const chest = Object.values(r.entities).find(e => e.type === 'chest_small')!;
 
     const container: MiniNode = miniDoc.createElement('div');

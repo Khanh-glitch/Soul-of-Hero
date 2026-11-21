@@ -1,4 +1,4 @@
-import {readFileSync,writeFileSync} from 'node:fs';
+import {readFileSync,writeFileSync,mkdirSync} from 'node:fs';
 import {it,expect} from 'vitest';
 import {validate} from '../src/game/persist';
 import {newGame,startRun,beginReceiptSink,endReceiptSink,C} from '../src/game/engine';
@@ -21,6 +21,7 @@ it('normal population physically procures and delivers a positive-hunger paid re
   if(delivered)break;
  }
  const events=endReceiptSink(),r=gs.run!,hw=r.humanWorld!;
+ mkdirSync('../tmp/verification',{recursive:true});   // ignored scratch directory (root .gitignore: tmp/); absent in a fresh clone
  writeFileSync('../tmp/verification/procurement-final-natural-save.json',JSON.stringify(gs));
  writeFileSync('../tmp/verification/procurement-final-natural-events.json',JSON.stringify(events));
  const deliveries=events.filter(e=>e.kind==='human.cargo.lineage').map(e=>JSON.parse(e.detail!)).filter(v=>v.lineage.some((s:{recipe?:string;key:string})=>s.recipe&&(ITEMS[s.key]?.food?.hunger??0)>0));

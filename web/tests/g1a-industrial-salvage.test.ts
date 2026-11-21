@@ -66,7 +66,9 @@ function nearest(b: Bot, key: string, skip = new Set<string>()): [number, number
 }
 /** A run whose window holds all three archetypes (searches real New Game seeds; no hand-picked coordinate). */
 function runWithTrio(min = 6, from = 1): Bot {
-  for (let seed = from; seed < from + 60; seed++) { const b = new Bot(seed); const c = count(getWindowWorld(b.r.layoutId!)); if (TRIO.every(k => (c[k] ?? 0) >= min)) return b; }
+  // The starter tool is the Wood Club since 373d999; these fixtures are about the Survival Knife on
+  // salvage, so the bot is handed the knife a player would have crafted by then.
+  for (let seed = from; seed < from + 60; seed++) { const b = new Bot(seed); const c = count(getWindowWorld(b.r.layoutId!)); if (TRIO.every(k => (c[k] ?? 0) >= min)) { if (!C(b.r, 'inv').slots.some(v => v?.key === 'knife')) addItem(b.r, 'inv', 'knife', 1); return b; } }
   throw new Error('no seed with all three archetypes');
 }
 
@@ -196,10 +198,17 @@ describe('G1A interaction — real swings', () => {
     const b = runWithTrio(12); const tools = ['stone_axe', 'knife', 'cleaver', 'machete', 'iron_pick', 'stone_pick', 'industrial_pick', 'iron_axe'];
     const used = new Set<string>(); const table: Record<string, Record<string, { hits: number; ms: number; units: number[] }>> = {};
     for (const key of TRIO) { table[key] = {}; for (const tool of tools) {
-      let g: [number, number] | null = null;
-      for (let n = 0; n < 40 && !g; n++) { const c = nearest(b, key, used); used.add(c.join()); const [tx, ty] = b.toLocal(c[0], c[1]); if (standBeside(b, tx, ty)) g = c; }
-      { const inv = C(b.r, 'inv'); for (let i = 0; i < inv.slots.length; i++) if (inv.slots[i] && tools.includes(inv.slots[i]!.key)) inv.slots[i] = null; addItem(b.r, 'inv', tool, 1); }   // one test tool carried at a time
-      const log = strike(b, tool, g![0], g![1], 99, true); const dmg = G1A_HARVEST[tool] ?? 1;
+      // Residents salvage the same roadside sources (shared, by design). The matrix measures the tool
+      // alone, so a source a resident has already struck, or strikes during the measurement, is not a
+      // measurement: take the next untouched one.
+      const dmg = G1A_HARVEST[tool] ?? 1; let log: HitLog[] = [];
+      for (let attempt = 0; attempt < 8; attempt++) {
+        let g: [number, number] | null = null;
+        for (let n = 0; n < 40 && !g; n++) { const c = nearest(b, key, used); used.add(c.join()); const [tx, ty] = b.toLocal(c[0], c[1]); if (standBeside(b, tx, ty) && sourceAt(b.r, tx, ty, b.now)!.hp === SOURCES[key].hp) g = c; }
+        { const inv = C(b.r, 'inv'); for (let i = 0; i < inv.slots.length; i++) if (inv.slots[i] && tools.includes(inv.slots[i]!.key)) inv.slots[i] = null; addItem(b.r, 'inv', tool, 1); }   // one test tool carried at a time
+        log = strike(b, tool, g![0], g![1], 99, true);
+        if (log.length && log[0].hpBefore === SOURCES[key].hp && log.every(h => h.durSpent === 1)) break;
+      }
       expect(log.length, `${tool} on ${key}`).toBe(Math.ceil(SOURCES[key].hp / dmg));
       expect(log.reduce((s, h) => s + h.units, 0)).toBe(SOURCES[key].stock);
       expect(log[0].units, `${tool} on ${key}: never the whole stock on hit 1`).toBeLessThan(SOURCES[key].stock);

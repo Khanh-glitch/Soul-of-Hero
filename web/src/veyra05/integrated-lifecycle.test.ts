@@ -14,7 +14,9 @@ describe('single canonical VEYRA runtime save, traversal and floors',()=>{
     const gs=newGame();
     const res=startRun(gs,'female',Date.now(),null,20261109);
     expect(res.ok).toBe(true);
-    expect(gs.run?.layoutId).toBe(U05_WORLD_LAYOUT_ID);
+    // A new run lands on a seeded safe cell of the mainland, so its first window is already a
+    // positioned Veyra window (engine startRun: `r.layoutId = selected.layout`), not the frame origin.
+    expect(gs.run?.layoutId).toMatch(/^veyra05-(world|at-\d+-\d+)$/);
     expect(validate(gs)).not.toBeNull();
     const shifted=shiftVeyraWindowBy(gs,64,0,()=>{});
     expect(shifted).toBe(true);

@@ -25,7 +25,7 @@ const DIRECT_CONSUMERS: Record<string, string[]> = {
 const ENGINE_CONSUMERS: Record<string, { label: string; pattern: RegExp }[]> = {
   fuel_can: [
     { label: 'action:vehicle.refuel motorbike tank (engine.ts ~1373)', pattern: /removeItem\(r,'inv','fuel_can',1\);e\.vehicle\.fuel\+=BAL\.motorbike\.canFuel/ },
-    { label: 'action:base generator burns a fuel item from its container, incl. Fuel Canister (engine.ts ~533, advanceWorld)', pattern: /ITEMS\[s\.key\]\?\.fuel\)[\s\S]{0,160}removeItem\(r,e\.c,key,1\)/ },
+    { label: 'action:base generator burns a fuel item from its container, incl. Fuel Canister (engine.ts ~533, advanceWorld)', pattern: /find\(s => s && !s\.production && ITEMS\[s\.key\]\?\.fuel\);[\s\S]{0,200}power\.energy = ITEMS\[slot\.key\]\.fuel! \* 1000;[\s\S]{0,80}--slot\.qty===0/ },   // the generator now spends the found stack itself (production-tagged stock is never burnt)
     { label: 'action:authorized POI generator fuelled by one canister (engine.ts ~1541)', pattern: /removeItem\(r, 'inv', 'fuel_can', 1\); e\.power=1;e\.poiPower/ },
   ],
 };

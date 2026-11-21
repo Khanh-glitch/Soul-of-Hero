@@ -22,7 +22,9 @@ import { describe, it, expect } from 'vitest';
 import { mkdirSync } from 'node:fs';
 import { writeFileSync } from './_evidenceFs';
 import { type GameState, type RunState, TILE, WW } from '../src/game/core';
-import { RECIPES } from '../src/game/catalog';
+import { RECIPES, WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III } from '../src/game/catalog';
+import { BAL } from '../src/game/core';
+import { dispatchCarryingPack, ensurePack } from './helpers/build-kit';
 import { addItem, countItem, dispatch, markDirty, newGame, stepStations, buildReason } from '../src/game/engine';
 import { setActiveLayout } from '../src/game/world';
 import { serializeSnapshot, selectSnapshots } from '../src/game/persist';
@@ -36,7 +38,8 @@ function start() {
   expect(dispatch(g, { id: 'c1-start-' + (++n), type: 'startRun', character: 'female', seed: SEED }, START).ok).toBe(true);
   g.run!.creatures = []; markDirty(); return g;
 }
-const crateOf = (r: RunState) => Object.values(r.entities).find(e => e.kind === 'loot' && e.poi === 'factory' && e.c && r.custody[e.c]?.slots.some(s => s?.key === 'iron_sword'))!;
+/** The authorised factory crate: the one whose roll carries the high-grade parts (gear, pipe, refined iron). */
+const crateOf = (r: RunState) => Object.values(r.entities).find(e => e.kind === 'loot' && e.poi === 'factory' && e.c && r.custody[e.c]?.slots.some(s => s?.key === 'mechanical_gear'))!;
 function place(r: RunState, tx: number, ty: number) { r.player.x = tx * TILE + 8; r.player.y = ty * TILE + 8; markDirty(); }
 /** Legal buildable tiles for three stations, nearest spawn first (FIXTURE position; build itself is real). */
 function legalTilesNear(g: GameState, cx: number, cy: number, struct: string, count: number): [number, number][] {
@@ -50,188 +53,171 @@ function legalTilesNear(g: GameState, cx: number, cy: number, struct: string, co
   return out;
 }
 const countAll = (r: RunState, keys: string[]) => Object.fromEntries(keys.map(k => [k, countItem(r, 'inv', k)]));
-const LEDGER_KEYS = ['iron_ingot', 'refined_iron_ingot', 'mechanical_parts', 'fasteners', 'spares', 'wood', 'stone', 'coal', 'scrap', 'fuel_can'];
+const RAW = ['iron_ingot', 'charcoal', 'spares'] as const;
+const LEDGER_KEYS = [...RAW, 'refined_iron_ingot', 'mechanical_gear', 'metal_pipe', 'iron_plate', 'vehicle_frame', 'motorbike_kit', 'fuel_can'];
 
-describe('MEC-01 R2 C1: factory source -> furnace -> workbench L2 -> paid L3 -> research -> packed Motorbike Kit', () => {
-  it('walks the whole paid chain with real intents, preserves UIDs through save/reload, and keeps survival kit-free of it', () => {
+// Ledger rev 6 chain (the live catalog is the authority; every cost below is read from it, not typed in):
+//   Iron Ingot + Charcoal -> Refined Iron (furnace) -> Metal Pipe / Iron Plate / Mechanical Gear (bench L2)
+//   -> Utility Frame (L2) -> paid bench L3 (2 gears, 2 plates, ingots, Parts) -> directed research ->
+//   blueprint learned -> Utility Motorbike (packed) = frame + 2 gears + 3 plates + 4 refined iron.
+// Machine Parts, Forged Fasteners, Scrap and the separate Motor Drive of the earlier chain are retired.
+const CRAFTS: [station: 'furnace' | 'workbench', recipe: string, times: number][] = [
+  ['furnace', 'refined_iron_ingot', 7],   // 14 refined: 2 pipe-craft + 6 plate-crafts + 2 frame + 4 kit
+  ['workbench', 'mechanical_gear', 4],    // 2 for the L3 upgrade, 2 for the kit
+  ['workbench', 'metal_pipe', 1],         // makes 2, the frame uses 1
+  ['workbench', 'iron_plate', 3],         // makes 6: 2 for the L3 upgrade, 3 for the kit
+  ['workbench', 'vehicle_frame', 1],
+];
+describe('MEC-01 C1 (Ledger rev 6): factory crate -> furnace -> workbench L2 -> paid L3 -> research -> packed Motorbike Kit', () => {
+  it('walks the whole paid chain with real intents, debits exactly the catalog cost at every step, and preserves UIDs through save/reload', () => {
     const g = start(); const r = g.run!;
     const s0 = countAll(r, LEDGER_KEYS);
-    // ============ LEG 1 — NATURAL take from the authorized factory crate (real moves) ============
+    // ============ LEG 1 — NATURAL take from the authorised factory crate (real moves) ============
     place(r, 150, 104);                                  // FIXTURE position beside the crate
     const crate = crateOf(r);
-    const taken: Record<string, number> = {};
-    for (const key of ['mechanical_parts', 'fasteners', 'scrap'] as const) {
-      const slot = r.custody[crate.c!].slots.findIndex(s => s?.key === key);
-      expect(slot, key).toBeGreaterThanOrEqual(0);
-      const qty = key === 'scrap' ? 3 : r.custody[crate.c!].slots[slot]!.qty;
-      // move only what we need; the crate keeps the rest (scrap: exactly 3 of the 6)
-      const res = dispatch(g, { id: `c1-take-${key}-${++n}`, type: 'move', from: crate.c, fs: slot, to: 'inv', qty } as any, START + 5);
-      expect(res.ok, key).toBe(true);
-      taken[key] = qty;
-    }
-    // spares live in TWO stacks in the crate (s-fixes: 3 + 2). Take both — never more than exists.
-    let sparesTaken = 0;
-    for (let guard = 0; guard < 4; guard++) {
-      const slot = r.custody[crate.c!].slots.findIndex(s => s?.key === 'spares');
+    expect(crate, 'factory crate with the high-grade roll').toBeTruthy();
+    const crateSpares = r.custody[crate.c!].slots.reduce((n, v) => n + (v?.key === 'spares' ? v.qty : 0), 0);
+    expect(crateSpares).toBeGreaterThan(0);
+    for (let guard = 0; guard < 12; guard++) {
+      const slot = r.custody[crate.c!].slots.findIndex(v => v?.key === 'spares');
       if (slot < 0) break;
-      const res = dispatch(g, { id: `c1-take-spares-${++n}`, type: 'move', from: crate.c, fs: slot, to: 'inv' } as any, START + 6);
-      expect(res.ok, 'spares').toBe(true); sparesTaken += 0; // qty read post-move below via counts
+      expect(dispatch(g, { id: `c1-take-spares-${++n}`, type: 'move', from: crate.c, fs: slot, to: 'inv' } as any, START + 6).ok, 'spares').toBe(true);
     }
-    sparesTaken = countItem(r, 'inv', 'spares') - s0.spares;
-    expect(sparesTaken).toBe(5);
-    // The crate's own high-grade roll stays untouched — gear/pipe/refined here are CRAFTED, not looted.
-    expect(r.custody[crate.c!].slots.some(s => s?.key === 'mechanical_gear')).toBe(true);
-    expect(r.custody[crate.c!].slots.some(s => s?.key === 'metal_pipe')).toBe(true);
-    expect(r.custody[crate.c!].slots.some(s => s?.key === 'refined_iron_ingot')).toBe(true);
-  // ============ LEG 2 — FIXTURE_INTENT raw materials (labelled; the gather loop is not what this test proves) ============
-    const grant = (key: string, qty: number) => addItem(r, 'inv', key, qty);
-    grant('iron_ingot', 20); grant('coal', 2); grant('wood', 30); grant('stone', 22);
-    grant('mechanical_parts', 11); grant('fasteners', 10); grant('spares', 26);
-    const grants = { iron_ingot: 20, coal: 2, wood: 30, stone: 22, mechanical_parts: 11, fasteners: 10, spares: 26 };
-    const s1 = countAll(r, LEDGER_KEYS);
-  // ============ LEG 3 — Furnace: real build, real fuel, real refined ingots ============
+    expect(countItem(r, 'inv', 'spares') - s0.spares).toBe(crateSpares);          // never more than the crate held
+    // The crate's own high-grade roll stays untouched — gear, pipe and refined iron here are CRAFTED, not looted.
+    for (const key of ['mechanical_gear', 'metal_pipe', 'refined_iron_ingot']) expect(r.custody[crate.c!].slots.some(v => v?.key === key), key).toBe(true);
+    // ============ LEG 2 — FIXTURE_INTENT raw materials: exactly what the catalog says the chain costs ============
+    const bill: Record<string, number> = { iron_ingot: 0, charcoal: 0, spares: 0 };
+    const charge = (cost: readonly (readonly [string, number])[], times = 1) => { for (const [k, q] of cost) if (k in bill) bill[k] += q * times; };
+    for (const [, recipe, times] of CRAFTS) charge(RECIPES[recipe].ins, times);
+    charge(RECIPES.motorbike_kit.ins); charge(WORKBENCH_UPGRADE.cost); charge(WORKBENCH_UPGRADE_III.cost);
+    bill.spares += BAL.research.directedSparesCost;
+    expect(bill.spares).toBeGreaterThan(crateSpares);                              // the crate alone does not pay for a motorbike
+    const grants = { iron_ingot: bill.iron_ingot, charcoal: bill.charcoal, spares: bill.spares - crateSpares, wood: 30 };   // wood is furnace fuel only (Coal is retired; Charcoal is an ingredient here)
+    for (const [k, q] of Object.entries(grants)) expect(addItem(r, 'inv', k, q), k).toBe(0);
+    // ============ LEG 3 — Furnace: real placement of the packed device, real fuel ============
     const spawnTx = Math.floor(r.player.x / TILE), spawnTy = Math.floor(r.player.y / TILE);
-    const [fx, fy] = legalTilesNear(g, spawnTx, spawnTy, 'furnace', 1)[0];
-    place(r, fx - 1, fy);
-    expect(dispatch(g, { id: 'c1-build-furnace', type: 'build', struct: 'furnace', tx: fx, ty: fy }, START + 10).ok).toBe(true);
-    const furnace = Object.values(r.entities).find(e => e.kind === 'struct' && e.type === 'furnace')!;
-    // fuel: 1 coal moved into the furnace fuelC by real move (furnace burns coal fine)
-    const coalSlot = r.custody.inv.slots.findIndex(s => s?.key === 'coal');
-    expect(dispatch(g, { id: 'c1-feed', type: 'move', from: 'inv', fs: coalSlot, to: furnace.station!.fuelC, ts: 0, qty: 1 } as any, START + 11).ok).toBe(true);
-    expect(dispatch(g, { id: 'c1-refine', type: 'craft', eid: furnace.id, recipe: 'refined_iron_ingot' }, START + 12).ok).toBe(true);
-    stepStations(g, RECIPES.refined_iron_ingot.secs * 1000 + 1000, START + 13000);
-    const furnaceOut = furnace.station!.outC!;
-    const refinedUid = r.custody[furnaceOut].slots.find(s => s?.key === 'refined_iron_ingot')!.uid;
-    const fsOut = r.custody[furnaceOut].slots.findIndex(s => s?.key === 'refined_iron_ingot');
-    expect(dispatch(g, { id: 'c1-take-refined', type: 'move', from: furnaceOut, fs: fsOut, to: 'inv' } as any, START + 14000).ok).toBe(true);
-    expect(countItem(r, 'inv', 'refined_iron_ingot')).toBe(2);
-  // ============ LEG 4 — Workbench: real build, L1->L2 paid upgrade ============
-    const [bx, by] = legalTilesNear(g, fx + 1, fy, 'workbench', 1)[0];
-    place(r, bx - 1, by);
-    expect(dispatch(g, { id: 'c1-build-bench', type: 'build', struct: 'workbench', tx: bx, ty: by }, START + 20).ok).toBe(true);
-    const bench = Object.values(r.entities).find(e => e.kind === 'struct' && e.type === 'workbench')!;
-    expect(bench.station!.level ?? 1).toBe(1);
-    expect(dispatch(g, { id: 'c1-l2', type: 'upgradeStation', eid: bench.id }, START + 21).ok).toBe(true);
-    expect(bench.station!.level).toBe(2);
-    // L2 upgrade consumed 2 MP + 1 iron_ingot (paid).
-  // ============ LEG 5 — CRAFTED gear, pipe, frame (piped), drive (geared) ============
-    const s2 = countAll(r, LEDGER_KEYS);
-    const craftAt = (eid: string, recipe: string, at: number) => {
-      expect(dispatch(g, { id: `c1-craft-${recipe}`, type: 'craft', eid, recipe }, at).ok, recipe).toBe(true);
-      stepStations(g, RECIPES[recipe].secs * 1000 + 1000, at + 1000);
-      const outC = bench.station!.outC!;
-      const fslot = r.custody[outC].slots.findIndex(s => s?.key === RECIPES[recipe].out);
-      expect(fslot, recipe).toBeGreaterThanOrEqual(0);
-      const uid = r.custody[outC].slots[fslot]!.uid;
-      expect(dispatch(g, { id: `c1-collect-${recipe}`, type: 'move', from: outC, fs: fslot, to: 'inv' } as any, at + 2000).ok, recipe).toBe(true);
-      return uid;
+    const build = (id: string, struct: string, near: [number, number], at: number) => {
+      ensurePack(r, struct);                             // PA1: a station is placed from its packed device
+      const [tx, ty] = legalTilesNear(g, near[0], near[1], struct, 1)[0];
+      place(r, tx - 1, ty);
+      expect(dispatchCarryingPack(g, { id, type: 'build', struct, tx, ty }, at)).toMatchObject({ ok: true });
+      return Object.values(r.entities).find(e => e.kind === 'struct' && e.type === struct && e.tx === tx && e.ty === ty)!;
     };
-    const gearUid = craftAt(bench.id, 'mechanical_gear', START + 30000);
-    const pipeUid = craftAt(bench.id, 'metal_pipe', START + 40000);
-    const frameUid = craftAt(bench.id, 'vehicle_frame_piped', START + 50000);
-    const driveUid = craftAt(bench.id, 'vehicle_drive_geared', START + 60000);
+    const furnace = build('c1-build-furnace', 'furnace', [spawnTx, spawnTy], START + 10);
+    const fuelSlot = r.custody.inv.slots.findIndex(v => v?.key === 'wood');
+    expect(dispatchCarryingPack(g, { id: 'c1-feed', type: 'move', from: 'inv', fs: fuelSlot, to: furnace.station!.fuelC, ts: 0 } as any, START + 11)).toMatchObject({ ok: true });
+    // ============ LEG 4 — Workbench: real placement, paid L1 -> L2 ============
+    const bench = build('c1-build-bench', 'workbench', [furnace.tx! + 1, furnace.ty!], START + 20);
+    expect(bench.station!.level ?? 1).toBe(1);
+    const paid = (what: string, cost: readonly (readonly [string, number])[], act: () => void) => {
+      const before = Object.fromEntries(cost.map(([k]) => [k, countItem(r, 'inv', k)]));
+      act();
+      for (const [k, q] of cost) expect(before[k] - countItem(r, 'inv', k), `${what}: ${k}`).toBe(q);
+    };
+    place(r, bench.tx! - 1, bench.ty!);
+    paid('bench L2', WORKBENCH_UPGRADE.cost, () => expect(dispatch(g, { id: 'c1-l2', type: 'upgradeStation', eid: bench.id }, START + 21).ok).toBe(true));
+    expect(bench.station!.level).toBe(2);
+    // ============ LEG 5 — CRAFTED refined iron, gears, pipe, plates, frame: each job debits its catalog bill ============
+    let clock = START + 30_000; const made: Record<string, string[]> = {};
+    const craft = (station: typeof bench, recipe: string) => {
+      const rc = RECIPES[recipe]; const outBefore = countItem(r, 'inv', rc.out);
+      place(r, station.tx! - 1, station.ty!);
+      paid(recipe, rc.ins.filter(([k]) => k !== rc.out), () => {
+        expect(dispatch(g, { id: `c1-craft-${recipe}-${++n}`, type: 'craft', eid: station.id, recipe }, clock), recipe).toMatchObject({ ok: true });
+        stepStations(g, rc.secs * 1000 + 1000, clock + 1000);
+        const outC = station.station!.outC!;
+        const fslot = r.custody[outC].slots.findIndex(v => v?.key === rc.out);
+        expect(fslot, `${recipe} output`).toBeGreaterThanOrEqual(0);
+        (made[rc.out] ??= []).push(r.custody[outC].slots[fslot]!.uid);
+        expect(dispatch(g, { id: `c1-collect-${recipe}-${++n}`, type: 'move', from: outC, fs: fslot, to: 'inv' } as any, clock + rc.secs * 1000 + 2000).ok, recipe).toBe(true);
+      });
+      expect(countItem(r, 'inv', rc.out) - outBefore, `${recipe} yield`).toBe(rc.qty);
+      clock += rc.secs * 1000 + 10_000;
+    };
+    for (const [where, recipe, times] of CRAFTS) for (let k = 0; k < times; k++) craft(where === 'furnace' ? furnace : bench, recipe);
     expect(countItem(r, 'inv', 'vehicle_frame')).toBe(1);
-    expect(countItem(r, 'inv', 'vehicle_drive')).toBe(1);
-  // ============ LEG 6 — PAID L3 upgrade (the real gate) ============
-    const s3 = countAll(r, LEDGER_KEYS);
-    place(r, bx - 1, by);
-    expect(dispatch(g, { id: 'c1-l3', type: 'upgradeStation', eid: bench.id }, START + 70000).ok).toBe(true);
+    // ============ LEG 6 — PAID L3 upgrade (the real gate): two crafted gears and two crafted plates go into the bench ============
+    place(r, bench.tx! - 1, bench.ty!);
+    expect(r.knowledge.recipes).not.toContain('motorbike_kit');
+    paid('bench L3', WORKBENCH_UPGRADE_III.cost, () => expect(dispatch(g, { id: 'c1-l3', type: 'upgradeStation', eid: bench.id }, clock).ok).toBe(true));
     expect(bench.station!.level).toBe(3);
-    const s4 = countAll(r, LEDGER_KEYS);
-    expect(s3.iron_ingot - s4.iron_ingot).toBe(8);
-    expect(s3.mechanical_parts - s4.mechanical_parts).toBe(6);
-    expect(s3.fasteners - s4.fasteners).toBe(8);
-    expect(s3.spares - s4.spares).toBe(12);
-  // ============ LEG 7 — Research Table: real build, directed research, real blueprint ============
-    const [rx, ry] = legalTilesNear(g, bx + 1, by, 'research', 1)[0];
-    place(r, rx - 1, ry);
-    expect(dispatch(g, { id: 'c1-build-table', type: 'build', struct: 'research', tx: rx, ty: ry }, START + 71000).ok).toBe(true);
-    const table = Object.values(r.entities).find(e => e.kind === 'struct' && e.type === 'research')!;
-    place(r, rx - 1, ry);
-    expect(dispatch(g, { id: 'c1-research', type: 'research', eid: table.id, mode: 'directed', recipe: 'motorbike_kit' } as any, START + 72000).ok).toBe(true);
-    stepStations(g, 46_000, START + 73000);
+    // ============ LEG 7 — Research Table: real placement, directed research, real blueprint ============
+    const table = build('c1-build-table', 'research', [bench.tx! + 1, bench.ty!], clock + 1000);
+    place(r, table.tx! - 1, table.ty!);
+    paid('directed research', [['spares', BAL.research.directedSparesCost]], () =>
+      expect(dispatch(g, { id: 'c1-research', type: 'research', eid: table.id, mode: 'directed', recipe: 'motorbike_kit' } as any, clock + 2000)).toMatchObject({ ok: true }));
+    stepStations(g, BAL.research.directedSeconds * 1000 + 1000, clock + 3000);
     const tableOut = table.station!.outC!;
-    const bpSlot = r.custody[tableOut].slots.findIndex(s => s?.key === 'blueprint' && s?.meta === 'motorbike_kit');
+    const bpSlot = r.custody[tableOut].slots.findIndex(v => v?.key === 'blueprint' && v?.meta === 'motorbike_kit');
     expect(bpSlot, 'directed blueprint').toBeGreaterThanOrEqual(0);
     const bpUid = r.custody[tableOut].slots[bpSlot]!.uid;
-    expect(dispatch(g, { id: 'c1-take-bp', type: 'move', from: tableOut, fs: bpSlot, to: 'inv' } as any, START + 120000).ok).toBe(true);
-    const bpInv = r.custody.inv.slots.findIndex(s => s?.key === 'blueprint' && s?.meta === 'motorbike_kit');
-    expect(dispatch(g, { id: 'c1-learn', type: 'useItem', slot: bpInv }, START + 121000).ok).toBe(true);
+    clock += 60_000;
+    expect(dispatch(g, { id: 'c1-take-bp', type: 'move', from: tableOut, fs: bpSlot, to: 'inv' } as any, clock).ok).toBe(true);
+    const bpInv = r.custody.inv.slots.findIndex(v => v?.key === 'blueprint' && v?.meta === 'motorbike_kit');
+    expect(dispatch(g, { id: 'c1-learn', type: 'useItem', slot: bpInv }, clock + 1000).ok).toBe(true);
     expect(r.knowledge.recipes).toContain('motorbike_kit');
-    expect(r.custody.inv.slots.some(s => s?.uid === bpUid)).toBe(false);   // blueprint consumed by learning
-  // ============ LEG 8 — motorbike_kit at bench L3, then deploy/fuel/mount/cargo/save ============
-    const s5 = countAll(r, LEDGER_KEYS);
-    const kitUid = craftAt(bench.id, 'motorbike_kit', START + 130000);
+    expect(r.custody.inv.slots.some(v => v?.uid === bpUid)).toBe(false);   // blueprint consumed by learning
+    // ============ LEG 8 — the kit at bench L3, then deploy / fuel / mount / cargo ============
+    clock += 10_000;
+    craft(bench, 'motorbike_kit');
+    const kitUid = made.motorbike_kit[0];
     expect(countItem(r, 'inv', 'motorbike_kit')).toBe(1);
+    // The exact bill: every raw unit granted or taken from the crate is spent, and nothing else was needed.
+    for (const k of RAW) expect(countItem(r, 'inv', k), `raw ${k} left over`).toBe(s0[k]);
+    expect(countItem(r, 'inv', 'refined_iron_ingot')).toBe(s0.refined_iron_ingot);
+    expect(countItem(r, 'inv', 'mechanical_gear')).toBe(s0.mechanical_gear);
+    const leftovers = { metal_pipe: countItem(r, 'inv', 'metal_pipe') - s0.metal_pipe, iron_plate: countItem(r, 'inv', 'iron_plate') - s0.iron_plate };
+    expect(leftovers).toEqual({ metal_pipe: 1, iron_plate: 1 });           // batch remainders, still in the pack
     place(r, 150, 104);                                // FIXTURE position (open ground beside the crate)
-    expect(dispatch(g, { id: 'c1-place', type: 'placeMotorbike', x: 149 * TILE + 8, y: 104 * TILE + 8 }, START + 140000).ok).toBe(true);
+    expect(dispatch(g, { id: 'c1-place', type: 'placeMotorbike', x: 149 * TILE + 8, y: 104 * TILE + 8 }, clock)).toMatchObject({ ok: true });
     const bike = Object.values(r.entities).find(e => e.kind === 'vehicle')!;
     expect(bike.deployed!.uid).toBe(kitUid);
+    expect(countItem(r, 'inv', 'motorbike_kit')).toBe(0);
+    expect(bike.vehicle!.fuel ?? 0).toBe(0);           // packed dry
     addItem(r, 'inv', 'fuel_can', 1);                  // FIXTURE: fuel canister (source: refinery chain, out of scope here)
-    expect(dispatch(g, { id: 'c1-fuel', type: 'vehicleRefuel', eid: bike.id }, START + 141000).ok).toBe(true);
+    expect(dispatch(g, { id: 'c1-fuel', type: 'vehicleRefuel', eid: bike.id }, clock + 1000).ok).toBe(true);
     expect(bike.vehicle!.fuel).toBeGreaterThan(0);
-    expect(dispatch(g, { id: 'c1-mount', type: 'vehicleMount', eid: bike.id }, START + 142000).ok).toBe(true);
+    expect(countItem(r, 'inv', 'fuel_can')).toBe(s0.fuel_can);
+    expect(dispatch(g, { id: 'c1-mount', type: 'vehicleMount', eid: bike.id }, clock + 2000).ok).toBe(true);
     expect(r.player.vehicle).toBe(bike.id);
-    // Physical cargo: scrap moved into the bike container by a real `move`, UID tracked.
-    const scrapUids: string[] = [];
-    for (let guard = 0; guard < 1; guard++) {
-      const slot = r.custody[crate.c!]?.slots.findIndex(s => s?.key === 'scrap') ?? -1;
-      if (slot < 0) break;
-      const scrapRes = dispatch(g, { id: `c1-cargo-scrap-${++n}`, type: 'move', from: crate.c, fs: slot, to: 'inv' } as any, START + 143000);
-      expect(scrapRes.ok).toBe(true);
-    }
-    const scrapSlot = r.custody.inv.slots.findIndex(s => s?.key === 'scrap');
-    expect(scrapSlot).toBeGreaterThanOrEqual(0);
-    const scrapUid = r.custody.inv.slots[scrapSlot]!.uid; scrapUids.push(scrapUid);
-    const bikeEmpty = r.custody[bike.c!].slots.findIndex(s => !s);
+    // Physical cargo: a crafted Metal Pipe moved into the bike container by a real `move`, UID tracked.
+    const cargoSlot = r.custody.inv.slots.findIndex(v => v?.key === 'metal_pipe');
+    expect(cargoSlot).toBeGreaterThanOrEqual(0);
+    const cargoUid = r.custody.inv.slots[cargoSlot]!.uid;
+    const bikeEmpty = r.custody[bike.c!].slots.findIndex(v => !v);
     expect(bikeEmpty).toBeGreaterThanOrEqual(0);
-    expect(dispatch(g, { id: 'c1-load-bike', type: 'move', from: 'inv', fs: scrapSlot, to: bike.c!, ts: bikeEmpty } as any, START + 143500).ok).toBe(true);
-    expect(r.custody[bike.c!].slots[bikeEmpty]!.uid).toBe(scrapUid);
-  // ============ LEG 9 — save/reload UID check through the game's own serializer ============
+    expect(dispatch(g, { id: 'c1-load-bike', type: 'move', from: 'inv', fs: cargoSlot, to: bike.c!, ts: bikeEmpty } as any, clock + 3000).ok).toBe(true);
+    expect(r.custody[bike.c!].slots[bikeEmpty]!.uid).toBe(cargoUid);
+    // ============ LEG 9 — save/reload UID check through the game's own serializer ============
     const reloaded = copy(g);
     const rb = Object.values(reloaded.run!.entities).find(e => e.kind === 'vehicle')!;
     expect(rb.id).toBe(bike.id);
+    expect(rb.deployed!.uid).toBe(kitUid);
     expect(reloaded.run!.player.vehicle).toBe(bike.id);
-    expect(reloaded.run!.custody[rb.c!].slots[bikeEmpty]!.uid).toBe(scrapUid);
+    expect(reloaded.run!.custody[rb.c!].slots[bikeEmpty]!.uid).toBe(cargoUid);
     expect(reloaded.run!.knowledge.recipes).toContain('motorbike_kit');
     expect(reloaded.run!.entities[bench.id].station!.level).toBe(3);
-    // ============ COST LEDGER + EVIDENCE ============
-    const s6 = countAll(r, LEDGER_KEYS);
-    const ledger: Record<string, number> = {};
-    for (const k of LEDGER_KEYS) ledger[k] = s1[k] - s6[k];   // net consumed after grants+takes (kit/bike out of inv)
-    const costs = {
-      furnaceBuild: { stone: 18, wood: 4 },
-      workbenchBuild: { wood: 14, stone: 4 },
-      workbenchL2: { mechanical_parts: 2, iron_ingot: 1 },
-      refinedIron: { iron_ingot: 3, coal: 1 },
-      mechanical_gear: { iron_ingot: 2, mechanical_parts: 2, fasteners: 1 },
-      metal_pipe: { refined_iron_ingot: 2, mechanical_parts: 1 },
-      vehicle_frame_piped: { metal_pipe: 1, iron_ingot: 2, mechanical_parts: 2, spares: 2 },
-      vehicle_drive_geared: { mechanical_gear: 1, iron_ingot: 1, fasteners: 2, spares: 2 },
-      workbenchL3_PAID: { mechanical_parts: 6, iron_ingot: 8, fasteners: 8, spares: 12 },
-      researchTable: { wood: 10, spares: 6, iron_ingot: 1 },
-      directedResearch_motorbike_kit: { spares: 9 },
-      motorbike_kit: { vehicle_frame: 1, vehicle_drive: 1, iron_ingot: 2, fasteners: 2 },
-      vehicleRefuel: { fuel_can: 1 },
-    };
+    // ============ EVIDENCE ============
     const evidence = {
-      note: 'C1 PAID CHAIN, real intents end to end. Timing is SIM_FIXTURE_MEASUREMENT (stepStations with catalog recipe times). Fixtures labelled; crate high-grade roll left untouched (gear/pipe CRAFTED).',
+      note: 'C1 PAID CHAIN under Ledger rev 6, real intents end to end. Timing is SIM_FIXTURE_MEASUREMENT (stepStations with catalog recipe times). Fixtures labelled; the crate high-grade roll is left untouched (gear, pipe, refined iron are CRAFTED).',
       seed: SEED,
-      route: 'factory crate -> furnace -> workbench L2 -> paid L3 -> research table -> motorbike_kit -> placeMotorbike -> vehicleRefuel -> vehicleMount -> scrap cargo in bike -> save/reload UID check',
+      route: 'factory crate -> furnace -> workbench L2 -> paid L3 -> research table -> motorbike_kit -> placeMotorbike -> vehicleRefuel -> vehicleMount -> pipe cargo in bike -> save/reload UID check',
+      raw_bill_from_catalog: bill,
+      taken_from_crate_real_moves: { spares: crateSpares },
       grants_fixture_intent: grants,
-      taken_from_crate_real_moves: { mechanical_parts: 2, fasteners: 3, spares: 5, scrap: 3 },
-      intermediates: { refined_iron_ingot: 2, mechanical_gear: 1, metal_pipe: 1, vehicle_frame: 1, vehicle_drive: 1, motorbike_kit: 1, blueprint: 1 },
-      uiDs: { refined: refinedUid, gear: gearUid, pipe: pipeUid, frame: frameUid, drive: driveUid, kit: kitUid, bike: bike.id, bikeDeployed: bike.deployed!.uid, cargoScrap: scrapUid },
-      costs,
-      net_consumed_after_grants: ledger,
-      saveReload: { midChainBenchLevel: 3, reloadedBikeIdMatches: rb.id === bike.id, reloadedCargoUidMatches: reloaded.run!.custody[rb.c!].slots[bikeEmpty]!.uid === scrapUid, reloadedPlayerVehicleMatches: reloaded.run!.player.vehicle === bike.id, reloadedKnowledgeHasKit: reloaded.run!.knowledge.recipes.includes('motorbike_kit') },
-      crate_kept_high_grade_roll: true,
-      ordinary_survival_without_chain: 'covered by the sibling test in this file',
-      labels: { natural: ['crate takes', 'furnace build/feed/craft', 'workbench build/upgrade/craft', 'research build/directed/learn', 'kit craft', 'motorbike place/refuel/mount', 'cargo move'], fixture: ['player placement at the ends', 'raw material grants', 'fuel canister', 'creatures cleared at start'] },
+      crafts: Object.fromEntries(CRAFTS.map(([station, recipe, times]) => [recipe, { station, times, ins: RECIPES[recipe].ins, makes: RECIPES[recipe].qty }])),
+      upgrades: { workbenchL2: WORKBENCH_UPGRADE.cost, workbenchL3_PAID: WORKBENCH_UPGRADE_III.cost },
+      directedResearch_motorbike_kit: { spares: BAL.research.directedSparesCost },
+      motorbike_kit: RECIPES.motorbike_kit.ins,
+      leftovers_in_pack: leftovers,
+      uids: { made, kit: kitUid, bike: bike.id, bikeDeployed: bike.deployed!.uid, cargoPipe: cargoUid, blueprint: bpUid },
+      saveReload: { benchLevel: 3, reloadedBikeIdMatches: rb.id === bike.id, reloadedCargoUidMatches: reloaded.run!.custody[rb.c!].slots[bikeEmpty]!.uid === cargoUid, reloadedPlayerVehicleMatches: reloaded.run!.player.vehicle === bike.id },
+      labels: { natural: ['crate takes', 'furnace placement/feed/craft', 'workbench placement/upgrade/craft', 'research placement/directed/learn', 'kit craft', 'motorbike place/refuel/mount', 'cargo move'], fixture: ['player placement beside stations', 'raw material grants (exactly the catalog bill)', 'packed station devices', 'one Fuel Canister'] },
     };
     mkdirSync('evidence/mec01-c1', { recursive: true });
     writeFileSync('evidence/mec01-c1/motorbike-chain.json', JSON.stringify(evidence, null, 2));
-    expect(evidence.uiDs.kit).toBeTruthy();
+    expect(evidence.uids.kit).toBeTruthy();
   }, 120000);
 
   it('ordinary survival verbs (eat, drink) work without motorbike, Elder or Core ever entering the pack', () => {

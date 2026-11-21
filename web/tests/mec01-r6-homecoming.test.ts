@@ -143,7 +143,10 @@ describe('R6/R6.1 — the offline kill’s consequence reaches the player’s ha
     const walkEnd = walkHome(gs);
     expect(act(gs, 'door', { eid: door.id }, walkEnd).ok).toBe(true);       // closed — the bash must commit
     const homeFix = poweredTurret(gs, px + 5, py - 1, { arrows: 8, fuel: 180, energy: 0 });   // full 3-slot paid fuel stock, accounted
-    const boar = mkCreature(r, 'boar', (px - 1) * TILE + 8, py * TILE + 8, 40); boar.state = 'wander';
+    // Animals no longer follow a player's trail (373d999), so the boar is not led to the door any more.
+    // A turret only fires on a hostile creature, and a boar is peaceful until crowded: this one was
+    // provoked before the player went indoors and stands in the turret's field of fire at logout.
+    const boar = mkCreature(r, 'boar', (px + 5) * TILE + 8, (py + 2) * TILE + 8, 40); boar.state = 'wander'; (boar as any).prov = true;
     r.creatures.push(boar);
     // The logout save — the state the player carries into the absence.
     const logout = serializeSnapshot(gs);

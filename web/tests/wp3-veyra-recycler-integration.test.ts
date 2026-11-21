@@ -2,7 +2,6 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import {
-  T,
   TILE,
   WH,
   WW,
@@ -10,14 +9,12 @@ import {
   type GameState,
   type RunState,
 } from '../src/game/core';
-import { ITEMS } from '../src/game/catalog';
+import { ITEMS, RECIPES, SOURCES } from '../src/game/catalog';
 import {
   blockGrid,
   C,
   countItem,
   dispatch,
-  effTile,
-  entsAt,
   harvestHit,
   markDirty,
   newGame,
@@ -26,7 +23,8 @@ import {
 } from '../src/game/engine';
 import { selectSnapshots, serializeSnapshot, validate } from '../src/game/persist';
 import { FX, HAZ, PROJ, findInteract, settle } from '../src/game/sim';
-import { getWorld, setActiveLayout, VEYRA_RECYCLER_SITE } from '../src/game/world';
+import { recoveryPlan } from '../src/game/recycler';
+import { setActiveLayout, VEYRA_RECYCLER_SITE } from '../src/game/world';
 import { hasAuthorizedRecycler } from '../src/game/wreck-economy';
 import { maybeSlideVeyraWindow, windowOrigin } from '../src/veyra05/continuity';
 import { activeFloor, applyFloor, stairAt } from '../src/veyra05/floors';
@@ -184,7 +182,7 @@ function harvestSourceNaturally(
 
   const power = ITEMS[toolKey].power || {};
   for (let hit = 0; hit < 40; hit++) {
-    const res = harvestHit(gs, tx, ty, power, nowRef.t, r.player.x, r.player.y, { extraction: 'playerTool' });
+    const res = harvestHit(gs, tx, ty, power, nowRef.t, r.player.x, r.player.y, { extraction: 'playerTool', tool: toolKey });
     nowRef.t += 350;
     if (res.result !== 'yield' || res.depleted) break;
   }
@@ -219,8 +217,8 @@ function harvestSourceNaturally(
   return { collectedDrives };
 }
 
-describe('WP3: End-to-End Veyra Natural-Source -> Foundry Recycler -> Spend -> Floor -1 -> Save/Reload Integration Proof', () => {
-  it('harvests natural Veyra wrecks/resources (zero item injection), recycles damaged_drive at po_slag into spares, spends spares in real craft/build, and survives mandatory Floor -1 reload', () => {
+describe('WP3: End-to-End Veyra Natural-Source -> Foundry Recycler -> Floor -1 -> Save/Reload Integration Proof (item set v3)', () => {
+  it('knaps a Stone Pickaxe by hand, pries natural Veyra wrecks for Spare Parts and machine parts (zero item injection, zero Damaged Drives), recycles one machine part at po_slag, and survives mandatory Floor -1 reload', () => {
     // 1. Start a fresh canonical Veyra05 world run (region 1 = Greywater; zero qaUsed, zero inspectAt, zero addItem)
     setActiveLayout('veyra05-world');
     const gs = newGame();
@@ -235,27 +233,57 @@ describe('WP3: End-to-End Veyra Natural-Source -> Foundry Recycler -> Spend -> F
 
     const nowRef = { t: NOW + 1000 };
 
-    // 2. Harvest natural wood, stone, and accessible wrecks in Greywater before hiking to Slag Flats (charred trees in Slag yield charcoal, not wood)
+    // 2. Natural tool (starter-tool law 373d999): the Wood Club strikes wood, stone and plants but cannot pry a wreck.
+    //    Gather wood, stone and fiber with the club, twist rope and knap a Stone Pickaxe by hand — no item injection.
+    expect(C(r, 'inv').slots[0]?.key).toBe('wood_club');
+    expect(ITEMS.wood_club.power?.scrap ?? 0).toBe(0);
     const WOOD_SOURCES = ['oak', 'pine', 'snowpine', 'palm', 'willow'] as const;
-    for (const src of findReachableSources(r, WOOD_SOURCES, nowRef.t)) {
-      if (countItem(r, 'inv', 'wood') >= 46) break;
-      harvestSourceNaturally(gs, src.tx, src.ty, 'knife', nowRef, ['wood']);
+    const pickBill = new Map<string, number>(RECIPES.stone_pick.ins);
+    const ropeBill = new Map<string, number>(RECIPES.rope.ins);
+    const gather = (keys: readonly string[], item: string, want: number) => {
+      for (const src of findReachableSources(r, keys, nowRef.t)) {
+        if (countItem(r, 'inv', item) >= want) break;
+        harvestSourceNaturally(gs, src.tx, src.ty, 'wood_club', nowRef, [item]);
+      }
+      expect(countItem(r, 'inv', item), `natural ${item}`).toBeGreaterThanOrEqual(want);
+    };
+    gather(WOOD_SOURCES, 'wood', pickBill.get('wood') ?? 0);
+    gather(['rock'], 'stone', pickBill.get('stone') ?? 0);
+    gather(['grass', 'reed'], 'fiber', (ropeBill.get('fiber') ?? 0) * (pickBill.get('rope') ?? 0));
+    for (let i = 0; i < (pickBill.get('rope') ?? 0); i++) {
+      const rope = dispatch(gs, { id: `rope-${i}-${nowRef.t}`, type: 'craft', recipe: 'rope' }, nowRef.t);
+      expect(rope.ok, (rope as any).reason).toBe(true);
+      nowRef.t += 1100;
     }
-    for (const src of findReachableSources(r, ['rock'], nowRef.t)) {
-      if (countItem(r, 'inv', 'stone') >= 20) break;
-      harvestSourceNaturally(gs, src.tx, src.ty, 'knife', nowRef, ['stone']);
-    }
+    const pick = dispatch(gs, { id: `pick-${nowRef.t}`, type: 'craft', recipe: 'stone_pick' }, nowRef.t);
+    expect(pick.ok, (pick as any).reason).toBe(true);
+    nowRef.t += 2100;
+    expect(countItem(r, 'inv', 'stone_pick')).toBe(1);
+    expect(ITEMS.stone_pick.power?.scrap ?? 0).toBeGreaterThan(0);
 
-    const harvestNearby = (wantDrives: number, wantScrap: number) => {
-      for (const w of findReachableSources(r, ['wreck'], nowRef.t)) {
-        if (countItem(r, 'inv', 'damaged_drive') >= wantDrives && countItem(r, 'inv', 'scrap') >= wantScrap) break;
-        harvestSourceNaturally(gs, w.tx, w.ty, 'knife', nowRef, ['damaged_drive', 'scrap', 'spares']);
+    // 3. Item set v3 / G1A: Veyra's salvage stands at the roadside (Relay Wrecks, Salvage Bales). Each unit pays Spare
+    //    Parts directly and, on a bonus roll, a whole machine part. The Damaged Drive is retired, so the Recycler's
+    //    natural input is one of those machine parts. Both sources answer only to their per-tool table (G1A_HARVEST).
+    const SALVAGE_SOURCES = ['road_relay_wreck', 'road_salvage_bale'] as const;
+    for (const k of SALVAGE_SOURCES) {
+      expect(SOURCES[k].harvestBy?.stone_pick ?? 0, `${k} answers to the Stone Pickaxe`).toBeGreaterThan(0);
+      expect(SOURCES[k].harvestBy?.wood_club ?? 0, `${k} ignores the Wood Club`).toBe(0);
+    }
+    const RECYCLABLE = ['mechanical_gear', 'metal_pipe', 'iron_plate'] as const;
+    const WANT_SPARES = 6;
+    const recyclableHeld = () => RECYCLABLE.reduce((n, k) => n + countItem(r, 'inv', k), 0);
+    const enough = () => recyclableHeld() >= 1 && countItem(r, 'inv', 'spares') >= WANT_SPARES;
+    const harvestNearby = () => {
+      for (const w of findReachableSources(r, SALVAGE_SOURCES, nowRef.t)) {
+        if (enough()) break;
+        harvestSourceNaturally(gs, w.tx, w.ty, 'stone_pick', nowRef, ['spares', ...RECYCLABLE]);
       }
     };
 
-    harvestNearby(3, 42);
+    harvestNearby();
 
-    // Walk toward po_slag (2414, 1896) using real BFS + maybeSlideVeyraWindow until po_slag's Foundry Recycler is loaded in the active window AND >= 3 drives + >= 42 scrap collected
+    // Walk toward po_slag using real BFS + maybeSlideVeyraWindow until the Foundry Recycler is loaded in the active
+    // window AND the pack holds a recyclable machine part plus the spares.
     const hasRecyclerInWindow = () => Object.values(r.entities).some((e) => e.kind === 'recycler');
     for (let step = 0; step < 30; step++) {
       const [ox, oy] = windowOrigin(r);
@@ -267,13 +295,12 @@ describe('WP3: End-to-End Veyra Natural-Source -> Foundry Recycler -> Spend -> F
         localRecX <= WW - 30 &&
         localRecY >= 30 &&
         localRecY <= WH - 30;
-      if (recCentered && countItem(r, 'inv', 'damaged_drive') >= 3 && countItem(r, 'inv', 'scrap') >= 42) break;
+      if (recCentered && enough()) break;
 
       const curGlobX = ox + Math.floor(r.player.x / TILE);
       const curGlobY = oy + Math.floor(r.player.y / TILE);
       const dxGlob = VEYRA_RECYCLER_SITE.tx - curGlobX;
       const dyGlob = VEYRA_RECYCLER_SITE.ty - curGlobY;
-      // If we haven't found 3 drives / 42 scrap yet even after reaching po_slag, keep sweeping nearby east/south/west windows
       const sweepDirX = dxGlob > 30 ? WW - 12 : dxGlob < -30 ? 12 : step % 2 === 0 ? WW - 12 : 100;
       const sweepDirY = dyGlob > 30 ? WH - 12 : dyGlob < -30 ? 12 : step % 2 === 1 ? WH - 12 : 100;
       const edgeTx = recCentered ? (step % 2 === 0 ? WW - 12 : 12) : sweepDirX;
@@ -293,31 +320,16 @@ describe('WP3: End-to-End Veyra Natural-Source -> Foundry Recycler -> Spend -> F
       if (targets.size && walkPathTo(gs, targets, nowRef)) {
         const slid = maybeSlideVeyraWindow(gs, markDirty);
         r.creatures = []; // keep test deterministic (no ambient monster ambush while testing industrial flow)
-        if (slid && (countItem(r, 'inv', 'damaged_drive') < 3 || countItem(r, 'inv', 'scrap') < 42)) {
-          harvestNearby(3, 42);
-        }
+        if (slid && !enough()) harvestNearby();
       }
     }
 
-    const driveCount = countItem(r, 'inv', 'damaged_drive');
-    expect(driveCount).toBeGreaterThanOrEqual(3);
-
-    // Every natural damaged_drive must have a harvest.component receipt referencing its exact stack UID
-    const driveStacks = C(r, 'inv').slots.filter((s): s is NonNullable<typeof s> => s?.key === 'damaged_drive');
-    expect(driveStacks.length).toBeGreaterThanOrEqual(3);
-    for (const ds of driveStacks) {
-      expect(r.receipts.some((rc) => rc.kind === 'harvest.component' && rc.detail.includes(ds.uid))).toBe(true);
-    }
-
-    // 3. Top up wood/stone if any remains needed along walkable routes in current window
-    for (const src of findReachableSources(r, WOOD_SOURCES, nowRef.t)) {
-      if (countItem(r, 'inv', 'wood') >= 42) break;
-      harvestSourceNaturally(gs, src.tx, src.ty, 'knife', nowRef, ['wood']);
-    }
-    for (const src of findReachableSources(r, ['rock'], nowRef.t)) {
-      if (countItem(r, 'inv', 'stone') >= 20) break;
-      harvestSourceNaturally(gs, src.tx, src.ty, 'knife', nowRef, ['stone']);
-    }
+    expect(countItem(r, 'inv', 'spares'), 'natural spares').toBeGreaterThanOrEqual(WANT_SPARES);
+    expect(recyclableHeld(), 'natural recyclable machine parts').toBeGreaterThanOrEqual(1);
+    // The retired drive is never issued: not in the pack, not on the ground, no receipt.
+    expect(countItem(r, 'inv', 'damaged_drive')).toBe(0);
+    expect(Object.values(r.entities).some((e) => e.kind === 'drop' && e.c && C(r, e.c).slots.some((s) => s?.key === 'damaged_drive'))).toBe(false);
+    expect(r.receipts.some((rc) => rc.kind === 'harvest.component')).toBe(false);
 
     // 4. Locate po_slag's Foundry Recycler (already streamed into window via pure walking) and walk right through slag_sort's door to it
     const rec = Object.values(r.entities).find((e) => e.kind === 'recycler')!;
@@ -328,9 +340,6 @@ describe('WP3: End-to-End Veyra Natural-Source -> Foundry Recycler -> Spend -> F
 
     const recGoals = adjacentWalkableGoals(r, rec.tx!, rec.ty!);
     expect(walkPathTo(gs, recGoals, nowRef)).not.toBeNull();
-
-    // Record incidental spares (if any dropped from wrecks) to verify exact Recycler delta independently
-    const incidentalSpares = countItem(r, 'inv', 'spares');
 
     // Synchronize simulation clock to current action timestamp before timed station processing
     r.creatures = [];
@@ -347,177 +356,55 @@ describe('WP3: End-to-End Veyra Natural-Source -> Foundry Recycler -> Spend -> F
       writeFileSync(resolve(snapDir, 'po-slag-recycler.json'), serializeSnapshot(gs), 'utf8');
     }
 
-    // Feed 3 natural damaged_drive stacks sequentially into Foundry Recycler -> 6 spares in outC
-    for (let i = 0; i < 3; i++) {
-      const slot = C(r, 'inv').slots.findIndex((s) => s?.key === 'damaged_drive');
-      expect(slot).toBeGreaterThanOrEqual(0);
-      const stack = C(r, 'inv').slots[slot]!;
-      const startRec = dispatch(gs, { id: `rec-${i}-${nowRef.t}`, type: 'recycleItem', eid: rec.id, slot, uid: stack.uid }, nowRef.t);
-      expect(startRec.ok, (startRec as any).reason).toBe(true);
-      settle(gs, nowRef.t + 13000, true);
-      if (r.player.dead) {
-        throw new Error(`Player died during recycle #${i}: ${JSON.stringify(r.receipts.filter(rc => rc.kind === 'death'))}`);
-      }
-      nowRef.t += 13500;
+    // Feed one natural machine part into the Foundry Recycler. A stacked part is split by a real `split` intent first
+    // (the Recycler takes exactly one unit); the output must equal the live recovery plan for that part.
+    const isPart = (s: { key: string } | null | undefined) => !!s && (RECYCLABLE as readonly string[]).includes(s.key);
+    let slot = C(r, 'inv').slots.findIndex((s) => isPart(s) && s!.qty === 1);
+    if (slot < 0) {
+      const stacked = C(r, 'inv').slots.findIndex((s) => isPart(s));
+      expect(stacked).toBeGreaterThanOrEqual(0);
+      const sp = dispatch(gs, { id: `split-${nowRef.t}`, type: 'split', c: 'inv', slot: stacked, qty: 1 }, nowRef.t);
+      expect(sp.ok, (sp as any).reason).toBe(true);
+      nowRef.t += 100;
+      slot = C(r, 'inv').slots.findIndex((s) => isPart(s) && s!.qty === 1);
     }
+    expect(slot).toBeGreaterThanOrEqual(0);
+    const part = C(r, 'inv').slots[slot]!;
+    const partKey = part.key;
+    const plan = recoveryPlan(part)!;
+    expect(plan, `live recovery plan for ${partKey}`).toBeTruthy();
+    expect(plan.outputs.length).toBeGreaterThan(0);
+    const heldBefore = new Map(plan.outputs.map(([k]) => [k, countItem(r, 'inv', k)]));
+    const partsBefore = countItem(r, 'inv', partKey);
+    const sparesBeforeRecycle = countItem(r, 'inv', 'spares');
+
+    const startRec = dispatch(gs, { id: `rec-${nowRef.t}`, type: 'recycleItem', eid: rec.id, slot, uid: part.uid }, nowRef.t);
+    expect(startRec.ok, (startRec as any).reason).toBe(true);
+    expect(countItem(r, 'inv', partKey)).toBe(partsBefore - 1);
+    settle(gs, nowRef.t + plan.total + 1000, true);
+    if (r.player.dead) {
+      throw new Error(`Player died during recycle: ${JSON.stringify(r.receipts.filter(rc => rc.kind === 'death'))}`);
+    }
+    nowRef.t += plan.total + 1500;
 
     const outC = rec.station!.outC;
-    expect(countItem(r, outC, 'spares')).toBe(6);
-    const outSlot = C(r, outC).slots.findIndex((s) => s?.key === 'spares');
-    const colRes = dispatch(gs, { id: `col-spares-${nowRef.t}`, type: 'move', from: outC, fs: outSlot, to: 'inv' }, nowRef.t);
-    expect(colRes.ok, (colRes as any).reason).toBe(true);
-    expect(countItem(r, 'inv', 'spares')).toBe(incidentalSpares + 6);
-    nowRef.t += 500;
-
-    // 5. Spend spares in legitimate production/crafting on real buildable tiles just outside po_slag's protected apron:
-    // Build furnace & workbench from natural wood/stone/scrap -> smelt iron_ingot (scrap_ingot) -> craft mechanical_parts -> spend 4 spares building base_generator!
-    const buildOpenSpot = (structKey: string) => {
-      const g = blockGrid(r);
-      const w = getWorld();
-      const sx0 = Math.floor(r.player.x / TILE), sy0 = Math.floor(r.player.y / TILE);
-      const seen = new Uint8Array(WW * WH);
-      const q: number[] = [sy0 * WW + sx0];
-      seen[sy0 * WW + sx0] = 1;
-      const badTiles = new Set<number>([T.DEEP, T.SHALLOW, T.RIVER, T.CLIFF, T.PWALL, T.LAVA, T.FLOOR, T.ICE, T.ROAD, T.BRIDGE]);
-      let tries = 0;
-      let lastReason = 'no-buildable-tile-found';
-
-      for (let head = 0; head < q.length; head++) {
-        const cur = q[head];
-        const tx = cur % WW, ty = (cur / WW) | 0;
-        if (
-          tx > 2 && ty > 2 && tx < WW - 3 && ty < WH - 3 &&
-          g[cur] === 0 &&
-          w.economyMap.buildable[cur] &&
-          !w.economyMap.protected[cur] &&
-          !w.accessCorridors?.mask[cur] &&
-          !badTiles.has(effTile(r, tx, ty)) &&
-          !(sourceAt(r, tx, ty)?.stock ?? 0) &&
-          entsAt(r, tx, ty).length === 0
-        ) {
-          const adj = adjacentWalkableGoals(r, tx, ty);
-          if (adj.size && walkPathTo(gs, adj, nowRef)) {
-            const b = dispatch(gs, { id: `b-${structKey}-${tx}-${ty}-${nowRef.t}`, type: 'build', struct: structKey, tx, ty }, nowRef.t);
-            if (b.ok) {
-              nowRef.t += 200;
-              return Object.values(r.entities).find((e) => e.kind === 'struct' && e.type === structKey && e.tx === tx && e.ty === ty)!;
-            }
-            lastReason = `${(b as any).reason} (wood=${countItem(r, 'inv', 'wood')}, stone=${countItem(r, 'inv', 'stone')}, spares=${countItem(r, 'inv', 'spares')})`;
-            if (++tries >= 5) throw new Error(`buildOpenSpot(${structKey}) failed at ${tx},${ty}: ${lastReason}`);
-          }
-        }
-        for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
-          const nx = tx + dx, ny = ty + dy;
-          if (nx < 1 || ny < 1 || nx >= WW - 1 || ny >= WH - 1) continue;
-          const ni = ny * WW + nx;
-          if (!seen[ni] && (g[ni] === 0 || g[ni] === 4)) {
-            seen[ni] = 1;
-            q.push(ni);
-          }
-        }
-      }
-      throw new Error(`buildOpenSpot(${structKey}) exhausted BFS: ${lastReason}`);
-    };
-
-    // Ensure enough wood/stone/scrap separately (never over-harvest one resource searching for another)
-    if (countItem(r, 'inv', 'wood') < 30) {
-      for (const s of findReachableSources(r, WOOD_SOURCES, nowRef.t)) {
-        if (countItem(r, 'inv', 'wood') >= 32) break;
-        harvestSourceNaturally(gs, s.tx, s.ty, 'knife', nowRef, ['wood']);
-      }
+    expect(rec.station!.queue.length).toBe(0);
+    for (const [k, q] of plan.outputs) expect(countItem(r, outC, k), `recycler output ${k}`).toBe(q);
+    for (const [k] of plan.outputs) {
+      const outSlot = C(r, outC).slots.findIndex((s) => s?.key === k);
+      const colRes = dispatch(gs, { id: `col-${k}-${nowRef.t}`, type: 'move', from: outC, fs: outSlot, to: 'inv' }, nowRef.t);
+      expect(colRes.ok, (colRes as any).reason).toBe(true);
+      nowRef.t += 200;
     }
-    if (countItem(r, 'inv', 'stone') < 22) {
-      for (const s of findReachableSources(r, ['rock'], nowRef.t)) {
-        if (countItem(r, 'inv', 'stone') >= 24) break;
-        harvestSourceNaturally(gs, s.tx, s.ty, 'knife', nowRef, ['stone']);
-      }
-    }
-    if (countItem(r, 'inv', 'scrap') < 41) {
-      for (const s of findReachableSources(r, ['wreck'], nowRef.t)) {
-        if (countItem(r, 'inv', 'scrap') >= 42) break;
-        harvestSourceNaturally(gs, s.tx, s.ty, 'knife', nowRef, ['scrap']);
-      }
-    }
-
-    const furnace = buildOpenSpot('furnace')!;
-    expect(furnace).toBeTruthy();
-    const bench = buildOpenSpot('workbench')!;
-    expect(bench).toBeTruthy();
-
-    // Fuel furnace with natural wood and smelt scrap -> 11 iron_ingots via scrap_ingot (base: true; max queue 6 per batch)
-    expect(walkPathTo(gs, adjacentWalkableGoals(r, furnace.tx!, furnace.ty!), nowRef)).not.toBeNull();
-    compactInv(gs, nowRef);
-    const woodSlot = C(r, 'inv').slots.findIndex((s) => s?.key === 'wood' && s.qty >= 14);
-    expect(woodSlot).toBeGreaterThanOrEqual(0);
-    expect(dispatch(gs, { id: `fuel-furn-${nowRef.t}`, type: 'move', from: 'inv', fs: woodSlot, to: furnace.station!.fuelC, qty: 14 }, nowRef.t).ok).toBe(true);
-    for (let i = 0; i < 6; i++) {
-      expect(dispatch(gs, { id: `smelt-a-${i}-${nowRef.t}`, type: 'craft', recipe: 'scrap_ingot', eid: furnace.id }, nowRef.t).ok).toBe(true);
-      nowRef.t += 50;
-    }
-    settle(gs, nowRef.t + 75_000, true);
-    nowRef.t += 76_000;
-    for (let i = 0; i < 5; i++) {
-      expect(dispatch(gs, { id: `smelt-b-${i}-${nowRef.t}`, type: 'craft', recipe: 'scrap_ingot', eid: furnace.id }, nowRef.t).ok).toBe(true);
-      nowRef.t += 50;
-    }
-    settle(gs, nowRef.t + 65_000, true);
-    nowRef.t += 66_000;
-    const furnOutSlot = C(r, furnace.station!.outC).slots.findIndex((s) => s?.key === 'iron_ingot');
-    expect(furnOutSlot).toBeGreaterThanOrEqual(0);
-    expect(dispatch(gs, { id: `col-ingot-${nowRef.t}`, type: 'move', from: furnace.station!.outC, fs: furnOutSlot, to: 'inv' }, nowRef.t).ok).toBe(true);
-    expect(countItem(r, 'inv', 'iron_ingot')).toBeGreaterThanOrEqual(11);
-
-    // Craft 8 mechanical_parts at workbench (4 jobs x 2 parts; cost 8 scrap + 4 iron_ingot)
-    expect(walkPathTo(gs, adjacentWalkableGoals(r, bench.tx!, bench.ty!), nowRef)).not.toBeNull();
-    for (let i = 0; i < 4; i++) {
-      expect(dispatch(gs, { id: `mp-${i}-${nowRef.t}`, type: 'craft', recipe: 'mechanical_parts', eid: bench.id }, nowRef.t).ok).toBe(true);
-      nowRef.t += 50;
-    }
-    settle(gs, nowRef.t + 52_000, true);
-    nowRef.t += 53_000;
-    const mpSlot = C(r, bench.station!.outC).slots.findIndex((s) => s?.key === 'mechanical_parts');
-    expect(mpSlot).toBeGreaterThanOrEqual(0);
-    expect(dispatch(gs, { id: `col-mp-${nowRef.t}`, type: 'move', from: bench.station!.outC, fs: mpSlot, to: 'inv' }, nowRef.t).ok).toBe(true);
-    expect(countItem(r, 'inv', 'mechanical_parts')).toBeGreaterThanOrEqual(7);
-
-    // Spend 4 recycled spares in a real BUILD sink: Field Generator (base_generator)
-    const sparesBeforeSpend = countItem(r, 'inv', 'spares');
-    expect(sparesBeforeSpend).toBeGreaterThanOrEqual(6);
-    const gen = buildOpenSpot('base_generator')!;
-    expect(gen).toBeTruthy();
-    expect(countItem(r, 'inv', 'spares')).toBe(sparesBeforeSpend - 4);
-    expect(gen.basePower?.network).toBe('wire-v1');
-
-    // Upgrade workbench to Level 2 (cost 2 mechanical_parts + 1 iron_ingot) & spend 2 recycled spares in a real CRAFT sink: Utility Frame (vehicle_frame)
-    expect(walkPathTo(gs, adjacentWalkableGoals(r, bench.tx!, bench.ty!), nowRef)).not.toBeNull();
-    expect(dispatch(gs, { id: `upg-bench-${nowRef.t}`, type: 'upgradeStation', eid: bench.id }, nowRef.t).ok).toBe(true);
-    expect(bench.station!.level).toBe(2);
-    expect(dispatch(gs, { id: `craft-frame-${nowRef.t}`, type: 'craft', recipe: 'vehicle_frame', eid: bench.id }, nowRef.t).ok).toBe(true);
-    settle(gs, nowRef.t + 26_000, true);
-    nowRef.t += 27_000;
-    const vfSlot = C(r, bench.station!.outC).slots.findIndex((s) => s?.key === 'vehicle_frame');
-    expect(vfSlot).toBeGreaterThanOrEqual(0);
-    expect(dispatch(gs, { id: `col-vf-${nowRef.t}`, type: 'move', from: bench.station!.outC, fs: vfSlot, to: 'inv' }, nowRef.t).ok).toBe(true);
-    expect(countItem(r, 'inv', 'vehicle_frame')).toBe(1);
-    expect(countItem(r, 'inv', 'spares')).toBe(sparesBeforeSpend - 6);
+    for (const [k, q] of plan.outputs) expect(countItem(r, 'inv', k), `collected ${k}`).toBe((heldBefore.get(k) ?? 0) + q);
+    // Recycling a machine part never mints Spare Parts (finite salvage; bible K4).
+    expect(plan.outputs.some(([k]) => k === 'spares')).toBe(false);
+    expect(countItem(r, 'inv', 'spares')).toBe(sparesBeforeRecycle);
+    const held = Object.fromEntries(['spares', 'stone_pick', ...RECYCLABLE, ...plan.outputs.map(([k]) => k)].map((k) => [k, countItem(r, 'inv', k)]));
 
     // Zero QA/inspect/cheat tampering across the whole natural loop
     expect(r.qaUsed).toBe(false);
     expect(r.receipts.some((rc) => rc.kind.startsWith('qa') || rc.kind === 'inspect')).toBe(false);
-
-    if (snapDir) {
-      const bAdj = [...adjacentWalkableGoals(r, bench.tx!, bench.ty!)].sort((a, b) => {
-        const ax = (a % WW) * TILE + 8, ay = ((a / WW) | 0) * TILE + 8;
-        const bx = (b % WW) * TILE + 8, by = ((b / WW) | 0) * TILE + 8;
-        const da = Math.min(Math.hypot(ax - furnace.x, ay - furnace.y), Math.hypot(ax - gen.x, ay - gen.y));
-        const db = Math.min(Math.hypot(bx - furnace.x, by - furnace.y), Math.hypot(bx - gen.x, by - gen.y));
-        return db - da;
-      });
-      if (bAdj.length) walkPathTo(gs, new Set([bAdj[0]]), nowRef);
-      r.player.aim = Math.atan2(bench.y - r.player.y, bench.x - r.player.x);
-      expect(findInteract(gs, nowRef.t)?.kind).toBe('struct:workbench');
-      writeFileSync(resolve(snapDir, 'base-and-bench.json'), serializeSnapshot(gs), 'utf8');
-    }
 
     // 6. MANDATORY Floor -1 Descent, Save/Reload, and Return (NO `if` skip guards, NO window teleports!)
     // Walk inside po_slag to the Ground -> Floor -1 stair (`Quench drain service hatch`), descend, save/reload, and ascend back to Floor 0.
@@ -561,10 +448,10 @@ describe('WP3: End-to-End Veyra Natural-Source -> Foundry Recycler -> Spend -> F
     expect(hasAuthorizedRecycler(reloaded.run!)).toBe(true);
     expect(reloaded.run!.wreckEconomy).toBe('recycler-v1');
     expect(reloaded.run!.qaUsed).toBe(false);
-    // Built generator, crafted vehicle_frame & spares balance on Floor 0 remain intact across Floor -1 cold reload
-    expect(reloaded.run!.entities[gen.id]?.type).toBe('base_generator');
-    expect(countItem(reloaded.run!, 'inv', 'vehicle_frame')).toBe(1);
-    expect(countItem(reloaded.run!, 'inv', 'spares')).toBe(sparesBeforeSpend - 6);
+    // The hand-made pick, the natural spares, the remaining machine parts and the recycled output all survive the
+    // Floor -1 cold reload, and the Recycler is left idle and empty.
+    for (const [k, q] of Object.entries(held)) expect(countItem(reloaded.run!, 'inv', k), `reloaded ${k}`).toBe(q);
+    expect(countItem(reloaded.run!, 'inv', 'damaged_drive')).toBe(0);
 
     // Ascend back to Floor 0 using the Floor -1 return stair
     const loadedWw = getWindowWorld(reloaded.run!.layoutId!);
@@ -576,7 +463,9 @@ describe('WP3: End-to-End Veyra Natural-Source -> Foundry Recycler -> Spend -> F
         : [returnStair.x - lOx, returnStair.y - lOy];
     expect(applyFloor(reloaded, loadedWw, loadedWw.floors, 0, [upLx, upLy], markDirty)).toBe(true);
     expect(activeFloor(reloaded.run!)).toBe(0);
-    expect(reloaded.run!.entities[gen.id]?.type).toBe('base_generator');
+    const recAfter = Object.values(reloaded.run!.entities).find((e) => e.kind === 'recycler');
+    expect(recAfter?.station?.queue.length).toBe(0);
+    for (const [k, q] of Object.entries(held)) expect(countItem(reloaded.run!, 'inv', k), `back on ground ${k}`).toBe(q);
 
     resetWindowToGround(loadedWw);
   });

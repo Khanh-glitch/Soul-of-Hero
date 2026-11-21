@@ -33,6 +33,8 @@ let atlas: LiAtlas;
 let findings: Round2Findings;
 const item = (id: string) => p.items.find((i) => i.id === id)!;
 const sorted = (xs: [string, number][]) => [...xs].map(([k, q]) => `${k}:${q}`).sort();
+/** Recipe revision at which Item Ontology V2 round 2 shipped its proposals. */
+const ROUND2_REVISION = 3;
 
 beforeAll(() => {
   graph = buildSohEconomicGraph(collectExtractionInput());
@@ -69,12 +71,18 @@ describe('projection is an adapter over the existing multigraph, not a second ca
   });
 
   it('does not call an item reachable because a loot table mentions it', () => {
+    // ARENA 1 round 2 gave Crude Petroleum a real source on both layouts (oil seeps + the Oil Pump's `pump_crude`),
+    // so it is no longer a fixture-only id.
     const cp = item('crude_petroleum');
-    expect(cp.runtime_reachability).toBe('FIXTURE_ONLY');
-    expect(cp.signals).toContain('TEST_FIXTURE_SOURCE_ONLY');
-    for (const id of ['chitin', 'crawler_optic', 'wolf_fang', 'beetle_horn', 'keycard']) {
+    expect(cp.runtime_reachability).toBe('SHIPPING_AND_VEYRA');
+    expect(cp.signals).not.toContain('TEST_FIXTURE_SOURCE_ONLY');
+    expect(cp.produced_by).toEqual(['pump_crude']);
+    for (const id of ['chitin', 'crawler_optic', 'wolf_fang', 'beetle_horn']) {
       expect(item(id).runtime_reachability, id).toBe('SHIPPING_ONLY');
     }
+    // The Keycard is named by loot tables but B01 forbids it in every live table: mentioned, not reachable.
+    expect(item('keycard').runtime_reachability).toBe('UNREACHABLE');
+    expect(item('keycard').signals).toContain('UNREACHABLE_EVERYWHERE');
     const reachByDiag = new Set([...graph.diagnostics.shippingReachableItems, ...graph.diagnostics.veyraReachableItems]);
     for (const i of p.items) expect(i.runtime_reachability !== 'FIXTURE_ONLY' && i.runtime_reachability !== 'UNREACHABLE', i.id).toBe(reachByDiag.has(i.id));
   });
@@ -109,13 +117,16 @@ describe('projection is an adapter over the existing multigraph, not a second ca
     // P5: all four technical components have a Recycler rule.
     expect(item('iron_plate').recycle?.rule).toBe('X:plate-v1');
     for (const id of ['metal_pipe', 'mechanical_gear', 'metal_blade', 'iron_plate']) expect(item(id).recycle, id).not.toBeNull();
-    // P2 not authorised: the twin is still there and still reported, not hidden.
-    expect(p.twin_intermediates.some((t) => t.a === 'mechanical_parts' && t.b === 'fasteners')).toBe(true);
+    // P2 was not authorised in round 2; item set v3 then retired BOTH ids into Parts, so the twin no longer exists.
+    expect(isRetiredLive('mechanical_parts') && isRetiredLive('fasteners')).toBe(true);
+    expect(p.twin_intermediates.some((t) => [t.a, t.b].includes('mechanical_parts') || [t.a, t.b].includes('fasteners'))).toBe(false);
     // P6: Plank's only listed consumer cannot exist in a live world.
     expect(UNOBTAINABLE_STRUCTURES).toContain('wall_plank');
     expect(item('plank').signals).toContain('NO_REACHABLE_CONSUMER:wall_plank');
-    // Under a merged Parts resource the Recycler would mint research currency from an Iron Axe.
-    expect(p.recycle_loops.find((l) => l.item === 'iron_axe')!.merged_parts_verdict).toBe('PARTS_POSITIVE');
+    // Round 2 warned that a merged Parts resource would let the Recycler mint research currency from an Iron Axe.
+    // The merge shipped with X:recover-v4, which pays wood and ingots only: no tool or component loop is Parts-positive.
+    expect(p.recycle_loops.find((l) => l.item === 'iron_axe')).toMatchObject({ rule: 'X:recover-v4', parts_out: 0, merged_parts_verdict: 'PARTS_NEGATIVE' });
+    for (const l of p.recycle_loops) expect(l.merged_parts_verdict, l.item).toBe('PARTS_NEGATIVE');
   });
 });
 
@@ -136,7 +147,9 @@ describe('player-facing class (Group A, display only)', () => {
   it('agrees with the graph: SALVAGE/ORE/NATURAL are never crafted, COMPONENT/METAL always are', () => {
     for (const i of p.items) {
       const liveMade = i.produced_by.filter((r) => { const x = p.recipes.find((y) => y.id === r)!; return x.craftable_shipping || x.craftable_veyra; });
-      if (['SALVAGE', 'ORE', 'NATURAL', 'PARTS', 'SPECIMEN'].includes(i.item_class ?? '')) expect(liveMade, i.id).toEqual([]);
+      // An extraction job (no item inputs: the Oil Pump drawing crude from a seep) is a source, not a craft.
+      const crafted = liveMade.filter((r) => p.recipes.find((y) => y.id === r)!.ins.length > 0);
+      if (['SALVAGE', 'ORE', 'NATURAL', 'PARTS', 'SPECIMEN'].includes(i.item_class ?? '')) expect(crafted, i.id).toEqual([]);
       // A LIVE-retired id (final item set v2) keeps its catalog row for old saves but has no live formula any more.
       if (['COMPONENT', 'METAL'].includes(i.item_class ?? '') && !isRetiredLive(i.id)) expect(i.produced_by.length, i.id).toBeGreaterThan(0);
     }
@@ -198,6 +211,8 @@ describe('decisions', () => {
           if (!r && RETIRED_RECIPES.includes(b.id)) continue;
           // …and re-wrote the kit without Fasteners at rev 4. A CLOSED proposal's `before` is then a historical record.
           if (pr.status === 'CLOSED_KEEP' && (RECIPES as Record<string, { rev?: number }>)[b.id]?.rev === RECIPE_REVISION) continue;
+          // Item set v3: a CLOSED proposal's `before` that quotes a retired id (Fasteners, Machine Parts, …) is history too.
+          if (pr.status === 'CLOSED_KEEP' && [...b.ins, ...b.out].some(([k]) => isRetiredLive(k))) continue;
           expect(r, `${pr.id}:${b.id}`).toBeDefined();
           expect(sorted(b.ins), `${pr.id}:${b.id} ins`).toEqual(sorted(r!.ins));
           expect(sorted(b.out), `${pr.id}:${b.id} out`).toEqual(sorted(r!.outs));
@@ -205,12 +220,19 @@ describe('decisions', () => {
         }
       }
       // Structure costs quoted anywhere must equal the live catalog: round 2 changed NO structure cost.
-      for (const b of pr.before_structs ?? []) expect(sorted(b.cost), `${pr.id}:${b.id}`).toEqual(sorted(STRUCTS[b.id].cost as [string, number][]));
+      // …until item set v3 re-priced the ones that named a retired id; such a quote is then the Round 2 record.
+      for (const b of pr.before_structs ?? []) {
+        if (b.cost.some(([k]) => isRetiredLive(k))) { expect(STRUCTS[b.id], `${pr.id}:${b.id}`).toBeDefined(); continue; }
+        expect(sorted(b.cost), `${pr.id}:${b.id}`).toEqual(sorted(STRUCTS[b.id].cost as [string, number][]));
+      }
       for (const a of pr.after_recipes ?? []) {
         for (const [k] of [...a.ins, ...a.out]) expect(ITEMS[k], `${pr.id}:${a.id}:${k}`).toBeDefined();
         if (!done) continue;
         if (a.ins.length === 0) { expect(RETIRED_RECIPES as readonly string[], `${pr.id}:${a.id} retired`).toContain(a.id); expect(RECIPES[a.id]).toBeUndefined(); continue; }
         const r = live(a.id)!;
+        // A formula re-written after round 2 (rev 4+: final item set, item set v3, crafting master) has moved on from
+        // the round-2 `after`; that quote is then history, and only its ids are checked (above).
+        if (((RECIPES as Record<string, { rev?: number }>)[a.id]?.rev ?? 0) > ROUND2_REVISION) continue;
         expect(sorted(a.ins), `${pr.id}:${a.id} live ins`).toEqual(sorted(r.ins));
         expect(sorted(a.out), `${pr.id}:${a.id} live out`).toEqual(sorted(r.outs));
         expect(a.station, `${pr.id}:${a.id} live station`).toBe(r.station_tier);
@@ -224,7 +246,7 @@ describe('decisions', () => {
   it('round 2 status: exactly the authorised proposals are live, and nothing else moved', () => {
     const status = Object.fromEntries(PROPOSALS.map((x) => [x.id, x.status]));
     expect(status).toEqual({ P1: 'IMPLEMENTED', P2: 'CLOSED_KEEP', P3: 'IMPLEMENTED_PARTIAL', P4: 'IMPLEMENTED', P5: 'IMPLEMENTED', P6: 'HANDED_OFF', P7: 'IMPLEMENTED', P8: 'HANDED_OFF', P9: 'IMPLEMENTED_PARTIAL', P10: 'IMPLEMENTED' });
-    expect(RECIPE_REVISION).toBe(4); // rev 3 = Item Ontology V2 round 2; rev 4 = final item set v2 (ARENA 1)
+    expect(RECIPE_REVISION).toBe(6); // rev 3 = Item Ontology V2 round 2; rev 4 = final item set v2 (ARENA 1); rev 5/6 = item set v3 + crafting master
     // P1 / P7 — display only, ids untouched
     expect(ITEMS.spares.name).toBe('Parts'); expect(ITEMS.spares.vi).toBe('Linh kiện');
     expect(ITEMS.mechanical_parts.name).toBe('Machine Parts'); expect(ITEMS.mechanical_parts.vi).toBe('Bộ phận máy');
@@ -232,18 +254,21 @@ describe('decisions', () => {
     expect(RECIPES.spares).toBeUndefined();
     for (const d of Object.values(ITEMS)) expect(d.name, d.name).toMatch(/^[\x20-\x7e]+$/);
     for (const [k, d] of Object.entries(ITEMS)) if (d.creatorCore && k !== 'core_mjolnir') expect(d.vi, k).toBeTruthy();
-    // P3 — frame only; fluid machines untouched
+    // P3 — frame only in round 2. Item set v3 / the crafting master (rev 6) later re-priced the fluid machines in live
+    // ids: Machine Parts and Brick are gone from both, and each now takes two Metal Pipes.
     expect(RECIPES.vehicle_frame_piped).toBeUndefined();
-    expect(sorted(STRUCTS.oil_pump.cost as [string, number][])).toEqual(sorted([['iron_ingot', 3], ['mechanical_parts', 2], ['spares', 2], ['brick', 2]]));
-    expect(sorted(STRUCTS.refinery.cost as [string, number][])).toEqual(sorted([['iron_ingot', 4], ['mechanical_parts', 3], ['spares', 5], ['brick', 6], ['glass', 2]]));
+    expect(sorted(STRUCTS.oil_pump.cost as [string, number][])).toEqual(sorted([['iron_ingot', 3], ['mechanical_gear', 1], ['metal_pipe', 2], ['spares', 2]]));
+    expect(sorted(STRUCTS.refinery.cost as [string, number][])).toEqual(sorted([['iron_ingot', 8], ['wood', 8], ['metal_pipe', 2], ['spares', 5], ['glass', 2]]));
+    for (const id of ['oil_pump', 'refinery']) for (const [k] of STRUCTS[id].cost as [string, number][]) expect(isRetiredLive(k), `${id}:${k}`).toBe(false);
     // P5 — new key, old rules byte-for-byte where they were
     const rules = componentRuleSnapshot();
     expect(rules['X:plate-v1']).toEqual({ key: 'iron_plate', seconds: 10, outputs: [['iron_ingot', 1]] });
     expect(rules['X:pipe-v3'].outputs).toEqual([['refined_iron_ingot', 1]]);
     expect(sorted(rules['X:gear-v1'].outputs)).toEqual(['iron_ingot:1', 'mechanical_parts:2']);
     expect(sorted(rules['X:blade-v1'].outputs)).toEqual(['iron_ingot:2', 'mechanical_parts:1']);
-    // P2 / P6 — not authorised, so nothing about them changed
-    expect(sorted(RECIPES.fasteners.ins)).toEqual(['iron_ingot:1', 'scrap:1']); expect(RECIPES.fasteners.qty).toBe(3);
+    // P2 — not authorised in round 2; SUPERSEDED by item set v3 (Fasteners retired into Parts, no formula left).
+    // The V2 decision row is the historical record and still reads KEEP. P6 — not authorised, nothing changed.
+    expect(RECIPES.fasteners).toBeUndefined(); expect(isRetiredLive('fasteners')).toBe(true);
     expect(sorted(RECIPES.plank.ins)).toEqual(['wood:2']);
     expect(sorted(STRUCTS.wall_plank.cost as [string, number][])).toEqual(['plank:3']);
     expect(decisionFor('fasteners')!.decision).toBe('KEEP');
@@ -254,15 +279,15 @@ describe('decisions', () => {
   });
 
   it('round 2 findings are computed from the live game and say what they measured', () => {
-    // P2: every consumer listed, and the merge is shown to cost more — not asserted to be neutral.
+    // P2: measured from the live game. Item set v3 retired Fasteners into Parts, so NO consumer is left to list —
+    // no recipe, structure, repair, upgrade or action — and the finding says it is superseded rather than hiding it.
     const f = findings.P2;
-    expect(f.rows.length).toBeGreaterThanOrEqual(14);
-    for (const id of ['iron_plate', 'mechanical_gear']) expect(f.rows.some((x) => x.consumer === id), id).toBe(true);
-    // Final item set (rev 4): the Motor Drive is retired and the Motorbike Kit no longer takes Fasteners.
-    for (const id of ['vehicle_drive', 'motorbike_kit']) expect(f.rows.some((x) => x.consumer === id), id).toBe(false);
-    expect(f.rows.find((x) => x.consumer === 'door_powered')!.live).toBe(false);
-    expect(f.totals.m1_scrap).toBeGreaterThan(f.totals.before_scrap);
-    expect(f.totals.m1_worst_scrap_ratio).toBe(3);
+    expect(f.rows).toEqual([]);
+    expect(f.totals).toMatchObject({ consumers: 0, live_consumers: 0, before_scrap: 0, m1_scrap: 0, m1_worst_scrap_ratio: 0 });
+    for (const v of Object.values(f.totals)) expect(Number.isFinite(v)).toBe(true);
+    expect(f.resolution[0]).toMatch(/^SUPERSEDED by item set v3/);
+    // The unit prices are the frozen last-live formulas, kept so the Round 2 arithmetic stays readable.
+    expect(f.unit.per_fastener).toEqual({ iron: 0.333, scrap: 0.333 });
     // P6: the 240 HP wall is not obtainable today.
     expect(findings.P6.tiers.find((t) => t.id === 'wall_plank')).toMatchObject({ hp: 240, buildable_directly: false, upgrade_from: [], obtainable: false });
     expect(findings.P6.tiers.find((t) => t.id === 'wall_stone')!.obtainable).toBe(true);
@@ -271,7 +296,7 @@ describe('decisions', () => {
     for (const x of findings.P8.rows) expect(x.gap === 'NO_VEYRA_SOURCE', x.id).toBe(['SHIPPING_ONLY', 'FIXTURE_ONLY', 'UNREACHABLE'].includes(x.reachability));
     expect(findings.P8.rows.find((x) => x.id === 'core_demon')!.gap).toBe('NO_VEYRA_SOURCE');
     // P9
-    expect(findings.P9.reachability).toBe('FIXTURE_ONLY');
+    expect(findings.P9.reachability).toBe('SHIPPING_AND_VEYRA'); // oil seeps + Oil Pump (ARENA 1 round 2)
     // P10: four legacy + seven creator, different save fields
     expect(findings.P10.legacy.length).toBe(4); expect(findings.P10.creator.length).toBe(7);
     expect(findings.P10.creator_loot_markers.length).toBe(3);

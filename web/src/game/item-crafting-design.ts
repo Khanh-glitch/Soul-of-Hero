@@ -527,6 +527,7 @@ export const SYSTEM_CONSUMERS: readonly { item: string; system: string; what: st
   ...['stone_surtur', 'stone_typhon', 'stone_aion', 'stone_atlas', 'stone_argus', 'stone_anubis'].map(item => ({ item, system: 'Primordial Elders', what: 'Claimed from its Elder; the record of that fight.', anchor: 'catalog.ts PRIMORDIAL_ELDERS' })),
   ...['relic_shaleheart', 'ronin_nodachi', 'tidemarshal_trident', 'custodian_lantern'].map(item => ({ item, system: 'Side bosses', what: 'Unique drop of one side boss; equipped and used like any gear.', anchor: 'catalog.ts CREATURES.boss_*.uniqueDrop' })),
   { item: 'wood_club', system: 'Starting kit', what: 'Issued at the start of a run; the baseline tool.', anchor: 'engine.ts startRun' },
+  { item: 'knife', system: 'Industrial salvage', what: 'Carried by resident salvagers; strips roadside salvage two points a hit, twice the Stone Axe.', anchor: 'catalog.ts G1A_HARVEST, humanworld.ts salvager kit' },
 ]);
 
 /** What changed in this assignment, and what it does to the economy. */

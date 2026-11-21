@@ -11,7 +11,10 @@ const copy=(g:GameState)=>JSON.parse(JSON.parse(serializeSnapshot(g)).payload) a
 function setup(seed=313){const g=newGame();expect(act(g,'startRun',{character:'female',region:0,seed}).ok).toBe(true);const r=g.run!;r.creatures=[];const w=getWorld(),grid=blockGrid(r);let x=0,y=0;outer:for(let yy=20;yy<180;yy++)for(let xx=20;xx<180;xx++){const cells=[[-2,-2],[2,0],[0,1],[-1,1],[0,2],[1,1],[0,0],[0,-1]];if(cells.every(([dx,dy])=>{const i=(yy+dy)*WW+xx+dx;return grid[i]===0&&!w.sourceV3[i]&&w.economyMap.buildable[i]&&!w.economyMap.protected[i]&&!w.accessCorridors?.mask[i];})){x=xx;y=yy;break outer;}}expect(x).toBeGreaterThan(0);r.player.x=x*TILE+8;r.player.y=y*TILE+8;for(const [k,n] of [['wood',100],['stone',30],['fiber',20],['rope',3],['iron_ingot',5],['mechanical_parts',6],['fasteners',4],['spares',4]] as const)expect(addItem(r,'inv',k,n)).toBe(0);
  const build=(type:string,dx:number,dy:number)=>{const res=act(g,'build',{struct:type,tx:x+dx,ty:y+dy});expect(res).toMatchObject({ok:true});return Object.values(r.entities).find(e=>e.type===type&&e.tx===x+dx&&e.ty===y+dy)!;};
  build('floor_wood',-2,-2);const cabinet=build('claim',-2,-2);for(const [k,n] of [['wood',60],['stone',60],['fiber',30],['rope',10],['iron_ingot',20],['spares',20],['mechanical_parts',20],['fasteners',20]] as const)addItem(r,cabinet.c!,k,n);const bench=build('workbench',2,0);expect(act(g,'build',{struct:'farm_controller',tx:x,ty:y+1}).ok).toBe(false);expect(act(g,'upgradeStation',{eid:bench.id}).ok).toBe(true);const machine=build('farm_controller',0,1),garden=build('garden',-1,1),barrel=build('barrel',0,2),chest=build('chest_small',1,1);for(const [field,e] of [['gardenId',garden],['barrelId',barrel],['chestId',chest]] as const)expect(act(g,'farmConfigure',{eid:machine.id,field,value:e.id}).ok).toBe(true);return {g,r,machine,garden,barrel,chest,x,y};}
-function fill(o:ReturnType<typeof setup>,crop:'crop'|'herb'='crop'){const {g,r,machine,chest,barrel}=o;addItem(r,chest.c!,'seed',1);if(crop==='herb')addItem(r,chest.c!,'herb',1);addItem(r,machine.c!,'wood',3);barrel.water=12;expect(act(g,'farmConfigure',{eid:machine.id,field:'crop',value:crop}).ok).toBe(true);expect(act(g,'farmConfigure',{eid:machine.id,field:'enabled',value:true}).ok).toBe(true);}
+// Item set v2 (fe339ac): each cultivar is grown from its own named seed, and a harvest returns exactly
+// that one seed; Bitterleaf no longer takes a leaf to plant.
+const SEED={crop:'seed_sunroot',herb:'seed_bitterleaf'} as const;
+function fill(o:ReturnType<typeof setup>,crop:'crop'|'herb'='crop'){const {g,r,machine,chest,barrel}=o;addItem(r,chest.c!,SEED[crop],1);addItem(r,machine.c!,'wood',3);barrel.water=12;expect(act(g,'farmConfigure',{eid:machine.id,field:'crop',value:crop}).ok).toBe(true);expect(act(g,'farmConfigure',{eid:machine.id,field:'enabled',value:true}).ok).toBe(true);}
 
 import {settleWithReturn} from '../src/game/return-report';
 
@@ -32,12 +35,14 @@ describe('B03-C typed return report (receipt-derived, no invented rewards)', () 
 
   it('8-hour outcome: harvests and planting in the report equal the real chest and seed stock changes', () => {
     const o=setup(),{g,r,chest}=o;fill(o,'herb');
-    const seedsBefore=countItem(r,chest.c!,'seed');
+    const seedsBefore=countItem(r,chest.c!,SEED.herb);
     const {report}=settleWithReturn(g,T+8*3600000);
     const harvests=r.receipts.filter(x=>x.kind==='tender.harvest').length;
     const plants=r.receipts.filter(x=>x.kind==='tender.plant').length;
     expect(harvests).toBeGreaterThanOrEqual(0);
-    expect(countItem(r,chest.c!,'seed')).toBe(seedsBefore-plants);
+    // v2 seed law: planting spends one named seed, every harvest hands exactly one back.
+    expect(plants).toBeGreaterThan(0);
+    expect(countItem(r,chest.c!,SEED.herb)).toBe(seedsBefore-plants+harvests);
     const reported=report!.sections.production.filter(x=>x.text.includes('harvested')).length;
     expect(reported).toBe(harvests);
   });

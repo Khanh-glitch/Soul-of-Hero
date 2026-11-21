@@ -35,8 +35,8 @@ describe('connected economy',()=>{
   expect(s.dur).toBe(0);expect(C(r,'inv').slots[0]?.uid).toBe(id);const hp=m.hp;
   p.action=null;for(let k=6;k<=10;k++)tick(g,controls,50,T+k*50);expect(m.hp).toBe(hp);
   const saved=JSON.parse(JSON.parse(serializeSnapshot(g)).payload) as GameState;expect(validate(saved)).toBeTruthy();
-  const bench=station(saved,'workbench');give(saved,'stone');give(saved,'fiber');const stone0=countItem(saved.run!,'inv','stone'); /* item set v3: the knife is honed with Stone + Fibre (Scrap retired) */expect(act(saved,'maintainItem',{eid:bench.id,slot:0,uid:id,mode:'repair'},'broken-repair',T+1000).ok).toBe(true);
-  expect(C(saved.run!,'inv').slots[0]).toMatchObject({uid:id,dur:300});expect(countItem(saved.run!,'inv','stone')).toBe(stone0-1);expect(act(saved,'maintainItem',{eid:bench.id,slot:0,uid:id,mode:'repair'},'broken-repair',T+1001)).toMatchObject({ok:false,dup:true});
+  const bench=station(saved,'workbench');/* since 373d999 slot 0 holds the starting Wood Club, mended at the bench with 3 Wood */expect(C(saved.run!,'inv').slots[0]?.key).toBe('wood_club');give(saved,'wood',3);const wood0=countItem(saved.run!,'inv','wood');expect(act(saved,'maintainItem',{eid:bench.id,slot:0,uid:id,mode:'repair'},'broken-repair',T+1000).ok).toBe(true);
+  expect(C(saved.run!,'inv').slots[0]).toMatchObject({uid:id,dur:ITEMS.wood_club.dur});expect(countItem(saved.run!,'inv','wood')).toBe(wood0-3);expect(act(saved,'maintainItem',{eid:bench.id,slot:0,uid:id,mode:'repair'},'broken-repair',T+1001)).toMatchObject({ok:false,dup:true});
  });
  it('level 2 and knowledge gate industrial jobs; reserve and cancel returns exact tool identity and durability',()=>{
   const g=fresh(),r=g.run!,e=station(g,'workbench');give(g,'iron_pick');for(const [k,q] of RECIPES.industrial_pick.ins)if(k!=='iron_pick')give(g,k,q*2); /* two bills of the live recipe: one is cancelled, one is finished */

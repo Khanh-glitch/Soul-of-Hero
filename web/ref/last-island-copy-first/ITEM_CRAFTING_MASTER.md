@@ -332,7 +332,7 @@ Items whose value is what they unlock or prove. None is crafted.
 
 | Item | id | Grp | Policy | Purpose | How it is made, or why it is not | LI id / grade |
 |---|---|---|---|---|---|---|
-| Survival Knife | `knife` | B | SPECIAL_AUTHORITY | Survival Knife. The starting tool: cuts plants fast, wood and stone slowly. Repaired at a Workbench. | NO_RECIPE_BY_DESIGN (starter issue): every run begins with one and a Workbench repairs it for 1 stone + 1 fiber. Known risk recorded in open questions: no tool-free way to get stone exists if every tool is broken away from a bench. | — / NONE |
+| Survival Knife | `knife` | B | WORLD_ONLY | Survival Knife. Salvagers carry this blade; it cuts plants faster than the club. | No hand recipe. Repair at a Workbench for stone and fiber. | — / NONE |
 | Stone Pickaxe | `stone_pick` | B | CRAFT_ONLY | Stone Pickaxe. First tool for stone and ore. | 3 Wood + 4 Stone + 1 Rope → 1 | — / NONE |
 | Iron Pickaxe | `iron_pick` | B | BOTH | Iron Pickaxe. Faster on stone and ore; can free Rich Iron Ore. | 3 Iron Ingot + 2 Wood + 1 Leather → 1 | — / NONE |
 | Salvager Pick | `industrial_pick` | B | CRAFT_ONLY | Salvager Pick. The top pick; an Iron Pick rebuilt with refined metal. | 1 Iron Pickaxe + 2 Refined Iron Ingot + 1 Metal Pipe → 1<br>*alt* 1 Iron Pickaxe + 1 Mechanical Gear + 2 Parts → 1 | — / NONE |
@@ -340,7 +340,7 @@ Items whose value is what they unlock or prove. None is crafted.
 | Iron Axe | `iron_axe` | A | BOTH | Iron Axe. Faster on trees. | 3 Iron Ingot + 2 Wood + 1 Leather → 1 | iron_axe / DIRECT |
 | Salvager Axe | `industrial_axe` | A | CRAFT_ONLY | Salvager Axe. The top axe; an Iron Axe rebuilt with a Blade and refined metal. | 1 Iron Axe + 1 Metal Blade + 2 Refined Iron Ingot + 1 Metal Pipe → 1 | refined_iron_axe / DIRECT |
 | Torch | `torch` | A | CRAFT_ONLY | Torch. Light and a little warmth; also the flame of a Torch Post. | 1 Wood + 2 Plant Fiber → 1 | — / NONE |
-| Wood Club | `wood_club` | A | CRAFT_ONLY | Wood Club. The first weapon upgrade, made by hand from a lot of wood. | 12 Wood → 1 | wood_club / DIRECT |
+| Wood Club | `wood_club` | A | BOTH | Wood Club. Issued on landing; craft a replacement by hand from wood. | 12 Wood → 1 | wood_club / DIRECT |
 | Cleaver | `cleaver` | A | BOTH | Cleaver. A short, quick blade; the first use of a Metal Blade. | 1 Iron Ingot + 1 Metal Blade → 1 | cleaver / DIRECT |
 | Machete | `machete` | A | BOTH | Machete. The iron long blade and the best crafted melee weapon. | 4 Iron Ingot + 3 Metal Blade → 1 | machete / DIRECT |
 | Fire-hardened Spear | `wood_spear` | B | CRAFT_ONLY | Fire-hardened Spear. Reach without metal. | 4 Wood + 1 Rope → 1 | — / NONE |
@@ -705,7 +705,8 @@ Unit cost divides the bill by the yield. Knowledge: Starter = known from the fir
 | Oathless Nodachi | Side bosses | Unique drop of one side boss; equipped and used like any gear. | `catalog.ts CREATURES.boss_*.uniqueDrop` |
 | Saltwick Trident | Side bosses | Unique drop of one side boss; equipped and used like any gear. | `catalog.ts CREATURES.boss_*.uniqueDrop` |
 | Archive Lantern | Side bosses | Unique drop of one side boss; equipped and used like any gear. | `catalog.ts CREATURES.boss_*.uniqueDrop` |
-| Survival Knife | Starting kit | Issued at the start of a run; the baseline tool. | `catalog.ts ITEMS.knife` |
+| Wood Club | Starting kit | Issued at the start of a run; the baseline tool. | `engine.ts startRun` |
+| Survival Knife | Industrial salvage | Carried by resident salvagers; strips roadside salvage two points a hit, twice the Stone Axe. | `catalog.ts G1A_HARVEST, humanworld.ts salvager kit` |
 
 ## 6. Cross-family graph audit
 
@@ -798,7 +799,7 @@ No consumer: none.
 
 Main connected component: 135 of 157 items. The rest have no bill and appear in no bill; each is tied to the game by a system, not a formula:
 
-- Survival Knife (family 04, SPECIAL_AUTHORITY): system:Starting kit
+- Survival Knife (family 04, WORLD_ONLY): system:Industrial salvage
 - Blueprint (family 11, SPECIAL_AUTHORITY): system:Knowledge
 - Wolf Fang (specimen) (family 11, WORLD_ONLY): system:Specimen study
 - Boar Tusk (specimen) (family 11, WORLD_ONLY): system:Specimen study

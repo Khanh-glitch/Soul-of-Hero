@@ -27,8 +27,14 @@ export interface P2Row {
   /** Mechanism M2 — the fastener batch ratio written straight into the consumer: ceil(n / 3) ingot + ceil(n / 3) scrap. */
   m2: { iron: number; scrap: number }; m2_ratio: number;
 }
+const P2_FROZEN: Record<'fasteners' | 'mechanical_parts', { qty: number; ins: Bom }> = {
+  fasteners: { qty: 3, ins: [['iron_ingot', 1], ['scrap', 1]] },
+  mechanical_parts: { qty: 2, ins: [['scrap', 2], ['iron_ingot', 1]] },
+};
 function p2(): { unit: Record<string, unknown>; rows: P2Row[]; totals: Record<string, number>; other_facts: string[]; conclusion: string[]; resolution: string[] } {
-  const f = RECIPES.fasteners, mp = RECIPES.mechanical_parts;
+  // Both recipes were retired by the live item set v3 (84eb406). This finding is the Round 2 record of
+  // what the retirement replaced, so it keeps the last live recipe of each (frozen at 84eb406^).
+  const f = RECIPES.fasteners ?? P2_FROZEN.fasteners, mp = RECIPES.mechanical_parts ?? P2_FROZEN.mechanical_parts;
   const fIron = f.ins.find(([k]) => k === 'iron_ingot')![1] / f.qty, fScrap = f.ins.find(([k]) => k === 'scrap')![1] / f.qty;
   const mIron = mp.ins.find(([k]) => k === 'iron_ingot')![1] / mp.qty, mScrap = mp.ins.find(([k]) => k === 'scrap')![1] / mp.qty;
   const rows: P2Row[] = [];
@@ -54,7 +60,10 @@ function p2(): { unit: Record<string, unknown>; rows: P2Row[]; totals: Record<st
   for (const [label, u] of [['workbench → level 2', WORKBENCH_UPGRADE], ['workbench → level 3', WORKBENCH_UPGRADE_III]] as const) {
     const n = (u.cost as Bom).find(([k]) => k === 'fasteners')?.[1]; if (n) add(label, 'upgrade', n);
   }
-  add('vehicleRepair (motorbike, engine.ts)', 'action', 1);
+  // Item set v3 retired both ids: the motorbike repair is paid in 3 Parts (engine.ts `vehicleRepair`) and no
+  // catalog row names Fasteners any more, so nothing is listed. Before the retirement the repair took 1 Fastener.
+  const retired = !RECIPES.fasteners;
+  if (!retired) add('vehicleRepair (motorbike, engine.ts)', 'action', 1);
   const live = rows.filter((x) => x.live);
   const sum = (pick: (x: P2Row) => number) => r3(live.reduce((a, x) => a + pick(x), 0));
   const totals = {
@@ -62,8 +71,8 @@ function p2(): { unit: Record<string, unknown>; rows: P2Row[]; totals: Record<st
     before_iron: sum((x) => x.before.iron), before_scrap: sum((x) => x.before.scrap),
     m1_iron: sum((x) => x.m1.iron), m1_scrap: sum((x) => x.m1.scrap),
     m2_iron: sum((x) => x.m2.iron), m2_scrap: sum((x) => x.m2.scrap),
-    m1_worst_scrap_ratio: Math.max(...live.map((x) => x.m1_scrap_ratio)), m1_best_scrap_ratio: Math.min(...live.map((x) => x.m1_scrap_ratio)),
-    m2_worst_ratio: Math.max(...live.map((x) => x.m2_ratio)), m2_best_ratio: Math.min(...live.map((x) => x.m2_ratio)),
+    m1_worst_scrap_ratio: Math.max(0, ...live.map((x) => x.m1_scrap_ratio)), m1_best_scrap_ratio: live.length ? Math.min(...live.map((x) => x.m1_scrap_ratio)) : 0,
+    m2_worst_ratio: Math.max(0, ...live.map((x) => x.m2_ratio)), m2_best_ratio: live.length ? Math.min(...live.map((x) => x.m2_ratio)) : 0,
   };
   const drops = Object.entries(CREATURES).filter(([, c]) => (c.drops as [string, number, number][]).some(([k]) => k === 'fasteners')).map(([k]) => k);
   return {
@@ -84,6 +93,7 @@ function p2(): { unit: Record<string, unknown>; rows: P2Row[]; totals: Record<st
       'No integer mapping removes Fasteners without a cost jump on the one- and two-fastener consumers. That is the blocker; it is arithmetic, not taste.',
     ],
     resolution: [
+      ...(retired ? ['SUPERSEDED by item set v3 (owner roster): Fasteners and Machine Parts are both retired into Parts (1 Fastener → 1 Parts, 1 Machine Parts → 2 Parts). No live recipe, structure, repair, upgrade or action consumes Fasteners; the table above is empty for that reason and the lines below are the Round 2 record only.'] : []),
       'RULING APPLIED: Fasteners stay. The Round 1 disposition MERGE_CANDIDATE is withdrawn (now KEEP).',
       'If the twin signal is to be removed later, do it by DIFFERENTIATION, not by merge: Fasteners = researched joining stock for assemblies and field repair; Machine Parts = base mechanism stock. That needs no recipe change.',
       'A future merge is only admissible with a replacement that is priced per consumer in thirds (i.e. keeps a 3-per-batch unit) — which is Fasteners under another name. Close P2 unless a new mechanic is proposed.',
