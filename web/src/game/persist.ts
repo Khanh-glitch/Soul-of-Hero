@@ -82,6 +82,7 @@ export function bearTrapStateValid(state:any, uses:any):boolean {
   if(state==='worn')return uses===0;
   return false;
 }
+const HUMAN_ROLE_WORDS = ['Salvager', 'Mechanic', 'Cook', 'Gardener', 'Medic', 'Guard', 'Engineer', 'Builder'];
 export function validate(raw: any): GameState | null {
   if (!obj(raw) || !integer(raw.version) || raw.version > SAVE_VERSION || !integer(raw.revision)) return null;
   const p = raw.profile;
@@ -279,6 +280,10 @@ export function validate(raw: any): GameState | null {
     if (!def || !finite(st.stock) || !Number.isInteger(st.stock) || st.stock<0 || st.stock>def.stock || !finite(st.hp) || st.hp<0 || st.hp>def.hp || (st.burnt!==undefined && typeof st.burnt!=='boolean') || (st.regrowAt!==undefined && (!finite(st.regrowAt)||st.regrowAt<0)) || ((st.regrowFrom!==undefined || st.regrowAcc!==undefined || st.regrowDoneAt!==undefined) && (!def.regrow || (st.regrowFrom!==undefined && (!finite(st.regrowFrom)||st.regrowFrom<0)) || (st.regrowAcc!==undefined && (!finite(st.regrowAcc)||st.regrowAcc<0)) || (st.regrowDoneAt!==undefined && !finite(st.regrowDoneAt)))) || (st.fire!==undefined && (!finite(st.fire)||st.fire<0)) || (st.fireSpreadAt!==undefined && (!finite(st.fireSpreadAt)||st.fireSpreadAt<0 || !st.fire || st.fireSpreadAt>st.fire)) || (st.fireDepth!==undefined && (!Number.isInteger(st.fireDepth)||st.fireDepth<0||st.fireDepth>BAL.fire.maxSpreadDepth))) return null;
   }
   if (!r.custody.inv || !r.custody.eq || r.custody.inv.kind !== 'inv' || r.custody.eq.kind !== 'eq' || (r.custody.inv.slots?.length !== 24 && !(testMode && r.qaUsed === true && r.custody.inv.slots?.length === 128)) || r.custody.eq.slots?.length !== EQ_SLOTS.length) return null;
+  if (r.player.deathBag !== undefined) {
+    const db = r.player.deathBag;
+    if (!obj(db) || typeof db.cause !== 'string' || (db.id !== null && (typeof db.id !== 'string' || !db.id))) return null;
+  }
   if (!Number.isInteger(r.player.active) || r.player.active < 0 || r.player.active > 7 || !['vx','vy','dir','aim','invuln','deadT','stepAcc','lastTraceX','lastTraceY'].every(k => finite(r.player[k])) || !['gather','combat','craft','survival'].every(k => finite(r.player.skills[k]))) return null;
   const beforeNext = (id: string, re: RegExp) => { const m = re.exec(id); return !m || parseInt(m[1], 36) < r.nextId; };
   // Versioned Elder schema validation & deterministic v1 -> v2 migration on Veyra saves (fails closed on unknown schema version or unknown Elder key).
@@ -820,6 +825,12 @@ export function validate(raw: any): GameState | null {
     const seenUids = new Set<string>();
     for (const h of Object.values(hw.people ?? {}) as any[]) {
       if (!h || typeof h.actorId !== 'string' || !h.actorId || typeof h.sourceId !== 'string' || !h.sourceId) return null;
+      // Names follow the work a person actually does (2026-11-21). A save written before that
+      // keeps every surname and only has a wrong role word corrected.
+      if (typeof h.name === 'string' && typeof h.occupation === 'string') {
+        const role = h.occupation.charAt(0).toUpperCase() + h.occupation.slice(1), at = h.name.indexOf(' ');
+        if (at > 0 && HUMAN_ROLE_WORDS.includes(role) && HUMAN_ROLE_WORDS.includes(h.name.slice(0, at)) && h.name.slice(0, at) !== role) h.name = role + h.name.slice(at);
+      }
       if (typeof h.inv?.packId !== 'string' || typeof h.inv?.cartId !== 'string') return null;
       if (h.threat !== undefined && (!obj(h.threat) || ![h.threat.waves, h.threat.hit, h.threat.guarded].every(integer))) return null;
       const d=h.intent?.delivery;

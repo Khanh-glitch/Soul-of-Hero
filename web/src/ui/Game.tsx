@@ -47,6 +47,7 @@ import { humanContact, playerAtSea, playerVoyage } from '../game/humanworld';
 import { InventoryPanel, ContainerPanel, CraftPanel, BuildPanel, MapPanel, SkillsPanel, MenuPanel, VendorPanel, EscrowPanel, EvacPanel, ReportPanel } from './panels';
 import { deriveCues } from '../game/presentation-cues';
 import { experienceForPhase, experienceFromCue, stagedExperience, type ExperienceEvent } from '../game/experience';
+import { QA_BUILD } from '../game/build-flags';
 import { triggerQaEvent, qaCycleBikeState, type QaPresetId } from '../game/qa-sandbox';
 import { ElderBossHUD, RagnarokStrip, CoreReserveStrip, AirdropCard, DeathRecoveryOverlay, QaSandboxDrawer } from './EventExperiences';
 import { ExperienceStage, FieldPickupLayer, EventFeed, type FieldPickup, type FeedLine } from './ExperienceStage';
@@ -377,6 +378,7 @@ export default function Game({
       if (keyMap[e.code]) { if (!panelRef.current) (inp.current as any)[keyMap[e.code]] = true; e.preventDefault(); return; }
       if (e.code === 'Tab') { e.preventDefault(); toggle('skills'); return; }
       if (e.code === 'F9') {
+        if (!QA_BUILD) return;                 // the player build has no QA lab behind any key
         e.preventDefault();
         if (onInspect && (gs as any).__ephemeralInspect) { onInspect(); return; }
         if (!qaMode) {

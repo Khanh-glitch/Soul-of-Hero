@@ -6,6 +6,7 @@ import { BAL, HOUR, TILE, type GameState, type RunState } from './core';
 import { ITEMS, STRUCTS, RECIPES } from './catalog';
 import { C, countItem, territoryForecast, tenderState, weatherAt, beginReceiptSink, endReceiptSink, owned } from './engine';
 import { settle } from './sim';
+import { deathBagView } from './death-view';
 import { playerVoyage, evacBerthStatus } from './humanworld';
 
 export type ReturnTone = 'ok' | 'gold' | 'warn' | 'bad' | 'muted';
@@ -168,8 +169,13 @@ export function buildOfflineReturn(gs: GameState, before: Snap | null, receipts:
     if (voyage) out.body.push({id:'voyage',tone:voyage.vessel?.stranded?'bad':'muted',text:evacBerthStatus(voyage),receipts:[]});
     else out.body.push({ id: 'shelter', tone: ap.sheltered ? 'ok' : 'warn', text: ap.sheltered ? 'Sheltered now (roofed, enclosed).' : 'Not sheltered now.', receipts: [] });
     if (ap.dead) {
-      const deadBag = r && Object.values(r.entities).find(x => x.kind === 'bag' && x.c && Math.floor(x.x / TILE) === Math.floor(r.player.x / TILE) && Math.floor(x.y / TILE) === Math.floor(r.player.y / TILE));
-      out.body.push({ id: 'dead', tone: 'bad', text: deadBag ? `You are dead. A bag (${deadBag.id}) is on the ground where you fell.` : 'You are dead. No surviving bag is confirmed at your death tile.', receipts: [] });
+      // One authority for "is my bag still there": the same death binding the death panel and
+      // the map use. A different bag that happens to lie on the tile is never called yours.
+      const death = r ? deathBagView(r) : undefined;
+      out.body.push({ id: 'dead', tone: 'bad', text: death?.status === 'present'
+        ? `You are dead. Your bag (${death.stacks.length} stack${death.stacks.length === 1 ? '' : 's'}) is on the ground where you fell.`
+        : death?.status === 'none' ? 'You are dead. You were carrying nothing when you fell.'
+        : 'You are dead. No recoverable bag is confirmed for this death.', receipts: [] });
     }
     if (bp.food !== ap.food) out.body.push({ id: 'food', tone: 'gold', text: `Food items ${bp.food} → ${ap.food} (physical stacks only).`, receipts: [] });
     for (const [id, c] of Object.entries(after.cabinets)) {

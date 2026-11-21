@@ -456,12 +456,14 @@ const ROLE_BY_OCC: Record<Occupation, string> = {
   medic: 'Medic', guard: 'Guard', engineer: 'Engineer', builder: 'Builder',
 };
 
-/** Deterministic actor name + appearance from sourceId (stable across reload). */
-export function humanIdentity(sourceId: string, seq: number): { name: string; appearance: number } {
+/** Deterministic actor name + appearance from sourceId (stable across reload). The first word of
+ *  a name is the work the person actually does (a cook is "Cook Highland", never "Guard Highland"
+ *  — Creator decision 2026-11-21). The role draw is still consumed so appearances stay unchanged. */
+export function humanIdentity(sourceId: string, seq: number, occupation?: Occupation): { name: string; appearance: number } {
   const r = mulberry(hashInt(sourceId) ^ (seq * 2654435761));
   const surname = REGION_NAMES[Math.floor(r() * REGION_NAMES.length)];
-  const given = ROLE_BY_OCC[OCCUPATIONS_LIST[Math.floor(r() * OCCUPATIONS_LIST.length)]];
-  return { name: `${given} ${surname}`, appearance: Math.floor(r() * 6) };
+  const drawn = OCCUPATIONS_LIST[Math.floor(r() * OCCUPATIONS_LIST.length)];
+  return { name: `${ROLE_BY_OCC[occupation ?? drawn]} ${surname}`, appearance: Math.floor(r() * 6) };
 }
 const OCCUPATIONS_LIST: Occupation[] = ['salvager', 'mechanic', 'cook', 'gardener', 'medic', 'guard', 'engineer', 'builder'];
 function hashInt(s: string): number { let h = 2166136261; for (let i = 0; i < s.length; i++) h = Math.imul(h ^ s.charCodeAt(i), 16777619); return h >>> 0; }
@@ -478,7 +480,7 @@ export function makeHuman(r: RunState, hw: HumanWorld, opts: {
 }): HumanRecord {
   const seq = hw.nextActorSeq++;
   const id = `h${seq.toString(36)}`;
-  const { name, appearance } = humanIdentity(opts.sourceId, seq);
+  const { name, appearance } = humanIdentity(opts.sourceId, seq, opts.occupation);
   const P = PROFILES[opts.profile];
   const invPack = mkContainer(r, 'bag', 12);
   const invCart = mkContainer(r, 'cart', 6);

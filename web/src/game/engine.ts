@@ -1447,6 +1447,10 @@ function mergeable(a: Stack, b: Stack) {
   return a.key === b.key && !isAccessCard(a.key) && ITEMS[a.key].max > 1 && a.production === undefined && b.production === undefined && a.meta === undefined && b.meta === undefined &&
     a.dur === undefined && b.dur === undefined && a.charge === undefined && b.charge === undefined;
 }
+/** A stack with no per-instance state: safe to pour into another stack of the same item. */
+function plainStackable(s: Stack) {
+  return !isAccessCard(s.key) && ITEMS[s.key].max > 1 && s.production === undefined && s.meta === undefined && s.dur === undefined && s.charge === undefined;
+}
 function portion(r: RunState, s: Stack, qty: number): Stack {
   return { ...s, uid: uid(r, 's'), qty };
 }
@@ -2199,8 +2203,11 @@ export function killPlayer(gs: GameState, now: number, cause: string) {
   if (r.rest) endRest(r, now, 'death'); // reserve returns to the chest before the bag is formed
   p.dead = true; p.deadT = 0; p.hp = 0; p.action = null; p.pulling = null; delete p.vehicle;
   const bag = bagContainers(r, ['inv', 'eq'], p.x, p.y, now, 'Your bag', [], undefined, true);
+  // The binding is kept on the player, not only in the receipt ledger: that ledger keeps 250 entries
+  // and a death from hours ago would otherwise lose its bag.
+  p.deathBag = { id: bag?.id ?? null, cause };
   receipt(r, now, 'death', `${cause}; bag=${bag?.id ?? 'none'}`);
-  pushLog(r, now, `You died (${cause}). Your belongings lie in a bag where you fell.`, 'red');
+  pushLog(r, now, bag ? `You died (${cause}). Your belongings lie in a bag where you fell.` : `You died (${cause}). You were carrying nothing.`, 'red');
 }
 export function respawn(gs: GameState, now: number): Result {
   const r = gs.run!; const p = r.player; if (!p.dead) return { ok: false, reason: 'Not dead.' };
@@ -2699,7 +2706,25 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       const s = C(r, e.c!).slots[0]; if (!s) return fail('Empty.');
       const room = ITEMS[s.key].max > 1 && s.production === undefined && s.meta === undefined && s.dur === undefined && s.charge === undefined ? spaceFor(r, 'inv', s.key) : (C(r, 'inv').slots.includes(null) ? s.qty : 0);
       if (room <= 0) return fail('Inventory full.');
-      if (room >= s.qty) { if (!addStack(r, 'inv', s)) return fail('Inventory full.'); removeEntity(r, e); return ok('pickup', `${s.key}x${s.qty}`); }
+      if (room >= s.qty) {
+        // Plain stackables (wood, stone, fibre, berries…) top up the stacks already carried before
+        // they take a new slot, so gathered wood becomes one stack of up to 60 instead of a slot
+        // per log (Creator decision 2026-11-21). Receivers keep their UIDs and material is
+        // conserved exactly; whatever does not fit an existing stack moves as ONE custody transfer
+        // that keeps its own UID. Stateful or unique stacks are never merged.
+        const picked = s.qty;
+        if (plainStackable(s)) {
+          const max = ITEMS[s.key].max;
+          for (const have of C(r, 'inv').slots) {
+            if (s.qty <= 0) break;
+            if (!have || have === s || !mergeable(have, s) || have.qty >= max) continue;
+            const moved = Math.min(s.qty, max - have.qty);
+            have.qty += moved; s.qty -= moved;
+          }
+        }
+        if (s.qty > 0 && !addStack(r, 'inv', s)) return fail('Inventory full.');
+        removeEntity(r, e); return ok('pickup', `${s.key}x${picked}`);
+      }
       addItem(r, 'inv', s.key, room); s.qty -= room; return ok('pickup', `${s.key}x${room} (partial)`);
     }
     case 'g1bOpen': {

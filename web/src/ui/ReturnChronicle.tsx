@@ -201,7 +201,9 @@ export function ReturnChronicle({
           </div>
           <div className="scroll return-col__list">
             {grouped.eventChanges.length === 0 && grouped.otherDeltaRows.length === 0 && grouped.decayRows.length === 0 ? (
-              <div className="return-empty">No timed events or stock deltas occurred during your absence.</div>
+              <div className="return-empty">{activeReport.receiptCount > 0
+                ? `${activeReport.receiptCount} background event${activeReport.receiptCount === 1 ? ' was' : 's were'} recorded on the island; none of them changed your stock, your home or your condition.`
+                : 'No timed events or stock deltas occurred during your absence.'}</div>
             ) : (
               <>
                 {grouped.eventChanges.map(row => (

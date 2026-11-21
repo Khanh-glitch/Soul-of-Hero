@@ -6,6 +6,7 @@ import { setActiveLayout } from '../game/world';
 import { U05_WORLD_LAYOUT_ID } from '../veyra05/scenes';
 import { ACHIEVEMENTS } from '../game/catalog';
 import { initAudio, sfx } from '../game/audio';
+import { QA_BUILD } from '../game/build-flags';
 import { QA_PRESETS, type QaPresetId } from '../game/qa-sandbox';
 import { computeStageFit } from '../visual/direction';
 import { useVisualPrefs } from './hud';
@@ -155,10 +156,12 @@ export default function Title({
           <div className="flex gap-2">{(['female', 'male'] as const).map(h => <button key={h} className={`btn ${hero === h ? 'gold' : 'ghost'}`} style={{ flex: 1, padding: 4, textAlign: 'left' }} onClick={() => { click(); setHero(h); }}>
             <div className="flex items-center gap-2"><HeroPreview female={h === 'female'} active={hero === h} /><div style={{ fontSize: 11, lineHeight: 1.15 }}><div className="title-font" style={{ fontSize: 13 }}>{h === 'female' ? 'Adventurer ♀' : 'Adventurer ♂'}</div><div>Wood club, half a flask and a few berries. Strike a tree for wood or a boulder for stone.</div></div></div></button>)}</div>
           <div style={{ fontSize: 11, marginTop: 6, color: '#ffd98a' }}>World</div>
-          <div className="flex gap-1" style={{ marginTop: 2 }}>
+          {/* The Classic Island (R12) baseline stays in the code for tests and old saves, but only
+              the engineering build can start a new run on it. */}
+          {QA_BUILD && <div className="flex gap-1" style={{ marginTop: 2 }}>
             <button className={`btn ${selectedLayout === U05_WORLD_LAYOUT_ID ? 'gold' : 'ghost'}`} style={{ fontSize: 10 }} onClick={() => { click(); setSelectedLayout(U05_WORLD_LAYOUT_ID); setRegion(null); }}>VEYRA · Unified World</button>
             <button className={`btn ${selectedLayout === 'shipping' ? 'gold' : 'ghost'}`} style={{ fontSize: 10 }} onClick={() => { click(); setSelectedLayout('shipping'); setRegion(null); }}>Classic Island (R12)</button>
-          </div>
+          </div>}
           <div style={{ fontSize: 10, color: '#e8dcc8', marginTop: 2 }}>
             {selectedLayout === U05_WORLD_LAYOUT_ID
               ? <><b style={{ color: '#ffe27a' }}>VEYRA · Unified World</b> · 4000×2800 tiles (1 tile = 0.5 AU) · 81 POIs, livestock husbandry, 4 side bosses &amp; 6 Primordials.</>

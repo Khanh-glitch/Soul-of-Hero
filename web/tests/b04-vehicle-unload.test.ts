@@ -127,17 +127,28 @@ describe('B04 OfflineReturnV1 truth repairs (R1-R3)', () => {
     r.player.dead=true;
     const rep=buildOfflineReturn(g,before,[],T,T+60000,false);
     const dead=rep.sections.body.find(x=>x.id==='dead')!;
-    expect(dead.text).toMatch(/No surviving bag is confirmed/);
+    expect(dead.text).toMatch(/No recoverable bag is confirmed/);
     expect(dead.text).not.toMatch(/keeps your belongings/);
   });
-  it('R1: a dead player standing on a real bag is told which bag entity holds the items', () => {
+  // 2026-11-21: the return report, the death panel and the map share one authority (deathBagView).
+  // The report no longer prints an entity id, and a bag is only "yours" if the death made it.
+  it('R1: a dead player lying on the bag their death made is told their bag is there, with its size', () => {
     const g=setup(),r=g.run!;
     const before=captureReturnSnapshot(g)!;
     r.player.dead=true;
     const cont=mkContainer(r,'bag',8);addItem(r,cont.id,'spares',1);
-    r.entities['bag-death']={id:'bag-death',kind:'bag',x:r.player.x,y:r.player.y,c:cont.id,label:'death',born:T};markDirty();
+    r.entities['bag-death']={id:'bag-death',kind:'bag',x:r.player.x,y:r.player.y,c:cont.id,label:'Your bag',born:T};markDirty();
     const rep=buildOfflineReturn(g,before,[],T,T+60000,false);
-    expect(rep.sections.body.find(x=>x.id==='dead')!.text).toMatch(/bag-death/);
+    expect(rep.sections.body.find(x=>x.id==='dead')!.text).toMatch(/Your bag \(1 stack\) is on the ground where you fell/);
+  });
+  it('R1: somebody else\'s bag lying on the death tile is never reported as the player\'s', () => {
+    const g=setup(),r=g.run!;
+    const before=captureReturnSnapshot(g)!;
+    r.player.dead=true;
+    const cont=mkContainer(r,'bag',8);addItem(r,cont.id,'spares',1);
+    r.entities['bag-other']={id:'bag-other',kind:'bag',x:r.player.x,y:r.player.y,c:cont.id,label:'Dropped cargo',born:T};markDirty();
+    const rep=buildOfflineReturn(g,before,[],T,T+60000,false);
+    expect(rep.sections.body.find(x=>x.id==='dead')!.text).toMatch(/No recoverable bag is confirmed/);
   });
 });
 

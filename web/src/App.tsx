@@ -14,6 +14,7 @@ import { resetRenderCaches, cam } from './game/render';
 import { setVolume, initAudio } from './game/audio';
 import { mkIntent } from './ui/common';
 import { ITEMS } from './game/catalog';
+import { QA_BUILD } from './game/build-flags';
 import { buildQaSandbox, resetQaSandboxFlags, type QaPresetId } from './game/qa-sandbox';
 import Title from './ui/Title';
 import Game from './ui/Game';
@@ -142,7 +143,7 @@ export default function App() {
     <progress aria-label="Island time resolved" value={progress} max={1} style={{width:'100%'}} /> {Math.floor(progress*100)}%
     <button className="btn" onClick={()=>{catchUp.current?.terminate();catchUp.current=null;setProgress(null);}}>Back to title</button>
   </main>;
-  if (screen === 'inspector') {
+  if (QA_BUILD && screen === 'inspector') {
     return <Inspector gs={savedGs} initialMode="creator" onClose={closeInspector} onLaunchCreatorInspect={launchInspection} />;
   }
 
@@ -152,7 +153,7 @@ export default function App() {
         note={note}
         summary={summary}
         clearSummary={() => setSummary(null)}
-        onInspect={openInspector}
+        onInspect={QA_BUILD ? openInspector : undefined}
         onContinue={() => {
           initAudio();
           resetQaSandboxFlags();
@@ -206,7 +207,7 @@ export default function App() {
             enter(savedGs);
           } else setNote(res.reason);
         }}
-        onStartQa={launchQa}
+        onStartQa={QA_BUILD ? launchQa : undefined}
       />
     : <Game
         gs={gs}
@@ -215,7 +216,7 @@ export default function App() {
         qaMode={qaMode || !!inspectionGs}
         qaPreset={qaPreset}
         onSwitchQaPreset={qaMode ? (p) => launchQa(p, qaHero) : undefined}
-        onInspect={openInspector}
+        onInspect={QA_BUILD ? openInspector : undefined}
         onExit={() => {
           if (qaMode) { leaveQa(); return; }
           if (inspectionGs) {
