@@ -987,6 +987,7 @@ export function validate(raw: any): GameState | null {
         if (!Array.isArray(mr.path) || mr.path.length < 4 || mr.path.length % 2 !== 0 || mr.path.length > 2048 || !mr.path.every(integer)) return null;
         if (mr.walked < 0 || mr.length < 0 || mr.walked > mr.length + 1e-6) return null;
         if (mr.ignore !== undefined && (!Array.isArray(mr.ignore) || !mr.ignore.every((x: unknown) => typeof x === 'string'))) return null;
+        if (mr.sea !== undefined && (!finite(mr.sea) || mr.sea < 0)) return null;
       }
       if (elder.events !== undefined) {
         if (!Array.isArray(elder.events)) return null;

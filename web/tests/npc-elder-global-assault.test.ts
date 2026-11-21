@@ -301,9 +301,9 @@ describe('global six-Elder assault (NOT RUN — authored for the post-implementa
 });
 
 /**
- * OVERLAND MARCH — Creator decision 2026-11-21: an awakened Elder leaves its lair and walks the
- * authored ground to the nearest inhabited place. No fixed 64-tile leash, no teleport, no sea
- * crossing. Distance decides who is struck before h336.
+ * MARCH — Creator decisions 2026-11-21: an awakened Elder leaves its lair and travels to the nearest
+ * inhabited place, and open sea does not stop it. No fixed 64-tile leash, no teleport. Distance
+ * decides who is struck before h336.
  */
 describe('elder overland march', () => {
   const HOUR_MS = HOUR;
@@ -340,15 +340,16 @@ describe('elder overland march', () => {
     expect(e.events![0].blockReason).toContain('on the march');
     expect(e.events![0].contactReceipt).toBeUndefined();
     expect([e.gx, e.gy]).toEqual([e.lairGx, e.lairGy]);               // it has not moved yet
-    // The planned route is real ground from the first tile to the last: no leg crosses open sea.
+    // The route is the straight line from the lair to the people, and its sea tiles are accounted.
     const path = e.march!.path;
-    for (let i = 2; i < path.length; i += 2) {
-      const n = Math.ceil(Math.max(Math.abs(path[i] - path[i - 2]), Math.abs(path[i + 1] - path[i - 1])) / 4);
-      for (let k = 1; k < n; k++) {
-        const x = Math.round(path[i - 2] + (path[i] - path[i - 2]) * k / n), y = Math.round(path[i - 1] + (path[i + 1] - path[i - 1]) * k / n);
-        expect(sampleTile(x, y).land).toBe(true);
-      }
+    expect(path).toEqual([e.lairGx, e.lairGy, e.march!.targetGx, e.march!.targetGy]);
+    let seaSamples = 0;
+    const n = Math.ceil(e.march!.length / 4);
+    for (let k = 0; k < n; k++) {
+      const t = (k + 0.5) / n;
+      if (!sampleTile(Math.round(path[0] + (path[2] - path[0]) * t), Math.round(path[1] + (path[3] - path[1]) * t)).land) seaSamples++;
     }
+    expect((e.march!.sea ?? 0) > 0).toBe(seaSamples > 0);
     // One hour of walking covers one hour of ground — never the whole distance.
     let prev = [e.gx!, e.gy!];
     advanceElderPressure(r, hw, at + HOUR_MS);
@@ -375,21 +376,56 @@ describe('elder overland march', () => {
       .every(id => (e.events ?? []).some(ev => ev.id === id && ev.state === 'APPROACH'))).toBe(true);
   });
 
-  it('never crosses open sea: an Elder alone on its island is refused and stays in its lair', () => {
+  it('crosses open sea: an Elder alone on its island swims to the nearest inhabited shore and strikes', () => {
+    const gs = runAt();
+    const r = gs.run!; const hw = r.humanWorld!;
+    const e = assault(gs, 'atlas');
+    const island = sampleTile(e.lairGx, e.lairGy).landIdx;
+    const poi = onlySettlement(gs, (_p, gx, gy) => sampleTile(gx, gy).landIdx !== island && Math.hypot(gx - e.lairGx, gy - e.lairGy) < 760);
+    const at = atHour(gs, 312);
+    expect(e.march).toBeDefined();
+    expect(e.march!.targetPoi).toBe(poi);
+    expect(e.march!.sea).toBeGreaterThan(100);                       // there really is a sea in the way
+    expect(e.events![0].state).toBe('BLOCKED');
+    expect(e.events![0].blockReason).toContain('open sea');
+    const seen = (kind: string) => r.receipts.filter(x => x.kind === kind && x.detail.startsWith('atlas:'));
+    let contact = false, swam = false;
+    for (let h = 1; h <= 23 && !contact; h++) {
+      const prev = [e.gx!, e.gy!];
+      advanceElderPressure(r, hw, at + h * HOUR_MS);
+      const inFlight = (e.events ?? []).some(ev => ev.state === 'APPROACH');
+      const struck = (e.events ?? []).find(ev => ev.state === 'CONTACT');
+      // Water is crossed at the march pace, tile by tile: never a jump across the strait.
+      if (!struck && !inFlight) expect(Math.hypot(e.gx! - prev[0], e.gy! - prev[1])).toBeLessThanOrEqual(40 + 2);
+      if (e.march && !sampleTile(e.gx!, e.gy!).land) {
+        swam = true;
+        // An Elder in open water has not halted and strikes nobody from there.
+        expect(inFlight).toBe(false);
+        expect(struck).toBeUndefined();
+      }
+      if (struck) { contact = true; expect(struck.targetPoi).toBe(poi); }
+    }
+    expect(swam).toBe(true);
+    expect(seen('elder.march.sea').length).toBeGreaterThan(0);
+    expect(seen('elder.march.landfall').length).toBeGreaterThan(0);
+    expect(contact).toBe(true);
+    expect(sampleTile(e.gx!, e.gy!).landIdx).not.toBe(island);         // the one body really is on the far shore
+    expect(Object.values(hw.people).some(h => (h.threat?.waves ?? 0) > 0 && h.threat?.lastWaveId?.includes('atlas'))).toBe(true);
+    // A save taken at any point of this is valid.
+    expect(validate(JSON.parse(JSON.stringify(gs)))).toBeTruthy();
+  });
+
+  it('an Elder too far away is still on the water when the world ends: no strike is fabricated', () => {
     const gs = runAt();
     const r = gs.run!; const hw = r.humanWorld!;
     const e = assault(gs, 'surtur');
-    const island = sampleTile(e.lairGx, e.lairGy).landIdx;
-    onlySettlement(gs, (_p, gx, gy) => sampleTile(gx, gy).landIdx !== island);
+    onlySettlement(gs, (_p, gx, gy) => Math.hypot(gx - e.lairGx, gy - e.lairGy) > 1100);
     const at = atHour(gs, 312);
+    expect(e.march).toBeDefined();
     for (let h = 1; h <= 23; h++) advanceElderPressure(r, hw, at + h * HOUR_MS);
-    expect(e.march).toBeUndefined();
-    expect([e.gx, e.gy]).toEqual([e.lairGx, e.lairGy]);
-    expect((e.events ?? []).length).toBeGreaterThan(0);
-    for (const ev of e.events ?? []) {
-      expect(ev.state).toBe('BLOCKED');
-      expect(ev.blockReason).toContain('open sea');
-    }
+    expect(Math.hypot(e.gx! - e.lairGx, e.gy! - e.lairGy)).toBeGreaterThan(800);   // it did set out…
+    expect(Math.hypot(e.gx! - e.lairGx, e.gy! - e.lairGy)).toBeLessThanOrEqual(23 * 40 + 2);   // …at its pace
+    for (const ev of e.events ?? []) expect(ev.state).toBe('BLOCKED');
     expect(Object.values(hw.people).some(h => (h.threat?.waves ?? 0) > 0 && h.threat?.lastWaveId?.includes('surtur'))).toBe(false);
   });
 

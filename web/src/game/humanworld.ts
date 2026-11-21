@@ -325,7 +325,7 @@ export interface ElderAssault {
   routeTargets: { poi: string; gx: number; gy: number; floor: number; at: number }[];
   lastAttackAt?: number;
   defeatedAt?: number;
-  /** Overland march toward distant inhabited ground (see `advanceElderMarch`). Absent while the
+  /** March toward distant inhabited ground, over land or sea (see `advanceElderMarch`). Absent while the
    *  Elder is in its lair, halted at a settlement, or cut off from every inhabited shore. */
   march?: ElderMarch;
   /** Current physical position: changes only by ground actually walked — along a march leg, or at
@@ -2385,7 +2385,7 @@ export interface ElderAssaultEvent {
   contactReceipt?: string;
   affected?: { humans: number; structures: number; downed: number; skippedLocal: number; interposed: number; ammoSpent: number };
 }
-/** One overland march leg. The Elder walks `path` (global tiles, flattened x,y pairs) at the march
+/** One march leg. The Elder travels `path` (global tiles, flattened x,y pairs) at the march
  *  pace; `walked` is how much of it the body has physically covered. */
 export interface ElderMarch {
   targetPoi: string;
@@ -2396,6 +2396,8 @@ export interface ElderMarch {
   length: number;
   /** Settlements the Elder was already standing beside (and refused at) when this leg began. */
   ignore?: string[];
+  /** Tiles of open sea on this leg, when it has any. */
+  sea?: number;
 }
 /** Canonical Elder body for one identity — the single source of HP/death (never a second copy). */
 export function elderCanonicalCreature(r: RunState, elderId: string): Creature | undefined {
@@ -2485,12 +2487,13 @@ function elderCrossingOpen(r: RunState, fromGx: number, fromGy: number, toGx: nu
 function elderRouteExists(r: RunState, fromGx: number, fromGy: number, toGx: number, toGy: number, budget = 3000, maxSteps = 160): boolean {
   if (!r.sourceMap || !isVeyra05Layout(r.layoutId || '')) return true;   // legacy island: no global geometry
   const rules = r.sourceMap.rules === 4 ? 4 : 3;
-  // An Elder wades: river and lake shallows are ground to it, exactly as on its overland march.
-  // Deep sea, cliffs, walls and unknown geometry still are not.
+  // Water does not stop an Elder (Creator decision 2026-11-21): it wades rivers and shallows and
+  // swims deep water, exactly as on its march. Cliffs, walls, solid props and unknown geometry
+  // still stop it.
   const walkable = (x: number, y: number): boolean => {
     if (!elderTargetInBounds(x, y)) return false;
     const c = globalBaseGeometry(x, y, 0, rules);
-    return !!c && (c.walkable || ((c.tile === T.SHALLOW || c.tile === T.RIVER) && !c.solidProp));
+    return !!c && (c.walkable || ((c.tile === T.SHALLOW || c.tile === T.RIVER || c.tile === T.DEEP) && !c.solidProp));
   };
   const reached = (x: number, y: number) => Math.abs(x - toGx) <= 1 && Math.abs(y - toGy) <= 1;
   const h = (x: number, y: number) => Math.max(Math.abs(x - toGx), Math.abs(y - toGy));
@@ -2522,82 +2525,38 @@ function elderRouteExists(r: RunState, fromGx: number, fromGy: number, toGx: num
 }
 
 // ---------------------------------------------------------------------------
-// Elder overland march — Creator decision 2026-11-21: an awakened Elder LEAVES its lair and walks
-// the authored ground to the nearest inhabited place. Distance, not a fixed radius, decides who is
-// struck before h336. The march is real travel: the body moves tile by tile along a route found on
-// the canonical authored terrain, it cannot cross open sea, and it is never repositioned instantly.
+// Elder march — Creator decisions 2026-11-21: an awakened Elder LEAVES its lair and travels to the
+// nearest inhabited place, and open sea does not stop it (second decision, same day: "cho vượt
+// biển luôn"). Distance, not a fixed radius and not a coastline, decides who is struck before h336.
+// The march is real travel: the body moves tile by tile along its route at the march pace, over
+// ground and water alike, and it is never repositioned instantly.
 // ---------------------------------------------------------------------------
-/** SOH_PROVISIONAL march pace (tiles per hour) over open country. */
+/** SOH_PROVISIONAL march pace (tiles per hour), the same over open country and open water. */
 function elderMarchTilesPerHour(): number { return 40; }
 /** The march ends this close to the settlement's people; the timed assault wave takes over from there. */
 function elderMarchHaltTiles(): number { return 24; }
-const MARCH_CELL = 16;                                   // one WMP analysis cell (8 AU)
-const MARCH_W = Math.ceil(FRAME_W / MARCH_CELL), MARCH_H = Math.ceil(FRAME_H / MARCH_CELL);
-let marchGround: Uint8Array | undefined;                 // authored and immutable: 0 unknown, 1 sea, 2 ground
-/** Ground an Elder can walk: anything inside an authored land ring (it wades rivers and lake
- *  shallows). Open sea is never ground. */
+/** Ground an Elder stands on: anything inside an authored land ring (it wades rivers and lake
+ *  shallows). Everything else inside the frame is open sea, which it crosses but never halts in. */
 function elderGroundAt(gx: number, gy: number): boolean { return inFrame(gx, gy) && sampleTile(gx, gy).land; }
-function elderLandmass(gx: number, gy: number): number { return inFrame(gx, gy) ? sampleTile(gx, gy).landIdx : -1; }
-function marchCellGround(cx: number, cy: number): boolean {
-  if (cx < 0 || cy < 0 || cx >= MARCH_W || cy >= MARCH_H) return false;
-  const g = (marchGround ??= new Uint8Array(MARCH_W * MARCH_H)), i = cy * MARCH_W + cx;
-  if (!g[i]) g[i] = elderGroundAt(cx * MARCH_CELL + MARCH_CELL / 2, cy * MARCH_CELL + MARCH_CELL / 2) ? 2 : 1;
-  return g[i] === 2;
-}
-/** Every sampled tile of a straight leg must be ground, so a march never hops a strait. */
-function marchLegGround(ax: number, ay: number, bx: number, by: number): boolean {
-  const n = Math.max(1, Math.ceil(Math.max(Math.abs(bx - ax), Math.abs(by - ay)) / 4));
-  for (let i = 1; i < n; i++) {
-    const t = i / n;
-    if (!elderGroundAt(Math.round(ax + (bx - ax) * t), Math.round(ay + (by - ay) * t))) return false;
-  }
-  return true;
-}
-/** A* over the authored ground at analysis-cell resolution. Returns the walked polyline in global
- *  tiles (start tile, cell centres, goal tile) or null when no ground route exists. */
+/** The route of a march leg. Nothing on the authored map stops an Elder any more, so the route is
+ *  the straight line between two tiles of the frame (which is convex, so it never leaves it). */
 function elderMarchRoute(fromGx: number, fromGy: number, toGx: number, toGy: number): number[] | null {
   if (!inFrame(fromGx, fromGy) || !inFrame(toGx, toGy)) return null;
-  const sc = [Math.floor(fromGx / MARCH_CELL), Math.floor(fromGy / MARCH_CELL)];
-  const gc = [Math.floor(toGx / MARCH_CELL), Math.floor(toGy / MARCH_CELL)];
-  const start = sc[1] * MARCH_W + sc[0], goal = gc[1] * MARCH_W + gc[0];
-  if (start === goal) return marchLegGround(fromGx, fromGy, toGx, toGy) ? [fromGx, fromGy, toGx, toGy] : null;
-  const centre = (i: number): [number, number] => i === start ? [fromGx, fromGy] : i === goal ? [toGx, toGy]
-    : [(i % MARCH_W) * MARCH_CELL + MARCH_CELL / 2, Math.floor(i / MARCH_W) * MARCH_CELL + MARCH_CELL / 2];
-  const h = (i: number) => { const dx = Math.abs(i % MARCH_W - gc[0]), dy = Math.abs(Math.floor(i / MARCH_W) - gc[1]); return (Math.max(dx, dy) + 0.4142 * Math.min(dx, dy)) * MARCH_CELL; };
-  const cost = new Map<number, number>([[start, 0]]), came = new Map<number, number>();
-  const heap: [number, number][] = [[h(start), start]];
-  const push = (f: number, i: number) => { heap.push([f, i]); let c = heap.length - 1; while (c > 0) { const p = (c - 1) >> 1; if (heap[p][0] <= heap[c][0]) break; [heap[p], heap[c]] = [heap[c], heap[p]]; c = p; } };
-  const pop = (): [number, number] => {
-    const top = heap[0], last = heap.pop()!;
-    if (heap.length) { heap[0] = last; let p = 0; for (;;) { const l = p * 2 + 1, q = l + 1; let m = p; if (l < heap.length && heap[l][0] < heap[m][0]) m = l; if (q < heap.length && heap[q][0] < heap[m][0]) m = q; if (m === p) break; [heap[p], heap[m]] = [heap[m], heap[p]]; p = m; } }
-    return top;
-  };
-  const done = new Set<number>();
-  while (heap.length) {
-    const [, cur] = pop();
-    if (done.has(cur)) continue;
-    done.add(cur);
-    if (cur === goal) {
-      const cells: number[] = [cur];
-      while (came.has(cells[cells.length - 1])) cells.push(came.get(cells[cells.length - 1])!);
-      const out: number[] = [];
-      for (let i = cells.length - 1; i >= 0; i--) { const [x, y] = centre(cells[i]); out.push(x, y); }
-      return out;
-    }
-    const cx = cur % MARCH_W, cy = Math.floor(cur / MARCH_W), [ax, ay] = centre(cur), base = cost.get(cur)!;
-    for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
-      if (!dx && !dy) continue;
-      const nx = cx + dx, ny = cy + dy, ni = ny * MARCH_W + nx;
-      if (nx < 0 || ny < 0 || nx >= MARCH_W || ny >= MARCH_H || done.has(ni)) continue;
-      if (ni !== goal && !marchCellGround(nx, ny)) continue;
-      const [bx, by] = centre(ni);
-      if (!marchLegGround(ax, ay, bx, by)) continue;
-      const c = base + Math.hypot(bx - ax, by - ay);
-      if (c >= (cost.get(ni) ?? Infinity)) continue;
-      cost.set(ni, c); came.set(ni, cur); push(c + h(ni), ni);
+  if (fromGx === toGx && fromGy === toGy) return null;
+  return [fromGx, fromGy, toGx, toGy];
+}
+/** Tiles of open sea along a route (sampled every 4 tiles; a figure for the record, not a rule). */
+function marchSeaTiles(path: number[]): number {
+  let sea = 0;
+  for (let i = 2; i < path.length; i += 2) {
+    const ax = path[i - 2], ay = path[i - 1], bx = path[i], by = path[i + 1];
+    const len = Math.hypot(bx - ax, by - ay), n = Math.max(1, Math.ceil(len / 4));
+    for (let k = 0; k < n; k++) {
+      const t = (k + 0.5) / n;
+      if (!elderGroundAt(Math.round(ax + (bx - ax) * t), Math.round(ay + (by - ay) * t))) sea += len / n;
     }
   }
-  return null;
+  return Math.round(sea);
 }
 function marchLength(path: number[]): number {
   let n = 0;
@@ -2653,27 +2612,27 @@ function walkCanonicalElderBody(r: RunState, m: Creature, gx: number, gy: number
   }
   m.x = px; m.y = py; m.tx = px; m.ty = py; m.homeX = px; m.homeY = py; m.floor = 0; m.path = null;
 }
-/** Plan an overland march from the body's ground toward the nearest settlement it can walk to. */
+/** Plan a march from where the body stands toward the nearest settlement that still has people. */
 function planElderMarch(r: RunState, hw: HumanWorld, elder: ElderAssault, fromGx: number, fromGy: number, now: number):
   { march: ElderMarch } | { reason: string } {
   if (!r.sourceMap || !isVeyra05Layout(r.layoutId || '')) return { reason: `no inhabited settlement within ${elderReachTiles()} tiles of its current position` };
   const all = elderSettlements(hw, fromGx, fromGy);
   if (!all.length) return { reason: 'no living settlement remains on the island' };
-  const land = elderLandmass(fromGx, fromGy);
-  const ashore = all.filter(c => elderLandmass(c.gx, c.gy) === land && land >= 0);
-  if (!ashore.length) return { reason: 'open sea lies between this Elder and every inhabited shore' };
-  // A settlement the Elder already stands beside was refused by the assault law (terrain); walking
+  // A settlement the Elder already stands beside was refused by the assault law (terrain); marching
   // "to" it again would only restart the same refusal, so the march looks past it.
   const halt = elderMarchHaltTiles();
-  const beside = ashore.filter(c => Math.hypot(c.gx - fromGx, c.gy - fromGy) <= halt).map(c => c.poi);
-  for (const c of ashore.filter(c => !beside.includes(c.poi)).slice(0, 3)) {
+  // (Only where it could have halted: an Elder still swimming off a shore has not been refused there.)
+  const beside = elderGroundAt(fromGx, fromGy) ? all.filter(c => Math.hypot(c.gx - fromGx, c.gy - fromGy) <= halt).map(c => c.poi) : [];
+  for (const c of all.filter(c => !beside.includes(c.poi)).slice(0, 3)) {
     const path = elderMarchRoute(fromGx, fromGy, c.gx, c.gy);
     if (!path) continue;
     const march: ElderMarch = { targetPoi: c.poi, targetGx: c.gx, targetGy: c.gy, startedAt: now, lastAt: now, path, walked: 0, length: marchLength(path) };
+    const sea = marchSeaTiles(path);
+    if (sea > 0) march.sea = sea;
     if (beside.length) march.ignore = beside;
     return { march };
   }
-  return { reason: 'no walkable ground leads to an inhabited settlement' };
+  return { reason: 'no other inhabited settlement lies inside the charted world' };
 }
 /** Advance a march leg by the ground the Elder covers in the elapsed time. The march halts when the
  *  body stands within reach of the people it is walking toward (or of any settlement it passes),
@@ -2700,13 +2659,22 @@ function advanceElderMarch(r: RunState, hw: HumanWorld, elder: ElderAssault, now
   let left = elderMarchTilesPerHour() * dt / HOUR;
   march.lastAt = now;
   let at = marchPointAt(march.path, march.walked), arrived: ElderSettlement | undefined, ended = false;
-  const nearby = (x: number, y: number) => elderSettlements(hw, x, y).find(c => Math.hypot(c.gx - x, c.gy - y) <= halt && !march.ignore?.includes(c.poi));
+  // It halts where it can stand: an Elder in open water keeps swimming until it makes landfall (or
+  // reaches the very tile its people stand on, e.g. a pier), then closes on whoever is in reach.
+  const nearby = (x: number, y: number) => elderGroundAt(x, y)
+    ? elderSettlements(hw, x, y).find(c => Math.hypot(c.gx - x, c.gy - y) <= halt && !march.ignore?.includes(c.poi)) : undefined;
+  let ashore = elderGroundAt(at[0], at[1]);
   arrived = nearby(at[0], at[1]);
   while (!arrived && left > 0) {
     const step = Math.min(left, 4, march.length - march.walked);
     if (step <= 0) { ended = true; break; }
     march.walked += step; left -= step;
     at = marchPointAt(march.path, march.walked);
+    const ground = elderGroundAt(at[0], at[1]);
+    if (ground !== ashore) {
+      ashore = ground;
+      receipt(r, now, ground ? 'elder.march.landfall' : 'elder.march.sea', `${elder.elderId}:${at[0]},${at[1]}:${march.targetPoi}:${Math.round(march.walked)}tiles`);
+    }
     arrived = nearby(at[0], at[1]);
   }
   if (at[0] !== elder.gx || at[1] !== elder.gy) {
@@ -2757,11 +2725,11 @@ function launchElderWave(r: RunState, hw: HumanWorld, elder: ElderAssault, now: 
       elder.march = plan.march;
       elder.gx = fromGx; elder.gy = fromGy;
       event.targetPoi = plan.march.targetPoi;
-      event.blockReason = `on the march toward ${plan.march.targetPoi}: ${Math.round(plan.march.length)} tiles of ground to cross`;
+      event.blockReason = `on the march toward ${plan.march.targetPoi}: ${Math.round(plan.march.length)} tiles to cross${plan.march.sea ? `, ${plan.march.sea} of them open sea` : ''}`;
       receipt(r, now, 'elder.march.start', `${elder.elderId}:${wave}:${fromGx},${fromGy}->${plan.march.targetPoi}@${plan.march.targetGx},${plan.march.targetGy}:${Math.round(plan.march.length)}tiles`);
       if (wave === 1 || (elder.events ?? []).every(ev => ev.targetPoi !== plan.march.targetPoi)) {
         const def = PRIMORDIAL_ELDERS[elder.elderId];
-        pushLog(r, now, `${def?.name ?? elder.elderId} leaves ${def?.region ?? 'its lair'} and walks toward ${plan.march.targetPoi}.`, 'red');
+        pushLog(r, now, `${def?.name ?? elder.elderId} leaves ${def?.region ?? 'its lair'} and ${plan.march.sea ? 'crosses the sea toward' : 'walks toward'} ${plan.march.targetPoi}.`, 'red');
       }
     } else {
       delete elder.march;
