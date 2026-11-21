@@ -1,4 +1,5 @@
 // B03 Deliverable A: shared physical thermal rules (online tick and offline settle).
+import {dispatchCarryingPack} from './helpers/build-kit';
 import { describe, it, expect } from 'vitest';
 import { BAL, TILE, WW, T, type GameState, type RunState } from '../src/game/core';
 import { newGame, dispatch, addItem, countItem, blockGrid, effTile, destroyStructure, markDirty, roofRoom, C } from '../src/game/engine';
@@ -9,7 +10,7 @@ import { serializeSnapshot, validate } from '../src/game/persist';
 
 const T0 = Date.UTC(2026, 0, 1);
 let seq = 0;
-const act = (g: GameState, type: string, data: object = {}, now = T0) => dispatch(g, { id: `thermal-${++seq}`, type, ...data }, now);
+const act = (g: GameState, type: string, data: object = {}, now = T0) => dispatchCarryingPack(g, { id: `thermal-${++seq}`, type, ...data }, now);
 const copy = (g: GameState) => JSON.parse(JSON.parse(serializeSnapshot(g)).payload) as GameState;
 
 // Finds a real snow tile with free 7x7 ground, so the cold rule comes from the map, not a test override.

@@ -1,3 +1,4 @@
+import {dispatchCarryingPack} from './helpers/build-kit';
 import {describe,it,expect} from 'vitest';
 import {BAL,HOUR,TILE,WW,T as TILE_T,type GameState,type RunState} from '../src/game/core';
 import {getWorld} from '../src/game/world';
@@ -8,7 +9,7 @@ import {serializeSnapshot,validate} from '../src/game/persist';
 // Rest is tested through the real intents, real build placement, real custody and the shared settle clock.
 // Only the world site search is a fixture; every structure, chest, bed and item in the shelter is built or moved by intents.
 const T=Date.UTC(2026,0,1);let seq=0;
-const act=(g:GameState,type:string,data:object={},now=T)=>dispatch(g,{id:`resttest-${++seq}`,type,...data},now);
+const act=(g:GameState,type:string,data:object={},now=T)=>dispatchCarryingPack(g,{id:`resttest-${++seq}`,type,...data},now);
 const copy=(g:GameState)=>JSON.parse(JSON.parse(serializeSnapshot(g)).payload) as GameState;
 const why=(res:any)=>res.ok?'':res.reason;
 const uids=(r:RunState)=>Object.values(r.custody).flatMap(c=>c.slots.filter(Boolean).map(s=>s!.uid)).sort();

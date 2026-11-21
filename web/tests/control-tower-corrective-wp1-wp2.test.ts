@@ -1,3 +1,4 @@
+import {dispatchCarryingPack} from './helpers/build-kit';
 import { describe, expect, it } from 'vitest';
 import { BAL, TILE, WW, type GameState } from '../src/game/core';
 import { ITEMS } from '../src/game/catalog';
@@ -371,7 +372,7 @@ function buildRealVeyraHomestead(seed = 404) {
   let seq = 0;
   const act = (type: string, extra: Record<string, any> = {}) => {
     now += 50;
-    const res = dispatch(gs, { id: `vy-farm-${++seq}`, type, ...extra }, now);
+    const res = dispatchCarryingPack(gs, { id: `vy-farm-${++seq}`, type, ...extra }, now);
     expect(res.ok, !res.ok ? `${type}: ${res.reason}` : '').toBe(true);
     return res;
   };

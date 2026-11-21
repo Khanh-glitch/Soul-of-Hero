@@ -1,3 +1,4 @@
+import {dispatchCarryingPack} from './helpers/build-kit';
 import { describe, it, expect, afterEach } from 'vitest';
 import { BAL, TILE, WW, type Entity, type GameState } from '../src/game/core';
 import { addItem, C, countItem, dispatch, markDirty, mkContainer, newGame, stepStations } from '../src/game/engine';
@@ -12,7 +13,7 @@ import { RECIPE_REVISION } from '../src/game/recipe-migration';
 // placed by the test; they are not natural-player acquisition evidence.
 const T = Date.UTC(2026, 10, 6);
 let serial = 0;
-const act = (g: GameState, type: string, p: object = {}, id = `s10-${++serial}`, now = T + 1) => dispatch(g, { id, type, ...p }, now);
+const act = (g: GameState, type: string, p: object = {}, id = `s10-${++serial}`, now = T + 1) => dispatchCarryingPack(g, { id, type, ...p }, now);
 function setup(seed = 77) {
   setActiveLayout('shipping_fresh');
   const g = newGame();

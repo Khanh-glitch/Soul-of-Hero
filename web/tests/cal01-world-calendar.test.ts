@@ -9,6 +9,7 @@
 //    reaching long-run boundaries, NOT evidence of natural play enjoyment;
 //  * settlement is driven through the real `settle()`/`syncWorld()` clock, never by
 //    re-implementing a slice loop.
+import {dispatchCarryingPack,ensurePack} from './helpers/build-kit';
 import { describe, it, expect } from 'vitest';
 import { BAL, HOUR, TILE, WW, T, type GameState, type RunState } from '../src/game/core';
 import { newGame, dispatch, addItem, countItem, C, buildReason, markDirty, blockGrid, gardenEnvironment, weatherAt, isWet, stepTenders, stepTenderStates, offlineSurvivalEstimate, calendarViewForRun, seasonInfo, effTile, weatherSlot } from '../src/game/engine';
@@ -20,7 +21,7 @@ import { thermalEnv, thermalEvaluate } from '../src/game/thermal';
 
 const T0 = Date.UTC(2026, 0, 1);
 let seq = 0;
-const act = (g: GameState, type: string, data: object = {}, now = T0) => dispatch(g, { id: `cal01-${++seq}`, type, ...data }, now);
+const act = (g: GameState, type: string, data: object = {}, now = T0) => dispatchCarryingPack(g, { id: `cal01-${++seq}`, type, ...data }, now);
 const put = (r: RunState, key: string, qty: number) => expect(addItem(r, 'inv', key, qty)).toBe(0);
 const copy = (g: GameState) => JSON.parse(JSON.parse(serializeSnapshot(g)).payload) as GameState;
 const fresh = (seed = 313) => {
@@ -443,7 +444,7 @@ describe('CAL-01 E — seasonal gardening with real structures, costs and receip
     const r = g.run!; r.creatures = [];
     const cell = opts.cell ?? openCell(r);
     r.player.x = cell.x * TILE + 8; r.player.y = cell.y * TILE + 8; markDirty();
-    put(r, 'wood', 40); put(r, 'fiber', 40); put(r, 'glass', 4); put(r, 'herb', 4); put(r, 'seed', 10);
+    put(r, 'wood', 40); put(r, 'fiber', 40); put(r, 'glass', 4); put(r, 'herb', 4); put(r, 'seed', 10); ensurePack(r, 'garden');
     expect(buildReason(g, 'garden', cell.x, cell.y)).toBeNull();
     expect(act(g, 'build', { struct: 'garden', tx: cell.x, ty: cell.y }, at).ok).toBe(true);
     const e = Object.values(r.entities).find(x => x.type === 'garden' && x.tx === cell.x && x.ty === cell.y)!;

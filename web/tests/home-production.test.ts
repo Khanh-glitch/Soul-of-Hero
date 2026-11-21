@@ -1,3 +1,4 @@
+import {dispatchCarryingPack} from './helpers/build-kit';
 import {describe,it,expect} from 'vitest';
 import {BAL,TILE,WW,type GameState} from '../src/game/core';
 import {getWorld} from '../src/game/world';
@@ -5,7 +6,7 @@ import {newGame,dispatch,addItem,countItem,C,blockGrid,stepTenders,stepStations,
 import {settle,syncWorld,tick} from '../src/game/sim';
 import {serializeSnapshot,validate} from '../src/game/persist';
 const T=Date.UTC(2026,0,1);let seq=0;
-const act=(g:GameState,type:string,data:object={},now=T)=>dispatch(g,{id:`farmtest-${++seq}`,type,...data},now);
+const act=(g:GameState,type:string,data:object={},now=T)=>dispatchCarryingPack(g,{id:`farmtest-${++seq}`,type,...data},now);
 const copy=(g:GameState)=>JSON.parse(JSON.parse(serializeSnapshot(g)).payload) as GameState;
 function setup(seed=313){const g=newGame();expect(act(g,'startRun',{character:'female',region:0,seed}).ok).toBe(true);const r=g.run!;r.creatures=[];const w=getWorld(),grid=blockGrid(r);let x=0,y=0;outer:for(let yy=20;yy<180;yy++)for(let xx=20;xx<180;xx++){const cells=[[-2,-2],[2,0],[0,1],[-1,1],[0,2],[1,1],[0,0],[0,-1]];if(cells.every(([dx,dy])=>{const i=(yy+dy)*WW+xx+dx;return grid[i]===0&&!w.sourceV3[i]&&w.economyMap.buildable[i]&&!w.economyMap.protected[i]&&!w.accessCorridors?.mask[i];})){x=xx;y=yy;break outer;}}expect(x).toBeGreaterThan(0);r.player.x=x*TILE+8;r.player.y=y*TILE+8;for(const [k,n] of [['wood',100],['stone',30],['fiber',20],['rope',3],['iron_ingot',5],['mechanical_parts',6],['fasteners',4],['spares',4]] as const)expect(addItem(r,'inv',k,n)).toBe(0);
  const build=(type:string,dx:number,dy:number)=>{const res=act(g,'build',{struct:type,tx:x+dx,ty:y+dy});expect(res).toMatchObject({ok:true});return Object.values(r.entities).find(e=>e.type===type&&e.tx===x+dx&&e.ty===y+dy)!;};

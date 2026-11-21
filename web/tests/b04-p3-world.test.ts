@@ -1,5 +1,6 @@
 // B04-P3: SYS12 airdrop phase projection, SYS15 local heat readout, B02 trap-v1 invariants, drop cleanup.
 // Mechanical invariants only: no survival bot, no human-enjoyment claims.
+import {dispatchCarryingPack} from './helpers/build-kit';
 import { afterAll, describe, it, expect } from 'vitest';
 import { BAL, TILE, WW, T, type GameState, type RunState } from '../src/game/core';
 import { STRUCTS } from '../src/game/catalog';
@@ -13,7 +14,7 @@ import { serializeSnapshot, selectSnapshots, validate, bearTrapStateValid } from
 
 const T0 = Date.UTC(2026, 10, 5);
 let seq = 0;
-const act = (g: GameState, type: string, data: object, now: number) => dispatch(g, { id: `p3-${++seq}`, type, ...data }, now);
+const act = (g: GameState, type: string, data: object, now: number) => dispatchCarryingPack(g, { id: `p3-${++seq}`, type, ...data }, now);
 const raw = (g: GameState) => JSON.parse(JSON.parse(serializeSnapshot(g)).payload);
 afterAll(() => setActiveLayout('shipping'));
 

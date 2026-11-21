@@ -4,6 +4,7 @@
 // granted directly (no loot walk claimed). Engine code is exercised unmodified.
 // Provenance note: white-box variants of the UID-reservation race exist in b01-industrial-loot.test.ts
 // (a pushed reservation blocks a recycle); these probes drive the real dispatch path instead.
+import {dispatchCarryingPack} from './helpers/build-kit';
 import { describe, it, expect, afterEach } from 'vitest';
 import { TILE, WW, BAL, type GameState, type RunState } from '../src/game/core';
 import { T } from '../src/game/core';
@@ -13,7 +14,7 @@ import { vehicleClear } from '../src/game/motorbike';
 
 const T0 = Date.UTC(2026, 10, 8);
 let n = 0;
-const act = (g: GameState, type: string, p: object = {}, now: number = T0) => dispatch(g, { id: `r3p2-${++n}`, type, ...p }, now);
+const act = (g: GameState, type: string, p: object = {}, now: number = T0) => dispatchCarryingPack(g, { id: `r3p2-${++n}`, type, ...p }, now);
 function fresh(): GameState {
   setActiveLayout('shipping_fresh');
   const g = newGame();

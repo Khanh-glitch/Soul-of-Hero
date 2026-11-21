@@ -1,6 +1,7 @@
 // MEC-01 R8B: wood -> plank -> plank wall (K4 "gỗ→ván→nhà"). SOH_PROVISIONAL numbers, no LI plank figure exists.
 // CRAFTED = real craft/build/move intents with real stepStations timing. FIXTURE = granted wood/stone for the bench and walls.
 // Not claimed: natural harvest of this wood, natural play, human play, or native Godot behaviour.
+import {dispatchCarryingPack} from './helpers/build-kit';
 import {describe,it,expect,afterEach} from 'vitest';
 import {type GameState,type RunState,type Entity,TILE} from '../src/game/core';
 import {RECIPES,STRUCTS} from '../src/game/catalog';
@@ -10,11 +11,11 @@ import {serializeSnapshot,validate} from '../src/game/persist';
 
 const START=Date.UTC(2026,10,12);let n=0;
 afterEach(()=>setActiveLayout('shipping'));
-const act=(g:GameState,type:string,p:object={},at=START+10)=>dispatch(g,{id:'r8b-'+(++n),type,...p} as any,at);
+const act=(g:GameState,type:string,p:object={},at=START+10)=>dispatchCarryingPack(g,{id:'r8b-'+(++n),type,...p} as any,at);
 const place=(r:RunState,tx:number,ty:number)=>{r.player.x=tx*TILE+8;r.player.y=ty*TILE+8;markDirty();};
 function start(){setActiveLayout('shipping_fresh');const g=newGame();expect(act(g,'startRun',{character:'female',seed:808},START).ok).toBe(true);g.run!.creatures=[];markDirty();return g;}
 function legalTileNear(g:GameState,cx:number,cy:number,struct:string):[number,number]{
-  const r=g.run!;for(let k=1;k<=10;k++)for(let dy=-k;dy<=k;dy++)for(let dx=-k;dx<=k;dx++){if(Math.max(Math.abs(dx),Math.abs(dy))!==k)continue;const tx=cx+dx,ty=cy+dy;place(r,tx-1,ty);const why=buildReason(g,struct,tx,ty);if(!why||why.startsWith('Missing materials'))return [tx,ty];}  // site only: the real build intent still checks materials}
+  const r=g.run!;for(let k=1;k<=10;k++)for(let dy=-k;dy<=k;dy++)for(let dx=-k;dx<=k;dx++){if(Math.max(Math.abs(dx),Math.abs(dy))!==k)continue;const tx=cx+dx,ty=cy+dy;place(r,tx-1,ty);const why=buildReason(g,struct,tx,ty);if(!why||why.startsWith('Missing materials')||why==='Need an intact packed device.')return [tx,ty];}  // site only: the real build intent still checks materials}
   throw new Error('no legal tile for '+struct);
 }
 /** One real craft at the bench, then the finished output moved into the pack. */

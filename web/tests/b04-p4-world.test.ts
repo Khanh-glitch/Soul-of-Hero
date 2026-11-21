@@ -1,4 +1,5 @@
 // B04-P4: adversarial cache identity, IR downstream network scoping, live bear-trap contact through tick().
+import {dispatchCarryingPack} from './helpers/build-kit';
 import { describe, it, expect } from 'vitest';
 import { TILE, WW, T, type GameState } from '../src/game/core';
 import { STRUCTS } from '../src/game/catalog';
@@ -9,7 +10,7 @@ import { serializeSnapshot, validate } from '../src/game/persist';
 
 const T0 = Date.UTC(2026, 0, 1);
 let n = 0;
-const act = (g: GameState, type: string, data: object = {}, now = T0) => dispatch(g, { id: `p4-${type}-${++n}`, type, ...data }, now);
+const act = (g: GameState, type: string, data: object = {}, now = T0) => dispatchCarryingPack(g, { id: `p4-${type}-${++n}`, type, ...data }, now);
 const raw = (g: GameState) => JSON.parse(JSON.parse(serializeSnapshot(g)).payload);
 
 function setup(seed = 97) {
@@ -19,7 +20,7 @@ function setup(seed = 97) {
   markDirty();
   const pos = (tx: number, ty: number) => { r.player.x = tx * TILE + 8; r.player.y = ty * TILE + 8; markDirty(); };
   const build = (type: string, tx: number, ty: number, px = tx, py = ty + 1) => {
-    pos(px, py); for (const [k, q] of STRUCTS[type].cost) addItem(r, 'inv', k, q);
+    pos(px, py); for (const [k, q] of STRUCTS[type].cost) addItem(r, 'inv', k, q); if (type === 'door_powered') { for (const [k, q] of STRUCTS.door_wood.cost) addItem(r, 'inv', k, q); expect(act(g, 'build', { struct: 'door_wood', tx, ty }).ok, 'host door').toBe(true); }
     expect(act(g, 'build', { struct: type, tx, ty }).ok, type).toBe(true);
     return Object.values(r.entities).find(e => e.kind === 'struct' && e.tx === tx && e.ty === ty && e.type === type)!;
   };
@@ -52,7 +53,7 @@ describe('B04-P4 F1 IR downstream is scoped to the sensor own generator network'
     for (let yy = y - 6; yy <= y + 6; yy++) for (let xx = x - 6; xx <= x + 8; xx++) { const i = yy * WW + xx; r.terrain[i] = { t: T.GRASS }; if (getWorld().sourceV3[i]) r.sources[i] = { stock: 0, hp: 0 }; }
     markDirty();
     const pos = (tx: number, ty: number) => { r.player.x = tx * TILE + 8; r.player.y = ty * TILE + 8; markDirty(); };
-    const build = (type: string, tx: number, ty: number, px = tx, py = ty + 1) => { pos(px, py); for (const [k, q] of STRUCTS[type].cost) addItem(r, 'inv', k, q); const res = act(g, 'build', { struct: type, tx, ty }); expect(res.ok, `${type}: ${(res as any).reason}`).toBe(true); return Object.values(r.entities).find(e => e.kind === 'struct' && e.tx === tx && e.ty === ty && e.type === type)!; };
+    const build = (type: string, tx: number, ty: number, px = tx, py = ty + 1) => { pos(px, py); for (const [k, q] of STRUCTS[type].cost) addItem(r, 'inv', k, q); if (type === 'door_powered') { for (const [k, q] of STRUCTS.door_wood.cost) addItem(r, 'inv', k, q); expect(act(g, 'build', { struct: 'door_wood', tx, ty }).ok, 'host door').toBe(true); } const res = act(g, 'build', { struct: type, tx, ty }); expect(res.ok, `${type}: ${(res as any).reason}`).toBe(true); return Object.values(r.entities).find(e => e.kind === 'struct' && e.tx === tx && e.ty === ty && e.type === type)!; };
     // network A: generator -> cable -> sensor -> door
     const genA = build('base_generator', x, y), cableA = build('power_cable', x + 1, y), sensor = build('ir_sensor', x + 2, y), doorA = build('door_powered', x + 3, y, x + 4, y);
     genA.basePower!.capacity = 2; addItem(r, genA.c!, 'wood', 2); pos(x, y + 1); expect(act(g, 'basePower', { eid: genA.id, enabled: true }).ok).toBe(true);
@@ -103,7 +104,7 @@ describe('B04-P4 IR sensor visual state mirrors the prompt rule (sprite key sour
     for (let yy = y - 6; yy <= y + 6; yy++) for (let xx = x - 6; xx <= x + 8; xx++) { const i = yy * WW + xx; r.terrain[i] = { t: T.GRASS }; if (getWorld().sourceV3[i]) r.sources[i] = { stock: 0, hp: 0 }; }
     markDirty();
     const pos = (tx: number, ty: number) => { r.player.x = tx * TILE + 8; r.player.y = ty * TILE + 8; markDirty(); };
-    const build = (type: string, tx: number, ty: number, px = tx, py = ty + 1) => { pos(px, py); for (const [k, q] of STRUCTS[type].cost) addItem(r, 'inv', k, q); expect(act(g, 'build', { struct: type, tx, ty }).ok, type).toBe(true); return Object.values(r.entities).find(e => e.kind === 'struct' && e.tx === tx && e.ty === ty && e.type === type)!; };
+    const build = (type: string, tx: number, ty: number, px = tx, py = ty + 1) => { pos(px, py); for (const [k, q] of STRUCTS[type].cost) addItem(r, 'inv', k, q); if (type === 'door_powered') { for (const [k, q] of STRUCTS.door_wood.cost) addItem(r, 'inv', k, q); expect(act(g, 'build', { struct: 'door_wood', tx, ty }).ok, 'host door').toBe(true); } expect(act(g, 'build', { struct: type, tx, ty }).ok, type).toBe(true); return Object.values(r.entities).find(e => e.kind === 'struct' && e.tx === tx && e.ty === ty && e.type === type)!; };
     const gen = build('base_generator', x, y), cable = build('power_cable', x + 1, y), sensor = build('ir_sensor', x + 2, y), door = build('door_powered', x + 3, y, x + 4, y);
     void door; void cable;
     expect(irSensorVisual(r, sensor)).toBe('off');

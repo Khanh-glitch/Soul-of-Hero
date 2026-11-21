@@ -143,6 +143,7 @@ function installMiniDom() {
 }
 const miniDoc = installMiniDom();
 
+import {dispatchCarryingPack} from './helpers/build-kit';
 import React, { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { afterEach, describe, expect, it } from 'vitest';
@@ -363,7 +364,11 @@ describe('D4 Corrective: Offscreen/Boundary-Straddling Wire-v1 Power Parity & 12
         r.player.x = tx * TILE + 8;
         r.player.y = (ty + 1) * TILE + 8;
         for (const [k, q] of STRUCTS[type].cost) addItem(r, 'inv', k, q);
-        const res = dispatch(gs, { id: `b-${type}-${tx}-${ty}`, type: 'build', struct: type, tx, ty }, NOW);
+        if (type === 'door_powered') {   // the lock module is fitted into a door the player owns
+          for (const [k, q] of STRUCTS.door_wood.cost) addItem(r, 'inv', k, q);
+          expect(dispatch(gs, { id: `b-host-${tx}-${ty}`, type: 'build', struct: 'door_wood', tx, ty }, NOW).ok, 'host door').toBe(true);
+        }
+        const res = dispatchCarryingPack(gs, { id: `b-${type}-${tx}-${ty}`, type: 'build', struct: type, tx, ty }, NOW);
         expect(res.ok, `${type}: ${(res as any).reason}`).toBe(true);
         return Object.values(r.entities).find((e) => e.kind === 'struct' && e.tx === tx && e.ty === ty && e.type === type)!;
       };

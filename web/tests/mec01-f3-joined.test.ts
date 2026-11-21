@@ -1,6 +1,7 @@
 // MEC-01 F3 joined boundary: REAL deposit (escrow-route-physical flow) -> lawful evacuation -> save/reload -> run 2.
 // FIXTURE (labelled): qaOffset 264h phase control (not a natural 336h end), fixture wood/stone, fixture evacuation beacon.
 // NOT injected: profile.securedCash. The 6 Ragnarok cash that reaches the profile is produced by the real deposit intent.
+import {dispatchCarryingPack} from './helpers/build-kit';
 import {describe,it,expect} from 'vitest';
 import {HOUR,TILE,WW,type Entity} from '../src/game/core';
 import {getWorld,setActiveLayout} from '../src/game/world';
@@ -11,7 +12,7 @@ const T=Date.UTC(2026,10,3);
 const neutral:Input={up:false,down:false,left:false,right:false,mx:0,my:0,attack:false,attackPressed:false,roll:false,cancel:false};
 describe('F3 joined: deposit -> evacuate -> save/reload -> run 2', () => {
  it('carries the real deposit receipt through evacuation and reload into run 2 with zero run-local cash', () => {
-  setActiveLayout('shipping');const g=newGame();let time=T,seq=0;const act=(type:string,fields:object={})=>dispatch(g,{id:`joined-${++seq}`,type,...fields},time);
+  setActiveLayout('shipping');const g=newGame();let time=T,seq=0;const act=(type:string,fields:object={})=>dispatchCarryingPack(g,{id:`joined-${++seq}`,type,...fields},time);
   expect(act('startRun',{character:'female',region:0,seed:1987}).ok).toBe(true);const r=g.run!;r.creatures=[];r.qaOffset=264*HOUR;
   addItem(r,'inv','wood',14);addItem(r,'inv','stone',5);
   const w=getWorld();const cash=Object.values(r.entities).find(e=>e.kind==='cash'&&e.poi==='tp')!,vendor=Object.values(r.entities).find(e=>e.kind==='vendor')!;
