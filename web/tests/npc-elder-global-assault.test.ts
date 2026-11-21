@@ -22,6 +22,7 @@ import { layoutIdAt } from '../src/veyra05/scenes';
 import { auToTile, windowAround } from '../src/veyra05/frame';
 import { T0 } from './helpers/g1b-kit';
 import { TILE } from '../src/game/core';
+import { sampleTile } from '../src/veyra05/reader';
 
 import { validate } from '../src/game/persist';
 import {
@@ -297,4 +298,114 @@ describe('global six-Elder assault (NOT RUN — authored for the post-implementa
     expect(r.receipts.some(x => x.kind === 'elder.loot.landed')).toBe(true);
   });
 
+});
+
+/**
+ * OVERLAND MARCH — Creator decision 2026-11-21: an awakened Elder leaves its lair and walks the
+ * authored ground to the nearest inhabited place. No fixed 64-tile leash, no teleport, no sea
+ * crossing. Distance decides who is struck before h336.
+ */
+describe('elder overland march', () => {
+  const HOUR_MS = HOUR;
+  /** Leave exactly one settlement inhabited: the living one nearest to `near` on the same landmass
+   *  but further than the assault reach, so the Elder has to walk. */
+  function onlySettlement(gs: GameState, pick: (poi: string, gx: number, gy: number) => boolean): string {
+    const hw = gs.run!.humanWorld!;
+    let kept = '';
+    for (const c of Object.values(hw.communities)) {
+      const first = c.memberIds.map(id => hw.people[id]).find(h => h && h.state !== 'DEAD' && h.floor === 0);
+      if (!kept && first && pick(c.poi, first.gx, first.gy)) { kept = c.poi; continue; }
+      for (const id of c.memberIds) { const h = hw.people[id]; if (h) { h.state = 'DEAD'; h.hp = 0; } }
+    }
+    expect(kept).not.toBe('');
+    return kept;
+  }
+  const tileOf = (gs: GameState, id: string) => {
+    const r = gs.run!; const body = elderCanonicalCreature(r, id)!;
+    if (elderBodyArchived(r, body)) return [Math.floor(body.x / TILE), Math.floor(body.y / TILE)];
+    const o = r.sourceMap!.veyra!.originAu;
+    return [Math.round(o[0] / 0.5) + Math.floor(body.x / TILE), Math.round(o[1] / 0.5) + Math.floor(body.y / TILE)];
+  };
+
+  it('walks out of the lair toward distant people instead of being refused at 64 tiles', () => {
+    const gs = runAt();
+    const r = gs.run!; const hw = r.humanWorld!;
+    const e = assault(gs, 'typhon');
+    const poi = onlySettlement(gs, (_p, gx, gy) => sampleTile(gx, gy).landIdx === sampleTile(e.lairGx, e.lairGy).landIdx
+      && Math.hypot(gx - e.lairGx, gy - e.lairGy) > 200 && Math.hypot(gx - e.lairGx, gy - e.lairGy) < 600);
+    const at = atHour(gs, 312);
+    expect(e.march).toBeDefined();
+    expect(e.march!.targetPoi).toBe(poi);
+    expect(e.events![0].state).toBe('BLOCKED');                       // on the road is not an attack
+    expect(e.events![0].blockReason).toContain('on the march');
+    expect(e.events![0].contactReceipt).toBeUndefined();
+    expect([e.gx, e.gy]).toEqual([e.lairGx, e.lairGy]);               // it has not moved yet
+    // The planned route is real ground from the first tile to the last: no leg crosses open sea.
+    const path = e.march!.path;
+    for (let i = 2; i < path.length; i += 2) {
+      const n = Math.ceil(Math.max(Math.abs(path[i] - path[i - 2]), Math.abs(path[i + 1] - path[i - 1])) / 4);
+      for (let k = 1; k < n; k++) {
+        const x = Math.round(path[i - 2] + (path[i] - path[i - 2]) * k / n), y = Math.round(path[i - 1] + (path[i + 1] - path[i - 1]) * k / n);
+        expect(sampleTile(x, y).land).toBe(true);
+      }
+    }
+    // One hour of walking covers one hour of ground — never the whole distance.
+    let prev = [e.gx!, e.gy!];
+    advanceElderPressure(r, hw, at + HOUR_MS);
+    const step = Math.hypot(e.gx! - prev[0], e.gy! - prev[1]);
+    expect(step).toBeGreaterThan(0);
+    expect(step).toBeLessThanOrEqual(40 + 2);
+    expect(tileOf(gs, 'typhon')).toEqual([e.gx, e.gy]);               // the one body is where the ledger says
+    // A save taken mid-march is a valid save and carries the leg.
+    const again = validate(JSON.parse(JSON.stringify(gs)));
+    expect(again?.run?.humanWorld?.elderPressure.typhon.march?.targetPoi).toBe(poi);
+    // It keeps walking hour by hour, never jumping, until it stands at the settlement and strikes.
+    let contact = false;
+    for (let h = 2; h <= 23 && !contact; h++) {
+      prev = [e.gx!, e.gy!];
+      advanceElderPressure(r, hw, at + h * HOUR_MS);
+      const inFlight = (e.events ?? []).some(ev => ev.state === 'APPROACH');
+      const struck = (e.events ?? []).find(ev => ev.state === 'CONTACT');
+      if (!struck && !inFlight) expect(Math.hypot(e.gx! - prev[0], e.gy! - prev[1])).toBeLessThanOrEqual(40 + 2);
+      if (struck) { contact = true; expect(struck.targetPoi).toBe(poi); expect(struck.launchedAt).toBeGreaterThan(at); }
+    }
+    expect(contact).toBe(true);
+    expect(e.march).toBeUndefined();
+    expect(elderCoverage(hw).pending.filter(id => id.includes('typhon') && !id.includes(':no-wave'))
+      .every(id => (e.events ?? []).some(ev => ev.id === id && ev.state === 'APPROACH'))).toBe(true);
+  });
+
+  it('never crosses open sea: an Elder alone on its island is refused and stays in its lair', () => {
+    const gs = runAt();
+    const r = gs.run!; const hw = r.humanWorld!;
+    const e = assault(gs, 'surtur');
+    const island = sampleTile(e.lairGx, e.lairGy).landIdx;
+    onlySettlement(gs, (_p, gx, gy) => sampleTile(gx, gy).landIdx !== island);
+    const at = atHour(gs, 312);
+    for (let h = 1; h <= 23; h++) advanceElderPressure(r, hw, at + h * HOUR_MS);
+    expect(e.march).toBeUndefined();
+    expect([e.gx, e.gy]).toEqual([e.lairGx, e.lairGy]);
+    expect((e.events ?? []).length).toBeGreaterThan(0);
+    for (const ev of e.events ?? []) {
+      expect(ev.state).toBe('BLOCKED');
+      expect(ev.blockReason).toContain('open sea');
+    }
+    expect(Object.values(hw.people).some(h => (h.threat?.waves ?? 0) > 0 && h.threat?.lastWaveId?.includes('surtur'))).toBe(false);
+  });
+
+  it('a destroyed Elder stops marching', () => {
+    const gs = runAt();
+    const r = gs.run!; const hw = r.humanWorld!;
+    const e = assault(gs, 'typhon');
+    onlySettlement(gs, (_p, gx, gy) => sampleTile(gx, gy).landIdx === sampleTile(e.lairGx, e.lairGy).landIdx
+      && Math.hypot(gx - e.lairGx, gy - e.lairGy) > 200 && Math.hypot(gx - e.lairGx, gy - e.lairGy) < 600);
+    const at = atHour(gs, 312);
+    expect(e.march).toBeDefined();
+    advanceElderPressure(r, hw, at + HOUR_MS);
+    const where = [e.gx, e.gy];
+    defeatElder(r, hw, 'typhon', at + HOUR_MS + 1);
+    for (let h = 2; h <= 6; h++) advanceElderPressure(r, hw, at + h * HOUR_MS);
+    expect(e.march).toBeUndefined();
+    expect([e.gx, e.gy]).toEqual(where);
+  });
 });

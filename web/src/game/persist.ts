@@ -968,6 +968,15 @@ export function validate(raw: any): GameState | null {
       if (elder.awakenedAt !== undefined && !finite(elder.awakenedAt)) return null;
       if (elder.defeatedAt !== undefined && !finite(elder.defeatedAt)) return null;
       if (elder.nextWaveAt !== undefined && !finite(elder.nextWaveAt)) return null;
+      if (elder.march !== undefined) {
+        // An overland march leg: a walked polyline in global tiles and how much of it is covered.
+        const mr = elder.march;
+        if (!obj(mr) || typeof mr.targetPoi !== 'string' || !mr.targetPoi) return null;
+        if (![mr.targetGx, mr.targetGy, mr.startedAt, mr.lastAt, mr.walked, mr.length].every(finite)) return null;
+        if (!Array.isArray(mr.path) || mr.path.length < 4 || mr.path.length % 2 !== 0 || mr.path.length > 2048 || !mr.path.every(integer)) return null;
+        if (mr.walked < 0 || mr.length < 0 || mr.walked > mr.length + 1e-6) return null;
+        if (mr.ignore !== undefined && (!Array.isArray(mr.ignore) || !mr.ignore.every((x: unknown) => typeof x === 'string'))) return null;
+      }
       if (elder.events !== undefined) {
         if (!Array.isArray(elder.events)) return null;
         for (const ev of elder.events as any[]) {

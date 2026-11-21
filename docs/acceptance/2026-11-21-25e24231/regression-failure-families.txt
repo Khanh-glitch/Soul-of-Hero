@@ -1,0 +1,81 @@
+files done 260 {'PASSED': 203, 'FAILED': 38, 'WATCHDOG': 6, 'SKIP_ONLY': 13} tests {'passed': 1330, 'failed': 143, 'pending': 59}
+  004 FAILED tests/b02-ir-sensor.test.ts 0p/12f/0s
+  007 FAILED tests/b03-return.test.ts 0p/9f/0s
+  008 FAILED tests/b03-thermal.test.ts 2p/7f/0s
+  009 FAILED tests/b04-p3-world.test.ts 7p/9f/0s
+  011 FAILED tests/b04-p4-world.test.ts 3p/4f/0s
+  016 FAILED tests/b05-loot-matrix.test.ts 6p/1f/0s
+  032 FAILED tests/cal01-world-calendar.test.ts 25p/4f/0s
+  035 FAILED tests/control-tower-audit-regressions.test.tsx 11p/1f/0s
+  036 FAILED tests/control-tower-corrective-wp1-wp2.test.ts 2p/2f/0s
+  037 FAILED tests/control-tower-journey-durability.test.tsx 3p/2f/0s
+  040 FAILED tests/d1-d5-corrective.test.tsx 4p/1f/0s
+  043 WATCHDOG tests/economic-network-m2.test.ts 
+  046 FAILED tests/economy-network.test.ts 10p/1f/0s
+  051 FAILED tests/g1a-industrial-salvage.test.ts 11p/4f/1s
+  052 SKIP_ONLY tests/g1a-r1-census.test.ts 
+  053 SKIP_ONLY tests/g1a-r1-play.test.ts 
+  063 WATCHDOG tests/g1b-lifecycle.test.ts 
+  065 SKIP_ONLY tests/g1b-resolve.test.ts 
+  073 FAILED tests/home-production.test.ts 0p/12f/0s
+  074 FAILED tests/home-sites-physical.test.ts 0p/1f/0s
+  077 FAILED tests/item-crafting-master.test.ts 14p/2f/0s
+  082 FAILED tests/item-ontology-v2.test.ts 0p/0f/31s
+  084 FAILED tests/k6-spatial.test.ts 7p/1f/0s
+  089 FAILED tests/lr02-shipping-access.test.ts 2p/1f/0s
+  095 FAILED tests/mec01-c1-motorbike-chain.test.ts 1p/1f/0s
+  097 SKIP_ONLY tests/mec01-c3-offline-child.test.ts 
+  100 FAILED tests/mec01-f3-joined.test.ts 0p/1f/0s
+  109 FAILED tests/mec01-r12-departure.test.ts 3p/18f/0s
+  111 FAILED tests/mec01-r3-causal-integrity.test.ts 1p/2f/0s
+  113 FAILED tests/mec01-r4-score-once.test.ts 2p/5f/0s
+  117 FAILED tests/mec01-r6-homecoming.test.ts 0p/1f/0s
+  120 FAILED tests/mec01-r8b-plank.test.ts 1p/2f/0s
+  133 SKIP_ONLY tests/npc-checkpoint-size.test.ts 
+  140 SKIP_ONLY tests/npc-first-day.test.ts 
+  145 SKIP_ONLY tests/npc-greywater-serving.test.ts 
+  151 SKIP_ONLY tests/npc-hour-profile.test.ts 
+  152 FAILED tests/npc-humanworld.test.ts 6p/1f/0s
+  160 SKIP_ONLY tests/npc-natural-food-consumer.test.ts 
+  168 FAILED tests/npc-natural-procurement.test.ts 0p/1f/0s
+  169 SKIP_ONLY tests/npc-navigation-resume.test.ts 
+  181 FAILED tests/npc-runtime-throughput.test.ts 0p/1f/0s
+  203 FAILED tests/production-network.test.ts 9p/1f/0s
+  206 FAILED tests/rest-supply.test.ts 0p/14f/0s
+  207 FAILED tests/s06-circuits.test.ts 0p/11f/0s
+  208 FAILED tests/s08-world-stimulus.test.ts 9p/1f/0s
+  209 FAILED tests/s10-oil-refinery.test.ts 18p/1f/0s
+  216 FAILED tests/sys07-w08-absence.test.ts 0p/1f/0s
+  235 FAILED tests/w08-home-status.test.ts 1p/5f/0s
+  243 FAILED tests/wp3-veyra-recycler-integration.test.ts 0p/1f/0s
+  245 WATCHDOG src/veyra05/audit-closure.test.ts 
+  246 WATCHDOG src/veyra05/ecosystem-full.test.ts 
+  247 SKIP_ONLY src/veyra05/full-world-spawn-industrial.audit.test.ts 
+  252 FAILED src/veyra05/integrated-lifecycle.test.ts 1p/1f/0s
+  256 WATCHDOG src/veyra05/review-r2-acceptance.test.ts 
+  257 SKIP_ONLY src/veyra05/spawn-candidate-reasons.audit.test.ts 
+  258 SKIP_ONLY src/veyra05/spawn-failure-cause.audit.test.ts 
+  259 WATCHDOG tests/arena1-round2-newgame-routes.test.ts 
+--- families
+ 45 tests / 16 files | AssertionError: expected false to be true // Object.is equality
+ 40 tests / 10 files | PACKED_DEVICE
+ 28 tests /  3 files | AssertionError: expected { ok: false, …(N) } to match object { ok: true }
+ 10 tests /  1 files | AssertionError: expected { s: 'bed_straw', tx: N, …(N) } to deeply equal { s: 'bed_straw', tx: N, …(N) }
+  3 tests /  1 files | Error: cannot hold knife
+  2 tests /  1 files | Error: no legal tile for workbench
+  1 tests /  1 files | AssertionError: expected [ [ 'iron_ingot', N ], …(N) ] to deeply equal [ [ 'mechanical_gear', N ], …(N) ]
+  1 tests /  1 files | AssertionError: bear_trap: expected false to be true // Object.is equality
+  1 tests /  1 files | AssertionError: base_generator: expected false to be true // Object.is equality
+  1 tests /  1 files | AssertionError: action:base generator burns a fuel item from its container, incl. Fuel Canister (engine.ts ~N,
+  1 tests /  1 files | AssertionError: cleaver on road_salvage_bale: expected N to be N // Object.is equality
+  1 tests /  1 files | AssertionError: expected '{\n "schema": "soh.item_crafting_mast…' to be '{\n "schema": "soh.item_crafting_mast
+  1 tests /  1 files | AssertionError: knife must be tied to a system: expected N to be greater than N
+  1 tests /  1 files | SUITE: Cannot read properties of undefined (reading 'ins')
+  1 tests /  1 files | TypeError: Cannot read properties of undefined (reading 'c')
+  1 tests /  1 files | AssertionError: the absence report must carry the creature-death row: expected undefined to be truthy
+  1 tests /  1 files | AssertionError: expected undefined to be truthy
+  1 tests /  1 files | Error: ENOENT: no such file or directory, open '../tmp/verification/procurement-final-natural-save.json'
+  1 tests /  1 files | Error: STACK_TRACE_ERROR
+  1 tests /  1 files | AssertionError: expected 'stimulus' to be 'trace' // Object.is equality
+  1 tests /  1 files | AssertionError: expected N to be greater than or equal to N
+  1 tests /  1 files | AssertionError: expected 'veyraN-at-N-N' to be 'veyraN-world' // Object.is equality

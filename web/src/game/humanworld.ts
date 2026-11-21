@@ -8,7 +8,9 @@ import {observeRecipeSources,serviceRecipeBoard,recipeBoardDestination,requested
 import {timedWorldWork} from './world-work';
 import {globalSourceCandidates, globalBaseGeometry} from '../veyra05/window';
 import {windowOrigin} from '../veyra05/continuity';
-import {inFrame} from '../veyra05/frame';
+import {inFrame, FRAME_W, FRAME_H} from '../veyra05/frame';
+import {sampleTile} from '../veyra05/reader';
+import {activeFloor} from '../veyra05/floors';
 import {isVeyra05Layout} from '../veyra05/scenes';
 import {ensureArchivedElderActor} from '../veyra05/ecosystem';
 import {countWorldWork} from './world-work';
@@ -32,7 +34,7 @@ import {countWorldWork} from './world-work';
  *  - Legacy runs without `humanWorld` remain solo-compatible; new runs seed finite source-authorized
  *    humans. No retroactive population/loot mint on old saves.
  */
-import { BAL, TILE, WW, WH, HOUR, clamp, uid, type RunState, type Stack, type Container, type Entity, type Dir, type Creature } from './core';
+import { BAL, T, TILE, WW, WH, HOUR, clamp, uid, type RunState, type Stack, type Container, type Entity, type Dir, type Creature } from './core';
 import { SOURCES, STRUCTS, RECIPES, ITEMS, ARMOR_CAP, wornProtection, CREATURES, passiveWildlife, ELDERS, lookupElderDef, PRIMORDIAL_ELDERS } from './catalog';
 import {type CoreEffectCast} from './core-ray';
 import {materialPayment} from './material-payment';
@@ -323,7 +325,11 @@ export interface ElderAssault {
   routeTargets: { poi: string; gx: number; gy: number; floor: number; at: number }[];
   lastAttackAt?: number;
   defeatedAt?: number;
-  /** Current physical position: changes ONLY at a resolved arrival (no teleport). */
+  /** Overland march toward distant inhabited ground (see `advanceElderMarch`). Absent while the
+   *  Elder is in its lair, halted at a settlement, or cut off from every inhabited shore. */
+  march?: ElderMarch;
+  /** Current physical position: changes only by ground actually walked — along a march leg, or at
+   *  a resolved assault arrival. Never a teleport. */
   gx?: number; gy?: number;
   /** Absolute instant of the next lawful approach wave. */
   nextWaveAt?: number;
@@ -2377,6 +2383,18 @@ export interface ElderAssaultEvent {
   contactReceipt?: string;
   affected?: { humans: number; structures: number; downed: number; skippedLocal: number; interposed: number; ammoSpent: number };
 }
+/** One overland march leg. The Elder walks `path` (global tiles, flattened x,y pairs) at the march
+ *  pace; `walked` is how much of it the body has physically covered. */
+export interface ElderMarch {
+  targetPoi: string;
+  targetGx: number; targetGy: number;
+  startedAt: number; lastAt: number;
+  path: number[];
+  walked: number;
+  length: number;
+  /** Settlements the Elder was already standing beside (and refused at) when this leg began. */
+  ignore?: string[];
+}
 /** Canonical Elder body for one identity — the single source of HP/death (never a second copy). */
 export function elderCanonicalCreature(r: RunState, elderId: string): Creature | undefined {
   const hit = r.creatures.find(m => m.elder?.key === elderId);
@@ -2465,10 +2483,12 @@ function elderCrossingOpen(r: RunState, fromGx: number, fromGy: number, toGx: nu
 function elderRouteExists(r: RunState, fromGx: number, fromGy: number, toGx: number, toGy: number, budget = 3000, maxSteps = 160): boolean {
   if (!r.sourceMap || !isVeyra05Layout(r.layoutId || '')) return true;   // legacy island: no global geometry
   const rules = r.sourceMap.rules === 4 ? 4 : 3;
+  // An Elder wades: river and lake shallows are ground to it, exactly as on its overland march.
+  // Deep sea, cliffs, walls and unknown geometry still are not.
   const walkable = (x: number, y: number): boolean => {
     if (!elderTargetInBounds(x, y)) return false;
     const c = globalBaseGeometry(x, y, 0, rules);
-    return !!c && c.walkable;
+    return !!c && (c.walkable || ((c.tile === T.SHALLOW || c.tile === T.RIVER) && !c.solidProp));
   };
   const reached = (x: number, y: number) => Math.abs(x - toGx) <= 1 && Math.abs(y - toGy) <= 1;
   const h = (x: number, y: number) => Math.max(Math.abs(x - toGx), Math.abs(y - toGy));
@@ -2499,6 +2519,206 @@ function elderRouteExists(r: RunState, fromGx: number, fromGy: number, toGx: num
   return false;
 }
 
+// ---------------------------------------------------------------------------
+// Elder overland march — Creator decision 2026-11-21: an awakened Elder LEAVES its lair and walks
+// the authored ground to the nearest inhabited place. Distance, not a fixed radius, decides who is
+// struck before h336. The march is real travel: the body moves tile by tile along a route found on
+// the canonical authored terrain, it cannot cross open sea, and it is never repositioned instantly.
+// ---------------------------------------------------------------------------
+/** SOH_PROVISIONAL march pace (tiles per hour) over open country. */
+function elderMarchTilesPerHour(): number { return 40; }
+/** The march ends this close to the settlement's people; the timed assault wave takes over from there. */
+function elderMarchHaltTiles(): number { return 24; }
+const MARCH_CELL = 16;                                   // one WMP analysis cell (8 AU)
+const MARCH_W = Math.ceil(FRAME_W / MARCH_CELL), MARCH_H = Math.ceil(FRAME_H / MARCH_CELL);
+let marchGround: Uint8Array | undefined;                 // authored and immutable: 0 unknown, 1 sea, 2 ground
+/** Ground an Elder can walk: anything inside an authored land ring (it wades rivers and lake
+ *  shallows). Open sea is never ground. */
+function elderGroundAt(gx: number, gy: number): boolean { return inFrame(gx, gy) && sampleTile(gx, gy).land; }
+function elderLandmass(gx: number, gy: number): number { return inFrame(gx, gy) ? sampleTile(gx, gy).landIdx : -1; }
+function marchCellGround(cx: number, cy: number): boolean {
+  if (cx < 0 || cy < 0 || cx >= MARCH_W || cy >= MARCH_H) return false;
+  const g = (marchGround ??= new Uint8Array(MARCH_W * MARCH_H)), i = cy * MARCH_W + cx;
+  if (!g[i]) g[i] = elderGroundAt(cx * MARCH_CELL + MARCH_CELL / 2, cy * MARCH_CELL + MARCH_CELL / 2) ? 2 : 1;
+  return g[i] === 2;
+}
+/** Every sampled tile of a straight leg must be ground, so a march never hops a strait. */
+function marchLegGround(ax: number, ay: number, bx: number, by: number): boolean {
+  const n = Math.max(1, Math.ceil(Math.max(Math.abs(bx - ax), Math.abs(by - ay)) / 4));
+  for (let i = 1; i < n; i++) {
+    const t = i / n;
+    if (!elderGroundAt(Math.round(ax + (bx - ax) * t), Math.round(ay + (by - ay) * t))) return false;
+  }
+  return true;
+}
+/** A* over the authored ground at analysis-cell resolution. Returns the walked polyline in global
+ *  tiles (start tile, cell centres, goal tile) or null when no ground route exists. */
+function elderMarchRoute(fromGx: number, fromGy: number, toGx: number, toGy: number): number[] | null {
+  if (!inFrame(fromGx, fromGy) || !inFrame(toGx, toGy)) return null;
+  const sc = [Math.floor(fromGx / MARCH_CELL), Math.floor(fromGy / MARCH_CELL)];
+  const gc = [Math.floor(toGx / MARCH_CELL), Math.floor(toGy / MARCH_CELL)];
+  const start = sc[1] * MARCH_W + sc[0], goal = gc[1] * MARCH_W + gc[0];
+  if (start === goal) return marchLegGround(fromGx, fromGy, toGx, toGy) ? [fromGx, fromGy, toGx, toGy] : null;
+  const centre = (i: number): [number, number] => i === start ? [fromGx, fromGy] : i === goal ? [toGx, toGy]
+    : [(i % MARCH_W) * MARCH_CELL + MARCH_CELL / 2, Math.floor(i / MARCH_W) * MARCH_CELL + MARCH_CELL / 2];
+  const h = (i: number) => { const dx = Math.abs(i % MARCH_W - gc[0]), dy = Math.abs(Math.floor(i / MARCH_W) - gc[1]); return (Math.max(dx, dy) + 0.4142 * Math.min(dx, dy)) * MARCH_CELL; };
+  const cost = new Map<number, number>([[start, 0]]), came = new Map<number, number>();
+  const heap: [number, number][] = [[h(start), start]];
+  const push = (f: number, i: number) => { heap.push([f, i]); let c = heap.length - 1; while (c > 0) { const p = (c - 1) >> 1; if (heap[p][0] <= heap[c][0]) break; [heap[p], heap[c]] = [heap[c], heap[p]]; c = p; } };
+  const pop = (): [number, number] => {
+    const top = heap[0], last = heap.pop()!;
+    if (heap.length) { heap[0] = last; let p = 0; for (;;) { const l = p * 2 + 1, q = l + 1; let m = p; if (l < heap.length && heap[l][0] < heap[m][0]) m = l; if (q < heap.length && heap[q][0] < heap[m][0]) m = q; if (m === p) break; [heap[p], heap[m]] = [heap[m], heap[p]]; p = m; } }
+    return top;
+  };
+  const done = new Set<number>();
+  while (heap.length) {
+    const [, cur] = pop();
+    if (done.has(cur)) continue;
+    done.add(cur);
+    if (cur === goal) {
+      const cells: number[] = [cur];
+      while (came.has(cells[cells.length - 1])) cells.push(came.get(cells[cells.length - 1])!);
+      const out: number[] = [];
+      for (let i = cells.length - 1; i >= 0; i--) { const [x, y] = centre(cells[i]); out.push(x, y); }
+      return out;
+    }
+    const cx = cur % MARCH_W, cy = Math.floor(cur / MARCH_W), [ax, ay] = centre(cur), base = cost.get(cur)!;
+    for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
+      if (!dx && !dy) continue;
+      const nx = cx + dx, ny = cy + dy, ni = ny * MARCH_W + nx;
+      if (nx < 0 || ny < 0 || nx >= MARCH_W || ny >= MARCH_H || done.has(ni)) continue;
+      if (ni !== goal && !marchCellGround(nx, ny)) continue;
+      const [bx, by] = centre(ni);
+      if (!marchLegGround(ax, ay, bx, by)) continue;
+      const c = base + Math.hypot(bx - ax, by - ay);
+      if (c >= (cost.get(ni) ?? Infinity)) continue;
+      cost.set(ni, c); came.set(ni, cur); push(c + h(ni), ni);
+    }
+  }
+  return null;
+}
+function marchLength(path: number[]): number {
+  let n = 0;
+  for (let i = 2; i < path.length; i += 2) n += Math.hypot(path[i] - path[i - 2], path[i + 1] - path[i - 1]);
+  return n;
+}
+function marchPointAt(path: number[], walked: number): [number, number] {
+  let left = walked;
+  for (let i = 2; i < path.length; i += 2) {
+    const seg = Math.hypot(path[i] - path[i - 2], path[i + 1] - path[i - 1]);
+    if (left <= seg && seg > 0) { const t = left / seg; return [Math.round(path[i - 2] + (path[i] - path[i - 2]) * t), Math.round(path[i - 1] + (path[i + 1] - path[i - 1]) * t)]; }
+    left -= seg;
+  }
+  return [path[path.length - 2], path[path.length - 1]];
+}
+interface ElderSettlement { poi: string; gx: number; gy: number; d: number; living: number; people: HumanRecord[] }
+/** Every settlement that still has living people on the surface, with the tile its people are
+ *  densest around today (the medoid of its living members), nearest first. */
+function elderSettlements(hw: HumanWorld, fromGx: number, fromGy: number): ElderSettlement[] {
+  const out: ElderSettlement[] = [];
+  for (const c of Object.values(hw.communities)) {
+    // The wave walks toward PEOPLE, not toward a storehouse tile: members drift tens of tiles from
+    // their community's store while working, and a strike on an empty tile would hit nobody.
+    const living = c.memberIds
+      .map(id => hw.people[id])
+      .filter((h): h is HumanRecord => !!h && h.state !== 'DEAD' && h.state !== 'EVACUATED' && h.state !== 'ON_VESSEL' && h.floor === 0);
+    if (!living.length) continue;
+    let centre = living[0], best = Infinity;
+    for (const a of living) {
+      let sum = 0;
+      for (const b of living) sum += Math.abs(a.gx - b.gx) + Math.abs(a.gy - b.gy);
+      if (sum < best) { best = sum; centre = a; }
+    }
+    out.push({ poi: c.poi, gx: centre.gx, gy: centre.gy, d: Math.abs(centre.gx - fromGx) + Math.abs(centre.gy - fromGy), living: living.length, people: living });
+  }
+  return out.sort((a, b) => a.d - b.d || (a.poi < b.poi ? -1 : 1));
+}
+/** Walk the canonical body to `gx,gy` without a receipt per tile. The body is the position
+ *  authority: an archived body that walks onto ground the player's window covers is promoted into
+ *  the window, so the player sees the Elder arrive instead of an invisible ledger entry. */
+function walkCanonicalElderBody(r: RunState, m: Creature, gx: number, gy: number): void {
+  const [ox, oy] = windowOrigin(r);
+  const lx = gx - ox, ly = gy - oy;
+  const inWindow = lx >= 2 && ly >= 2 && lx < WW - 2 && ly < WH - 2 && activeFloor(r) === 0 && !!r.sourceMap;
+  const off = r.veyraOffscreenCreatures;
+  const archived = !!off && Object.values(off).includes(m);
+  const px = (inWindow ? lx : gx) * TILE + 8, py = (inWindow ? ly : gy) * TILE + 8;
+  if (archived && inWindow) { delete off![m.id]; r.creatures.push(m); }
+  else if (!archived && !inWindow) {
+    const at = r.creatures.indexOf(m);
+    if (at >= 0) r.creatures.splice(at, 1);
+    (r.veyraOffscreenCreatures ??= {})[m.id] = m;
+  }
+  m.x = px; m.y = py; m.tx = px; m.ty = py; m.homeX = px; m.homeY = py; m.floor = 0; m.path = null;
+}
+/** Plan an overland march from the body's ground toward the nearest settlement it can walk to. */
+function planElderMarch(r: RunState, hw: HumanWorld, elder: ElderAssault, fromGx: number, fromGy: number, now: number):
+  { march: ElderMarch } | { reason: string } {
+  if (!r.sourceMap || !isVeyra05Layout(r.layoutId || '')) return { reason: `no inhabited settlement within ${elderReachTiles()} tiles of its current position` };
+  const all = elderSettlements(hw, fromGx, fromGy);
+  if (!all.length) return { reason: 'no living settlement remains on the island' };
+  const land = elderLandmass(fromGx, fromGy);
+  const ashore = all.filter(c => elderLandmass(c.gx, c.gy) === land && land >= 0);
+  if (!ashore.length) return { reason: 'open sea lies between this Elder and every inhabited shore' };
+  // A settlement the Elder already stands beside was refused by the assault law (terrain); walking
+  // "to" it again would only restart the same refusal, so the march looks past it.
+  const halt = elderMarchHaltTiles();
+  const beside = ashore.filter(c => Math.hypot(c.gx - fromGx, c.gy - fromGy) <= halt).map(c => c.poi);
+  for (const c of ashore.filter(c => !beside.includes(c.poi)).slice(0, 3)) {
+    const path = elderMarchRoute(fromGx, fromGy, c.gx, c.gy);
+    if (!path) continue;
+    const march: ElderMarch = { targetPoi: c.poi, targetGx: c.gx, targetGy: c.gy, startedAt: now, lastAt: now, path, walked: 0, length: marchLength(path) };
+    if (beside.length) march.ignore = beside;
+    return { march };
+  }
+  return { reason: 'no walkable ground leads to an inhabited settlement' };
+}
+/** Advance a march leg by the ground the Elder covers in the elapsed time. The march halts when the
+ *  body stands within reach of the people it is walking toward (or of any settlement it passes),
+ *  and the next assault wave is then due immediately. A body the player is fighting does not march. */
+function advanceElderMarch(r: RunState, hw: HumanWorld, elder: ElderAssault, now: number): void {
+  const march = elder.march;
+  if (!march) return;
+  const dt = now - march.lastAt;
+  if (dt < 60_000) return;                               // the pace is under a tile a minute
+  const body = elderCanonicalCreature(r, elder.elderId);
+  if (!body || body.state === 'dead') { delete elder.march; return; }
+  const loaded = r.creatures.includes(body);
+  if (loaded && body.state !== 'sleep') {
+    // Local combat owns a body the player has roused: it does not march while it fights, and the
+    // route is re-planned from wherever that fight leaves it.
+    const at = canonicalElderGlobalTile(r, body);
+    elder.gx = at.gx; elder.gy = at.gy;
+    delete elder.march;
+    elder.nextWaveAt = Math.min(elder.nextWaveAt ?? Infinity, now + HOUR);
+    receipt(r, now, 'elder.march.interrupted', `${elder.elderId}:${at.gx},${at.gy}:engaged`);
+    return;
+  }
+  const halt = elderMarchHaltTiles();
+  let left = elderMarchTilesPerHour() * dt / HOUR;
+  march.lastAt = now;
+  let at = marchPointAt(march.path, march.walked), arrived: ElderSettlement | undefined, ended = false;
+  const nearby = (x: number, y: number) => elderSettlements(hw, x, y).find(c => Math.hypot(c.gx - x, c.gy - y) <= halt && !march.ignore?.includes(c.poi));
+  arrived = nearby(at[0], at[1]);
+  while (!arrived && left > 0) {
+    const step = Math.min(left, 4, march.length - march.walked);
+    if (step <= 0) { ended = true; break; }
+    march.walked += step; left -= step;
+    at = marchPointAt(march.path, march.walked);
+    arrived = nearby(at[0], at[1]);
+  }
+  if (at[0] !== elder.gx || at[1] !== elder.gy) {
+    walkCanonicalElderBody(r, body, at[0], at[1]);
+    elder.gx = at[0]; elder.gy = at[1];
+  }
+  if (!arrived && !ended && march.walked < march.length - 1e-6) return;
+  const def = PRIMORDIAL_ELDERS[elder.elderId];
+  receipt(r, now, 'elder.march.halt', `${elder.elderId}:${at[0]},${at[1]}:${arrived ? arrived.poi : 'route-end'}:${Math.round(march.walked)}tiles`);
+  if (arrived) pushLog(r, now, `${def?.name ?? elder.elderId} has reached ${arrived.poi}.`, 'red');
+  delete elder.march;
+  elder.nextWaveAt = now;                                // the assault wave is due the moment it arrives
+}
+
 /** Launch one physical approach wave toward the nearest reachable inhabited settlement. */
 function launchElderWave(r: RunState, hw: HumanWorld, elder: ElderAssault, now: number, wave: number, finalAt: number): void {
   // The canonical body is the position authority. The ledger only records where that body has
@@ -2510,41 +2730,49 @@ function launchElderWave(r: RunState, hw: HumanWorld, elder: ElderAssault, now: 
   const bodyAt = body && body.state !== 'dead' ? canonicalElderGlobalTile(r, body) : undefined;
   const fromGx = bodyAt?.gx ?? elder.gx ?? elder.lairGx, fromGy = bodyAt?.gy ?? elder.gy ?? elder.lairGy;
   const reach = elderReachTiles();
-  const candidates = Object.values(hw.communities)
-    .map(c => {
-      // The wave walks toward PEOPLE, not toward a storehouse tile: members drift tens of tiles from
-      // their community's store while working, and a strike on an empty tile would hit nobody.
-      const living = c.memberIds
-        .map(id => hw.people[id])
-        .filter((h): h is HumanRecord => !!h && h.state !== 'DEAD' && h.state !== 'EVACUATED' && h.state !== 'ON_VESSEL' && h.floor === 0);
-      if (!living.length) return null;
-      // Medoid of the living members: the densest inhabited point of that settlement today.
-      let centre = living[0], best = Infinity;
-      for (const a of living) {
-        let sum = 0;
-        for (const b of living) sum += Math.abs(a.gx - b.gx) + Math.abs(a.gy - b.gy);
-        if (sum < best) { best = sum; centre = a; }
-      }
-      const d = Math.abs(centre.gx - fromGx) + Math.abs(centre.gy - fromGy);
-      return { poi: c.poi, gx: centre.gx, gy: centre.gy, d, living: living.length };
-    })
-    .filter((c): c is { poi: string; gx: number; gy: number; d: number; living: number } => !!c && c.d <= reach)
-    .sort((a, b) => a.d - b.d || (a.poi < b.poi ? -1 : 1));
+  const candidates = elderSettlements(hw, fromGx, fromGy).filter(c => c.d <= reach);
   const event: ElderAssaultEvent = {
     id: `elder-ev:${elder.elderId}:${wave}`, elderId: elder.elderId, wave,
     launchedAt: now, fromGx, fromGy, targetGx: fromGx, targetGy: fromGy,
     arriveAt: now, state: 'BLOCKED',
   };
-  const target = candidates.slice(0, 3).find(c => elderTargetInBounds(c.gx, c.gy) && elderRouteExists(r, fromGx, fromGy, c.gx, c.gy));
+  // The wave closes on the settlement's densest point; when that one tile is walled in, it closes
+  // on the nearest of that settlement's people it can physically walk up to instead.
+  let target: { poi: string; gx: number; gy: number } | undefined;
+  for (const c of candidates.slice(0, 3)) {
+    if (elderTargetInBounds(c.gx, c.gy) && elderRouteExists(r, fromGx, fromGy, c.gx, c.gy)) { target = c; break; }
+    const open = [...c.people]
+      .sort((a, b) => (Math.abs(a.gx - fromGx) + Math.abs(a.gy - fromGy)) - (Math.abs(b.gx - fromGx) + Math.abs(b.gy - fromGy)) || (a.actorId < b.actorId ? -1 : 1))
+      .slice(0, 3)
+      .find(h => Math.abs(h.gx - fromGx) + Math.abs(h.gy - fromGy) <= reach && elderTargetInBounds(h.gx, h.gy) && elderRouteExists(r, fromGx, fromGy, h.gx, h.gy));
+    if (open) { target = { poi: c.poi, gx: open.gx, gy: open.gy }; break; }
+  }
   if (!target) {
-    event.blockReason = candidates.length
-      ? 'every settlement in range is behind terrain this Elder cannot cross'
-      : `no inhabited settlement within ${reach} tiles of its current position`;
+    // Nothing can be struck from here, so the Elder walks. A wave that is still on the road is
+    // recorded as exactly that: no contact happened and nothing may look like an attack.
+    const plan = now < finalAt ? planElderMarch(r, hw, elder, fromGx, fromGy, now) : { reason: 'the final hour has come' };
+    if ('march' in plan) {
+      elder.march = plan.march;
+      elder.gx = fromGx; elder.gy = fromGy;
+      event.targetPoi = plan.march.targetPoi;
+      event.blockReason = `on the march toward ${plan.march.targetPoi}: ${Math.round(plan.march.length)} tiles of ground to cross`;
+      receipt(r, now, 'elder.march.start', `${elder.elderId}:${wave}:${fromGx},${fromGy}->${plan.march.targetPoi}@${plan.march.targetGx},${plan.march.targetGy}:${Math.round(plan.march.length)}tiles`);
+      if (wave === 1 || (elder.events ?? []).every(ev => ev.targetPoi !== plan.march.targetPoi)) {
+        const def = PRIMORDIAL_ELDERS[elder.elderId];
+        pushLog(r, now, `${def?.name ?? elder.elderId} leaves ${def?.region ?? 'its lair'} and walks toward ${plan.march.targetPoi}.`, 'red');
+      }
+    } else {
+      delete elder.march;
+      event.blockReason = candidates.length
+        ? 'every settlement in range is behind terrain this Elder cannot cross'
+        : plan.reason;
+    }
     (elder.events ??= []).push(event);
     elder.lastAttackAt = undefined; // no contact happened; nothing may look like an attack
     receipt(r, now, 'elder.assault.blocked', `${elder.elderId}:${wave}:${event.blockReason}`);
     return;
   }
+  delete elder.march;                                     // in reach: the timed assault takes over
   const distance = Math.max(1, Math.hypot(target.gx - fromGx, target.gy - fromGy));
   const travelMs = Math.max(HOUR, distance / elderTravelTilesPerHour() * HOUR);
   if (now + travelMs > finalAt) {
@@ -2827,6 +3055,8 @@ export function advanceElderPressure(r: RunState, hw: HumanWorld, now: number, o
     for (const ev of elder.events ?? []) {
       if (ev.state === 'APPROACH' && now >= ev.arriveAt) resolveElderContact(r, hw, elder, ev, Math.max(now, ev.arriveAt), onVolley);
     }
+    // Ground is covered before the wave decision, so an Elder that arrives launches at once.
+    advanceElderMarch(r, hw, elder, now);
     // One wave in flight per Elder; a defeated Elder never launches again.
     const inFlight = (elder.events ?? []).some(ev => ev.state === 'APPROACH');
     const nextWaveAt = elder.nextWaveAt ?? now;
@@ -2845,6 +3075,7 @@ export function defeatElder(r: RunState, hw: HumanWorld, elderId: string, now: n
   if (!elder || !elder.alive) return;
   elder.alive = false;
   elder.defeatedAt = now;
+  delete elder.march;
   let cancelled = 0;
   for (const ev of elder.events ?? []) if (ev.state === 'APPROACH') { ev.state = 'BLOCKED'; ev.blockReason = 'the Elder was destroyed before contact'; cancelled++; }
   receipt(r, now, 'elder.defeat', `${elderId}:cancelled${cancelled}`);

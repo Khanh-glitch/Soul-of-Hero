@@ -764,7 +764,11 @@ export function EvacPanel({ api, eid }: { api: Api; eid: string }) {
           return <div key={e.elderId} className="lbl" style={{ fontSize: 8, color: contacts.length ? 'var(--bad)' : 'var(--muted)' }}>
             {e.elderId}: {last
               ? `struck ${last.targetPoi ?? 'a settlement'} — ${last.affected?.humans ?? 0} hurt, ${last.affected?.downed ?? 0} down, ${last.affected?.structures ?? 0} structures`
-              : `${(e.events ?? []).length} wave(s) launched, no contact`}
+              : e.march
+                ? `walking toward ${e.march.targetPoi} — ${Math.max(0, Math.round(e.march.length - e.march.walked))} tiles away`
+                : (e.events ?? []).some(ev => ev.state === 'APPROACH')
+                  ? `closing on ${(e.events ?? []).find(ev => ev.state === 'APPROACH')?.targetPoi ?? 'a settlement'}`
+                  : e.awakenedAt === undefined ? 'asleep in its lair' : 'awake, no settlement within its reach'}
           </div>;
         })}
     </div>}
