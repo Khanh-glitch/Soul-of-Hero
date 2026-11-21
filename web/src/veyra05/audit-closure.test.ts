@@ -271,7 +271,8 @@ describe('Veyra Audit Closure & Cross-System Guarantees (#48)', () => {
     expect(BUTCHER_YIELDS.deer.adult.some(([k]) => k === 'hide')).toBe(true);
     expect(BUTCHER_YIELDS.boar.adult.some(([k]) => k === 'boar_tusk')).toBe(true);
     expect(RECIPES.poached_eggs).toBeDefined();
-    expect(ALWAYS_KNOWN_RECIPES.length).toBe(14);
+    // 13 core recipes besides the PA1 deploy recipes; none of them belongs to this phase.
+    expect(ALWAYS_KNOWN_RECIPES.filter(k => !k.startsWith('deploy_'))).toHaveLength(13);
 
     // 2. Build an enclosed 5x5 pen on Veyra with a Feed & Water Trough + Rain Barrel
     const gs = startVeyraAtAu(812, 592, 7404);

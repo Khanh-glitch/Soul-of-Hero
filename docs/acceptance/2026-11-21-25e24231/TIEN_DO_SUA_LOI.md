@@ -1,6 +1,6 @@
 # Tiến độ sửa lỗi sau nghiệm thu `6d2dec8`
 
-Cập nhật: 2026-11-21 (lần 3). Nhánh `arena/0f6091f9-soul-of-hero`. Chưa đẩy lên GitHub, chưa có PR, chưa phát hành.
+Cập nhật: 2026-11-21 (lần 4 — tăng tốc mô phỏng dân cư). Nhánh `arena/0f6091f9-soul-of-hero`. Chưa đẩy lên GitHub, chưa có PR, chưa phát hành.
 
 ## Các commit
 
@@ -13,7 +13,11 @@ Cập nhật: 2026-11-21 (lần 3). Nhánh `arena/0f6091f9-soul-of-hero`. Chưa 
 | `01021db` | Sửa bộ dựng cảnh của các bài kiểm thử theo luật PA1 (thiết bị phải đóng gói trước khi đặt). |
 | `0ae1ab6` | Elder vượt biển — quyết định của Creator 2026-11-21 ("cho vượt biển luôn"). |
 | `fc63741` | Elder bơi 80 ô/giờ (gấp đôi đi bộ) — quyết định của Creator, phương án 3. |
-| (commit này) | Đưa 21 tệp kiểm thử đỏ về xanh theo luật hiện hành của game; sinh lại tài liệu ontology. Không đổi mã game chạy thật. |
+| `d743ffa` | Đưa 21 tệp kiểm thử đỏ về xanh theo luật hiện hành của game; sinh lại tài liệu ontology. Không đổi mã game chạy thật. |
+| `c7e01dc` | **Tăng tốc mô phỏng dân cư** (phương án 1 Creator chọn): khi tua ngoại tuyến, dân cư xét kế hoạch / cấp cứu / tới ô theo nhịp 1 giây; thêm bộ nhớ đệm tra cứu địa hình. |
+| `0fa58e2` | Gỡ nút thắt người đứng quanh kho (bản đầu, **có lỗi** — xem mục "Tăng tốc" bên dưới). |
+| `eca8d96` | Sửa lỗi của `0fa58e2` và hiện tượng "đẩy qua đẩy lại" khi nhường đường. |
+| (commit này) | Sửa giới hạn thời gian / phép đếm lỗi thời trong `ecosystem-full`, `audit-closure`, `g1b-lifecycle`; cập nhật tài liệu này. |
 
 ## Đã đo được
 
@@ -117,16 +121,68 @@ Nguyên nhân chung: bài kiểm thử viết cho luật cũ, game đã đổi l
 - `control-tower-corrective-wp1-wp2` — so sánh vườn trong / ngoài màn hình nới thành sai số 1e-9 và ±1 ms; giới hạn thời gian 30 giây → 900 giây.
 - `ITEM_CRAFTING_MASTER.json/.md` sinh lại: dao là đồ chỉ có trong thế giới, Gậy gỗ là đồ khởi đầu.
 
-## Vấn đề tốc độ mô phỏng dân cư (mới xác định)
+## Tăng tốc mô phỏng dân cư — phương án 1 (đã làm)
 
-- `npc-runtime-throughput` yêu cầu giải quyết 1 giờ thế giới với đủ 286 dân trong 90 giây; máy này cần **181 giây** (bản `6d2dec8` cũng 182 giây). Đỏ từ trước, chưa sửa.
-- Đo trực tiếp: 1 giờ thế giới Veyra **không có dân mất 0,11 giây, có dân mất 50–180 giây**.
-- Đây chính là lý do 6 tệp "treo" (`economic-network-m2`, `g1b-lifecycle`, `audit-closure`, `ecosystem-full`, `review-r2-acceptance`, `arena1-round2-newgame-routes`): chúng không treo, chúng tua hàng chục đến hàng trăm giờ thế giới trên bản đồ có dân. Riêng `economic-network-m2` tua 336 giờ nhiều lần.
-- Người chơi cũng chịu: mở lại save sau 1 giờ vắng mặt, màn "While you were away" chạy **91 giây** trong trình duyệt (save h8 → h9, Chromium 131).
+**Thay đổi luật (chỉ khi tua ngoại tuyến: vắng mặt, "While you were away", kiểm thử tua giờ).** Ba loại thời điểm dày đặc của dân cư — xét lại kế hoạch, xét cấp cứu, bước tới ô kế tiếp — được làm tròn lên nhịp 1 giây chung. Các mốc có nhân quả (xong việc, ngưỡng đói khát, chảy máu, đợt Elder, tàu cập bến) giữ nguyên thời điểm chính xác. Khi người chơi đang chơi trực tiếp, không có gì thay đổi.
+
+**Tốc độ đo được (seed 7606, 286 dân, không có người chơi):**
+
+| | Trước (`6cb4846`) | Sau (`eca8d96`) |
+|---|---|---|
+| Giờ thế giới thứ 1 | 177 giây, 60.254 lát cắt | **~80–84 giây**, 6.317 lát cắt |
+| Giờ thứ 2 | 81 giây | ~30 giây |
+| Giờ thứ 3 | 63 giây | ~17 giây |
+| Giờ thứ 24 (trong lượt 336 giờ) | 33 giây | 16 giây |
+| Cả 336 giờ | 6.521 giây | **4.019 giây** (chạy chung máy với regression) |
+| `npc-runtime-throughput` (giới hạn 90 giây) | 186 giây — đỏ | **80 giây — xanh** (chạy riêng; dư 10 giây) |
+
+Gần một nửa giờ đầu tiên (≈40 giây) là dựng địa hình vùng lần đầu, chưa tối ưu. Thời gian "While you were away" trên trình duyệt **chưa đo lại**.
+
+**Tác dụng phụ đã thấy và đã sửa — người đứng kẹt quanh kho.** Sau khi đổi nhịp, ở Hook (và nơi khác) dân rảnh đứng thành cụm quanh kho; người có việc không lách qua được: ruộng chín hơn 40 phút không ai gặt. Hai sửa đổi trong luật đi lại (áp dụng cả khi chơi trực tiếp):
+
+1. Người rảnh bị kẹt giữa các đồng đội rảnh khác: vòng ngoài nhường trước một bước. Người nhường ưu tiên ô **không** nằm trên lối người kia sắp đi, **không** nằm sát quầy kho, và không quay lại ô vừa rời. (Trước đó hai người có việc ngược hướng đẩy một người rảnh qua lại giữa hai ô mãi mãi.)
+2. Người đang đi bị chặn bởi người đang bận: thử một lối khác tới đúng ô đích, chỉ nhận nếu bước đầu đang trống.
+
+**Lỗi do chính tôi gây ra ở `0fa58e2` và đã sửa ở `eca8d96`:** lối đi thay thế có thể dừng **cách đích một ô**. Hậu quả: người sơ cứu đứng cách nạn nhân 2 ô nên bị từ chối chữa; thợ xây đi lấy vật liệu 3 lần. Lượt regression và endurance chạy trên `0fa58e2` đã bị huỷ, không dùng số liệu nào từ đó.
+
+**Kết quả mô phỏng thay đổi nhẹ, không giống hệt bản cũ** (336 giờ, cùng seed):
+
+| | `fc63741` (trước) | `eca8d96` (sau) |
+|---|---|---|
+| Cổng chiến dịch | 15/15 | **15/15** |
+| Sơ tán / sống sót / chết | 6 / 34 / 246 | 6 / 33 / 247 |
+| Chết tới h24 / h96 / h235 | 110 / 192 / 235 | 106 / 186 / 234 |
+| Lượt gục (`human.down`) | 389 | **588 (+51 %)** |
+| Lượt được chữa | 265 | 402 |
+| Chuyến giao hàng về kho | 2.732 | 3.267 (+20 %) |
+| Vụ gặt ruộng / món nấu có trả công | 14 / 5 | 24 / 15 |
+| Lượt nhường đường | 50.864 | 33.594 |
+| Biên nhận `elder.contact` | 20 | 22 |
+| Save lớn nhất | 3,97 MB | 4,14 MB |
+
+Dân vẫn chết vì đói khát với số lượng như cũ. Số lượt gục tăng một nửa (gục rồi được chữa rồi gục lại) — chưa phân tích nguyên nhân.
+
+**Bài kiểm thử phải chỉnh mốc thời gian** (cùng chuỗi sự kiện, khác giây): `npc-guard-response` (điểm kiểm +1 giây), `npc-natural-cook` (theo dõi món ăn tới khi vào kho thay vì mốc cố định), `npc-natural-procurement` (dừng ở món đầu tiên có Tin Can), `npc-hook-boar-stew` (cho 5 phút để nồi được bắc; đầu bếp đang chờ có thể đã nhường một bước), `npc-natural-harvest` (chỉ xét dòng thu hoạch, vì món nấu đầu tiên nay kịp vào sổ kho trong 2 phút). Bài mới: `npc-offline-beat` (3 bài).
+
+## Regression trên `eca8d96` (262 tệp, mỗi tệp một tiến trình, giới hạn 1.800 giây)
+
+| Kết quả | Số tệp | Ghi chú |
+|---|---|---|
+| Đạt | **243** | 1.541 bài đạt. Toàn bộ 59 tệp `npc-*` không tự chọn đều xanh, kể cả `npc-runtime-throughput`. |
+| Chỉ có bài tự chọn bật (bỏ qua hết) | 13 | Như trước. |
+| Đỏ vì giới hạn thời gian / phép đếm lỗi thời — **đã sửa ở commit này** | 2 | `g1b-lifecycle` (10/11; bài rương cần ~10 phút, giới hạn cũ 5 phút — chạy lại riêng bài đó: đạt sau 627 giây). `ecosystem-full` (5/7 → chạy lại cả tệp: **7/7 trong 930 giây**; phép đếm "14 công thức luôn biết" đã lỗi thời từ đợt PA1, nay là 13 + 24 công thức đặt thiết bị). |
+| **Đỏ thật, chưa sửa** | 1 | `arena1-round2-newgame-routes`: 3/4. Tuyến DẦU dừng ở bước "bơm dầu thô" với lý do "no wood for fuel" (bot không tìm được gỗ làm chất đốt). Chưa điều tra; chưa biết có phải do đợt tăng tốc hay không vì tệp này chưa từng có kết quả trên mã mới. |
+| Hết 1.800 giây chưa xong | 2 | `review-r2-acceptance`: 4 bài đầu đạt, bài P1-5 (135 sinh vật bị thương ngoài màn hình) chạy mãi không xong. `audit-closure`: không bài nào xong (bài đầu tua 312 giờ thế giới có dân ≈ hơn 1 giờ máy). |
+| Chưa chạy | 1 | `economic-network-m2` (tua 336 giờ nhiều lần; tôi dừng lượt chạy trước tệp này). |
+
+Phép đếm trong `audit-closure` cũng được sửa giống `ecosystem-full` nhưng **chưa được kiểm chứng bằng một lượt chạy**. Kết quả từng tệp ở `/home/user/acc/reg5` (ngoài repo). Đây vẫn là lượt dò lỗi, chưa phải lượt khoá SHA.
 
 ## Chưa làm
 
-- Tăng tốc mô phỏng dân cư (hoặc quyết định khác cho 7 tệp trên).
+- Điều tra tuyến DẦU của `arena1-round2-newgame-routes` ("no wood for fuel").
+- Ba tệp tua hàng trăm giờ (`audit-closure`, `review-r2-acceptance`, `economic-network-m2`) vẫn chưa có kết quả đầy đủ; cần tăng tốc thêm hoặc Creator quyết định cách nghiệm thu khác.
+- Phân tích vì sao số lượt gục tăng 51 % sau khi đổi nhịp.
+- Đo lại thời gian "While you were away" trên trình duyệt với mã mới.
 - Chạy lại đủ 261 tệp trên SHA cuối cùng (lượt trên là để dò lỗi sớm, chưa phải lượt khoá SHA).
 - Kiểm tra trên trình duyệt: cộng dồn gỗ (mới có bài kiểm thử đơn vị), cảnh A–I, xây dựng, chiến đấu, giao dịch, sơ tán thủ công; Elder bơi qua biển chưa từng được nhìn thấy trên màn hình.
 - ZIP phát hành, Vercel, tài liệu hướng dẫn, PR vào `main`.

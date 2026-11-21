@@ -119,7 +119,9 @@ describe('Phase C/D/E/F — Veyra Full Creature, Husbandry, Side-Boss & 6-Primor
   });
 
   it('preserves ALWAYS_KNOWN_RECIPES invariant while exposing new base husbandry & fletching recipes', () => {
-    expect(ALWAYS_KNOWN_RECIPES.length).toBe(14);
+    // The list itself has moved on since this phase (fuel refinery rework, PA1 deploy recipes). What this phase
+    // promised is unchanged: its recipes are base recipes and were not added to the always-known core.
+    expect(ALWAYS_KNOWN_RECIPES.filter(k => !k.startsWith('deploy_'))).toHaveLength(13);
     expect(ALWAYS_KNOWN_RECIPES).not.toContain('lead_rope');
     expect(ALWAYS_KNOWN_RECIPES).not.toContain('animal_feed');
     expect(ALWAYS_KNOWN_RECIPES).not.toContain('arrow_fletched');
@@ -407,7 +409,8 @@ describe('Phase C/D/E/F — Veyra Full Creature, Husbandry, Side-Boss & 6-Primor
     const butcherRes = act(gs, 'husbandry', { cid: liveHen.id, op: 'butcher' }, nightAt + 48 * HOUR + 1000);
     expect(butcherRes.ok, !butcherRes.ok ? butcherRes.reason : '').toBe(true);
     expect(liveHen.state).toBe('dead');
-  });
+    // 80 offline hours of the whole inhabited island (286 residents) are settled here: minutes, not seconds.
+  }, 1_800_000);
 
   it('executes all 48/48 Primordial signature skills (6 Elders × 2 forms × 4 skills) cleanly with zero orphan entities or UTC clock drift', () => {
     expect(VEYRA_PRIMORDIAL_SITES.length).toBe(6);

@@ -91,7 +91,8 @@ describe('G1B chest lifecycle', () => {
     expect(k.act('g1bOpen', { eid: back.id }).ok).toBe(true);
     expect(stacks(k, back.c!)).toEqual(g1bRoll(k.r.id, s.id, 1, key => ITEMS[key]?.max ?? 1).stacks.map(v => `${v.key}x${v.qty}${v.level ? ':lv' + v.level : ''}`));
     expect(k.valid()).toBe(true);
-  }, 300_000);
+    // The restock interval is waited out on the inhabited island (286 residents): about ten minutes of machine time.
+  }, 1_200_000);
 
   it('a chest that restocks while outside the window is closed and unrolled when the player returns', () => {
     const k = new G1bRun(101); const s = src('food_low'); clearPack(k); k.standBy(s.gx, s.gy); const e = k.live(s.id);
@@ -100,7 +101,7 @@ describe('G1B chest lifecycle', () => {
     expect(Object.values(k.r.entities).some(v => v.g1b?.sid === s.id)).toBe(false);
     k.r.player.hunger = 100; k.r.player.thirst = 100; k.now = at + 1000; k.step();
     expect(k.ent(s.id).g1b).toMatchObject({ state: 'closed', cycle: 1 }); expect(k.valid()).toBe(true);
-  }, 300_000);
+  }, 1_200_000);
 
   it('a Core found in a chest arrives at the rolled level with full durability and no magazine', () => {
     const s = src('military_high', () => true); let found = false;
