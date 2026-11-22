@@ -1,6 +1,6 @@
 # Tiến độ sửa lỗi sau nghiệm thu `6d2dec8`
 
-Cập nhật: 2026-11-21 (lần 4 — tăng tốc mô phỏng dân cư). Nhánh `arena/0f6091f9-soul-of-hero`. Chưa đẩy lên GitHub, chưa có PR, chưa phát hành.
+Cập nhật: 2026-11-21 (lần 5 — phân tích lượt gục, sửa tuyến dầu, loại ba tệp chậm). Nhánh `arena/0f6091f9-soul-of-hero`. Chưa đẩy lên GitHub, chưa có PR, chưa phát hành.
 
 ## Các commit
 
@@ -17,7 +17,8 @@ Cập nhật: 2026-11-21 (lần 4 — tăng tốc mô phỏng dân cư). Nhánh 
 | `c7e01dc` | **Tăng tốc mô phỏng dân cư** (phương án 1 Creator chọn): khi tua ngoại tuyến, dân cư xét kế hoạch / cấp cứu / tới ô theo nhịp 1 giây; thêm bộ nhớ đệm tra cứu địa hình. |
 | `0fa58e2` | Gỡ nút thắt người đứng quanh kho (bản đầu, **có lỗi** — xem mục "Tăng tốc" bên dưới). |
 | `eca8d96` | Sửa lỗi của `0fa58e2` và hiện tượng "đẩy qua đẩy lại" khi nhường đường. |
-| (commit này) | Sửa giới hạn thời gian / phép đếm lỗi thời trong `ecosystem-full`, `audit-closure`, `g1b-lifecycle`; cập nhật tài liệu này. |
+| `e070b4b` | Sửa giới hạn thời gian / phép đếm lỗi thời trong `ecosystem-full`, `audit-closure`, `g1b-lifecycle`. |
+| (commit này) | Bot chơi thử của `arena1-round2-newgame-routes` biết làm lại công cụ khi không có dao; ghi quyết định 1B / 2C. |
 
 ## Đã đo được
 
@@ -160,7 +161,16 @@ Gần một nửa giờ đầu tiên (≈40 giây) là dựng địa hình vùng
 | Biên nhận `elder.contact` | 20 | 22 |
 | Save lớn nhất | 3,97 MB | 4,14 MB |
 
-Dân vẫn chết vì đói khát với số lượng như cũ. Số lượt gục tăng một nửa (gục rồi được chữa rồi gục lại) — chưa phân tích nguyên nhân.
+Dân vẫn chết vì đói khát với số lượng như cũ.
+
+**Vì sao số lượt gục tăng 51 % (Creator yêu cầu tìm hiểu trước khi đi tiếp).** Không có thêm người gặp nạn; vài người **được cứu dậy rồi gục lại nhiều lần hơn**:
+
+- Phần tăng nằm ở ba khoảng: h24–48 (40 → 69), h48–96 (126 → 186), h288–312 (32 → 133). Ngoài các khoảng đó hai bản gần như bằng nhau.
+- Chạy lại h24–48 trên cả hai bản và ghi tên từng người: **cùng 26 người gục** ở cả hai bản. Bản cũ người gục nhiều nhất gục 9 lần; bản mới một người gục **39 lần**. Chênh 30 lần ấy đúng bằng phần tăng của khoảng này.
+- Chạy lại h288–298 trên bản mới: 35 lượt gục chỉ thuộc về **5 người**; hai người (một thợ xây, một y sĩ, cùng khát = 0) gục 17 và 15 lần, cứ khoảng 8 phút một lần.
+- Cơ chế: người khát = 0 gục "vì đói khát" → đồng đội sơ cứu (tốn một liều thuốc) → đứng dậy nhưng vẫn khát = 0 → vài phút sau gục lại. Vòng này **đã có ở bản cũ** (389 lượt gục, 265 lượt chữa). Bản mới dân đi lại thông hơn và còn hoạt động ở cuối game (h288–336: 104 chuyến thu hoạch so với 10) nên người cứu tới được nhiều lần hơn.
+- Chưa kiểm tra từng khoảng còn lại (h48–96) bằng cách ghi tên; kết luận cho khoảng đó là suy ra từ hai khoảng đã đo.
+- Điểm đáng cân nhắc về thiết kế (chưa sửa, cần Creator quyết): sơ cứu cho người sắp chết khát không cho họ uống nước, nên mỗi lần cứu chỉ mua thêm vài phút và tốn một liều thuốc.
 
 **Bài kiểm thử phải chỉnh mốc thời gian** (cùng chuỗi sự kiện, khác giây): `npc-guard-response` (điểm kiểm +1 giây), `npc-natural-cook` (theo dõi món ăn tới khi vào kho thay vì mốc cố định), `npc-natural-procurement` (dừng ở món đầu tiên có Tin Can), `npc-hook-boar-stew` (cho 5 phút để nồi được bắc; đầu bếp đang chờ có thể đã nhường một bước), `npc-natural-harvest` (chỉ xét dòng thu hoạch, vì món nấu đầu tiên nay kịp vào sổ kho trong 2 phút). Bài mới: `npc-offline-beat` (3 bài).
 
@@ -171,17 +181,16 @@ Dân vẫn chết vì đói khát với số lượng như cũ. Số lượt g�
 | Đạt | **243** | 1.541 bài đạt. Toàn bộ 59 tệp `npc-*` không tự chọn đều xanh, kể cả `npc-runtime-throughput`. |
 | Chỉ có bài tự chọn bật (bỏ qua hết) | 13 | Như trước. |
 | Đỏ vì giới hạn thời gian / phép đếm lỗi thời — **đã sửa ở commit này** | 2 | `g1b-lifecycle` (10/11; bài rương cần ~10 phút, giới hạn cũ 5 phút — chạy lại riêng bài đó: đạt sau 627 giây). `ecosystem-full` (5/7 → chạy lại cả tệp: **7/7 trong 930 giây**; phép đếm "14 công thức luôn biết" đã lỗi thời từ đợt PA1, nay là 13 + 24 công thức đặt thiết bị). |
-| **Đỏ thật, chưa sửa** | 1 | `arena1-round2-newgame-routes`: 3/4. Tuyến DẦU dừng ở bước "bơm dầu thô" với lý do "no wood for fuel" (bot không tìm được gỗ làm chất đốt). Chưa điều tra; chưa biết có phải do đợt tăng tốc hay không vì tệp này chưa từng có kết quả trên mã mới. |
-| Hết 1.800 giây chưa xong | 2 | `review-r2-acceptance`: 4 bài đầu đạt, bài P1-5 (135 sinh vật bị thương ngoài màn hình) chạy mãi không xong. `audit-closure`: không bài nào xong (bài đầu tua 312 giờ thế giới có dân ≈ hơn 1 giờ máy). |
-| Chưa chạy | 1 | `economic-network-m2` (tua 336 giờ nhiều lần; tôi dừng lượt chạy trước tệp này). |
+| Đỏ ở lượt này — **đã sửa sau đó** | 1 | `arena1-round2-newgame-routes`: 3/4 → chạy lại cả tệp: **4/4 trong 1.107 giây**. Không liên quan đợt tăng tốc (hỏng y hệt trên `d743ffa`). Nguyên nhân: bot chơi thử chỉ làm lại rìu đá khi còn mang dao, mà nay khởi đầu bằng Gậy gỗ chứ không có dao; rìu mòn hết lúc túi không còn gỗ nên không chặt được cây để lấy chất đốt. Sửa trong bot: làm rìu / cuốc mới khi cái cũ sắp hỏng; khi túi đầy thì bỏ phụ phẩm để có chỗ cho bộ rương. Không đổi phép kiểm nào. |
+| Hết 1.800 giây chưa xong — **Creator loại khỏi điều kiện nghiệm thu** | 2 | `review-r2-acceptance`: 4 bài đầu đạt, bài P1-5 (135 sinh vật bị thương ngoài màn hình) chạy mãi không xong. `audit-closure`: không bài nào xong (bài đầu tua 312 giờ thế giới có dân ≈ hơn 1 giờ máy). |
+| Chưa chạy — **Creator loại khỏi điều kiện nghiệm thu** | 1 | `economic-network-m2` (tua 336 giờ nhiều lần; tôi dừng lượt chạy trước tệp này). |
 
 Phép đếm trong `audit-closure` cũng được sửa giống `ecosystem-full` nhưng **chưa được kiểm chứng bằng một lượt chạy**. Kết quả từng tệp ở `/home/user/acc/reg5` (ngoài repo). Đây vẫn là lượt dò lỗi, chưa phải lượt khoá SHA.
 
 ## Chưa làm
 
-- Điều tra tuyến DẦU của `arena1-round2-newgame-routes` ("no wood for fuel").
-- Ba tệp tua hàng trăm giờ (`audit-closure`, `review-r2-acceptance`, `economic-network-m2`) vẫn chưa có kết quả đầy đủ; cần tăng tốc thêm hoặc Creator quyết định cách nghiệm thu khác.
-- Phân tích vì sao số lượt gục tăng 51 % sau khi đổi nhịp.
+- Ba tệp `audit-closure`, `review-r2-acceptance`, `economic-network-m2`: Creator đã loại khỏi điều kiện nghiệm thu (21/11). Chúng **chưa được kiểm chứng** trên mã cuối; phép đếm công thức tôi sửa trong `audit-closure` cũng chưa từng được chạy.
+- Một khả năng kẹt của người chơi chưa kiểm tra trong game thật: Gậy gỗ và rìu cùng hỏng khi trong túi không còn gỗ (bot đã gặp đúng tình huống này).
 - Đo lại thời gian "While you were away" trên trình duyệt với mã mới.
 - Chạy lại đủ 261 tệp trên SHA cuối cùng (lượt trên là để dò lỗi sớm, chưa phải lượt khoá SHA).
 - Kiểm tra trên trình duyệt: cộng dồn gỗ (mới có bài kiểm thử đơn vị), cảnh A–I, xây dựng, chiến đấu, giao dịch, sơ tán thủ công; Elder bơi qua biển chưa từng được nhìn thấy trên màn hình.

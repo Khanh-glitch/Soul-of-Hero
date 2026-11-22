@@ -126,6 +126,9 @@ Chi tiết: `endurance-hourly-census.csv`, `endurance-campaign-gate.json`.
 - Mục A3 **bỏ**: bến `po_evac_south` và `po_evac_hook` được phép không có chuyến trong lượt không người chơi; chứng minh bằng lượt người chơi hộ tống.
 - Mục A6: **ẩn Classic Island** khỏi màn chọn thế giới (đã làm ở `ba9894a`).
 - Mục A9: **để nguyên 9 PR cũ đang mở**, chỉ ghi chú là không thuộc final.
+- Tốc độ mô phỏng dân cư: chọn **phương án 1** — khi tua ngoại tuyến, dân cư xét kế hoạch / cấp cứu / bước đi theo nhịp 1 giây.
+- **Giữ cách nhường đường mới của dân** (sửa kèm đợt tăng tốc, có hiệu lực cả khi chơi trực tiếp), với điều kiện tìm hiểu vì sao số lượt gục tăng — đã tìm hiểu, kết quả ở `TIEN_DO_SUA_LOI.md`.
+- **Ba tệp kiểm thử tua hàng trăm giờ bị loại khỏi điều kiện nghiệm thu**: `src/veyra05/audit-closure`, `src/veyra05/review-r2-acceptance`, `tests/economic-network-m2`. Chúng vẫn nằm trong repo nhưng **chưa được kiểm chứng** trên mã cuối; đây là ngoại lệ so với quyết định 5.
 
 Tiến độ thực hiện từng mục: xem `TIEN_DO_SUA_LOI.md` cùng thư mục.
 

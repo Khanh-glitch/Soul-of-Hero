@@ -43,10 +43,16 @@ function stoke(b: Bot, id: string, home: [number, number]) {
 /** Keep the bot alive the way a player would: drink at fresh water, eat what is carried, forage when the pack is empty. */
 function care(b: Bot, camp?: { fire: string; g: [number, number] }) {
   // Stone tools wear out (a pick lasts roughly half an hour of this route). Replace them by hand, as at the start.
-  for (const tool of ['stone_axe', 'stone_pick']) if (b.started.has(tool) && !b.working(tool) && !b.working(tool.replace('stone', 'iron')) && b.working('knife')) {
-    const bill = RECIPES[tool].ins; for (const [k, q] of bill) if (k !== 'rope' && b.inv(k) < q) b.gather(k, q, k === 'wood' ? ['tree', 'pine', 'jungle', 'deadtree'] : ['rock'], 6);
+  // The run no longer starts with a knife (the starter is the Wood Club) and neither recipe ever asked for one. Since
+  // G1A the axe is also spent on salvage, and the Wood Club is worn out within the first two minutes: an axe that
+  // breaks with no wood in the pack leaves nothing to fell a tree with. So, like a player, the bot makes the next
+  // tool while the old one still has a few swings left instead of waiting for it to break.
+  const sound = (tool: string) => C(b.r, 'inv').slots.some(s => s?.key === tool && (s.dur === undefined || s.dur > (ITEMS[tool].dur ?? 0) * 0.15));
+  for (const tool of ['stone_axe', 'stone_pick']) if (b.started.has(tool) && !sound(tool) && !b.working(tool.replace('stone', 'iron'))) {
+    const bill = RECIPES[tool].ins; for (const [k, q] of bill) if (k !== 'rope' && b.inv(k) < q) b.gather(k, q, k === 'wood' ? TREES : ['rock'], 6);
     if (b.inv('rope') < 1) { if (b.inv('fiber') < 3) b.gather('fiber', 3, ['reed', 'grass'], 6); if (b.inv('fiber') >= 3) b.craft('rope'); }
-    if (bill.every(([k, q]) => b.inv(k) >= q)) { b.craft(tool); b.toolsRemade++; b.note(`remade ${tool} (the old one wore out)`); }
+    const spent = !b.working(tool);
+    if (bill.every(([k, q]) => b.inv(k) >= q)) { b.craft(tool); b.toolsRemade++; b.note(`remade ${tool} (the old one ${spent ? 'wore out' : 'was nearly worn out'})`); }
   }
   for (const tool of ['stone_axe', 'stone_pick']) if (b.working(tool)) b.started.add(tool);
   // wounds: keep three bandages (4 fiber each, by hand) and bind up to 80 hp; a spear out-reaches the knife
@@ -203,7 +209,11 @@ describe('ARENA 1 round 2 — New-Game routes on Veyra (engine bot, no grants)',
       const chests: string[] = [];
       const unload = (keep: string[], toolsToo = false) => {
         const KEEP = ['water_flask', 'bandage', 'berries', 'cooked_meat', 'grilled_mushroom', 'wood', 'fiber', ...keep];
-        if (chests.length < 2) { b.gather('wood', b.inv('wood') + 16, TREES); b.at(ids.table, ids.home); while (chests.length < 2) chests.push(b.place('chest_small').id); }
+        if (chests.length < 2) { b.gather('wood', b.inv('wood') + 16, TREES);
+          // The chest kit needs one free slot, and the spare axe made above now takes the one that used to be empty.
+          // Same remedy as at the roadside: leave the by-products this route never uses on the ground.
+          if (!C(b.r, 'inv').slots.some(s => !s)) b.dropJunk(['tin_can', 'needle_tube', 'sulfur', 'herb']);
+          b.at(ids.table, ids.home); while (chests.length < 2) chests.push(b.place('chest_small').id); }
         let n = 0; for (const id of chests) n += b.stash(b.at(id, ids.home), KEEP, toolsToo); return n;
       };
       // Tools wear (knife 300, stone tools 180). The bench's Repair action restores them for stone/wood/fiber.
