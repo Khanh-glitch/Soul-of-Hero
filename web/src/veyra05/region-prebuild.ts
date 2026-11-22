@@ -23,6 +23,9 @@ const POOL_FLOOR = 40;
 const REQUEST_AGAIN_MS = 5 * 60000;
 /** Longest request list handed to the worker. */
 const WANT_LIMIT = 160;
+/** The worker is its own copy of the world compiler with its own working memory (well over 100 MB once it has
+ * compiled a hundred regions). With nothing to compile for this long it is shut down; the next request starts a new one. */
+const IDLE_SHUTDOWN_MS = 30000;
 
 /** While a game is running and its frames are already late, the worker rests after each region so it does not take
  * processor time from the game thread and the browser's own drawing: twice the region's time on 2 cores, once on 3
@@ -39,7 +42,8 @@ const requestedAt = new Map<string, number>();
 const pending = new Set<string>();
 let worker: Worker | null | undefined;
 let lastWant = '';
-const stats = { requested: 0, received: 0, served: 0, dropped: 0 };
+let idleSince: number | null = null;
+const stats = { requested: 0, received: 0, served: 0, dropped: 0, shutdowns: 0 };
 /** Counters for tests and measurements. */
 export const regionPrebuildStats = () => ({ ...stats, waiting: pool.size, waitingFloors: pooledFloors });
 
@@ -67,11 +71,18 @@ function start(): Worker | null {
   } catch { return worker = null; }
 }
 
+/** Stop the worker and free its memory. Finished packs stay in the pool; the next request starts a new worker. */
+function shutDown(): void {
+  if (!worker) return;
+  try { worker.terminate(); } catch { /* */ }
+  worker = undefined; lastWant = ''; idleSince = null; pending.clear(); stats.shutdowns++;
+}
+
 /** Call about once a second while a run is on screen or waiting behind the title. `framesLate`: the game is not
  * reaching its frame rate right now. Cheap; does nothing outside the Veyra world or without Worker. */
 export function prebuildRegions(r: RunState, nowMs: number, framesLate = false): void {
   if (!r.layoutId || !isVeyra05Layout(r.layoutId) || !r.humanWorld) return;
-  const w = start(); if (!w) return;
+  if (worker === null) return;
   const rules: VeyraPlacementRules = r.sourceMap?.rules === 4 ? 4 : 3;
   const want: [string, VeyraPlacementRules][] = [];
   // A floor region count is only known once a region is compiled; four per region is the usual size.
@@ -93,6 +104,10 @@ export function prebuildRegions(r: RunState, nowMs: number, framesLate = false):
   // Neighbours are a guess: they only use half of the room that is left.
   const guessLimit = fresh + Math.floor(Math.max(0, room - fresh) / 2);
   for (const lid of nearby) consider(lid, guessLimit);
+  // Nothing to compile and nothing on its way: after a while, give the worker's memory back.
+  if (want.length || pending.size) idleSince = null;
+  else if (idleSince === null || nowMs < idleSince) idleSince = nowMs;
+  else if (nowMs - idleSince >= IDLE_SHUTDOWN_MS) { shutDown(); return; }
   const rest = framesLate ? restWhenLate : 0;
   const text = rest + ' ' + want.map(x => x[0]).join(' ');
   if (text === lastWant) return;
@@ -101,7 +116,8 @@ export function prebuildRegions(r: RunState, nowMs: number, framesLate = false):
   for (const [lid] of want) { const key = keyOf(lid, rules); listed.add(key); if (!pending.has(key)) { pending.add(key); requestedAt.set(key, nowMs); stats.requested++; } }
   // The new list replaces the worker's queue: what fell off it is no longer on its way.
   for (const key of pending) if (!listed.has(key)) { pending.delete(key); requestedAt.delete(key); }
-  w.postMessage({ want, rest } as PrebuildRequest);
+  if (!want.length && worker === undefined) return;   // nothing to ask for: do not start a worker for it
+  start()?.postMessage({ want, rest } as PrebuildRequest);
 }
 
 /** Title screen, no run to continue: let the worker prepare the regions a new game opens with. Asked once. */

@@ -65,6 +65,38 @@ describe('region demand', () => {
   });
 });
 
+describe('prebuild worker lifetime', () => {
+  it('is shut down after half a minute with nothing to compile and started again on the next request', async () => {
+    type Fake = { posted: unknown[]; terminated: boolean; onmessage: ((e: { data: unknown }) => void) | null; onerror: (() => void) | null; postMessage(m: unknown): void; terminate(): void };
+    const made: Fake[] = [];
+    vi.stubGlobal('Worker', function (this: Fake) { this.posted = []; this.terminated = false; this.onmessage = null; this.onerror = null; this.postMessage = m => { this.posted.push(m); }; this.terminate = () => { this.terminated = true; }; made.push(this); });
+    try {
+      vi.resetModules();
+      const { prebuildRegions, regionPrebuildStats } = await import('../src/veyra05/region-prebuild');
+      const { U05_WORLD_LAYOUT_ID } = await import('../src/veyra05/scenes');
+      const r = { layoutId: U05_WORLD_LAYOUT_ID, sourceMap: { rules: 4 }, humanWorld: { people: { a: { gx: 1120, gy: 1120, floor: 0, state: 'IDLE' } } } } as unknown as RunState;
+      const T = 1_000_000;
+      prebuildRegions(r, T);
+      expect(made.length).toBe(1);
+      const want = (made[0].posted[0] as { want: [string, number][] }).want;
+      expect(want[0]).toEqual([layoutIdAt(1024, 1024), 4]);
+      // The worker answers every region (an empty answer counts: it is simply compiled on the game thread when asked).
+      for (const [layoutId, rules] of want) made[0].onmessage!({ data: { layoutId, rules, pack: null } });
+      prebuildRegions(r, T + 1000);                      // nothing left to ask for: the idle clock starts
+      prebuildRegions(r, T + 30000);
+      expect(made[0].terminated).toBe(false);
+      prebuildRegions(r, T + 31000);
+      expect(made[0].terminated).toBe(true);
+      expect(regionPrebuildStats().shutdowns).toBe(1);
+      prebuildRegions(r, T + 120000);                    // still nothing to ask for: no worker is started for that
+      expect(made.length).toBe(1);
+      prebuildRegions(r, T + 6 * 60000);                 // the regions may be asked for again: a new worker
+      expect(made.length).toBe(2);
+      expect((made[1].posted[0] as { want: unknown[] }).want.length).toBe(want.length);
+    } finally { vi.unstubAllGlobals(); vi.resetModules(); }
+  });
+});
+
 describe('autosave timing', () => {
   const moving = { sinceLastMs: AUTOSAVE_MIN_MS + 1, panelOpen: false, deadOrResting: false, stillMs: 0, threatNear: false };
   it('waits while the player moves or fights, but never past the limit', () => {
