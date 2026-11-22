@@ -206,9 +206,37 @@ Mã game ở `40ee8b9` giống hệt `eca8d96` (chỉ khác tệp kiểm thử v
 
 **Trình duyệt, mở lại save sau 1 giờ vắng mặt (h8 → h9, bản build `40ee8b9`):** màn "While you were away" mất **41 giây** (trước: 91 giây), vào game bình thường, không lỗi JavaScript. Đo trong lúc máy đang chạy lượt kiểm thử ở trên, nên con số thật có thể thấp hơn.
 
+## Trình duyệt, bản build `40ee8b9`, 640×360, điều khiển thường (22/11)
+
+Bốn lượt New run, không lỗi JavaScript, không request hỏng:
+
+| Việc | Kết quả |
+|---|---|
+| Gỗ cộng dồn | Đạt: 4 rồi 6 khúc gỗ nằm trong **một ô** (`wood x6`). |
+| Bài học Landfall | "Gather by hand" lên 2/3 rồi 3/3 sau các cú đánh thật; ô theo dõi chuyển sang "Shape a tool". |
+| Ăn, uống, chế đồ | Berries +8 đói, uống bình nước khát lên 99,9, chế được Torch. |
+| Xây | Đạt: nhấn B → Wall → Wood Wall → nhấp chuột; biên nhận `build:wall_wood`, gỗ 6 → 1, tường hiện trên màn hình kèm cảnh báo "NO CABINET · 12.0 h". Ô có cây báo "Clear the Oak first". |
+| Đánh quái | Đạt: đi tới một con grouse (16 máu), đánh bằng Gậy gỗ, biên nhận `creature.kill:grouse`. Chưa thử quái biết đánh trả. |
+| Sổ Journey [J] | Mở được cả bốn thẻ: Fieldcraft, Waypoints, Chronicle, Field Reference. |
+
+### Phần hướng dẫn tân thủ so với Last Island of Survival
+
+Nguồn đối chiếu: bài hướng dẫn của LevelWinner về Last Island (không tìm được danh sách nhiệm vụ gốc kèm phần thưởng từng bước).
+
+| Last Island | Soul of Hero hiện tại |
+|---|---|
+| Không ép hướng dẫn; mở bằng một nút | Giống: nút Journey [J], có thể "Set aside" bài học. |
+| Ô theo dõi mục tiêu trên màn hình chơi | Giống: ô "SUGGESTED · LANDFALL — Gather by hand 0/3" ở góc phải. |
+| Mục tiêu từ dễ tới khó, xem trước được bước sau | Giống một phần: 4 bài, 15 bước, bước sau hiện mờ. |
+| Đi hết mọi hoạt động của game | **Thiếu**: có hái lượm, chế đồ, ăn uống, Cabinet, tường, nhà kín, lửa, bàn chế, lò, nghiên cứu, khám phá, lục đồ, tự vệ, cất tiền. Chưa có bước nào về cửa và khoá, rương, giao dịch với cư dân, cứu cư dân, Core, xe, sơ tán. |
+| Nhận thưởng sau mỗi phần | **Không có** ở bài học tân thủ: xong bài chỉ được một dòng Chronicle. Chỉ Waypoints hằng ngày có nút "Claim Supply". |
+| Làm sai thứ tự vẫn tính | **Một phần**: bốn bài chạy song song, nhưng trong một bài chỉ bước đầu chưa xong mới được đếm (`journey.ts`, hàm `applyFieldcraft`), nên việc làm sớm không được tính. Điều này cũng lệch với Bible C12. |
+| Survival Gallery: từ điển vật phẩm, quái, cây, nơi tìm | **Không có**: Field Reference chỉ gồm phím điều khiển và 11 mẹo. |
+| Ngôn ngữ | Toàn bộ chữ hướng dẫn là tiếng Anh. |
+
 ## Chưa làm
 
 - Ba tệp `audit-closure`, `review-r2-acceptance`, `economic-network-m2`: Creator đã loại khỏi điều kiện nghiệm thu (21/11). Chúng **chưa được kiểm chứng** trên mã cuối; phép đếm công thức tôi sửa trong `audit-closure` cũng chưa từng được chạy.
 - Một khả năng kẹt của người chơi chưa kiểm tra trong game thật: Gậy gỗ và rìu cùng hỏng khi trong túi không còn gỗ (bot đã gặp đúng tình huống này).
-- Kiểm tra trên trình duyệt: cộng dồn gỗ (mới có bài kiểm thử đơn vị), cảnh A–I, xây dựng, chiến đấu, giao dịch, sơ tán thủ công; Elder bơi qua biển chưa từng được nhìn thấy trên màn hình.
+- Kiểm tra trên trình duyệt còn lại: cảnh A–I đầy đủ, giao dịch với NPC, sơ tán thủ công; Elder bơi qua biển chưa từng được nhìn thấy trên màn hình.
 - ZIP phát hành, Vercel, tài liệu hướng dẫn, PR vào `main`.
