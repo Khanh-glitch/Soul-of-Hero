@@ -24,10 +24,11 @@ const REQUEST_AGAIN_MS = 5 * 60000;
 /** Longest request list handed to the worker. */
 const WANT_LIMIT = 160;
 
-/** While a game is running the worker rests after each region on machines with few cores (it shares them with the
- * game thread and the browser's own drawing): twice the region's time on 2 cores, once on 3 or 4, none above. */
+/** While a game is running and its frames are already late, the worker rests after each region so it does not take
+ * processor time from the game thread and the browser's own drawing: twice the region's time on 2 cores, once on 3
+ * or 4, none above. With frames on time, or before the game starts, it does not rest. */
 const cores = typeof navigator !== 'undefined' && navigator.hardwareConcurrency ? navigator.hardwareConcurrency : 4;
-const restWhilePlaying = cores <= 2 ? 2 : cores <= 4 ? 1 : 0;
+const restWhenLate = cores <= 2 ? 2 : cores <= 4 ? 1 : 0;
 const pool = new Map<string, GeometryRegionPack>();
 let pooledFloors = 0;
 /** Floor regions the pool may hold right now. */
@@ -66,9 +67,9 @@ function start(): Worker | null {
   } catch { return worker = null; }
 }
 
-/** Call about once a second while a run is on screen (`playing`) or waiting behind the title. Cheap; does nothing
- * outside the Veyra world or without Worker. */
-export function prebuildRegions(r: RunState, nowMs: number, playing = true): void {
+/** Call about once a second while a run is on screen or waiting behind the title. `framesLate`: the game is not
+ * reaching its frame rate right now. Cheap; does nothing outside the Veyra world or without Worker. */
+export function prebuildRegions(r: RunState, nowMs: number, framesLate = false): void {
   if (!r.layoutId || !isVeyra05Layout(r.layoutId) || !r.humanWorld) return;
   const w = start(); if (!w) return;
   const rules: VeyraPlacementRules = r.sourceMap?.rules === 4 ? 4 : 3;
@@ -92,7 +93,7 @@ export function prebuildRegions(r: RunState, nowMs: number, playing = true): voi
   // Neighbours are a guess: they only use half of the room that is left.
   const guessLimit = fresh + Math.floor(Math.max(0, room - fresh) / 2);
   for (const lid of nearby) consider(lid, guessLimit);
-  const rest = playing ? restWhilePlaying : 0;
+  const rest = framesLate ? restWhenLate : 0;
   const text = rest + ' ' + want.map(x => x[0]).join(' ');
   if (text === lastWant) return;
   lastWant = text;

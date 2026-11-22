@@ -2,7 +2,8 @@
  * Which world regions the residents of a run are about to ask the compiler for. Pure reads of run state.
  *
  * Measured on a new game and on an hour-8 save: of the regions residents needed in their first five minutes, 2 in 3
- * lie under a resident and 9 in 10 under a resident or right beside one. Hence, most urgent first:
+ * lie under a resident and 9 in 10 under a resident or right beside one; of the neighbouring ones, half had a
+ * resident within 8 tiles of them. Hence, most urgent first:
  *   1. the region under each living resident,
  *   2. the region at the far end of each route search in progress,
  *   3. neighbouring regions, nearest first, up to `NEIGHBOUR_REACH` tiles from a resident.
@@ -14,7 +15,7 @@ import { FRAME_W, FRAME_H } from './frame';
 import { layoutIdAt } from './scenes';
 
 /** A neighbouring region counts only while a resident stands this close (tiles) to it. */
-const NEIGHBOUR_REACH = 16;
+const NEIGHBOUR_REACH = 8;
 const originOf = (g: number, frame: number, span: number) => Math.max(0, Math.min(frame - span, Math.floor((g - 68) / 64) * 64));
 
 /** `urgent`: classes 1 and 2 above; `nearby`: class 3, nearest first. */

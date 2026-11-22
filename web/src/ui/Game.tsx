@@ -491,7 +491,7 @@ export default function Game({
   useEffect(() => {
     const cv = cvRef.current; const g = cv?.getContext('2d'); if (!cv || !g) return; g.imageSmoothingEnabled = false;
     void pfx.initPfx(); vfxDirector.init();
-    let last = performance.now(); let raf = 0; let uiAcc = 0, prebuildAcc = 1000, ambAcc = 0; let autosavedAt = last, movedAt = last; let ended = false;
+    let last = performance.now(); let raf = 0; let uiAcc = 0, prebuildAcc = 1000, ambAcc = 0; let autosavedAt = last, movedAt = last, frameGap = 16.7, frameAt = last; let ended = false;
     const loop = (t: number) => {
       // Cap animation/input physics only; tick catches up autonomous wall time from lastSimAt.
       raf = requestAnimationFrame(loop); const dt = Math.min(50, t - last); last = t; const now = Date.now();
@@ -560,7 +560,8 @@ export default function Game({
       // 10 Hz and ambience/machines/mood are re-derived at 1 Hz from real state.
       setListener(cam.x + VIEW_W / 2, cam.y + VIEW_H / 2);
       uiAcc += dt; if (uiAcc > 100) { uiAcc = 0; rerender(); tickMusic(now); }
-      prebuildAcc += dt; if (prebuildAcc > 1000) { prebuildAcc = 0; prebuildRegions(gs.run, now); }
+      { const clock = performance.now(); frameGap += (Math.min(250, clock - frameAt) - frameGap) * 0.05; frameAt = clock; }   // smoothed real time between frames; above ~20 ms the game is missing its frame rate
+      prebuildAcc += dt; if (prebuildAcc > 1000) { prebuildAcc = 0; prebuildRegions(gs.run, now, frameGap > 20); }
       // Timed autosave: taken at a quiet moment, at the latest AUTOSAVE_MAX_MS after the previous one (autosave-policy.ts).
       // (clock time, not frame time: on a slow machine frame time runs behind and would stretch the 20 s limit)
       { const pl = gs.run.player, inp0 = inp.current;

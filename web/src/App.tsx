@@ -60,7 +60,7 @@ export default function App() {
   // new game), so the first minute of play does not pay for them (region-prebuild.ts; changes no game state).
   useEffect(() => {
     if (screen !== 'title') return;
-    const warm = () => { const r = gsRef.current?.run; if (r && !r.ended) prebuildRegions(r, Date.now(), false); else warmNewGameRegions(); };
+    const warm = () => { const r = gsRef.current?.run; if (r && !r.ended) prebuildRegions(r, Date.now()); else warmNewGameRegions(); };
     warm(); const timer = setInterval(warm, 1000);
     return () => clearInterval(timer);
   }, [screen]);
