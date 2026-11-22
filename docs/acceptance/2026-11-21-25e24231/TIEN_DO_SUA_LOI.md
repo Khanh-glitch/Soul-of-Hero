@@ -1,6 +1,6 @@
 # Tiến độ sửa lỗi sau nghiệm thu `6d2dec8`
 
-Cập nhật: 2026-11-21 (lần 5 — phân tích lượt gục, sửa tuyến dầu, loại ba tệp chậm). Nhánh `arena/0f6091f9-soul-of-hero`. Chưa đẩy lên GitHub, chưa có PR, chưa phát hành.
+Cập nhật: 2026-11-22 (lần 6 — lượt khoá SHA `40ee8b9`: 246 tệp đạt, 0 đỏ). Nhánh `arena/0f6091f9-soul-of-hero`. Chưa đẩy lên GitHub, chưa có PR, chưa phát hành.
 
 ## Các commit
 
@@ -18,7 +18,7 @@ Cập nhật: 2026-11-21 (lần 5 — phân tích lượt gục, sửa tuyến d
 | `0fa58e2` | Gỡ nút thắt người đứng quanh kho (bản đầu, **có lỗi** — xem mục "Tăng tốc" bên dưới). |
 | `eca8d96` | Sửa lỗi của `0fa58e2` và hiện tượng "đẩy qua đẩy lại" khi nhường đường. |
 | `e070b4b` | Sửa giới hạn thời gian / phép đếm lỗi thời trong `ecosystem-full`, `audit-closure`, `g1b-lifecycle`. |
-| (commit này) | Bot chơi thử của `arena1-round2-newgame-routes` biết làm lại công cụ khi không có dao; ghi quyết định 1B / 2C. |
+| `40ee8b9` | Bot chơi thử của `arena1-round2-newgame-routes` biết làm lại công cụ khi không có dao; ghi quyết định 1B / 2C. **SHA đã chạy lượt khoá.** |
 
 ## Đã đo được
 
@@ -137,7 +137,7 @@ Nguyên nhân chung: bài kiểm thử viết cho luật cũ, game đã đổi l
 | Cả 336 giờ | 6.521 giây | **4.019 giây** (chạy chung máy với regression) |
 | `npc-runtime-throughput` (giới hạn 90 giây) | 186 giây — đỏ | **80 giây — xanh** (chạy riêng; dư 10 giây) |
 
-Gần một nửa giờ đầu tiên (≈40 giây) là dựng địa hình vùng lần đầu, chưa tối ưu. Thời gian "While you were away" trên trình duyệt **chưa đo lại**.
+Gần một nửa giờ đầu tiên (≈40 giây) là dựng địa hình vùng lần đầu, chưa tối ưu.
 
 **Tác dụng phụ đã thấy và đã sửa — người đứng kẹt quanh kho.** Sau khi đổi nhịp, ở Hook (và nơi khác) dân rảnh đứng thành cụm quanh kho; người có việc không lách qua được: ruộng chín hơn 40 phút không ai gặt. Hai sửa đổi trong luật đi lại (áp dụng cả khi chơi trực tiếp):
 
@@ -187,11 +187,28 @@ Dân vẫn chết vì đói khát với số lượng như cũ.
 
 Phép đếm trong `audit-closure` cũng được sửa giống `ecosystem-full` nhưng **chưa được kiểm chứng bằng một lượt chạy**. Kết quả từng tệp ở `/home/user/acc/reg5` (ngoài repo). Đây vẫn là lượt dò lỗi, chưa phải lượt khoá SHA.
 
+## Lượt khoá SHA trên `40ee8b9` (259 tệp — 262 trừ ba tệp Creator đã loại)
+
+Mỗi tệp một tiến trình, giới hạn 1.800 giây, chạy một mình trên máy (5.820 giây cộng dồn).
+
+| | Kết quả |
+|---|---|
+| Tệp đạt | **246** |
+| Tệp đỏ | **0** |
+| Tệp chỉ có bài tự chọn bật (bỏ qua hết) | 13 (như mọi lượt trước) |
+| Bài đạt / hỏng / bỏ qua | **1.545 / 0 / 28** |
+| `npc-runtime-throughput` | đạt (74 giây cả tệp, giới hạn 90 giây cho bài) |
+| `g1b-lifecycle` | 11/11 (901 giây) |
+| `ecosystem-full` | 7/7 (905 giây) |
+| `arena1-round2-newgame-routes` | 4/4 (1.204 giây) |
+
+Mã game ở `40ee8b9` giống hệt `eca8d96` (chỉ khác tệp kiểm thử và tài liệu), nên lượt endurance 336 giờ 15/15 ở trên vẫn áp dụng. `typecheck`, `typecheck:tests`, `build` sạch. Kết quả từng tệp ở `/home/user/acc/reg6` (ngoài repo).
+
+**Trình duyệt, mở lại save sau 1 giờ vắng mặt (h8 → h9, bản build `40ee8b9`):** màn "While you were away" mất **41 giây** (trước: 91 giây), vào game bình thường, không lỗi JavaScript. Đo trong lúc máy đang chạy lượt kiểm thử ở trên, nên con số thật có thể thấp hơn.
+
 ## Chưa làm
 
 - Ba tệp `audit-closure`, `review-r2-acceptance`, `economic-network-m2`: Creator đã loại khỏi điều kiện nghiệm thu (21/11). Chúng **chưa được kiểm chứng** trên mã cuối; phép đếm công thức tôi sửa trong `audit-closure` cũng chưa từng được chạy.
 - Một khả năng kẹt của người chơi chưa kiểm tra trong game thật: Gậy gỗ và rìu cùng hỏng khi trong túi không còn gỗ (bot đã gặp đúng tình huống này).
-- Đo lại thời gian "While you were away" trên trình duyệt với mã mới.
-- Chạy lại đủ 261 tệp trên SHA cuối cùng (lượt trên là để dò lỗi sớm, chưa phải lượt khoá SHA).
 - Kiểm tra trên trình duyệt: cộng dồn gỗ (mới có bài kiểm thử đơn vị), cảnh A–I, xây dựng, chiến đấu, giao dịch, sơ tán thủ công; Elder bơi qua biển chưa từng được nhìn thấy trên màn hình.
 - ZIP phát hành, Vercel, tài liệu hướng dẫn, PR vào `main`.
