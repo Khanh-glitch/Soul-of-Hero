@@ -1,0 +1,17 @@
+// Scratch harness (not part of the repo): game-thread cost of `tick` on the hour-8 save, in Node (no Worker, so every
+// region is compiled on this thread in both builds). Prints CPU ms per frame for each block of 600 frames.
+import { it } from 'vitest';
+import fs from 'node:fs';
+import { tick } from './src/game/sim';
+import { setActiveLayout } from './src/game/world';
+import { selectSnapshots } from './src/game/persist';
+it('ticks', () => {
+  const gs = selectSnapshots([fs.readFileSync('/home/user/acc/e5-h8.save.txt', 'utf8')]).gs!; setActiveLayout(gs.run!.layoutId!);
+  const input = { up: false, down: false, left: false, right: false, mx: 0, my: 0, attack: false, attackPressed: false, roll: false, cancel: false };
+  let now = gs.run!.clock.lastSimAt; const blocks = Number(process.env.BLOCKS ?? 9), out: string[] = [];
+  for (let b = 0; b < blocks; b++) { const times: number[] = []; const c0 = process.cpuUsage();
+    for (let f = 0; f < 600; f++) { now += 1000 / 60; const t = performance.now(); tick(gs, input, 1000 / 60, now); times.push(performance.now() - t); }
+    const cpu = process.cpuUsage(c0); times.sort((x, y) => x - y);
+    out.push(`block ${b} cpu/frame ${((cpu.user + cpu.system) / 1000 / 600).toFixed(2)} median ${times[300].toFixed(2)} p90 ${times[540].toFixed(2)} max ${times[599].toFixed(0)} over50ms ${times.filter(x => x > 50).length}`); }
+  console.log('TICKS ' + (process.env.TAG ?? '') + '\n' + out.join('\n'));
+}, 2147483647);

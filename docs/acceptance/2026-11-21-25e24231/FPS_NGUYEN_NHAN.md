@@ -77,3 +77,118 @@ Lưu ý an toàn dữ liệu (không phải FPS): localStorage chỉ chứa đư
 4. **Sương mù (lỗi cũ).** Nhớ lại lưới nhiễu thay vì tính lại mỗi khung hình; hình ảnh giữ nguyên.
 
 Nghiệm thu sau khi sửa: đo lại bằng đúng bộ công cụ này (cùng cảnh, cùng máy), chạy các bài kiểm tra cư dân và lượt 336 giờ để chắc kết quả mô phỏng không đổi.
+
+---
+
+# Sau khi sửa (2026-11-22)
+
+Mã đã sửa: các commit `9ecbc85f`, `fe37734b`, `4ab22fac` trên nhánh `arena/0f6091f9-soul-of-hero`. Creator đã chọn nhịp tự lưu **B**.
+Cách đo: bản trước khi sửa (`416809d3`) và bản đã sửa chạy **liền nhau** trong cùng một phiên, cùng cảnh, mỗi cửa sổ 30 giây game (1.800 khung hình). Số liệu gốc: `fps-tools/result-ab-*.jsonl`.
+Năm phiên đo: phiên 1 đo `9ecbc85f`; phiên 2 và 3 đo `fe37734b`; phiên 4 và 5 đo `4ab22fac` (bản cuối). Ba commit chỉ khác nhau ở nhịp làm việc của luồng phụ.
+
+**Về máy thử:** trong ngày, máy thử có một quãng chạy chậm gấp khoảng 1,8 lần mà tôi không tìm ra lý do (cùng một bài kiểm tra, cùng mã: lúc 149 giây, lúc 79 giây). Phiên 1–4 rơi vào quãng chậm đó, nên số FPS trung bình của bốn phiên này nhảy lung tung. Phiên 5 đo lúc máy đã ổn định, và là phiên duy nhất cho số FPS trung bình đáng tin. Số lần giật thì cả năm phiên đều cùng chiều.
+
+## Kết luận ngắn
+
+| Việc | Kết quả | Mức chắc chắn |
+|---|---|---|
+| Giật do dựng vùng | **Giảm rõ.** Số khung hình bị chen ngang giảm từ 5–20 xuống 1–5 mỗi 30 giây | Đo 5 phiên, cùng chiều |
+| Giật do tự lưu | **Giảm khoảng một nửa đến 9/10**, tuỳ lúc đứng yên hay đang đi | Đo 5 phiên, cùng chiều |
+| FPS trung bình | **Tăng ở phiên 5** (máy ổn định): file lưu giờ 8 từ khoảng 36 lên 41 FPS, thời gian mỗi khung hình giảm khoảng 23 %. Phiên 1–4 (máy chậm thất thường) không kết luận được | Một phiên sạch, cảnh giờ 8 đo 2 lượt theo hai thứ tự. Cần Creator xác nhận trên máy thật |
+| Sương mù | **Giảm khoảng 1/4 thời gian vẽ** ở phiên 5 (7,0 → 5,3 ms); ở phiên 1 thì không thấy giảm | Đo 4 hồ sơ CPU, 2 phiên |
+| Cư dân mỗi khung hình | **Chưa sửa** | Xem mục "Điều chưa đạt" |
+| Bộ nhớ | **Tăng** khoảng 130–150 MB trong vài phút đầu sau khi vào game, sau đó còn khoảng 50 MB | Đo 1 phiên |
+
+## Đã sửa gì
+
+1. **Tự lưu (nhịp B).** Vẫn không lưu dày hơn 5 giây một lần. Đang mở bảng, đang nghỉ hoặc đã chết: lưu đầy đủ như cũ. Đứng yên từ 0,6 giây và không có mối nguy trong 190 px: lưu nhẹ. Đang đi hoặc đang đánh: chờ, nhưng không quá 20 giây. Lưu nhẹ chỉ ghi vào IndexedDB; phần đóng gói, mã kiểm và ghi đĩa chạy ở luồng phụ. Lúc chết, lúc ẩn hoặc đóng tab, và lưu từ menu vẫn là lưu đầy đủ. Kiểm tra hợp lệ còn một lần; bộ gói tìm đường viết lại, kết quả giống từng byte (có bài kiểm tra).
+2. **Dựng vùng.** Một luồng phụ dựng sẵn các vùng nơi cư dân đang đứng và vùng sát bên, bắt đầu ngay từ màn hình tiêu đề. Vùng nào chưa kịp thì luồng chính vẫn dựng như cũ. Kết quả dựng giống hệt: đã so 925.565 ô và 9.792 điểm nguyên liệu với mã cũ. Vùng đã dựng được giữ ở dạng gọn (khoảng 0,1 MB thay vì 0,5 MB mỗi tầng). Luồng phụ tự tắt sau 30 giây không có việc để trả lại bộ nhớ, và tự bật lại khi cần.
+3. **Sương mù vẫn là phần vẽ nặng nhất.** Phần tính nhiễu đã hết (2,7 ms ở phiên 1, 1,6 ms ở phiên 5). Tổng thời gian vẽ khi có sương: phiên 1 không giảm (14,8 → 14,9 ms), phiên 5 giảm 7,0 → 5,3 ms. Phần còn lại là các lệnh tô từng chấm nhỏ. Hai cách vẽ gộp đã thử đều cho hình lệch tới 2/255 mỗi kênh màu nên đã bỏ.
+
+## Số đo trước / sau
+
+Đơn vị: số khung hình bị chen ngang và tổng ms trên luồng game trong một cửa sổ 30 giây. Mỗi ô ghi lần lượt các phiên đo.
+
+**Dựng vùng trên luồng game**
+
+| Cảnh | Trước | Sau |
+|---|---|---|
+| Ván mới, 30 giây đầu | 10 khung / 2.286 ms; 11 / 5.004 | 5 / 2.147; 3 / 2.005 |
+| Ván mới, phút 1,6 | 20 / 4.062; 20 / 4.257 | 1 / 411; 3 / 3.061 |
+| File lưu giờ 8, 30 giây đầu | 8 / 3.051; 8 / 2.809; 8 / 5.468 | 1 / 576; 1 / 351; 1 / 253 |
+| File lưu giờ 8, giây 30–60 | 5 / 1.338; 5 / 1.713 | 1 / 202; 1 / 305 |
+| File lưu giờ 8, giây 60–90 | 5 / 1.152 | 2 / 561 |
+| File lưu giờ 8, đang đi | 8 / 3.221; 8 / 4.905 | 1 / 203; 1 / 361 |
+
+Lưu ý: thời gian của một lần dựng thay đổi theo tải của máy thử (150–1.300 ms). Hãy tin **số khung hình** hơn số ms. Ô "3 / 3.061" là ba lần dựng rơi đúng lúc máy thử chậm.
+
+**Tự lưu trên luồng game**
+
+| Cảnh | Trước | Sau |
+|---|---|---|
+| File lưu giờ 8, đứng yên (6 lần lưu / 30 giây) | 1.217; 1.136; 1.166; 2.040; 1.006; 1.153 ms | 614; 459; 555; 474; 437; 480 ms |
+| File lưu giờ 8, đang đi | 1.466 ms (7 lần); 1.642 ms (6 lần) | 230 ms (2 lần); 118 ms (1 lần) |
+| Một lần lưu ở giờ 8 | 182 ms + 72–82 ms ghi IndexedDB | lưu nhẹ 81 ms; lưu đầy đủ khoảng 116 ms |
+
+**Khung hình dài nhất, file lưu giờ 8, 30 giây đầu:** trước 822 / 723 / 1.656 ms; sau 685 / 455 / 365 ms.
+
+**Kiểm tra trên bản dựng thật trong trình duyệt** (`fps-tools/e1-save.mjs`): đi bộ thì lưu nhẹ, IndexedDB tăng số bản, localStorage giữ nguyên; mở túi đồ thì lưu đầy đủ, hai nơi giống nhau, mã kiểm đúng; tải lại trang thấy nút Continue; Continue vào được với 286 cư dân; không có lỗi trang.
+
+## Phiên 5 — máy thử ổn định, bản cuối `4ab22fac`
+
+Số liệu gốc: `fps-tools/result-ab-5-quiet-machine.jsonl` (lệnh chạy: `fps-tools/ab5.sh`). Thời tiết hai bản giống nhau trong từng cặp (giờ 8: sương mù; ván mới: mưa). Cảnh giờ 8 đứng yên chạy 2 lượt theo thứ tự trước – sau – sau – trước.
+
+| Cảnh | FPS trước → sau | ms mỗi khung hình trước → sau | Số khung dài hơn 33 ms | Khung dài nhất (ms) |
+|---|---|---|---|---|
+| Giờ 8 đứng yên, 30 giây đầu (2 lượt) | 34,8 và 37,6 → 41,1 và 40,9 | 14,41 và 13,13 → 10,56 và 10,63 | 28 và 24 → 15 và 16 | 309 và 332 → 235 và 176 |
+| Giờ 8 đứng yên, giây 30–60 (2 lượt) | 37,4 và 35,2 → 42,0 và 40,9 | 12,65 và 13,41 → 9,93 và 10,32 | 16 và 22 → 10 và 10 | 199 và 182 → 168 và 171 |
+| Giờ 8 đang đi | 36,4 → 40,5 | 13,95 → 10,72 | 33 → 4 | 383 → 182 |
+| Ván mới, 30 giây đầu | 49,0 → 48,4 | 9,35 → 9,10 | 27 → 14 | 360 → 309 |
+| Ván mới, phút 1,6 | 51,8 → 55,4 | 8,64 → 7,39 | 28 → 6 | 299 → 189 |
+
+Trong cùng phiên này, trên luồng game mỗi 30 giây:
+
+| Cảnh | Dựng vùng trước → sau (khung / ms) | Tự lưu trước → sau (ms) |
+|---|---|---|
+| Giờ 8 đứng yên, 30 giây đầu | 8 / 1.543 và 8 / 1.559 → 1 / 162 và 1 / 137 | 519 và 550 → 195 và 216 |
+| Giờ 8 đứng yên, giây 30–60 | 5 / 643 và 5 / 578 → 1 / 119 và 1 / 110 | 557 và 584 → 254 và 143 |
+| Giờ 8 đang đi | 8 / 1.792 → 1 / 137 | 548 (6 lần) → 36 (1 lần) |
+| Ván mới, 30 giây đầu | 11 / 1.727 → 2 / 491 | 337 → 152 |
+| Ván mới, phút 1,6 | 20 / 2.275 → 2 / 312 | 429 → 156 |
+
+Vẽ khi có sương mù (hồ sơ CPU, giờ 8, giây 30–60): 7,0 → 5,3 ms mỗi khung hình. Phần tính nhiễu (1,6 ms) không còn.
+
+**Cách đọc:** ở file lưu giờ 8, trung bình bốn cửa sổ là 13,4 → 10,4 ms mỗi khung hình (bớt khoảng 23 %), FPS 36,3 → 41,2. Ván mới 30 giây đầu thì FPS trung bình gần như không đổi; cái được ở đó là ít giật hơn. Đây là một phiên trên máy thử không có card đồ hoạ; con số trên máy của Creator sẽ khác, nên vẫn cần Creator chơi thử để xác nhận.
+
+## Điều chưa đạt
+
+1. **FPS trung bình: bốn phiên đầu không kết luận được.** Các cặp đo liền nhau ở phiên 1–4 (trước → sau): file lưu giờ 8 đứng yên 20,3 → 15,5; 18,8 → 19,0; 18,6 → 16,3; 9,4 → 19,3; 16,2 → 21,3; 19,1 → 21,2. Đang đi 17,8 → 15,9; 12,0 → 21,0. Ván mới 27,4 → 24,9; 31,0 → 30,9; 17,7 → 14,8; 29,6 → 17,9. Máy thử lúc đó chạy chậm thất thường (xem "Về máy thử" ở trên), cùng một bản chạy hai lần đã lệch nhau ±5 FPS. Chỉ phiên 5 cho thấy bản sửa nhanh hơn. Phần nặng đều đặn của mỗi khung hình vẫn là tính 286 cư dân và vẽ sương mù; bản sửa không đụng tới phần cư dân.
+2. **Đã kiểm tra hai nghi ngờ, cả hai đều sai.** (a) "Luồng phụ giành nhân xử lý với game": tắt luồng phụ thì chậm hơn (14,8–15,1 FPS, khung dài nhất 1.262 ms), không nhanh hơn. (b) "Mã mới làm bước mô phỏng chậm đi": chạy riêng bước mô phỏng trong Node, mã cũ và mã mới xen kẽ, 5.400 khung hình mỗi lượt: trung vị 4,8 và 4,3 ms (cũ) so với 4,5 và 3,9 ms (mới). Không chậm hơn.
+3. **Sương mù.** Phần tính nhiễu (2,7 ms) đã hết, nhưng tổng thời gian vẽ khi có sương vẫn khoảng 14,8 ms. Phần còn lại là các lệnh tô từng chấm nhỏ. Hai cách vẽ gộp đã thử đều cho hình lệch tới 2/255 mỗi kênh màu nên đã bỏ.
+4. **Cư dân mỗi khung hình: chưa sửa.** Đo theo từng dòng mã, phần "tính lặp" có thể bỏ mà không đụng thiết kế chỉ khoảng 0,5–1 ms trong khung hình 15–25 ms của máy thử. Các chỗ đó (lập lại danh sách vật thể, lập lại bảng giường mỗi lần gọi) lại là chốt an toàn có chủ ý trong mã. Lợi ít, rủi ro có, nên chưa làm.
+5. **Vẫn còn giật trong 30 giây đầu của ván mới** (3–5 lần dựng vùng trên luồng game): luồng phụ chưa kịp dựng xong khi người chơi bấm bắt đầu.
+6. **Lưu nhẹ vẫn chiếm 81 ms trên máy thử ở giờ 8** (kiểm tra hợp lệ 28, đổi thành chữ 28, gói tìm đường 20). Ba bước này phải chạy trên luồng game để bản lưu nhất quán. File lưu càng lớn thì càng lâu.
+7. **Bộ nhớ tăng.** Trình duyệt dùng 756–860 MB (sau) so với 600–725 MB (trước) trong 5 phút đầu sau khi vào file lưu giờ 8; sau khi luồng phụ tắt và trình duyệt dọn bộ nhớ: 570–585 MB so với 510–540 MB.
+8. **Luật "luồng phụ nghỉ khi game đang trễ khung hình"** không đo được trên máy thử (máy thử dùng đồng hồ giả). Phần này chỉ có bài kiểm tra đơn vị và lượt chạy trình duyệt thật ở trên.
+9. Giới hạn 5 MB của localStorage khi đóng tab: chưa giải quyết.
+
+## Nghiệm thu
+
+Tất cả chạy trên bản cuối `4ab22fac`.
+
+| Hạng mục | Kết quả |
+|---|---|
+| `typecheck`, `typecheck:tests`, `build` | Sạch |
+| Hồi quy 263 tệp (260 cũ + 3 bài mới: lưu, dựng vùng, sương mù) | **250 đạt, 0 đỏ**, 13 tệp chỉ có bài tự chọn (không chạy bài nào, như các lượt trước). 1.573 bài đạt, 0 bài trượt |
+| Chạy bền 336 giờ, seed 7606, không người chơi | Cổng chiến dịch **15/15**. Sơ tán 6, sống sót 33, chết 247: **trùng khít** với lượt trên `0d9cc3b3`, tức bản sửa FPS không làm đổi mô phỏng cư dân |
+| Kết quả dựng vùng so với mã cũ | Giống hệt: 925.565 ô và 9.792 điểm nguyên liệu (so trên `9ecbc85f`; hai commit sau không đụng tới mã dựng vùng) |
+| Tự lưu trên bản dựng thật trong trình duyệt (`fps-tools/e1-save.mjs`, chạy lại trên bản cuối) | Đạt: đi bộ 15 giây thì lưu nhẹ; đứng yên thì lưu nhẹ; mở túi đồ thì lưu đầy đủ, hai nơi giống nhau; tải lại trang rồi Continue vào được với 286 cư dân; không có lỗi trang |
+
+Ghi rõ: ở lượt hồi quy đầu, ba tệp không đạt vì quá giờ: `npc-runtime-throughput` (149 giây, hạn 90 giây), `ecosystem-full` và `arena1-round2-newgame-routes` (bị ngắt ở 1.800 giây). Lúc đó máy thử đang chậm và còn chạy chung với lượt 336 giờ. Chạy lại riêng từng tệp, không đổi mã: cả ba đạt (87 giây, 1.585 giây, 1.228 giây). Để chắc không phải do mã mới chậm đi, tôi chạy `npc-runtime-throughput` xen kẽ mã cũ – mã mới – mã cũ: 82,7 – 78,9 – 82,7 giây. Kết quả từng tệp ở `/home/user/acc/reg8` (ngoài repo), bản ghi lượt đầu giữ ở các tệp `*.first-pass.*`.
+
+Chưa kiểm: chơi tay trên máy thật có card đồ hoạ; bộ nhớ trên máy 4 GB RAM trở xuống.
+
+## Muốn FPS tăng thêm nữa thì cần Creator quyết định
+
+- **Cư dân không tính ở mọi khung hình.** Ví dụ tính nhu cầu và kế hoạch 10 lần mỗi giây thay vì 60. Bước mô phỏng hiện chiếm 3–5 ms trong khung hình 7–10 ms (phiên 5); ước lượng cách này bớt được khoảng một nửa số đó. Đây là ước lượng, chưa đo. Đây cũng là thay đổi cách mô phỏng: các mốc đói, khát có thể trễ tối đa 0,1 giây, nên phải chạy lại toàn bộ bài kiểm tra cư dân và lượt 336 giờ.
+- **Sương mù vẽ gộp thành một lớp.** Hình lệch tối đa 2/255 mỗi kênh màu (mắt không thấy), đổi lại bớt phần lớn thời gian vẽ sương. Chưa đo được mức bớt chính xác.

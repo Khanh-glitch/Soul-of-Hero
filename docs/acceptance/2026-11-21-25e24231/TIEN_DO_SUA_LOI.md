@@ -303,3 +303,11 @@ Ba chương đầu là "Gói khởi đầu": quà chính là món mà chương k
 - Chơi tay trên trình duyệt chương 3–11 của sổ tay.
 - Từ điển vật phẩm – quái – cây: Creator quyết định làm sau final.
 - ZIP phát hành (đóng sau khi Creator duyệt sổ tay, để không phải đóng hai lần), Vercel (tài khoản chưa có project cho Soul of Hero), tài liệu hướng dẫn, PR vào `main`.
+
+## Sửa FPS (2026-11-22) — bản `4ab22fac`
+
+Chi tiết và số đo: `FPS_NGUYEN_NHAN.md`, phần "Sau khi sửa". Tóm tắt:
+
+- Đã sửa ba chỗ gây giật mà không bỏ hình ảnh hay tính năng nào: tự lưu (nhịp B), dựng vùng (chuyển sang luồng phụ), tính nhiễu của sương mù.
+- Hồi quy 263 tệp: 250 đạt, 0 đỏ, 13 tệp tự chọn. Chạy bền 336 giờ: cổng 15/15, kết cục cư dân không đổi (6 / 33 / 247).
+- Chưa làm: giảm việc tính 286 cư dân mỗi khung hình (cần Creator quyết định); bộ nhớ tăng trong vài phút đầu; giới hạn 5 MB của localStorage khi đóng tab.

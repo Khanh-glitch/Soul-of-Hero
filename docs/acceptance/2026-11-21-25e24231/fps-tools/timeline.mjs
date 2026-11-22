@@ -12,6 +12,7 @@ const browser = await pw.launch({ executablePath: await chromium.executablePath(
 const ctx = await browser.newContext({ viewport: { width: Number(process.env.VW ?? 1280), height: Number(process.env.VH ?? 720) }, deviceScaleFactor: 1 }); const p = await ctx.newPage(); p.setDefaultTimeout(120000);
 const errors = []; p.on('pageerror', e => errors.push(String(e.message).slice(0, 200)));
 if (process.env.SAVE) await p.addInitScript(at0 => { window.__AT0 = at0; }, Date.UTC(2026, 10, 15, 8) + Number(process.env.HOUR ?? 8) * 3600000 + 20000);
+if (process.env.NOREGION) await p.addInitScript(() => { const W = window.Worker; window.Worker = function (u, o) { if (String(u).includes('region-prebuild')) return { postMessage() {}, terminate() {}, addEventListener() {}, onmessage: null, onerror: null }; return new W(u, o); }; });
 await p.addInitScript(() => {
   const realNow = performance.now.bind(performance); let seed = 0x5eed1234; Math.random = () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
   let at = window.__AT0 ?? Date.UTC(2026, 10, 20, 8, 0, 0), anim = 0, seq = 0; const next = new Map();
@@ -43,17 +44,19 @@ const click = async re => { const b = p.getByRole('button', { name: re }).first(
 let started = false;
 if (process.env.SAVE) {
   const text = fs.readFileSync(process.env.SAVE, 'utf8'); const put = await p.evaluate(s => { try { localStorage.setItem('soh.state.v3', s); return localStorage.getItem('soh.state.v3') === s; } catch (e) { return String(e); } }, text); console.error('inject', put, text.length);
-  await p.reload(); await step(20); await click(/Continue/);
+  await p.reload(); await step(20); if (process.env.DWELL) await p.waitForTimeout(+process.env.DWELL); await click(/Continue/);
   for (let i = 0; i < 200 && !started; i++) { await p.waitForTimeout(1500); await step(3); started = await p.evaluate(() => { const r = window.readRun?.()?.run; return !!r && Math.abs(Date.now() - r.clock.lastSimAt) < 5000; }); }
   await p.keyboard.press('Escape'); await step(10); console.error('continued', started, JSON.stringify(await p.evaluate(() => { const r = window.readRun()?.run; return r && { hour: (r.clock.lastSimAt - r.startedAt) / 3600000, dead: r.player.dead }; })));
 } else
 
+if (process.env.DWELL && !process.env.SAVE) await p.waitForTimeout(+process.env.DWELL);
 for (let i = 0; i < 6 && !started; i++) { await click(/^New run|^New Run|^NEW RUN|^Start|^Play/i) ; await click(/Begin the 14 days|^Begin|^Embark|^Start run/i); await step(10); started = await p.evaluate(() => !!window.readRun?.()); if (!started) await p.waitForTimeout(1500); }
 if (!started) { console.log(label, 'NOT STARTED; buttons:', JSON.stringify(await names())); await p.screenshot({ path: out + '/notstarted.png' }); await browser.close(); srv.close(); process.exit(2); }
 await p.waitForFunction(() => !!window.readRun(), {}, { polling: 200, timeout: 240000 }); await step(WARM);
 const stats = ts => { const a = [...ts].sort((x, y) => x - y); const q = f => a[Math.min(a.length - 1, Math.floor(f * a.length))]; return { mean: +(ts.reduce((s, v) => s + v, 0) / ts.length).toFixed(2), p50: +q(.5).toFixed(2), p95: +q(.95).toFixed(2), p99: +q(.99).toFixed(2), max: +a.at(-1).toFixed(2), over16: ts.filter(v => v > 16.7).length, over33: ts.filter(v => v > 33.3).length }; };
 console.error("warm done", Date.now() - T0);
 const cdp = await ctx.newCDPSession(p); await cdp.send('Profiler.enable'); await cdp.send('Profiler.setSamplingInterval', { interval: 250 });
+if (process.env.WALK) await p.keyboard.down(process.env.WALK);
 const PH = (process.env.PHASES ?? '0,3600,7200,10800').split(',').map(Number); const rows = []; let done = WARM;
 for (const extra of PH) {
   for (let k = 0; k < extra; k += 600) { await step(Math.min(600, extra - k)); } done += extra;
@@ -62,6 +65,6 @@ for (const extra of PH) {
   const incl = {}; profile.samples.forEach((id, i) => { const d = (profile.timeDeltas[i + 1] ?? 0) / 1000; const seen = new Set(); for (let c = id; c !== undefined; c = parent.get(c)) { const k = byId.get(c).callFrame.functionName || '(anon)'; if (!seen.has(k)) { seen.add(k); incl[k] = (incl[k] ?? 0) + d; } } });
   const pick = k => +((incl[k] ?? 0) / FRAMES).toFixed(2); const c = await p.evaluate(() => window.census());
   const row = { atMin: +((done - FRAMES) / 3600).toFixed(1), fps: +(1000 / (r.gap.reduce((a, b) => a + b, 0) / r.gap.length)).toFixed(1), cb: stats(r.cb), tick: pick('tick'), stepHumans: pick('stepHumans'), tickNeeds: pick('tickNeeds'), plan: pick('planAutonomousWork'), compileGeo: pick('compileCanonicalGeometryRegion'), route: pick('route'), boundary: pick('humanEventBoundary'), entityRead: pick('withRunEntityRead'), draw: pick('draw'), save: pick('saveDetailed'), react: pick('performWorkUntilDeadline'), gc: pick('(garbage collector)'), entities: c.entities, offscreen: c.offscreen, receipts: c.receipts, weather: c.weather, saveKB: c.saveKB };
-  rows.push(row); console.log(JSON.stringify({ label, ...row })); fs.writeFileSync(out + `/phase-${rows.length}.json`, JSON.stringify({ pstarts: await p.evaluate(() => window.__starts), pseries: r.cb })); fs.writeFileSync(out + `/phase-${rows.length}.cpuprofile`, JSON.stringify(profile));
+  row.regions = await p.evaluate(() => window.__sohView?.().regions ?? null); rows.push(row); console.log(JSON.stringify({ label, ...row })); fs.writeFileSync(out + `/phase-${rows.length}.json`, JSON.stringify({ pstarts: await p.evaluate(() => window.__starts), pseries: r.cb })); fs.writeFileSync(out + `/phase-${rows.length}.cpuprofile`, JSON.stringify(profile));
 }
 fs.writeFileSync(out + '/timeline.json', JSON.stringify(rows, null, 1)); await p.screenshot({ path: out + '/end.png' }); await browser.close(); srv.close();
