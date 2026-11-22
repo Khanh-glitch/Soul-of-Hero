@@ -1,3 +1,4 @@
+import { beginNpcReceipt, endNpcReceipt } from './handbook';
 import {groveCells,spiritDestination,inHaz,solidFor} from './core-sites';
 export {groveCells,spiritDestination} from './core-sites';
 import {swingTiming,castTiming} from './combat-timing';
@@ -1076,7 +1077,7 @@ function tickCreatures(gs: GameState, dtMs: number, now: number) {
           const blocked = moveBody(r, m, Math.cos(m.angle) * s2 * dt, Math.sin(m.angle) * s2 * dt, 4, 'creature');
           if (!m.atk.hit && dist(m.x, m.y, p.x, p.y) < d.r + 8 && los(r, m.x, m.y, p.x, p.y)) { m.atk.hit = true; hurtPlayer(gs, d.dmg, m.x, m.y, d.name, now, 200); }
           if (blocked && st === 'charge') { const tx = tileOf(m.x + Math.cos(m.angle) * 9), ty = tileOf(m.y + Math.sin(m.angle) * 9); const src = sourceAt(r, tx, ty, now);
-            if (src && blockGrid(r)[ty * WW + tx] === 2 && src.def.mat === 'wood' && src.stock > 0) { harvestHit(gs, tx, ty, { wood: 4 }, now, m.x, m.y); fx('chip', { x: tx * TILE + 8, y: ty * TILE + 8, mat: 'wood' }); }
+            if (src && blockGrid(r)[ty * WW + tx] === 2 && src.def.mat === 'wood' && src.stock > 0) { beginNpcReceipt(); try { harvestHit(gs, tx, ty, { wood: 4 }, now, m.x, m.y); } finally { endNpcReceipt(); } fx('chip', { x: tx * TILE + 8, y: ty * TILE + 8, mat: 'wood' }); }
             bashAhead(gs, m, m.angle, now); m.state = 'recover'; m.t = -900; fx('stun', { x: m.x, y: m.y - 10 }); fx('shake', { m: 2 }); break; }
           if (m.t >= dur) {
             if (st === 'sideboss_ronin' && m.atk?.move === 0) m.atk.vuln = 850;

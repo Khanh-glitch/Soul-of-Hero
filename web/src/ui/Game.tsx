@@ -57,7 +57,7 @@ import { clearSlotInteraction, getHoverSlot, getKeyboardPick, DragGhost } from '
 import { loadJourney, flushJourney, ingestJourney, resolveTrack, rerollDaily, recordWorldMoment, markChronicleSeen, lessonState, type JourneyStore, type JourneyEvent, type TrackRef, type QuickJumpTarget } from '../game/journey';
 import { directCues, standingIssues, ragnarokCinematic, eldersWakeCinematic, type Flare, type Cinematic, type Issue } from '../game/attention';
 import { Waymark, WorldBeacon, FlareLayer, CinematicLayer, IssueRail, findAnchor, type WaymarkMode } from './Waymark';
-import { JourneyLedger } from './Journey';
+import { JourneyLedger, useLang } from './Journey';
 
 export default function Game({
   gs,
@@ -114,6 +114,7 @@ export default function Game({
   const journeyRef = useRef(journey); journeyRef.current = journey;
   const setJourney = useCallback((next: JourneyStore) => { journeyRef.current = next; setJourneyState(next); if (qaMode) flushJourney(gs, true, next); }, [gs, qaMode]);
   const [stamps, setStamps] = useState<JourneyEvent[]>([]);
+  const nearSurvivorRef = useRef(false);
   const [flares, setFlares] = useState<Flare[]>([]);
   const heldFlares = useRef<Omit<Flare, 'born'>[]>([]);
   const [cines, setCines] = useState<Cinematic[]>([]);
@@ -132,7 +133,9 @@ export default function Game({
     // Offline/absent completions are grouped into ONE quiet record instead of a parade.
     if (away.length > 1) live.push({ id: `away:${now}`, level: 2, kind: 'step', title: `${away.length} records while away`, detail: 'Written in your Journey ledger [J]', icon: 'blueprint', away: true });
     else live.push(...away);
-    if (live.length) setStamps(cur => [...cur, ...live.filter(e => !cur.some(c => c.id === e.id))].slice(-6));
+    // A claimed bundle retires its own "ready" notice so the tracker never asks for what was just done.
+    const claimedNow = new Set(live.filter(e => e.id.startsWith('hbclaim:')).map(e => e.id.replace('hbclaim:', 'hbready:')));
+    if (live.length) setStamps(cur => [...cur.filter(c => !claimedNow.has(c.id)), ...live.filter(e => !cur.some(c => c.id === e.id))].slice(-6));
     if (!big.length && res.events.some(e => e.kind === 'progress')) sfx({ type: 'jtick' });
   }, [gs, setJourney]);
   const flushJourneyNow = useCallback(() => { if (!qaMode) flushJourney(gs, false, journeyRef.current); }, [gs, qaMode]);
@@ -145,8 +148,8 @@ export default function Game({
     const n = Date.now(); const g = gateRef.current; const sh = shownRef.current;
     const head = stampsRef.current[0];
     if (head && g.stamp) {
-      if (!sh.stamp || sh.stamp.id !== head.id) { sh.stamp = { id: head.id, t: n }; sfx({ type: head.kind === 'milestone' ? 'jmilestone' : 'jstamp' }); }
-      else if (n - sh.stamp.t > (head.kind === 'milestone' ? 3600 : 2700)) { sh.stamp = null; setStamps(cur => cur.filter(x => x.id !== head.id)); }
+      if (!sh.stamp || sh.stamp.id !== head.id) { sh.stamp = { id: head.id, t: n }; sfx({ type: head.kind === 'milestone' || head.kind === 'reward' ? 'jmilestone' : 'jstamp' }); }
+      else if (n - sh.stamp.t > (head.kind === 'milestone' || head.kind === 'reward' ? 3600 : 2700)) { sh.stamp = null; setStamps(cur => cur.filter(x => x.id !== head.id)); }
     }
     if (g.flare && heldFlares.current.length) { const next = heldFlares.current.splice(0, 2).map(f => ({ ...f, born: n })); setFlares(cur => [...cur, ...next].slice(-3)); sfx({ type: 'jcapability' }); }
     setFlares(cur => cur.some(f => n - f.born > 3700) ? cur.filter(f => n - f.born <= 3700) : cur);
@@ -275,6 +278,10 @@ export default function Game({
   }, [enterBuild, exitBuild]);
   const claimRequisition = useCallback((date: string, milestone: string) => {
     act('journeyRequisition', { date, milestone });
+  }, [act]);
+  const claimChapter = useCallback((chapter: string) => {
+    const res = act('handbookClaim', { chapter });
+    if (res.ok) sfx({ type: 'jmilestone' });
   }, [act]);
   const rerollWaypoint = useCallback((id: string) => {
     const d = journeyRef.current.daily;
@@ -703,7 +710,9 @@ export default function Game({
   useEffect(() => {
     if (r && nextStore && nextStore !== fieldNoteStore) setFieldNoteStore(writeFieldNoteStore(r, qaMode, nextStore));
   }, [nextStore, fieldNoteStore, r, qaMode]);
-  const trackView = r ? resolveTrack(journey, hrs) : null;
+  // Context only chooses WHICH open chapter the tracker offers (a survivor in reach, Ragnarok); it never gates anything.
+  const lang = useLang();
+  const trackView = r ? resolveTrack(journey, hrs, { nearSurvivor: nearSurvivorRef.current, ragnarok: r.achievements.includes('ragnarok') }) : null;
   // A suggestion that has actually been displayed counts as "seen" (never as progress).
   useEffect(() => { if (trackView?.ref.type === 'lesson' && lessonState(journeyRef.current, trackView.ref.id).status === 'unseen') { const id = trackView.ref.id; setJourney({ ...journeyRef.current, lessons: { ...journeyRef.current.lessons, [id]: { ...lessonState(journeyRef.current, id), status: 'seen' } } }); } }, [trackView?.ref.id]);
   if (!r || !fieldEval) return <div className="stage" />;
@@ -732,6 +741,7 @@ export default function Game({
     return null;
   })();
   const contacts = !panel && !buildMode && !p.vehicle && r.humanWorld ? Object.values(r.humanWorld.people).filter(h => humanContact(r, h, now)) : [];
+  if (!panel && !buildMode) nearSurvivorRef.current = contacts.length > 0;
   const nearAnimal = findNearAnimal(r);
   const tgt = target.current; const targetEntity = tgt?.eid ? r.entities[tgt.eid] : undefined;
   const targetHp = targetEntity?.kind === 'struct' && targetEntity.hp !== undefined && targetEntity.maxHp !== undefined && targetEntity.hp < targetEntity.maxHp ? ` · HP ${Math.ceil(targetEntity.hp)}/${targetEntity.maxHp}` : '';
@@ -771,7 +781,7 @@ export default function Game({
   const anchor = anchorKey ? anchorCache.current.v : null;
   const nearAnchor = !!anchor && trackView?.anchor?.kind === 'struct' && Math.hypot(anchor.x - p.x, anchor.y - p.y) < 5 * TILE;
   const wmMode: WaymarkMode = !calmish ? 'glyph' : peek || nearAnchor || (buildMode && !!trackView?.focus?.includes('build')) ? 'open' : 'compact';
-  const blocked = trackView?.anchor?.kind === 'struct' && !anchor && !trackView.done ? `Needs your own ${STRUCTS[trackView.anchor.types[0]]?.name ?? 'station'} first — Build [B].` : null;
+  const blocked = trackView?.anchor?.kind === 'struct' && !anchor && !trackView.done ? (lang === 'vi' ? `Cần ${STRUCTS[trackView.anchor.types[0]]?.name ?? 'trạm'} của chính bạn trước — Xây [B].` : `Needs your own ${STRUCTS[trackView.anchor.types[0]]?.name ?? 'station'} first — Build [B].`) : null;
   const shownIssues = issues.filter(i => snoozed[i.id] !== i.sig);
   const unseenCount = journey.chronicle.filter(c => !c.seen).length;
   const track = (t: TrackRef) => { setJourney({ ...journeyRef.current, tracked: t, trackQuiet: !t }); sfx({ type: 'ui' }); };
@@ -815,7 +825,7 @@ export default function Game({
         {!panel && !combatFocus && <RagnarokStrip r={r} now={now} secured={gs.profile.securedCash} />}
         {!panel && !qaOpen && returnDigest && <ReturnDigest report={returnDigest} onExpand={() => { setPanel({ kind: 'report', lines: [], report: returnDigest }); setReturnDigest(null); }} onDismiss={() => setReturnDigest(null)} />}
         {contextCard === 'home' && <HomeStatusCard r={r} px={p.x} py={p.y} inline />}
-        {wmVisible && !panel && <Waymark view={trackView} mode={wmMode} store={journey} stamp={activeStamp} blocked={blocked} onToggle={() => setPeek(v => !v)} onUntrack={() => track(null)} onOpenJournal={() => setPanel({ kind: 'journey' })} onJump={handleJump} />}
+        {wmVisible && !panel && <Waymark view={trackView} mode={wmMode} store={journey} stamp={activeStamp} blocked={blocked} lang={lang} onToggle={() => setPeek(v => !v)} onUntrack={() => track(null)} onOpenJournal={() => setPanel({ kind: 'journey' })} onJump={handleJump} />}
         {!panel && !buildMode && !combatFocus && !qaOpen && !returnDigest && contextCard !== 'home' && fieldEval.active && !activeStamp && wmMode !== 'open' && !(trackView && ['first_landfall', 'pack_and_craft'].includes(fieldEval.active.id)) && (
           <FieldNoteCard
             note={fieldEval.active}
@@ -893,6 +903,7 @@ export default function Game({
         onReroll={rerollWaypoint}
         onSeen={() => setJourney(markChronicleSeen(journeyRef.current))}
         onClaimRequisition={!qaMode ? claimRequisition : undefined}
+        onClaimChapter={!qaMode ? claimChapter : undefined}
         onJump={handleJump}
         onClose={() => setPanel(null)} onOpenNotes={() => setPanel({ kind: 'notes' })} />}
       {panel?.kind === 'skills' && <SkillsPanel api={api} />}

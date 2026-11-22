@@ -720,6 +720,22 @@ export function validate(raw: any): GameState | null {
       ) return null;
     }
   }
+  if (r.handbook !== undefined) {
+    // Survivor Handbook ledger: shape and bounds only. Unknown step / chapter ids are tolerated (a chapter may
+    // be renamed between builds) — they simply match nothing; the claim intent re-checks against live chapters.
+    const hb = r.handbook;
+    if (
+      !obj(hb) || hb.v !== 1 ||
+      !integer(hb.lastSeq) || hb.lastSeq < 0 || hb.lastSeq > r.seq ||
+      !obj(hb.steps) || Object.keys(hb.steps).length > 400 ||
+      !stringArray(hb.done) || hb.done.length > 400 || new Set(hb.done).size !== hb.done.length ||
+      !stringArray(hb.claimed) || hb.claimed.length > 64 || new Set(hb.claimed).size !== hb.claimed.length
+    ) return null;
+    for (const [k, n] of Object.entries(hb.steps) as [string, any][]) {
+      if (k.length > 80 || !integer(n) || n < 0 || n > 100000) return null;
+    }
+    if ([...hb.done, ...hb.claimed].some((k: string) => k.length > 80)) return null;
+  }
   if (r.dailyRerolls !== undefined) {
     if (!obj(r.dailyRerolls) || Object.keys(r.dailyRerolls).length > 32) return null;
     for (const [dk, rec] of Object.entries(r.dailyRerolls) as [string, any][]) {

@@ -217,6 +217,21 @@ export interface DailyLedger {
   days: Record<string, DailyLedgerDay>;
 }
 
+/** Run-authoritative Survivor Handbook ledger (Journey · Fieldcraft chapters).
+ * Progress is folded from committed receipts at commit time (so the 250-entry receipt ring cannot lose it)
+ * and steps count in ANY order. `claimed` holds the chapter ids whose one-time supply bundle was issued
+ * in this run. Absent on older saves; rebuilt from surviving receipts on first use. */
+export interface HandbookLedger {
+  v: 1;
+  lastSeq: number;
+  /** `<chapter>.<step>` -> progress (capped at the step target). */
+  steps: Record<string, number>;
+  /** `<chapter>.<step>` ids that reached their target. */
+  done: string[];
+  /** chapter ids whose reward bundle has been issued in this run. */
+  claimed: string[];
+}
+
 export interface RunRecord {
   runId: string; character: string; startedAt: number; endedAt: number; ending: 'evacuated' | 'abandoned' | 'expired';
   score: number; stones: number; deposited: number; achievements: string[]; qa: boolean; verified: 'LOCAL/UNVERIFIED';
@@ -328,6 +343,8 @@ export interface RunState {
   dailyRerolls?: Record<string, DailyRerollRecord>;
   /** Additive bounded run-authoritative daily waypoint ledger (pinned slate, progress, reroll cutover, capability dates). */
   dailyLedger?: DailyLedger;
+  /** Additive run-authoritative Survivor Handbook ledger (chapter step progress + one-time reward claims). */
+  handbook?: HandbookLedger;
   vendorStock: Record<string, number>;
   log: { t: number; msg: string; tone?: string }[];
 }

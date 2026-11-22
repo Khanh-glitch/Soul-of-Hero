@@ -4,6 +4,7 @@ import { SOURCES } from '../game/catalog';
 import { sourceAt } from '../game/engine';
 import { DAILY_MILESTONES, jumpTargetFor, type AnchorHint, type JourneyEvent, type JourneyStore, type QuickJumpTarget, type TrackView } from '../game/journey';
 import type { Cinematic, Flare, Issue } from '../game/attention';
+import { T, type Lang } from '../game/i18n';
 import { Icon } from './common';
 
 // ---------------------------------------------------------------------------
@@ -18,8 +19,8 @@ import { Icon } from './common';
 // ---------------------------------------------------------------------------
 export type WaymarkMode = 'glyph' | 'compact' | 'open';
 
-export function Waymark({ view, mode, store, stamp, onToggle, onUntrack, onOpenJournal, onJump, blocked }: {
-  view: TrackView | null; mode: WaymarkMode; store: JourneyStore; stamp: JourneyEvent | null; blocked?: string | null;
+export function Waymark({ view, mode, store, stamp, onToggle, onUntrack, onOpenJournal, onJump, blocked, lang = 'en' }: {
+  view: TrackView | null; mode: WaymarkMode; store: JourneyStore; stamp: JourneyEvent | null; blocked?: string | null; lang?: Lang;
   onToggle: () => void; onUntrack: () => void; onOpenJournal: () => void; onJump?: (t: QuickJumpTarget) => void;
 }) {
   const [bump, setBump] = useState(0);
@@ -29,11 +30,11 @@ export function Waymark({ view, mode, store, stamp, onToggle, onUntrack, onOpenJ
   if (!view && !stamp) return d && pts > 0 ? <div className="wm wm--dialonly"><DayDial points={pts} reached={d.milestones} onClick={onOpenJournal} /></div> : null;
 
   if (stamp) {
-    const ms = stamp.kind === 'milestone';
-    return <div className={`wm wm--stamp ${ms ? 'wm--milestone' : ''}`} key={stamp.id} role="status" aria-live="polite">
+    const ms = stamp.kind === 'milestone' || stamp.kind === 'reward';
+    return <div className={`wm wm--stamp lang-${lang} ${ms ? 'wm--milestone' : ''}`} key={stamp.id} role="status" aria-live="polite">
       <div className="wm__socket wm__socket--stamp"><Icon k={stamp.icon || 'gear'} size={14} /><i className="wm__seal" /></div>
       <div className="wm__body">
-        <div className="wm__eyebrow">{ms ? 'DAILY MILESTONE' : stamp.kind === 'daily' ? 'WAYPOINT COMPLETE' : 'FIELDCRAFT LEARNED'}{stamp.away && <em> · while away</em>}</div>
+        <div className="wm__eyebrow">{stamp.kind === 'reward' ? T('HANDBOOK SUPPLIES', 'QUÀ SỔ TAY', lang) : ms ? T('DAILY MILESTONE', 'MỐC TRONG NGÀY', lang) : stamp.kind === 'daily' ? T('WAYPOINT COMPLETE', 'XONG MỐC NGÀY', lang) : T('FIELDCRAFT LEARNED', 'ĐÃ HỌC ĐƯỢC', lang)}{stamp.away && <em>{T(' · while away', ' · lúc vắng mặt', lang)}</em>}</div>
         <div className="wm__title">{stamp.title}</div>
         <div className="wm__how">{stamp.detail}</div>
       </div>
@@ -45,17 +46,19 @@ export function Waymark({ view, mode, store, stamp, onToggle, onUntrack, onOpenJ
   if (mode === 'glyph') return <div className="wm wm--glyph" title={`${v.title} ${v.progress}/${v.target}`} onClick={onToggle}>
     <div className="wm__socket"><Ring frac={frac} /><Icon k={v.icon} size={12} /></div>
   </div>;
-  return <div className={`wm wm--${mode} ${v.suggested ? 'wm--suggested' : ''} ${v.done ? 'wm--done' : ''}`} onMouseDown={e => e.stopPropagation()}>
+  return <div className={`wm wm--${mode} lang-${lang} ${v.suggested ? 'wm--suggested' : ''} ${v.done ? 'wm--done' : ''} ${v.claimable ? 'wm--claim' : ''}`} onMouseDown={e => e.stopPropagation()}>
     <button className="wm__socket" onClick={onToggle} title="Peek [T]" key={`b${bump}`} data-bump={bump > 0 || undefined}>
       <Ring frac={frac} /><Icon k={v.icon} size={14} />
     </button>
     <div className="wm__body" onClick={onToggle}>
-      <div className="wm__eyebrow">{v.suggested ? 'SUGGESTED · ' : ''}{v.group}</div>
+      <div className="wm__eyebrow">{v.suggested ? T('SUGGESTED · ', 'GỢI Ý · ', lang) : ''}{v.group}</div>
       <div className="wm__title">{v.title}{v.target > 1 && !v.done && <span className="wm__count">{v.progress}<i>/</i>{v.target}</span>}</div>
       {v.target > 1 && <div className="wm__notches">{Array.from({ length: Math.min(v.target, 14) }, (_, i) => <i key={i} className={i < Math.round(frac * Math.min(v.target, 14)) ? 'on' : ''} />)}</div>}
       {mode === 'open' && <>
         <div className="wm__how">{blocked ? <b className="wm__blocked">{blocked}</b> : v.how}</div>
         <div className="wm__why">{v.why}</div>
+        {v.reward && !v.claimable && <div className="wm__reward">★ {v.reward}</div>}
+        {v.claimable && <div style={{ marginTop: 3 }}><button className="btn xs gold" onClick={e => { e.stopPropagation(); onOpenJournal(); }}>{T('Open ledger [J]', 'Mở sổ [J]', lang)}</button></div>}
         {onJump && !v.done && (() => {
           const j = jumpTargetFor(v.focus);
           return j ? <div style={{ marginTop: 3 }}><button className="btn xs gold" onClick={e => { e.stopPropagation(); onJump(j.target); }}>{j.label}</button></div> : null;
@@ -65,7 +68,7 @@ export function Waymark({ view, mode, store, stamp, onToggle, onUntrack, onOpenJ
     </div>
     <div className="wm__tools">
       <button onClick={onOpenJournal} title="Journey ledger [J]" aria-label="Open journey">❖</button>
-      <button onClick={onUntrack} title={v.suggested ? 'Not now' : 'Stop tracking'} aria-label="Stop tracking">×</button>
+      <button onClick={onUntrack} title={v.suggested ? T('Not now', 'Để sau', lang) : T('Stop tracking', 'Ngừng theo dõi', lang)} aria-label="Stop tracking">×</button>
     </div>
     {d && mode === 'open' && <DayDial points={pts} reached={d.milestones} onClick={onOpenJournal} />}
   </div>;

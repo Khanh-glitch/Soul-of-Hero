@@ -36,6 +36,7 @@ import {
   generateDaily, isValidDateKey, MAX_DAILY_LEDGER_DAYS, measureDailyObjectiveProgress,
   recordDailyReceipt, resolveRerollReplacement, syncRunDailyLedger,
 } from './journey';
+import { beginNpcReceipt, endNpcReceipt, handbookClaimable, isNpcReceipt, recordHandbookReceipt } from './handbook';
 import { syncVeyraEcosystemActors, VEYRA_PRIMORDIAL_SITES, resolvePrimordialGlobalTile } from '../veyra05/ecosystem';
 import { cleanupPrimordialBoss } from './primordials/host-bridge';
 import { TAMING_SPECIES, BUTCHER_YIELDS, createTamedState, deterministicAnimalSex, inspectPenAt } from './husbandry';
@@ -275,6 +276,7 @@ export function startRun(gs: GameState, character: 'male' | 'female', now: numbe
     traces: [], discovered: [], poiSeen: [], intel: [], elderStones: [], achievements: [], score: 0, deposited: 0,
     clock: { lastSimAt: now, simMs: 0, respawnAcc: 0, weatherSlot: -1 }, rng: seed, nextId: 1, receipts: [], seenIntents: [], seq: 0,
     dailyLedger: { v: 1, seed, lastSeq: 0, capabilities: { learnedKeys: [] }, days: {} },
+    handbook: { v: 1, lastSeq: 0, steps: {}, done: [], claimed: [] },
     vendorStock: { escrow_chest: 4, ...Object.fromEntries(Object.entries(VENDOR_SECURED).map(([k, v]) => [k, v.stock])), ...Object.fromEntries(Object.entries(VENDOR_SPARES).map(([k,v]) => [`spares:${k}`,v.stock])) }, log: [],
   };
   // NULL region from unified Veyra means geographic random spawn, not one of
@@ -447,6 +449,7 @@ export function receipt(r: RunState, now: number, kind: string, detail: string) 
   const id = `r${++r.seq}`;
   const rc = { id, seq: r.seq, at: now, kind, detail };
   recordDailyReceipt(r, rc);
+  recordHandbookReceipt(r, rc);
   r.receipts.push(rc);
   if (r.receipts.length > 250) r.receipts.splice(0, r.receipts.length - 250);
   if (receiptSink) receiptSink.push({ id, at: now, kind, detail });
@@ -2010,6 +2013,8 @@ export function harvestHit(gs: GameState, tx: number, ty: number, power: Partial
 
 export function killCreature(gs: GameState, m: Creature, now: number, hunterId?:string) {
   if(m.state==='dead')return;
+  // A resident's kill writes the same audit receipts but is never the player's handbook / waypoint progress.
+  if (hunterId && !isNpcReceipt()) { beginNpcReceipt(); try { killCreature(gs, m, now, hunterId); } finally { endNpcReceipt(); } return; }
   const r = gs.run!; m.state = 'dead'; m.t = 0; m.deadAt = r.clock.simMs / 1000;
   if (m.elder) {
     const d = lookupElderDef(m.elder.key);
@@ -3401,6 +3406,18 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
         }
       }
       return ok('journey.requisition', `${date}:${milestone}:items`, granted.join(', ') || 'Supplies delivered');
+    }
+    case 'handbookClaim': {
+      // Survivor Handbook: one physical supply bundle per chapter per run, verified against r.handbook.
+      if (r.qaUsed) return fail('QA-modified runs cannot claim handbook supplies.');
+      const chk = handbookClaimable(r, typeof it.chapter === 'string' ? it.chapter : '');
+      if (!chk.ok) return fail(chk.reason);
+      r.handbook!.claimed.push(chk.lesson.id);
+      const granted: string[] = [];
+      for (const [itemKey, qty] of chk.lesson.reward) {
+        if (ITEMS[itemKey] && qty > 0) { giveOrDrop(r, itemKey, qty, now); granted.push(`${qty}× ${ITEMS[itemKey].name}`); }
+      }
+      return ok('journey.handbook', `${chk.lesson.id}:items`, granted.join(', ') || 'Supplies delivered');
     }
     case 'buySpares': {
       const e=r.entities[it.eid]; if(!e || e.kind!=='vendor' || !near(r,e,2.6) || !clearInteraction(r,e)) return fail('Walk up to the trader.');

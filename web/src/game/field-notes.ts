@@ -119,7 +119,7 @@ export const FIELD_NOTES: FieldNoteDef[] = [
     category: 'craft',
     title: 'Worn Tool or Weapon',
     keyHint: 'I · C',
-    body: 'A carried tool is near breaking or broken. Craft a replacement [C] or apply a Field Repair Kit inside Pack [I].',
+    body: 'A carried tool is near breaking or broken. Craft a replacement [C] or repair it at your Workbench [E] with the listed materials.',
     priority: 76,
     when: ({ r }) => C(r, 'inv').slots.some(s => !!s && !!ITEMS[s.key]?.dur && s.dur !== undefined && s.dur <= 4),
   },
@@ -195,6 +195,28 @@ export const FIELD_REFERENCE_GROUPS: { title: string; items: [string, string][] 
   { title: 'Build & Base', items: [['B', 'Toggle Build Mode'], ['U / V / X', 'Upgrade / Repair / Dismantle'], ['G', 'Cycle structure layer'], ['E on Cabinet', 'Deposit upkeep materials']] },
   { title: 'Cores & Navigation', items: [['Q / E (hold)', 'Refined / Signature Core skill'], ['Workbench', 'Upgrade / repair a Creator Core'], ['M', 'Field Chart (Continent ↔ Sector)'], ['J / N / Esc', 'Journey Ledger / Notes / Menu']] },
   { title: 'Husbandry & Waymark', items: [['T (near animal)', 'Feed / Tame / Command animal'], ['⇧T (near tamed)', 'Toggle Follow / Stay'], ['T (open field)', 'Peek Journey Waymark'], ['Walk on Stairs', 'Change floor (B1 · F1 · F2)']] },
+];
+
+/** Vietnamese presentation text (ids, triggers and rules are unchanged; item and structure names stay English). */
+export const FIELD_NOTES_VI: Record<string, { title: string; body: string }> = {
+  death_bag: { title: 'Lấy lại đồ đã rơi', body: 'Túi đồ lúc chết gần nhất được đánh dấu trên Field Chart [M]. Chuẩn bị thức ăn và dụng cụ trước khi quay lại lấy.' },
+  overloaded_pack: { title: 'Balo quá nặng', body: 'Mang quá giới hạn sẽ đi chậm. Bỏ bớt đồ, cất vào Chest [B], hoặc kéo bằng Cart [F].' },
+  cold_night_shelter: { title: 'Lạnh và phơi sương', body: 'Thân nhiệt đang giảm vì không có mái che. Dựng Campfire hoặc tường kín có mái [B], hoặc mặc đồ ấm [I].' },
+  hunger_thirst: { title: 'Đói và khát', body: 'Chọn thức ăn hoặc bình nước trên Quickbar 1–8 rồi bấm chuột để dùng, hoặc bấm E cạnh nước sông ngọt.' },
+  worn_tool: { title: 'Dụng cụ hoặc vũ khí mòn', body: 'Một dụng cụ đang mang sắp hỏng hoặc đã hỏng. Chế cái mới [C] hoặc sửa tại Workbench [E] bằng vật liệu ghi sẵn.' },
+  spirit_blink: { title: 'Điểm đến của Spirit Blink', body: 'Chiêu đặc trưng của Spirit Core cần điểm đáp đã đánh dấu: mở Field Chart [M], chọn nền trống an toàn, rồi giữ và thả E.' },
+  creator_core: { title: 'Năng lượng cho Creator Core', body: 'Chuột trái bắn đòn Cơ bản (1 Energy Cell). Lv2 mở giữ Q (1 Refined Cell); Lv3 mở giữ E (1 Refined Cell + 1 Essence). Cell bị trừ trong balo mỗi lần dùng, không có nạp lại. Nâng cấp và sửa tại Workbench.' },
+  ragnarok_final: { title: 'Ragnarok · 72 giờ cuối', body: 'Các hầm niêm phong đã mở và các Elder thức dậy. Cất xu Ragnarok vào Escrow Chest hoặc tới Evacuation Beacon.' },
+  base_and_cabinet: { title: 'Lãnh thổ và trạm', body: 'Bấm [E] vào trạm để nạp nhiên liệu hoặc xếp việc. Giữ Territory Cabinet luôn có vật liệu để tường không mục; V để sửa.' },
+  pack_and_craft: { title: 'Balo, Quickbar và chế tạo', body: 'Mở Survivor [I / C] để chế dụng cụ, xem chỉ số, hoặc kéo đồ lên Quickbar 1–8. Sắp xếp balo không đụng tới ô 1–8.' },
+  first_landfall: { title: 'Lần đầu đặt chân', body: 'Ở đây không có nhiệm vụ bắt buộc — tự chọn cách sinh tồn của bạn. Đi bằng WASD, vung chuột trái để lấy gỗ/quả, E để tương tác hoặc uống.' },
+};
+export const FIELD_REFERENCE_VI: { title: string; items: string[] }[] = [
+  { title: 'Di chuyển và hành động', items: ['Di chuyển', 'Vung dụng cụ / Tấn công / Dùng', 'Lăn né', 'Tương tác / Uống / Mở', 'Kéo Cart / Lên hoặc xuống xe'] },
+  { title: 'Quickbar và balo', items: ['Chọn ô Quickbar', 'Balo và chế tạo', 'Gán ô vào Quickbar', 'Sắp xếp ô 9–24; giữ nguyên 1–8'] },
+  { title: 'Xây dựng và căn cứ', items: ['Bật / tắt chế độ xây', 'Nâng cấp / Sửa / Tháo dỡ', 'Đổi lớp công trình', 'Nạp vật liệu bảo trì'] },
+  { title: 'Core và điều hướng', items: ['Chiêu Refined / chiêu đặc trưng của Core', 'Nâng cấp / sửa Creator Core', 'Field Chart (Lục địa ↔ Khu vực)', 'Sổ Journey / Ghi chú / Menu'] },
+  { title: 'Chăn nuôi và Waymark', items: ['Cho ăn / Thuần hóa / Ra lệnh', 'Bật / tắt Đi theo / Đứng yên', 'Xem nhanh Waymark', 'Đổi tầng (B1 · F1 · F2)'] },
 ];
 
 export function evaluateFieldNotes(

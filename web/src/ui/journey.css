@@ -270,3 +270,47 @@
   .wm, .wm__seal, .flare, .flare__plate, .beacon__pin, .cine__title span, .cine__relic, .cine__rays, .wm__pips i.cur, .stone.cur { animation: none !important; }
   .flare { animation: flare-life 3.6s steps(1) forwards !important; }
 }
+
+/* ---- Survivor Handbook (Fieldcraft chapters, supply caches, EN/VI switch) ---- */
+.trail { min-height: 0; flex: 1; gap: 2px; }
+.trail > .page__lede { margin-bottom: 2px; }
+.trail__list { display: flex; flex-direction: column; gap: 0; overflow-y: auto; min-height: 0; flex: 1; padding-right: 2px; }
+/* eleven chapters must be visible at once on a 640x360 view: one compact line per chapter */
+.trail__list .trail__row { grid-template-columns: 16px 1fr auto; gap: 5px; padding: 0 3px; min-height: 18px; }
+.trail__list .trail__sigil { width: 16px; height: 16px; }
+.trail__list .trail__name { display: flex; align-items: baseline; gap: 5px; min-width: 0; white-space: nowrap; overflow: hidden; }
+.trail__list .trail__name b { display: inline; font-size: 8px; }
+.trail__list .state { font-size: 9px; overflow: hidden; text-overflow: ellipsis; }
+.trail__list .stone { width: 6px; height: 6px; margin-right: 5px; } .trail__list .stone u { left: 5px; top: 5px; width: 4px; }
+.trail__row.gift { background: rgba(224,160,64,.22); box-shadow: inset 2px 0 0 #b9781c; }
+.trail__row.gift .trail__sigil { background: #7a4a10; animation: pip 1.4s steps(2) infinite; }
+.state--gift { color: #8a4a08; } .state--setaside, .state--unread, .state--seen { color: var(--inkm); }
+.lesson { display: flex; flex-direction: column; min-height: 0; flex: 1; overflow-y: auto; padding-right: 2px; }
+.lesson__head { margin-bottom: 4px; }
+.lesson__steps li.open { opacity: .92; }
+.cache { margin-top: 6px; padding: 3px 5px 4px; background: rgba(107,86,57,.14); box-shadow: inset 0 0 0 1px rgba(107,86,57,.55); }
+.cache--t2 { box-shadow: inset 0 0 0 1px #7a5a2a, inset 0 0 0 2px rgba(224,160,64,.25); }
+.cache--t3 { background: linear-gradient(180deg, rgba(224,160,64,.2), rgba(107,86,57,.14)); box-shadow: inset 0 0 0 1px #b9781c, inset 0 0 0 2px rgba(255,220,140,.35); }
+.cache--ready { background: rgba(224,160,64,.3); box-shadow: inset 0 0 0 1px #b9781c, 0 0 0 1px #e0a040; }
+.cache--got { opacity: .6; }
+.cache__head { display: flex; justify-content: space-between; align-items: center; gap: 4px; }
+.cache__head b { font-family: 'Pixelify Sans', monospace; font-size: 8px; font-weight: 400; letter-spacing: .4px; text-transform: uppercase; color: #7a2a1e; }
+.cache__lock { font-size: 10px; color: var(--inkm); }
+.cache__btn { animation: pip 1.2s steps(2) infinite; }
+.cache__items { display: flex; flex-wrap: wrap; gap: 2px 7px; margin-top: 2px; }
+.cache__item { display: inline-flex; align-items: center; gap: 2px; font-size: 11px; line-height: 12px; color: var(--inkb); }
+.cache__item i { font-style: normal; }
+.lesson__acts { margin-top: 5px; }
+.lang { margin-left: auto; align-self: center; display: inline-flex; gap: 1px; padding-right: 4px; }
+.lang button { font-family: 'Pixelify Sans', monospace; font-size: 8px; line-height: 12px; padding: 0 5px; border: 0; cursor: pointer; color: var(--muted); background: #141a20; box-shadow: inset 0 0 0 1px var(--edge); }
+.lang button.on { color: #1a1206; background: var(--brassLit); box-shadow: none; }
+.ribbon--gift span { color: var(--brassLit); }
+.wm__reward { margin-top: 1px; font-family: 'VT323', monospace; font-size: 9px; line-height: 8px; color: var(--brassLit); max-width: 150px; margin-left: auto; }
+.wm--claim .wm__title { color: var(--brassLit); }
+/* Pixelify Sans has no Vietnamese glyphs: Vietnamese text uses VT323 (which has them) so letters never mix fonts. */
+.lang-vi b, .lang-vi h3, .lang-vi .btn, .lang-vi .page__kicker, .lang-vi .rank, .lang-vi .wm__title, .lang-vi .wm__eyebrow, .lang-vi .cache__head b, .lang-vi .ribbon b, .lang-vi .ribbon span, .lang-vi .req-badge, .lang-vi .marks, .lang-vi sup,
+.lang-vi .lesson__steps li b, .lang-vi .trail__name b, .lang-vi .wp__body b, .lang-vi .wp__cat, .lang-vi .ref-card__head b, .lang-vi .medals b, .lang-vi .tl__filters button, .lang-vi .streak-pill { font-family: 'VT323', monospace; letter-spacing: 0; }
+.lang-vi .trail__list .trail__name b { font-size: 12px; } .lang-vi .lesson h3 { font-size: 17px; line-height: 14px; }
+.lang-vi .lesson__steps li b { font-size: 12px; line-height: 10px; } .lang-vi .cache__head b { font-size: 11px; } .lang-vi .page__kicker { font-size: 11px; }
+.lang-vi .btn.xs { font-size: 10px; } .lang-vi .btn.sm { font-size: 11px; } .lang-vi .ribbon b { font-size: 12px; } .lang-vi .wm__title { font-size: 12px; } .lang-vi .wm__eyebrow { font-size: 10px; }
+.lang-vi .wp__body b, .lang-vi .ref-card__head b, .lang-vi .medals b { font-size: 12px; } .lang-vi .wp__cat { font-size: 9px; }
