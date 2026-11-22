@@ -25,7 +25,7 @@ import { computeCreatureEnvFactors } from '../veyra05/ecosystem';
 import { stepHusbandry, inspectPenAt } from './husbandry';
 import { stepPrimordialHost, damagePrimordialSummonsMelee, damagePrimordialSummonsProjectile, damagePrimordialSummonsAoE } from './primordials/host-bridge';
 import { beginDailyOfflineSettle, dateKey, endDailyOfflineSettle, syncRunDailyLedger } from './journey';
-import { humanContact, tickNeeds, witnessPlayerDefense, advanceElderPressure, advanceEvacuation, playerAtSea, playerVoyage, elderCanonicalCreature, elderBodyArchived, recordArchivedElderDefeat, stepHumans, humanEventBoundary, stepHumanCombat, applyDamage as applyHumanDamage, humanWorldPosition, type ElderVolleyShot, type HumanShot } from './humanworld';
+import { humanContact, tickNeeds, witnessPlayerDefense, advanceElderPressure, advanceEvacuation, playerAtSea, playerVoyage, elderCanonicalCreature, elderBodyArchived, recordArchivedElderDefeat, stepHumans, humanEventBoundary, humansMayWait, stepHumanCombat, applyDamage as applyHumanDamage, humanWorldPosition, type ElderVolleyShot, type HumanShot } from './humanworld';
 import { stepG1b, settleCoreOwed, g1bGateOf, g1bDoorLabel, g1bEta, coreCastBlock, coreCastCommit, ensureOilSeeps, regrowNote, settleRegrowthAt, irSensorStatus, irSensorDownstream, restStep, dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, stepTenders, stepTenderStates, tenderBoundary, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit, carryLimit, invWeight, clearInteraction, clearPhysicalLine, withRunEntityRead, allRunEntities, stepBasePower, basePowerBoundary, powerAllocation, turretStatus, syncElectricDoors, electricDoorPowered, electricInterior, stepLootRespawn, migrateLootRespawn, initializeCabinets, territoryBoundary, territoryForecast, stepTerritory, spawnDrop } from './engine';
 
 export interface Input { up: boolean; down: boolean; left: boolean; right: boolean; mx: number; my: number; attack: boolean; attackPressed: boolean; roll: boolean; cancel: boolean; skill?: 'refined' | 'signature'; skillAim?: { uid:string; slot:number; mx:number; my:number; viewX:number; viewY:number }; viewX?: number; viewY?: number }
@@ -1632,6 +1632,8 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
     // must end on it rather than interpolate across it.
     let dt = Math.min(end - t, nextWeather - t, seasonBoundaryAt(r, t));
     let powered:Set<string>=new Set();
+    // Live play: the instant of the next resident event, kept so the residents' step can wait for it (see humansMayWait).
+    let humanEventAt=t;
     withRunEntityRead(r,()=>{
       powered=new Set(allRunEntities(r).filter(e=>e.basePower).flatMap(g=>powerAllocation(r,g,visual).filter(e=>e.industrial).map(e=>e.id)));
       for (const e of allRunEntities(r)) {
@@ -1646,7 +1648,18 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
         if (fuelled) dt = Math.min(dt, fuel);
         if (job && job.left > 0) dt = Math.min(dt, job.left / (powered.has(e.id) ? BAL.industrialPower.workSpeedMultiplier : 1));
       }
-      if(r.humanWorld)dt=humanEventBoundary(r,r.humanWorld,t,dt,!visual);
+      if(r.humanWorld){
+        if(visual){
+          // Residents were last stepped at `stepped` (this instant, or a few frames back while they wait). What the
+          // boundary measures from their own state (a walker's remaining stride, a need's distance to its threshold)
+          // counts from that step, so the question is asked there and the answer is the same absolute instant.
+          const hw=r.humanWorld,stepped=hw.lastStepAt??hw.lastResolvedAt,inStep=stepped<=t&&(hw.lastNeedsAt??hw.lastResolvedAt)===stepped;
+          const from=inStep?stepped:t;
+          humanEventAt=inStep?from+humanEventBoundary(r,hw,from,Infinity,false):t;
+          dt=Math.min(dt,inStep?Math.max(humanEventAt-t,.001):humanEventBoundary(r,hw,t,dt,false));
+        }
+        else dt=humanEventBoundary(r,r.humanWorld,t,dt,true);
+      }
       dt = airdropBoundary(r,t,dt);
       dt = basePowerBoundary(r, dt, visual);
       dt = territoryBoundary(r, dt);
@@ -1693,7 +1706,7 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
     let dirty = false; for (const k in r.terrain) { const m = r.terrain[k]; if (m.until && m.until <= r.clock.simMs) { const ci = +k; settleRegrowthAt(r, ci % WW, Math.floor(ci / WW), m.untilAt ?? t); delete r.terrain[k]; dirty = true; } } if (dirty) markDirty();
     resolveFires(gs, t, visual);
     stepLootRespawn(r, t); stepG1b(r, t); settleCoreOwed(r, t);
-    if (r.humanWorld) {
+    if (r.humanWorld && !(visual && humansMayWait(r.humanWorld, t, humanEventAt))) {
       tickNeeds(r, r.humanWorld, t);
       advanceElderPressure(r, r.humanWorld, t, (elderId, shots, at) => resolveElderVolley(gs, elderId, shots, at));
       const evac = advanceEvacuation(r, r.humanWorld, t);

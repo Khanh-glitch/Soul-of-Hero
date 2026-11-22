@@ -3144,13 +3144,39 @@ function countOutcomes(hw: HumanWorld): HumanOutcomeSummary {
 /** Advance every human's autonomous behavior for one tick. Does NOT touch player XP or
  *  player-exploration loot. Movement is tile-step toward an intent target (no teleport). */
 function humanCellKey(floor: number, gx: number, gy: number): string { return `${floor}:${gx}:${gy}`; }
+/** The drawn position of a walking resident may run this far (ms) ahead of the resident's last simulation step. */
+export const HUMAN_DRAW_LEAD_MS = 50;
+/**
+ * Live play: may the residents' step wait for a later frame? Nothing is due for any of them before `nextEventAt`
+ * (the instant `humanEventBoundary` gave for this slice), so stepping them at `now` would move no clock that
+ * matters: needs are integrated over elapsed time, and walkers are drawn ahead of their last step for up to
+ * `HUMAN_DRAW_LEAD_MS`. They never wait longer than that, so whatever has no instant of its own (a guard noticing
+ * a creature, a store that changed, a hit taken) is answered within that time. Residents in a fight, residents
+ * following the player, first aid in progress and a risen Elder are stepped on every frame as before, and so is a
+ * walker about to start a stride, so nobody is drawn standing between two tiles of a route.
+ * Offline settlement never asks: it steps at every boundary.
+ */
+export function humansMayWait(hw: HumanWorld, now: number, nextEventAt: number): boolean {
+  if (!(nextEventAt > now)) return false;
+  const stepped = hw.lastStepAt ?? hw.lastResolvedAt, needs = hw.lastNeedsAt ?? hw.lastResolvedAt;
+  if (!(now - stepped < HUMAN_DRAW_LEAD_MS) || !(now - needs < HUMAN_DRAW_LEAD_MS)) return false;
+  if (hw.playerAid) return false;
+  for (const id in hw.elderPressure) { const elder = hw.elderPressure[id]; if (elder.alive && elder.awakenedAt !== undefined) return false; }
+  for (const id in hw.people) {
+    const h = hw.people[id];
+    if (h.state === 'FIGHTING' || h.following || h.intent?.kind === 'fight' || h.spiritStep) return false;
+    // A walker between two strides (just arrived, or just given a route) starts the next one at the next step.
+    if (h.state === 'MOVING' && !h.motion && h.intent?.route?.length) return false;
+  }
+  return true;
+}
 /** Render/query position in global tile coordinates. Logical occupancy remains tile-authoritative. */
 export function humanWorldPosition(h: HumanRecord, at?: number): { gx: number; gy: number } {
   const m = h.motion;
   if (!m) return { gx: h.gx + 0.5, gy: h.gy + 0.5 };
   // Render may interpolate only the small uncommitted remainder since the latest simulation
   // update. Tile occupancy/route legality remains authoritative and never advances here.
-  const extrapolation = at === undefined || m.updatedAt === undefined ? 0 : clamp(at - m.updatedAt, 0, 50);
+  const extrapolation = at === undefined || m.updatedAt === undefined ? 0 : clamp(at - m.updatedAt, 0, HUMAN_DRAW_LEAD_MS);
   const travelMs = TILE / PROFILES[h.profile].speed * 1000;
   const t = clamp((m.elapsedMs + extrapolation) / travelMs, 0, 1);
   return { gx: m.fromGx + 0.5 + (m.toGx - m.fromGx) * t, gy: m.fromGy + 0.5 + (m.toGy - m.fromGy) * t };
