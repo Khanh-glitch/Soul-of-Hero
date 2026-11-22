@@ -9,6 +9,7 @@ import { watchCue, drawWatchCue } from './watch-cue';
 import { humanWorldPosition } from './humanworld';
 import { isCreatureRenderedByPrimordialRig, renderPrimordialOverlay } from './primordials/host-bridge';
 import { getFrame as getPrimordialRasterFrame, frameRGBA } from './primordials/art/sprites';
+import { drawFogDots } from './fog-layer';
 import { getWorld, getActiveLayout, SRC_KEYS, fbm } from './world';
 import { isVeyra05Layout } from '../veyra05/scenes';
 import { activeFloor, onActiveFloor } from '../veyra05/floors';
@@ -846,7 +847,7 @@ function drawWeather(g: CanvasRenderingContext2D, r: RunState, now: number, time
   if (w === 'rain' || w === 'storm') { const n = w === 'storm' ? 220 : 130; g.fillStyle = 'rgba(180,200,240,0.55)'; const wind = w === 'storm' ? 3 : 1;
     for (let i = 0; i < n; i++) { const d = rain[i]; d.y += 7 * d.s; d.x += wind * d.s; if (d.y > VIEW_H) { d.y = -6; d.x = Math.random() * VIEW_W; if (Math.random() < 0.5) { g.fillRect(Math.round(d.x), VIEW_H - 2 - Math.random() * VIEW_H | 0, 2, 1); } } if (d.x > VIEW_W) d.x -= VIEW_W; g.fillRect(Math.round(d.x), Math.round(d.y), 1, 4); if (wind > 1) g.fillRect(Math.round(d.x) + 1, Math.round(d.y) + 2, 1, 2); }
     for (let i = 0; i < 12; i++) { g.fillStyle = 'rgba(200,220,255,0.5)'; g.fillRect(hash2(i, Math.floor(time / 100), 1) * VIEW_W | 0, hash2(i, Math.floor(time / 100), 2) * VIEW_H | 0, 2, 1); } }
-  if (w === 'fog') { g.fillStyle = 'rgba(200,205,215,0.16)'; g.fillRect(0, 0, VIEW_W, VIEW_H); g.fillStyle = 'rgba(225,230,238,0.22)'; const ox = Math.floor(time / 70 + cx * 0.5), oy = Math.floor(cy * 0.5); for (let y = 0; y < VIEW_H; y += 2) for (let x = (y >> 1) % 2 * 2; x < VIEW_W; x += 4) { const v = fbm((x + ox) / 90, (y + oy) / 60, 41, 2); if (v > 0.55) g.fillRect(x, y, 2, 2); } }
+  if (w === 'fog') { g.fillStyle = 'rgba(200,205,215,0.16)'; g.fillRect(0, 0, VIEW_W, VIEW_H); drawFogDots(g, Math.floor(time / 70 + cx * 0.5), Math.floor(cy * 0.5)); }
   if (cold) { g.fillStyle = 'rgba(255,255,255,0.85)'; for (let i = 0; i < 90; i++) { const X = (hash2(i, 1, 1) * VIEW_W + time / 30 * (0.5 + hash2(i, 2, 2)) + Math.sin(time / 700 + i) * 6 - cx * 0.2) % VIEW_W, Y = (hash2(i, 3, 3) * VIEW_H + time / 25 * (0.6 + hash2(i, 4, 4))) % VIEW_H; g.fillRect((X + VIEW_W) % VIEW_W | 0, Y | 0, i % 7 ? 1 : 2, 1); } }
   if (ash) { g.fillStyle = isRagnarok(r, now) ? 'rgba(255,140,80,0.7)' : 'rgba(120,110,110,0.7)'; for (let i = 0; i < 40; i++) { const X = (hash2(i, 5, 1) * VIEW_W - time / 50 * (0.5 + hash2(i, 6, 2))) % VIEW_W, Y = (hash2(i, 7, 3) * VIEW_H + time / 60) % VIEW_H; g.fillRect((X + VIEW_W) % VIEW_W | 0, Y | 0, 1, 1); } }
   if (zone === 7) { g.fillStyle = 'rgba(140,170,40,0.08)'; g.fillRect(0, 0, VIEW_W, VIEW_H); }

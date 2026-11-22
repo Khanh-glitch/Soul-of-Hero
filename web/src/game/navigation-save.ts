@@ -31,40 +31,48 @@ function check(ok: unknown): asserts ok {
 const MAX_POINTS = 4_000_000,
   MAX_BYTES = 48 * 1024 * 1024,
   MAX_LIST = 300_000;
+/** Append-only byte stream. `n` is a little-endian base-128 varint; the stream of a list of values is the plain
+ * concatenation of their streams, so an unchanged search can be appended from its last encoding (see the caches below). */
 class Writer {
-  private chunk = new Uint8Array(8192);
-  private cursor = 0;
-  private parts: string[] = [];
-  private pointBudget = MAX_POINTS;
-  private byte(x: number) {
-    if (this.cursor === this.chunk.length) {
-      this.parts.push(String.fromCharCode(...this.chunk));
-      check(this.parts.length * this.chunk.length < MAX_BYTES);
-      this.cursor = 0;
-    }
-    this.chunk[this.cursor++] = x;
+  private buf = new Uint8Array(8192);
+  private len = 0;
+  /** Points written through this writer (the caller charges them to the save-wide budget). */
+  pointCount = 0;
+  private room(add: number) {
+    check(this.len + add <= MAX_BYTES);
+    if (this.len + add <= this.buf.length) return;
+    const next = new Uint8Array(Math.max(this.buf.length * 2, this.len + add));
+    next.set(this.buf.subarray(0, this.len));
+    this.buf = next;
   }
   n(x: number) {
     check(Number.isSafeInteger(x) && x >= 0 && x <= 0x7fffffff);
+    this.room(5);
+    const buf = this.buf;
     while (x >= 128) {
-      this.byte(128 + (x % 128));
-      x = Math.floor(x / 128);
+      buf[this.len++] = 128 + (x & 127);
+      x >>>= 7;
     }
-    this.byte(x);
+    buf[this.len++] = x;
   }
   signed(x: number) {
     this.n(x < 0 ? -2 * x - 1 : 2 * x);
   }
   text(s: string) {
-    const b = new TextEncoder().encode(s);
+    const b = textEncoder.encode(s);
     check(b.length <= 2048);
     this.n(b.length);
-    for (const x of b) this.byte(x);
+    this.bytes(b);
   }
-  points(ps: Point[]) {
-    this.pointBudget -= ps.length;
-    check(ps.length <= MAX_LIST && this.pointBudget >= 0);
-    this.n(ps.length);
+  bytes(b: Uint8Array) {
+    this.room(b.length);
+    this.buf.set(b, this.len);
+    this.len += b.length;
+  }
+  points(ps: Iterable<Point>, count: number) {
+    this.pointCount += count;
+    check(count <= MAX_LIST && this.pointCount <= MAX_POINTS);
+    this.n(count);
     let x = 0,
       y = 0,
       z = 0;
@@ -77,11 +85,17 @@ class Writer {
       z = p.floor;
     }
   }
+  /** The bytes written so far, detached from this writer. */
+  take() {
+    return this.buf.slice(0, this.len);
+  }
   finish() {
-    this.parts.push(String.fromCharCode(...this.chunk.subarray(0, this.cursor)));
-    return btoa(this.parts.join(''));
+    const parts: string[] = [];
+    for (let i = 0; i < this.len; i += 8192) parts.push(String.fromCharCode(...this.buf.subarray(i, Math.min(this.len, i + 8192))));
+    return btoa(parts.join(''));
   }
 }
+const textEncoder = new TextEncoder();
 class Reader {
   i = 0;
   private pointBudget = MAX_POINTS;
@@ -132,48 +146,95 @@ const toPoint = (k: string): Point => {
   const [floor, tx, ty] = k.split(/[:,]/).map(Number);
   return { tx, ty, floor };
 };
+// ---- encodings of searches that did not change since the previous save ---------------------------------------------
+// A save happens every few seconds; almost every stored search is untouched between two of them. Each cache entry is
+// keyed by the object itself plus every saved field that can change, so a hit is byte-for-byte what a fresh encoding
+// would produce:
+//  * Pending: heap, costs, parent, points and blocked are written only inside the expansion loop of
+//    human-navigation.ts, and every pass of that loop first increments `expanded`. `touched` is the only saved field
+//    that moves on its own, so it stays outside the cached body. The collection sizes are part of the key as well
+//    (the first frontier node is pushed while `expanded` is still 0).
+//  * Failed and Component records are created once and only their unsaved `checked` / `resources` are rewritten.
+type Encoded = { bytes: Uint8Array; points: number };
+const pendingBodies = new WeakMap<Pending, Encoded & { expanded: number; sizes: string }>();
+const failedBodies = new WeakMap<Failed, Encoded & { expanded: number; status: Failed['status']; blocked: Point[]; count: number }>();
+const componentBodies = new WeakMap<Component, Encoded & { expanded: number; access: string; points0: Set<string>; size: number; blocked: Point[]; count: number }>();
+function pendingBody(s: Pending): Encoded {
+  const hit = pendingBodies.get(s),
+    sizes = `${s.points.size}/${s.costs.size}/${s.parent.size}/${s.heap.length}/${s.blocked.size}`;
+  if (hit && hit.expanded === s.expanded && hit.sizes === sizes) return hit;
+  const w = new Writer();
+  const index = new Map<string, number>();
+  let i = 0;
+  for (const k of s.points.keys()) index.set(k, i++);
+  w.points(s.points.values(), s.points.size);
+  for (const k of s.points.keys()) {
+    w.n(s.costs.get(k)!);
+    const parent = s.parent.get(k);
+    w.n(parent !== undefined ? index.get(parent)! + 1 : 0);
+  }
+  check(s.heap.length <= MAX_LIST);
+  w.n(s.heap.length);
+  for (const n of s.heap) {
+    w.n(index.get(key(n.p))!);
+    w.n(n.g);
+    w.n(n.score);
+  }
+  w.points(s.blocked.values(), s.blocked.size);
+  const made = { bytes: w.take(), points: w.pointCount, expanded: s.expanded, sizes };
+  pendingBodies.set(s, made);
+  return made;
+}
+function failedBody(s: Failed): Encoded {
+  const hit = failedBodies.get(s);
+  if (hit && hit.expanded === s.expanded && hit.status === s.status && hit.blocked === s.blocked && hit.count === s.blocked.length) return hit;
+  const w = new Writer();
+  w.n(s.expanded);
+  w.n(s.status === 'NO_PATH' ? 0 : 1);
+  w.points(s.blocked, s.blocked.length);
+  const made = { bytes: w.take(), points: w.pointCount, expanded: s.expanded, status: s.status, blocked: s.blocked, count: s.blocked.length };
+  failedBodies.set(s, made);
+  return made;
+}
+function componentBody(s: Component): Encoded {
+  const hit = componentBodies.get(s);
+  if (hit && hit.expanded === s.expanded && hit.access === s.access && hit.points0 === s.points && hit.size === s.points.size && hit.blocked === s.blocked && hit.count === s.blocked.length) return hit;
+  const w = new Writer();
+  w.text(s.access);
+  w.n(s.expanded);
+  w.points([...s.points].map(toPoint), s.points.size);
+  w.points(s.blocked, s.blocked.length);
+  const made = { bytes: w.take(), points: w.pointCount, expanded: s.expanded, access: s.access, points0: s.points, size: s.points.size, blocked: s.blocked, count: s.blocked.length };
+  componentBodies.set(s, made);
+  return made;
+}
 export function saveNavigation(r: RunState): string | undefined {
   const pending = searches.get(r),
     failed = failedSearches.get(r),
     components = componentFailures.get(r);
   if (!pending?.size && !failed?.size && !components?.length) return;
   const w = new Writer();
+  let pointBudget = MAX_POINTS;
+  const append = (e: Encoded) => {
+    pointBudget -= e.points;
+    check(pointBudget >= 0);
+    w.bytes(e.bytes);
+  };
   w.n(2);
   w.n(pending?.size ?? 0);
   for (const [id, s] of pending ?? []) {
     w.text(id);
     w.n(s.expanded);
     w.n(s.touched ?? 0);
-    const keys = [...s.points.keys()],
-      index = new Map(keys.map((k, i) => [k, i]));
-    w.points([...s.points.values()]);
-    for (const k of keys) {
-      w.n(s.costs.get(k)!);
-      w.n(s.parent.has(k) ? index.get(s.parent.get(k)!)! + 1 : 0);
-    }
-    check(s.heap.length <= MAX_LIST);
-    w.n(s.heap.length);
-    for (const n of s.heap) {
-      w.n(index.get(key(n.p))!);
-      w.n(n.g);
-      w.n(n.score);
-    }
-    w.points([...s.blocked.values()]);
+    append(pendingBody(s));
   }
   w.n(failed?.size ?? 0);
   for (const [id, s] of failed ?? []) {
     w.text(id);
-    w.n(s.expanded);
-    w.n(s.status === 'NO_PATH' ? 0 : 1);
-    w.points(s.blocked);
+    append(failedBody(s));
   }
   w.n(components?.length ?? 0);
-  for (const s of components ?? []) {
-    w.text(s.access);
-    w.n(s.expanded);
-    w.points([...s.points].map(toPoint));
-    w.points(s.blocked);
-  }
+  for (const s of components ?? []) append(componentBody(s));
   return w.finish();
 }
 export function loadNavigation(r: RunState, encoded: unknown) {

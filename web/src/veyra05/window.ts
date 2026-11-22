@@ -567,15 +567,83 @@ interface GlobalBaseCell {
   solidProp:boolean;fresh:boolean;statics:FloorLayer['statics'];
   biome:Biome;temperature:number;moisture:number;slope:number;
 }
-interface GeometryRegion {
-  originTx:number;originTy:number;tiles:Uint8Array;walkable:Uint8Array;solidProps:Uint8Array;
-  fresh?:Uint8Array;sources:Map<number,string>;statics:Map<number,FloorLayer['statics']>;
-  climate:Pick<EconomyMap,'biome'|'temperature'|'moisture'|'slope'>;
+/** A per-cell number layer with few distinct values (climate bands): one byte per cell plus the list of values.
+ * Coding goes by the stored bit pattern, so every read returns exactly the number the compiler wrote. A layer that is
+ * not a Float32Array, or has more than 256 distinct values, is kept as it is (`codes` null). */
+type CodedLayer={codes:Uint8Array;values:Float32Array}|{codes:null;values:ArrayLike<number>};
+function codeLayer(a:ArrayLike<number>):CodedLayer{
+  if(!(a instanceof Float32Array))return {codes:null,values:a};
+  const bits=new Uint32Array(a.buffer,a.byteOffset,a.length),codes=new Uint8Array(a.length),seen=new Map<number,number>();
+  for(let i=0;i<bits.length;i++){let k=seen.get(bits[i]);if(k===undefined){k=seen.size;if(k>255)return {codes:null,values:a.slice()};seen.set(bits[i],k);}codes[i]=k;}
+  const values=new Float32Array(seen.size),out=new Uint32Array(values.buffer);
+  for(const [pattern,k]of seen)out[k]=pattern;
+  return {codes,values};
 }
-// Only query geometry, NOT compiled render/economy worlds, is retained. Three
-// masks + sparse source/static records per queried floor; bounded512 floor regions.
+const readLayer=(l:CodedLayer,i:number)=>l.codes?l.values[l.codes[i]]:l.values[i];
+/** One bit per cell of a mask that is only ever read as true/false. */
+function packMask(a:ArrayLike<number>){const bits=new Uint8Array((a.length+7)>>3);for(let i=0;i<a.length;i++)if(a[i])bits[i>>3]|=1<<(i&7);return bits;}
+const maskAt=(bits:Uint8Array,i:number)=>(bits[i>>3]>>(i&7)&1)===1;
+interface RegionClimate {biomeNames:string[];biome:Uint8Array;temperature:CodedLayer;moisture:CodedLayer;slope:CodedLayer}
+interface GeometryRegion {
+  originTx:number;originTy:number;tiles:Uint8Array;
+  /** Bit masks (packMask). */
+  walkable:Uint8Array;solidProps:Uint8Array;fresh?:Uint8Array;
+  sources:Map<number,string>;statics:Map<number,FloorLayer['statics']>;
+  climate:RegionClimate;
+}
+// Only query geometry, NOT compiled render/economy worlds, is retained. One tile
+// layer + two bit masks + sparse source/static records per queried floor, and one
+// coded climate set per region; bounded512 floor regions.
 // This avoids the 16-view render cache thrashing across81 inhabited sites.
 const geometryRegions=new Map<string,GeometryRegion|null>();
+/** Everything the geometry cache keeps of one compiled region. Produced by `compileGeometryRegionPack`, which is a
+ * pure function of (layout, rules). Every array in a pack is its own copy (nothing is shared with the compiler's
+ * caches), so a pack can be handed to another thread whole; installing a pack made there is the same as compiling here. */
+export interface GeometryRegionPack {
+  layoutId:string;rules:VeyraPlacementRules;originTx:number;originTy:number;fresh:Uint8Array;climate:RegionClimate;
+  levels:{level:number;tiles:Uint8Array;walkable:Uint8Array;solidProps:Uint8Array;sourceNames:string[];sourceCells:Uint32Array;sourceCodes:Uint16Array;statics:FloorLayer['statics']}[];
+}
+export function compileGeometryRegionPack(layoutId:string,rules:VeyraPlacementRules):GeometryRegionPack{
+  const c=compileCanonicalGeometryRegion(layoutId,rules),biomes=c.economyMap.biome;
+  const biomeNames:string[]=[],biomeCode=new Map<string,number>(),biome=new Uint8Array(biomes.length);
+  for(let i=0;i<biomes.length;i++){let k=biomeCode.get(biomes[i]);if(k===undefined){k=biomeNames.length;if(k>255)throw Error('Too many biomes in one region.');biomeCode.set(biomes[i],k);biomeNames.push(biomes[i]);}biome[i]=k;}
+  const levels:GeometryRegionPack['levels']=[];
+  for(const [level,layer]of c.floors.layers){
+    const sourceNames:string[]=[],sourceCode=new Map<string,number>(),cells:number[]=[],codes:number[]=[];
+    for(let i=0;i<layer.sources.length;i++){const key=layer.sources[i];if(!key)continue;let k=sourceCode.get(key);if(k===undefined){k=sourceNames.length;if(k>65535)throw Error('Too many source kinds in one region.');sourceCode.set(key,k);sourceNames.push(key);}cells.push(i);codes.push(k);}
+    levels.push({level,tiles:layer.tiles.slice(),walkable:packMask(layer.walkable),solidProps:packMask(layer.solidProps),sourceNames,sourceCells:Uint32Array.from(cells),sourceCodes:Uint16Array.from(codes),statics:layer.statics});
+  }
+  return {layoutId,rules,originTx:c.win.originTx,originTy:c.win.originTy,fresh:packMask(c.fresh),
+    climate:{biomeNames,biome,temperature:codeLayer(c.economyMap.temperature),moisture:codeLayer(c.economyMap.moisture),slope:codeLayer(c.economyMap.slope)},levels};
+}
+/** The buffers of a pack, for a zero-copy postMessage. */
+export function geometryRegionPackBuffers(p:GeometryRegionPack):ArrayBuffer[]{
+  const out=new Set<ArrayBuffer>(),add=(a:unknown)=>{if(ArrayBuffer.isView(a)&&a.buffer instanceof ArrayBuffer)out.add(a.buffer);};
+  add(p.fresh);add(p.climate.biome);
+  for(const l of [p.climate.temperature,p.climate.moisture,p.climate.slope]){add(l.codes);add(l.values);}
+  for(const l of p.levels){add(l.tiles);add(l.walkable);add(l.solidProps);add(l.sourceCells);add(l.sourceCodes);}
+  return [...out];
+}
+/** The floors each compiled region has (a few numbers per region; kept when the region itself leaves the cache). */
+const regionFloors=new Map<string,number[]>();
+function installGeometryRegionPack(p:GeometryRegionPack){
+  regionFloors.set(`${p.rules}:${p.layoutId}`,p.levels.map(l=>l.level));
+  for(const l of p.levels){
+    const sources=new Map<number,string>(),statics=new Map<number,FloorLayer['statics']>();
+    for(let i=0;i<l.sourceCells.length;i++)sources.set(l.sourceCells[i],l.sourceNames[l.sourceCodes[i]]);
+    for(const s of l.statics){const k=s.ty*WW+s.tx,list=statics.get(k);if(list)list.push(s);else statics.set(k,[s]);}
+    geometryRegions.set(`${p.rules}:${p.layoutId}:${l.level}`,{originTx:p.originTx,originTy:p.originTy,tiles:l.tiles,walkable:l.walkable,solidProps:l.solidProps,fresh:l.level===0?p.fresh:undefined,sources,statics,climate:p.climate});
+  }
+}
+/** Regions compiled ahead of need on another thread (region-prebuild.ts). Asked once per cache miss; a miss it cannot
+ * serve compiles here as always. The cache itself (contents, order, bound) behaves the same either way. */
+let prebuiltRegion:((layoutId:string,rules:VeyraPlacementRules)=>GeometryRegionPack|undefined)|null=null;
+export function setPrebuiltRegionSource(source:typeof prebuiltRegion){prebuiltRegion=source;}
+/** Floor regions the cache holds now, and the most it may hold. */
+export const GEOMETRY_REGION_LIMIT=512;
+export const geometryRegionCount=()=>geometryRegions.size;
+/** True while the cache holds this region's ground floor (the prebuilder skips it). Does not touch cache order. */
+export function hasGeometryRegion(layoutId:string,rules:VeyraPlacementRules){return geometryRegions.has(`${rules}:${layoutId}:0`);}
 /** Immutable compiler output only. All door/source/terrain/entity deltas remain
  * RunState reads in the caller. Never cache a mutable stock or access decision. */
 export function globalBaseGeometry(gx:number,gy:number,floor:number,rules:VeyraPlacementRules,layout?:string):GlobalBaseCell|null {
@@ -584,22 +652,18 @@ export function globalBaseGeometry(gx:number,gy:number,floor:number,rules:VeyraP
   const id=layout??layoutIdAt(ox,oy),key=`${rules}:${id}:${floor}`;
   let region=geometryRegions.get(key);
   if(region===undefined){
-    const c=compileCanonicalGeometryRegion(id,rules);
-    for(const [level,layer]of c.floors.layers){
-      const sources=new Map<number,string>(),statics=new Map<number,FloorLayer['statics']>();
-      for(let i=0;i<layer.sources.length;i++)if(layer.sources[i])sources.set(i,layer.sources[i]!);
-      for(const s of layer.statics){const k=s.ty*WW+s.tx,list=statics.get(k);if(list)list.push(s);else statics.set(k,[s]);}
-      geometryRegions.set(`${rules}:${id}:${level}`,{originTx:c.win.originTx,originTy:c.win.originTy,tiles:layer.tiles,walkable:layer.walkable,solidProps:layer.solidProps,fresh:level===0?c.fresh:undefined,sources,statics,climate:{biome:c.economyMap.biome,temperature:c.economyMap.temperature,moisture:c.economyMap.moisture,slope:c.economyMap.slope}});
-    }
+    // A floor the compiler is already known not to produce for this region needs no second compile to say so.
+    if(regionFloors.get(`${rules}:${id}`)?.includes(floor)!==false)installGeometryRegionPack(prebuiltRegion?.(id,rules)??compileGeometryRegionPack(id,rules));
     if(!geometryRegions.has(key))geometryRegions.set(key,null);
     region=geometryRegions.get(key)!;
-    while(geometryRegions.size>512)geometryRegions.delete(geometryRegions.keys().next().value!);
+    while(geometryRegions.size>GEOMETRY_REGION_LIMIT)geometryRegions.delete(geometryRegions.keys().next().value!);
   } else {geometryRegions.delete(key);geometryRegions.set(key,region);}
   if(!region)return null;
   const x=gx-region.originTx,y=gy-region.originTy;
   if(x<0||y<0||x>=WW||y>=WH)return null;
   const i=y*WW+x;
-  return {originTx:region.originTx,originTy:region.originTy,tile:region.tiles[i],walkable:!!region.walkable[i],source:region.sources.get(i)??null,solidProp:!!region.solidProps[i],fresh:!!region.fresh?.[i],statics:region.statics.get(i)??[],biome:region.climate.biome[i],temperature:region.climate.temperature[i],moisture:region.climate.moisture[i],slope:region.climate.slope[i]};
+  const climate=region.climate;
+  return {originTx:region.originTx,originTy:region.originTy,tile:region.tiles[i],walkable:maskAt(region.walkable,i),source:region.sources.get(i)??null,solidProp:maskAt(region.solidProps,i),fresh:!!region.fresh&&maskAt(region.fresh,i),statics:region.statics.get(i)??[],biome:climate.biomeNames[climate.biome[i]] as Biome,temperature:readLayer(climate.temperature,i),moisture:readLayer(climate.moisture,i),slope:readLayer(climate.slope,i)};
 }
 /** Bounded known-catchment discovery over the compiled sparse source index.
  * No per-cell geometry queries, stock copies or render materialization. */

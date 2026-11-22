@@ -9,6 +9,7 @@ import { getActiveLayout, getWorld, setActiveLayout } from './game/world';
 import { U05_WORLD_LAYOUT_ID, isVeyra05Layout } from './veyra05/scenes';
 import { getWindowWorld } from './veyra05/window';
 import { syncFloor } from './veyra05/floors';
+import { prebuildRegions, warmNewGameRegions } from './veyra05/region-prebuild';
 import Inspector from './veyra05/inspector/Inspector';
 import { resetRenderCaches, cam } from './game/render';
 import { setVolume, initAudio } from './game/audio';
@@ -55,6 +56,14 @@ export default function App() {
   const [progress,setProgress]=useState<number|null>(null);
   useEffect(()=>()=>{catchUp.current?.terminate();catchUp.current=null;},[]);
   const savedGs = gsRef.current;
+  // While the title is up, start compiling the regions residents stand on (those of the run behind Continue, or of a
+  // new game), so the first minute of play does not pay for them (region-prebuild.ts; changes no game state).
+  useEffect(() => {
+    if (screen !== 'title') return;
+    const warm = () => { const r = gsRef.current?.run; if (r && !r.ended) prebuildRegions(r, Date.now(), false); else warmNewGameRegions(); };
+    warm(); const timer = setInterval(warm, 1000);
+    return () => clearInterval(timer);
+  }, [screen]);
   const gs = qaMode ? qaGsRef.current : (inspectionGs ?? savedGs);
   if (loadError) return <div style={{ padding: 24, color: '#ffd98a', background: '#120c18', minHeight: '100vh' }}><h1>Save recovery required</h1><p>{loadError}</p><p>No new game was started and the original save copies were not overwritten.</p><button onClick={() => window.location.reload()}>Retry</button></div>;
   if (screen === 'loading' || !gs || !savedGs) return <div style={{ position: 'fixed', inset: 0, display: 'grid', placeItems: 'center', color: '#ffd98a', fontSize: 22 }} className="title-font">Raising the island…</div>;

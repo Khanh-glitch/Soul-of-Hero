@@ -1,4 +1,5 @@
 import {saveNavigation,loadNavigation} from './navigation-save';
+import { SNAPSHOT_FORMAT, snapshotChecksum as checksum, wrapSnapshot, type SaveWriteReply, type SaveWriteRequest } from './save-wire';
 import { G1B_VERSION, G1B_CHEST_SLOTS, G1B_SITES, G1B_FIXTURE_BY_ID, G1B_GATE_BY_ID, G1B_SOURCE_SITES, G1B_BASE_SOURCE_SITES, G1B_LAYOUT_REVISION, G1B_FIXTURES, g1bSeed, CORE_V2 } from './g1b';
 import { G1B_BATCH2_ECOLOGY } from './g1b-ecology-batch2.frozen';
 import { G1B_BATCH3_ECOLOGY } from './g1b-ecology-batch3.frozen';
@@ -54,7 +55,7 @@ import { activeFloor, onActiveFloor, syncFloor } from '../veyra05/floors';
 
 const testMode = import.meta.env.VITE_FX_TEST === '1';
 const DB = testMode ? 'soul-of-hero-vfx-test' : 'soul-of-hero', STORE = 'kv', KEY = 'state', LS = (testMode ? 'soh.vfx-test.v' : 'soh.state.v') + SAVE_VERSION;
-const FORMAT = 'soh-snapshot-v1';
+const FORMAT = SNAPSHOT_FORMAT;
 let dbp: Promise<IDBDatabase | null> | null = null;
 let dbFailed = false;
 // Never overwrite a store that could not be read on this page load.
@@ -1050,16 +1051,17 @@ export function migrate(raw: any): LoadResult {
   if (validate(candidate)) return { gs: candidate, note: `Save format v${raw.version} migrated with its run and profile intact.` };
   return { gs: null, note: `Save format v${raw.version} is incompatible; the original run and profile were left untouched for recovery.` };
 }
-function checksum(text: string) { let h = 2166136261; for (let i = 0; i < text.length; i++) h = Math.imul(h ^ text.charCodeAt(i), 16777619); return (h >>> 0).toString(16).padStart(8, '0'); }
-/** Each serialized snapshot gets a new sequence even when only the simulation changed. */
-export function serializeSnapshot(gs: GameState): string {
-  if (!validate(gs)) throw new Error('Refusing to save invalid game state.');
+/** State text of a snapshot that the caller has ALREADY validated. Each one gets a new sequence even when only the simulation changed. */
+function snapshotPayload(gs: GameState): string {
   if (gs.run && !gs.run.wreckEconomy) gs.run.wreckEconomy = wreckEconomy(gs.run);
   if (!Number.isSafeInteger(gs.revision + 1)) throw new Error('Snapshot sequence exhausted.');
   gs.revision++;
   const nav=gs.run && saveNavigation(gs.run);
-  const payload = JSON.stringify(nav?{...gs,navigation:nav}:gs);
-  return JSON.stringify({ format: FORMAT, payload, checksum: checksum(payload) });
+  return JSON.stringify(nav?{...gs,navigation:nav}:gs);
+}
+export function serializeSnapshot(gs: GameState): string {
+  if (!validate(gs)) throw new Error('Refusing to save invalid game state.');
+  return wrapSnapshot(snapshotPayload(gs));
 }
 type Candidate = { gs: GameState; payload: string; legacy: boolean; index: number };
 function decode(text: string, index: number): Candidate | null {
@@ -1171,6 +1173,34 @@ export async function load(): Promise<LoadResult> {
   return { gs: m.gs, note: notes.join(' ') || undefined };
 }
 let writeTail: Promise<unknown> = Promise.resolve();
+/** True once an IndexedDB write of this page load succeeded and none failed since. A light save needs it. */
+let idbHealthy = false;
+// ---- background save writer -------------------------------------------------------------------------------------
+// One small worker owns the IndexedDB transaction of every save, so the game thread never copies a megabyte of text
+// into the database between two frames. Any failure (no Worker, a crash, no answer) retires it for this page load and
+// the write happens on the game thread exactly as before.
+let saveWriter: Worker | null | undefined; let writerSeq = 0;
+const writerWaiting = new Map<number, (status: SaveWriteReply['status'] | null) => void>();
+function retireWriter() { try { saveWriter?.terminate(); } catch { /* */ } saveWriter = null; for (const done of writerWaiting.values()) done(null); writerWaiting.clear(); }
+function writer(): Worker | null {
+  if (saveWriter !== undefined) return saveWriter;
+  try {
+    if (typeof Worker === 'undefined' || typeof indexedDB === 'undefined') return saveWriter = null;
+    const w = new Worker(new URL('./save-writer.worker.ts', import.meta.url), { type: 'module' });
+    w.onmessage = ({ data }: MessageEvent<SaveWriteReply>) => { const done = writerWaiting.get(data.id); if (done) { writerWaiting.delete(data.id); done(data.status); } };
+    w.onerror = () => retireWriter(); w.onmessageerror = () => retireWriter();
+    return saveWriter = w;
+  } catch { return saveWriter = null; }
+}
+/** Null: the background writer could not take this write; the caller writes on the game thread. */
+function writeInBackground(body: { payload: string } | { text: string }): Promise<SaveWriteReply['status'] | null> {
+  const w = writer(); if (!w) return Promise.resolve(null);
+  return new Promise(res => {
+    const id = ++writerSeq; const timer = setTimeout(() => { if (writerWaiting.has(id)) retireWriter(); }, 15000);
+    writerWaiting.set(id, status => { clearTimeout(timer); res(status); });
+    try { w.postMessage({ id, db: DB, store: STORE, key: KEY, ...body } as SaveWriteRequest); } catch { writerWaiting.delete(id); clearTimeout(timer); retireWriter(); res(null); }
+  });
+}
 export type SaveCategory = 'ok' | 'invalid-state' | 'serialize-error' | 'local-write' | 'readback-conflict' | 'idb-init' | 'idb-transaction';
 export interface SaveOutcome {
   ok: boolean; category: SaveCategory; revision: number | null;
@@ -1228,7 +1258,7 @@ export function diagnoseInvalidState(gs: GameState): string {
  * Local-first save with bounded diagnostics. Validation happens BEFORE any write, so an invalid new state never
  * overwrites the last valid snapshot. localStorage and IndexedDB are both written; the save succeeds if either holds the snapshot.
  */
-export async function saveDetailed(gs: GameState): Promise<SaveOutcome> {
+export async function saveDetailed(gs: GameState, opts: { light?: boolean } = {}): Promise<SaveOutcome> {
   if ((gs as any).__ephemeralInspect) {
     return { ok: true, category: 'ok', revision: gs.revision, localStatus: 'skipped', idbStatus: 'skipped' };
   }
@@ -1238,23 +1268,37 @@ export async function saveDetailed(gs: GameState): Promise<SaveOutcome> {
     if (key && !warnedSave.has(key)) { warnedSave.add(key); console.warn(`[save] ${key}`); }   // category only; no payload
     return o;
   };
+  // The one validation of this save (the state text below is produced from the state that just passed it).
   if (!validate(gs)) return record({ ok: false, category: 'invalid-state', revision: null, localStatus: 'skipped', idbStatus: 'skipped', invariant: diagnoseInvalidState(gs) });
-  let text: string;
-  try { text = serializeSnapshot(gs); }
+  let payload: string;
+  try { payload = snapshotPayload(gs); }
   catch { return record({ ok: false, category: 'serialize-error', revision: null, localStatus: 'skipped', idbStatus: 'skipped' }); }
   const revision = gs.revision;
-  let localStatus: SaveOutcome['localStatus'] = 'skipped';
-  if (localReadable) {
-    try { localStorage.setItem(LS, text); localStatus = localStorage.getItem(LS) === text ? 'ok' : 'readback-conflict'; }
-    catch { localStatus = 'local-write'; }
-  }
+  // A light save (the timed autosave while the player is moving or fighting) hands the state text to the background
+  // writer and leaves the game thread at once: the envelope, the checksum and the database transaction happen there.
+  // It is only taken while that database is known to be accepting writes; otherwise this is a full save.
+  const light = !!opts.light && idbReadable && idbHealthy && !!writer();
+  let text: string | undefined;
+  const writeLocal = (): SaveOutcome['localStatus'] => {
+    if (!localReadable) return 'skipped';
+    text ??= wrapSnapshot(payload);
+    try { localStorage.setItem(LS, text); return localStorage.getItem(LS) === text ? 'ok' : 'readback-conflict'; }
+    catch { return 'local-write'; }
+  };
+  let localStatus: SaveOutcome['localStatus'] = light ? 'skipped' : writeLocal();
   const write = async (): Promise<SaveOutcome['idbStatus']> => {
     if (!idbReadable) return 'idb-init';
+    const viaWriter = await writeInBackground(text === undefined ? { payload } : { text });
+    if (viaWriter) return viaWriter;
     const d = await db(); if (!d) return 'idb-init';
-    return await new Promise<SaveOutcome['idbStatus']>(res => { try { const tx = d.transaction(STORE, 'readwrite'); tx.objectStore(STORE).put(text, KEY); tx.oncomplete = () => res('ok'); tx.onerror = () => res('idb-transaction'); tx.onabort = () => res('idb-transaction'); } catch { res('idb-transaction'); } });
+    const stored = text ??= wrapSnapshot(payload);
+    return await new Promise<SaveOutcome['idbStatus']>(res => { try { const tx = d.transaction(STORE, 'readwrite'); tx.objectStore(STORE).put(stored, KEY); tx.oncomplete = () => res('ok'); tx.onerror = () => res('idb-transaction'); tx.onabort = () => res('idb-transaction'); } catch { res('idb-transaction'); } });
   };
   const result = writeTail.then(write, write) as Promise<SaveOutcome['idbStatus']>; writeTail = result;
   const idbStatus: SaveOutcome['idbStatus'] = await result;
+  idbHealthy = idbStatus === 'ok';
+  // A light save whose database write failed still has its state text: keep the old guarantee and store it locally now.
+  if (light && idbStatus !== 'ok') localStatus = writeLocal();
   const ok = localStatus === 'ok' || idbStatus === 'ok';
   if (ok) return record({ ok: true, category: 'ok', revision, localStatus, idbStatus });
   const category: SaveCategory = idbStatus === 'idb-init' || idbStatus === 'idb-transaction' ? idbStatus : localStatus === 'local-write' ? 'local-write' : 'readback-conflict';

@@ -28,6 +28,8 @@ const SAVE_TOAST: Record<string, string> = {
 import { getWorld, ZONES } from '../game/world';
 import { sfx, setAmbience, initAudio, setVolume } from '../game/audio';
 import { save, saveSync, saveDetailed, lastSaveOutcome } from '../game/persist';
+import { prebuildRegions, regionPrebuildStats } from '../veyra05/region-prebuild';
+import { autosaveDecision, AUTOSAVE_MIN_MS, AUTOSAVE_STILL_MS } from '../game/autosave-policy';
 import { Slot, Bar, Icon, mkIntent, type Api, type PanelState } from './common';
 import { Vitals, UrgentAlerts, WorldClock, Hotbar, RigStatus, ThreatBar, PresentationPanel, useVisualPrefs, Glyph } from './hud';
 import { setListener, setEnvironment, machineState, setMood, tickMusic, stopAllMachines } from '../game/audio';
@@ -182,7 +184,7 @@ export default function Game({
   const idleAcc = useRef(0); // presentation only: lets the score fall silent while gathering
   const panelRef = useRef(panel); panelRef.current = panel; const buildRef = useRef(buildType); buildRef.current = buildType; const reclaimRef = useRef(reclaim); reclaimRef.current = reclaim; const repairRef = useRef(repairMode); repairRef.current = repairMode; const upgradeRef = useRef(upgradeMode); upgradeRef.current = upgradeMode;
   const saveT = useRef<any>(null); const toastKeys = useRef<Record<string, number>>({});
-  const scheduleSave = () => { if (qaMode) return; clearTimeout(saveT.current); saveT.current = setTimeout(() => { void saveDetailed(gs).then(reportSave); }, 250); };
+  const scheduleSave = () => { if (qaMode) return; clearTimeout(saveT.current); saveT.current = setTimeout(() => { void saveDetailed(gs, { light: !panelRef.current }).then(reportSave); }, 250); };
   const reportSave = (o: { ok: boolean; category: string; idbStatus: string }) => {
     if (qaMode) return;
     if (o.ok) flushJourneyNow();
@@ -489,7 +491,7 @@ export default function Game({
   useEffect(() => {
     const cv = cvRef.current; const g = cv?.getContext('2d'); if (!cv || !g) return; g.imageSmoothingEnabled = false;
     void pfx.initPfx(); vfxDirector.init();
-    let last = performance.now(); let raf = 0; let uiAcc = 0, saveAcc = 0, ambAcc = 0; let ended = false;
+    let last = performance.now(); let raf = 0; let uiAcc = 0, prebuildAcc = 1000, ambAcc = 0; let autosavedAt = last, movedAt = last; let ended = false;
     const loop = (t: number) => {
       // Cap animation/input physics only; tick catches up autonomous wall time from lastSimAt.
       raf = requestAnimationFrame(loop); const dt = Math.min(50, t - last); last = t; const now = Date.now();
@@ -558,7 +560,18 @@ export default function Game({
       // 10 Hz and ambience/machines/mood are re-derived at 1 Hz from real state.
       setListener(cam.x + VIEW_W / 2, cam.y + VIEW_H / 2);
       uiAcc += dt; if (uiAcc > 100) { uiAcc = 0; rerender(); tickMusic(now); }
-      saveAcc += dt; if (saveAcc > 5000) { saveAcc = 0; if (!qaMode) void saveDetailed(gs).then(reportSave); }
+      prebuildAcc += dt; if (prebuildAcc > 1000) { prebuildAcc = 0; prebuildRegions(gs.run, now); }
+      // Timed autosave: taken at a quiet moment, at the latest AUTOSAVE_MAX_MS after the previous one (autosave-policy.ts).
+      // (clock time, not frame time: on a slow machine frame time runs behind and would stretch the 20 s limit)
+      { const pl = gs.run.player, inp0 = inp.current;
+        if (Math.hypot(pl.vx, pl.vy) > 6 || inp0.up || inp0.down || inp0.left || inp0.right || inp0.attack) movedAt = t;
+        const sinceLastMs = t - autosavedAt, stillMs = t - movedAt;
+        if (sinceLastMs > AUTOSAVE_MIN_MS) {
+          const rr = gs.run;
+          const when = autosaveDecision({ sinceLastMs, panelOpen: !!panelRef.current, deadOrResting: pl.dead || !!rr.rest, stillMs,
+            threatNear: stillMs >= AUTOSAVE_STILL_MS && rr.creatures.some(m => (m.state === 'chase' || m.state === 'attack' || m.state === 'tell') && Math.hypot(m.x - pl.x, m.y - pl.y) < 190) });
+          if (when !== 'wait') { autosavedAt = t; if (!qaMode) void saveDetailed(gs, { light: when === 'light' }).then(reportSave); }
+        } }
       ambAcc += dt; if (ambAcc > 1000) {
         ambAcc = 0; const rr = gs.run; const pp = rr.player; setIssues(standingIssues(rr));
         const w = weatherAt(rr, now); const idx = Math.floor(pp.y / 16) * WW + Math.floor(pp.x / 16);
@@ -694,7 +707,7 @@ export default function Game({
 
   if (import.meta.env.VITE_SOH_QA === '1') (window as any).__soh = gs; // QA builds only: mutable state reference for drivers
   // QA read-only view: camera + stage transform + current interaction target (lets a driver aim the real mouse). No authority.
-  (window as any).__sohView = () => ({ lastSave: lastSaveOutcome(), cam: { x: cam.x, y: cam.y }, scale: scaleRef.current, off: offRef.current, target: target.current ? { kind: target.current.kind, label: target.current.label, eid: target.current.eid ?? null } : null });
+  (window as any).__sohView = () => ({ regions: regionPrebuildStats(), lastSave: lastSaveOutcome(), cam: { x: cam.x, y: cam.y }, scale: scaleRef.current, off: offRef.current, target: target.current ? { kind: target.current.kind, label: target.current.label, eid: target.current.eid ?? null } : null });
   // QA fixture passthrough: used ONLY by disclosed browser fixtures (pack filling, cart placement). Gameplay still goes through dispatch.
   if (import.meta.env.VITE_SOH_QA === '1') (window as any).__sohQA = { // QA builds only: fixture helpers (all mutations via engine rules)
     act: (type: string, payload: Record<string, any> = {}) => act(type, payload),
