@@ -1,0 +1,62 @@
+[
+ {
+  "atMin": 0,
+  "fps": 30.9,
+  "cb": {
+   "mean": 16.37,
+   "p50": 12.5,
+   "p95": 25.6,
+   "p99": 66.4,
+   "max": 423.4,
+   "over16": 386,
+   "over33": 44
+  },
+  "tick": 4.54,
+  "stepHumans": 2.04,
+  "tickNeeds": 0.67,
+  "plan": 0.93,
+  "compileGeo": 1.12,
+  "route": 0.2,
+  "boundary": 0.26,
+  "entityRead": 2.07,
+  "draw": 8.86,
+  "save": 0.39,
+  "react": 0.47,
+  "gc": 0.62,
+  "entities": 46,
+  "offscreen": 107,
+  "receipts": 250,
+  "weather": "FOG",
+  "saveKB": 1655
+ },
+ {
+  "atMin": 1,
+  "fps": 24,
+  "cb": {
+   "mean": 20.2,
+   "p50": 18.2,
+   "p95": 31.8,
+   "p99": 60.6,
+   "max": 293.9,
+   "over16": 1072,
+   "over33": 76
+  },
+  "tick": 4.91,
+  "stepHumans": 2.02,
+  "tickNeeds": 0.98,
+  "plan": 0.5,
+  "compileGeo": 0.54,
+  "route": 0.33,
+  "boundary": 0.35,
+  "entityRead": 1.7,
+  "draw": 11.07,
+  "save": 0.6,
+  "react": 0.43,
+  "gc": 0.62,
+  "entities": 46,
+  "offscreen": 107,
+  "receipts": 250,
+  "weather": "FOG",
+  "saveKB": 1698
+ }
+]

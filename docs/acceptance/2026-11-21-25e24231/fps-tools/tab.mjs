@@ -1,0 +1,5 @@
+import fs from 'node:fs'; const f = process.argv[2] ?? 'sweep-idle.jsonl';
+const rows = fs.readFileSync(f, 'utf8').trim().split('\n').filter(l => l.startsWith('{')).map(l => JSON.parse(l)).sort((a, b) => a.label.localeCompare(b.label));
+console.log('build         fps  gap.mean gap.p95 | cb.mean cb.p95 | busy  tick  syncW humans needs  draw react | people creat | drawImg fillRect  px(M) fill/img');
+for (const r of rows) { const s = r.split ?? {}, o = r.ops ?? {}; const px = o.px ?? {}; const fpx = ((px['fillRect>main'] ?? 0) / 1e6).toFixed(2), ipx = (((px['canvas>main'] ?? 0) + (px['img>main'] ?? 0)) / 1e6).toFixed(2);
+  console.log(`${r.label.padEnd(13)} ${String(r.fps).padStart(4)} ${String(r.gap?.mean).padStart(8)} ${String(r.gap?.p95).padStart(7)} | ${String(r.cb.mean).padStart(7)} ${String(r.cb.p95).padStart(6)} | ${[s.busy, s.tick, s.syncWorld, s.stepHumans, s.tickNeeds, s.draw, s.react].map(v => String(v).padStart(5)).join(' ')} | ${String(r.people).padStart(6)} ${String(r.creatures).padStart(5)} | ${String(o.di).padStart(7)} ${String(o.fr).padStart(8)}  ${fpx}/${ipx}${r.errors?.length ? ' ERR ' + r.errors[0] : ''}`); }
