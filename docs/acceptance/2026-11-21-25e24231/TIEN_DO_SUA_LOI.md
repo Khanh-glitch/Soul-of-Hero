@@ -1,6 +1,6 @@
 # Tiến độ sửa lỗi sau nghiệm thu `6d2dec8`
 
-Cập nhật: 2026-11-22 (lần 6 — lượt khoá SHA `40ee8b9`: 246 tệp đạt, 0 đỏ). Nhánh `arena/0f6091f9-soul-of-hero`. Chưa đẩy lên GitHub, chưa có PR, chưa phát hành.
+Cập nhật: 2026-11-22 (lần 7 — sổ tay tân thủ mới, lượt khoá SHA `0d9cc3b3`: 247 tệp đạt, 0 đỏ, endurance 15/15). Nhánh `arena/0f6091f9-soul-of-hero`. Chưa đẩy lên GitHub, chưa có PR, chưa phát hành.
 
 ## Các commit
 
@@ -19,6 +19,7 @@ Cập nhật: 2026-11-22 (lần 6 — lượt khoá SHA `40ee8b9`: 246 tệp đ�
 | `eca8d96` | Sửa lỗi của `0fa58e2` và hiện tượng "đẩy qua đẩy lại" khi nhường đường. |
 | `e070b4b` | Sửa giới hạn thời gian / phép đếm lỗi thời trong `ecosystem-full`, `audit-closure`, `g1b-lifecycle`. |
 | `40ee8b9` | Bot chơi thử của `arena1-round2-newgame-routes` biết làm lại công cụ khi không có dao; ghi quyết định 1B / 2C. **SHA đã chạy lượt khoá.** |
+| `0d9cc3b3` | **Sổ tay sinh tồn trong Journey**: 11 chương mở sẵn, làm theo thứ tự nào cũng được, mỗi chương một gói quà nhận một lần, công tắc Anh / Việt. Có đổi mã game chạy thật. **SHA đã chạy lượt khoá mới.** |
 
 ## Đã đo được
 
@@ -234,9 +235,71 @@ Nguồn đối chiếu: bài hướng dẫn của LevelWinner về Last Island (
 | Survival Gallery: từ điển vật phẩm, quái, cây, nơi tìm | **Không có**: Field Reference chỉ gồm phím điều khiển và 11 mẹo. |
 | Ngôn ngữ | Toàn bộ chữ hướng dẫn là tiếng Anh. |
 
+## Sổ tay sinh tồn (Journey → thẻ Fieldcraft) — commit `0d9cc3b3`
+
+Quyết định của Creator 22/11: Journey phải giúp người chơi hiểu mọi cơ chế nhưng không ép một cách chơi; "1 B" mỗi chương có quà nhận một lần (đầu game hỗ trợ tân thủ, về sau hấp dẫn hơn); "2 C" có công tắc Anh / Việt; "3 B" từ điển vật phẩm – quái – cây để sau final.
+
+**Cách hoạt động**
+
+- 11 chương, 40 bước. Tất cả mở từ phút đầu, không chương nào khoá chương nào.
+- Bước nào làm trước cũng được tính, kể cả khi chưa mở sổ. Bản cũ chỉ đếm bước đầu tiên chưa xong.
+- Bước có nhiều cách chơi thì ghi rõ từng cách, làm **một** cách là xong, quà như nhau. Ví dụ chương Cư dân: đổi đồ, sơ cứu, sửa đồ giúp, góp thức ăn, chiêu mộ, ra lệnh, đe doạ hoặc cướp đều tính. Chương cuối: lên tàu sơ tán hoặc ở lại hạ Elder đều tính.
+- Ô gợi ý trên màn hình chỉ là lời mời. Bấm × là im hẳn; "Set aside" thì chương vẫn ghi nhận âm thầm.
+- Tiến độ nằm trong save của lượt chơi (`RunState.handbook`) và được ghi ngay lúc hành động xảy ra, nên không mất khi sổ biên nhận 250 dòng bị đẩy trôi.
+- Việc của cư dân không được tính cho người chơi (cư dân săn thú, lò của làng, máy phát của làng, heo rừng húc đổ cây).
+- Quà do engine cấp qua lệnh `handbookClaim`: mỗi chương một lần mỗi lượt chơi, không cấp ở lượt QA, đồ không vừa balo thì rơi xuống đất, không bao giờ tạo Secured Cash.
+
+**11 chương và quà**
+
+| # | Chương (Anh / Việt) | Dạy gì | Quà |
+|---|---|---|---|
+| 1 | Landfall / Đặt chân | hái lượm, chế đồ, ăn uống | Stone Axe, Stone Pickaxe, Territory Cabinet (đã đóng gói), 4 Roast Meat |
+| 2 | Hearth & Wall / Mái nhà | nền, Cabinet, tường, cửa, nhà kín | Campfire, Wood Chest, Straw Bed (đóng gói), 2 Torch |
+| 3 | Fire & Iron / Lửa và sắt | lửa trại, nấu ăn, bàn chế, lò, luyện kim | 6 Iron Ingot, 10 Charcoal, 4 Rope |
+| 4 | Paper & Parts / Tri thức | nghiên cứu, sửa đồ, tái chế | 12 Parts, 4 Electronic Parts |
+| 5 | Field & Flock / Lương thực | vườn, gieo hạt, tưới, thu hoạch hoặc săn hoặc nuôi | Trail Canteen, 3 Canned Meat, 4 hạt Sunroot |
+| 6 | Beyond the Treeline / Khám phá | tìm địa điểm, lục đồ, cất đồ / xe kéo | Trail Pack, 6 Parts, 4 Bandage |
+| 7 | Tooth & Steel / Chiến đấu | tự vệ, chữa thương, vũ khí – giáp, bẫy – rào | Bow, 24 Arrow, 2 Medkit |
+| 8 | Neighbours / Cư dân | nói chuyện, đối xử với cư dân, thương nhân | 3 Medkit, 4 Canned Meat, 2 Fruit Wine |
+| 9 | Wheels & Wires / Máy móc | điện, nhiên liệu, xe | 3 Fuel Can, 4 Mechanical Gear, 4 Iron Plate |
+| 10 | Old Power / Sức mạnh cổ xưa | Energy Cell, dùng Core, nâng cấp – sửa Core | 12 Refined Energy, 40 Basic Energy, 3 Crystal |
+| 11 | The Last 72 Hours / 72 giờ cuối | Ragnarok, cất tiền Escrow, chọn kết cục | 4 Medkit, 2 Fuel Can, 8 Refined Energy, 4 Canned Meat (mở ngay khi Ragnarok bắt đầu) |
+
+Ba chương đầu là "Gói khởi đầu": quà chính là món mà chương kế tiếp cần, để người mới không phải tự cày. Chương 4–7 là "Kiện tiếp tế", chương 8–11 là "Kho hiếm".
+
+**Tiếng Việt:** nút EN / VI ở góc trên sổ Journey; đổi cả sổ tay, ô gợi ý trên màn hình, Mốc ngày, phần Tra cứu. Tên vật phẩm và công trình giữ tiếng Anh để khớp với balo. Chữ tiếng Việt dùng phông VT323 vì phông tiêu đề Pixelify Sans không có dấu tiếng Việt. Các dòng Biên niên đã ghi từ trước giữ nguyên ngôn ngữ lúc ghi.
+
+**Sửa kèm:** mẹo "Worn Tool" còn chỉ người chơi dùng Field Repair Kit (vật phẩm đã bỏ) → đổi thành sửa tại Workbench.
+
+**Đã kiểm tra**
+
+| Cách kiểm | Kết quả |
+|---|---|
+| `tests/journey-handbook.test.ts` (19 bài) | Đạt. Gồm: làm bước 3 trước bước 1 vẫn tính; sổ biên nhận bị đẩy trôi vẫn giữ tiến độ; việc của cư dân không tính; nhận quà một lần, lưu – mở lại không nhận được lần hai; balo đầy thì quà rơi ra đất; save bị sửa tay bị từ chối. |
+| Dựng nhà thật bằng lệnh của game (tường trước, rồi cửa, nền, Cabinet, giường) | Chương 2 hoàn thành; nhận quà, đặt rương từ gói quà, cất đồ vào rương → bước "cất đồ" của chương 6 được tính. |
+| Mọi loại biên nhận mà 40 bước lắng nghe | Đều có chỗ phát ra trong mã engine (bài kiểm tra đọc mã nguồn). |
+| Trình duyệt 640×360, điều khiển thường | Ăn trước → đốn cây → chế Campfire: chương 1 xong dù sai thứ tự; ô góc phải báo "Starter kit ready"; bấm Claim → balo có Stone Axe, Stone Pickaxe, Territory Cabinet, 4 Roast Meat; nút Claim biến mất. Đủ 11 chương hiện trên một trang. Bản tiếng Việt hiển thị đủ dấu. Không lỗi JavaScript. |
+| Lỗi bắt được khi chơi thử | Bước "nhiên liệu" tự xong vì máy phát của làng đốt than. Đã sửa: chỉ máy phát của người chơi mới tính; thêm bài kiểm tra. |
+
+**Chưa kiểm bằng tay trên trình duyệt:** chương 3–11 (mới kiểm ở mức biên nhận và bài kiểm tra engine, chưa có ai bấm chuột chơi hết).
+
+## Lượt khoá SHA trên `0d9cc3b3` (260 tệp = 259 cũ + bài sổ tay)
+
+| | Số tệp |
+|---|---|
+| Đạt | **247** |
+| Chỉ có bài tự chọn bật bằng biến môi trường (không chạy bài nào) | 13 |
+| Đỏ | **0** |
+
+1.564 bài kiểm tra đạt, 0 bài trượt, tổng 7.012 giây (chạy song song với endurance nên chậm hơn lượt trước). `typecheck`, `typecheck:tests`, `build` sạch. Kết quả từng tệp ở `/home/user/acc/reg7` (ngoài repo).
+
+**Endurance 336 giờ trên `0d9cc3b3` (seed 7606, không người chơi):** cổng chiến dịch **15/15**. Kết cục: sơ tán 6, sống sót 33, chết 247 — **trùng khít** với `eca8d96`, tức sổ tay không làm thay đổi mô phỏng dân cư. 4.685 giây. Kết quả ở `/home/user/acc/endurance7`.
+
 ## Chưa làm
 
 - Ba tệp `audit-closure`, `review-r2-acceptance`, `economic-network-m2`: Creator đã loại khỏi điều kiện nghiệm thu (21/11). Chúng **chưa được kiểm chứng** trên mã cuối; phép đếm công thức tôi sửa trong `audit-closure` cũng chưa từng được chạy.
 - Một khả năng kẹt của người chơi chưa kiểm tra trong game thật: Gậy gỗ và rìu cùng hỏng khi trong túi không còn gỗ (bot đã gặp đúng tình huống này).
 - Kiểm tra trên trình duyệt còn lại: cảnh A–I đầy đủ, giao dịch với NPC, sơ tán thủ công; Elder bơi qua biển chưa từng được nhìn thấy trên màn hình.
-- ZIP phát hành, Vercel, tài liệu hướng dẫn, PR vào `main`.
+- Chơi tay trên trình duyệt chương 3–11 của sổ tay.
+- Từ điển vật phẩm – quái – cây: Creator quyết định làm sau final.
+- ZIP phát hành (đóng sau khi Creator duyệt sổ tay, để không phải đóng hai lần), Vercel (tài khoản chưa có project cho Soul of Hero), tài liệu hướng dẫn, PR vào `main`.
