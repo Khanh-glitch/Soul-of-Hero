@@ -42,7 +42,7 @@ import {owned, coreCastBlock,coreCastCommit, carryLimit, invWeight, addItem, add
 import { rngNext, mulberry, hash2 } from './core';
 import { phaseOf, isRagnarok, runHours } from './engine';
 import {communityBarrel,drinkCommunityRain,NO_LOCAL_BANK} from './human-rainwater';
-import { isGuardPost, humanCanUseEntity, humanEntityTile, executeHumanWork, answerWaterAppeal, dispatchMedicalResponse, needsFollowup, planHumanOccupation, type HumanWorkTask } from './human-jobs';
+import { isGuardPost, humanCanUseEntity, humanEntityTile, executeHumanWork, answerWaterAppeal, dispatchMedicalResponse, needsFollowup, planHumanOccupation, downedByThirst, type HumanWorkTask } from './human-jobs';
 import { withHumanNavigationRead, humanNavigation } from './human-navigation';
 import { humanShelter, humanShelterContext, type HumanShelterContext } from './human-shelter';
 import {consolidatePantry} from './human-pantry';
@@ -1497,10 +1497,7 @@ function rewardHelpOnce(hw:HumanWorld,h:HumanRecord,kind:keyof NonNullable<Human
   h.helpTrustReceipts??={};
   if(!selfCaused && !h.helpTrustReceipts[kind]){h.trust=clamp((h.trust??50)+amount,0,100);h.helpTrustReceipts[kind]=id;}
 }
-/** A collapse from thirst alone: down, out of water, and no wound still bleeding. For this patient water is the first
- *  aid (Creator ruling 2026-11-23): a drink brings them round, where a bandage would only put them back on their feet
- *  as thirsty as before. A bleeding patient still needs the bleeding stopped first. */
-export function downedByThirst(h:HumanRecord):boolean {return h.state==='DOWNED'&&h.thirst<1&&!h.wounds.some(w=>w.bleeding&&!w.treated);}
+export { downedByThirst };
 export function startHumanAid(r:RunState,hw:HumanWorld,h:HumanRecord,id:string,stackUid:string,now:number): {ok:boolean;reason?:string;msg?:string} {
   if(hw.playerAid)return {ok:false,reason:'Finish or cancel your current aid first.'};
   if(['DEAD','EVACUATED','FIGHTING'].includes(h.state))return {ok:false,reason:'It is not safe to help right now.'};

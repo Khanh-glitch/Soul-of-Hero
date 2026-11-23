@@ -1,6 +1,6 @@
 import {describe,it,expect} from 'vitest';
-import {newGame,startRun,clearSurvivorSight,mkCreature,markDirty,beginReceiptSink,endReceiptSink} from '../src/game/engine';
-import {applyDamage,stepHumans,stepHumanCombat} from '../src/game/humanworld';
+import {newGame,startRun,clearSurvivorSight,mkCreature,markDirty,beginReceiptSink,endReceiptSink,addItem} from '../src/game/engine';
+import {applyDamage,stepHumans,stepHumanCombat,downHuman,downedByThirst} from '../src/game/humanworld';
 import {humanNavigation} from '../src/game/human-navigation';
 import {setActiveLayout} from '../src/game/world';
 import {validate} from '../src/game/persist';
@@ -89,4 +89,91 @@ it('a landed hostile hit interrupts even an unarmed responder before the dose is
  expect(applyDamage(r,hw,medic,1,0,T0+101,'enemy','attacker',medic.floor)).toBe(true);
  expect(medic.intent?.work).toBeUndefined();expect(patient.state).toBe('DOWNED');expect(JSON.stringify(r.custody[medic.inv.packId])).toBe(carried);
  expect(r.receipts.some(q=>q.kind==='human.medical.interrupted')).toBe(true);
+});
+
+// Creator ruling 2026-11-23: water is the first aid for a resident who collapsed from thirst. Controlled scene: only
+// the collapse, the patient's thirst and what the medic carries are staged; the call, the walk, the six seconds at
+// the body and the debit are the game's own. Not claimed: that this collapse arose in organic play.
+describe('first aid with water for a thirst collapse',()=>{
+ function thirst(carry:{drink:boolean;medicine:boolean},cause:'thirst'|'thirst and bleeding'|'accident'){
+  setActiveLayout('veyra05-greywater'); const gs=newGame();expect(startRun(gs,'female',T0,null,7606,{tx:100,ty:100}).ok).toBe(true);
+  const r=gs.run!,hw=r.humanWorld!,medic=Object.values(hw.people).find(h=>h.occupation==='medic')!,community=hw.communities[medic.community!];
+  const patient=community.memberIds.map(id=>hw.people[id]).find(h=>h.occupation==='builder')!;
+  const occupied=new Set(Object.values(hw.people).filter(h=>h!==patient&&h!==medic).map(h=>`${h.floor}:${h.gx}:${h.gy}`));const nav=humanNavigation(r,occupied,true);
+  const spot=[[-4,0],[4,0],[0,-4],[0,4]].map(([dx,dy])=>({tx:medic.gx+dx,ty:medic.gy+dy,floor:medic.floor})).find(q=>nav.free(q,patient)&&nav.route(medic,q)?.length);
+  expect(spot).toBeDefined();patient.gx=spot!.tx;patient.gy=spot!.ty;patient.floor=medic.floor;
+  // Nothing drinkable or medicinal anywhere except what this test hands the medic.
+  const drinkable=(k:string)=>k==='water_flask'||k==='trail_canteen';
+  for(const c of Object.values(r.custody))for(let i=0;i<c.slots.length;i++){const k=c.slots[i]?.key??'';if(drinkable(k)||(!carry.medicine&&['herb','bandage'].includes(k)))c.slots[i]=null;}
+  const pack=()=>r.custody[medic.inv.packId];
+  for(let i=0;i<pack().slots.length;i++){const st=pack().slots[i];if(st&&st.key!=='bandage'&&st.key!=='herb')pack().slots[i]=null;}   // room for the flask; no berries to hand over
+  if(carry.drink)expect(addItem(r,medic.inv.packId,'water_flask',1)).toBe(0);
+  medic.thirst=90;medic.hunger=90;patient.hp=1;patient.wounds=[];
+  if(cause==='accident'){patient.thirst=50;applyDamage(r,hw,patient,patient.hp*3,0,T0,'hazard',patient.actorId,patient.floor);}
+  else{patient.thirst=0;downHuman(r,hw,patient,T0,cause==='thirst'?'starvation':'enemy');}
+  expect(patient.state).toBe('DOWNED');expect(downedByThirst(patient)).toBe(cause==='thirst');
+  const flask=()=>pack().slots.find(q=>q?.key==='water_flask');
+  const doses=()=>pack().slots.reduce((n,q)=>n+(q?.key==='bandage'||q?.key==='herb'?q.qty:0),0);
+  const run=(ms:number)=>{for(let t=1000;t<=ms&&patient.state==='DOWNED';t+=1000)stepHumans(r,hw,T0+t);};
+  const kinds=(k:string)=>r.receipts.filter(q=>q.kind===k);
+  return {gs,r,hw,medic,patient,flask,doses,run,kinds};
+ }
+
+ it('the medic walks over and gives one drink; the patient comes round with water in them and no dose is spent',()=>{
+  const o=thirst({drink:true,medicine:true},'thirst');const charge=o.flask()!.charge!,doses=o.doses();expect(doses).toBeGreaterThan(0);
+  stepHumans(o.r,o.hw,T0+100);
+  expect(o.medic.intent?.work).toMatchObject({kind:'medical',patientId:o.patient.actorId,inputs:[]});
+  expect(o.kinds('human.medical.respond').at(-1)!.detail).toMatch(new RegExp(`^${o.medic.actorId}:${o.patient.actorId}:water:`));
+  expect(o.flask()!.charge).toBe(charge);                                             // nothing is spent before contact
+  o.run(120000);
+  expect(o.patient.state).toBe('IDLE');expect(o.patient.thirst).toBe(30);expect(o.patient.downedAt).toBeUndefined();
+  expect(o.patient.hp).toBe(1);                                                       // water restores no health
+  expect(o.patient.wounds.every(w=>w.treated)).toBe(true);
+  expect(o.flask()!.charge).toBe(charge-1);expect(o.doses()).toBe(doses);
+  const water=o.kinds('human.medical.water').map(q=>JSON.parse(q.detail));
+  expect(water).toHaveLength(1);expect(water[0]).toMatchObject({worker:o.medic.actorId,patient:o.patient.actorId,key:'water_flask',thirstBefore:0,thirstAfter:30});
+  expect(o.kinds('human.medical.payment')).toHaveLength(0);
+  expect(o.kinds('human.treat').map(q=>q.detail)).toEqual([`${o.medic.actorId}:${o.patient.actorId}:water`]);
+ });
+
+ it('the answer survives a validated save taken on the way to the patient',()=>{
+  const o=thirst({drink:true,medicine:false},'thirst');stepHumans(o.r,o.hw,T0+100);
+  const job=o.medic.intent!.intentId;expect(o.medic.intent?.work?.inputs).toEqual([]);
+  const gs=validate(JSON.parse(JSON.stringify(o.gs)))!;expect(gs).toBeTruthy();
+  const r=gs.run!,hw=r.humanWorld!,medic=hw.people[o.medic.actorId],patient=hw.people[o.patient.actorId];
+  expect(medic.intent?.intentId).toBe(job);
+  for(let t=1000;t<=120000&&patient.state==='DOWNED';t+=1000)stepHumans(r,hw,T0+t);
+  expect(patient.state).toBe('IDLE');expect(patient.thirst).toBe(30);
+  expect(r.receipts.filter(q=>q.kind==='human.medical.water').map(q=>JSON.parse(q.detail).job)).toEqual([job]);
+ });
+
+ it('thirst and a bleeding wound: the dose stops the bleeding and the same visit gives the drink',()=>{
+  const o=thirst({drink:true,medicine:true},'thirst and bleeding');const charge=o.flask()!.charge!,doses=o.doses();
+  stepHumans(o.r,o.hw,T0+100);expect(o.medic.intent?.work?.inputs).toHaveLength(1);
+  o.run(120000);
+  expect(o.patient.state).toBe('IDLE');expect(o.patient.wounds.every(w=>w.treated&&!w.bleeding)).toBe(true);
+  expect(o.patient.hp).toBe(31);expect(o.patient.thirst).toBe(30);
+  expect(o.doses()).toBe(doses-1);expect(o.flask()!.charge).toBe(charge-1);
+  expect(o.kinds('human.medical.payment')).toHaveLength(1);expect(o.kinds('human.medical.water')).toHaveLength(1);
+ });
+
+ it('negative: bleeding and no medicine — water alone does not answer it, and the flask is untouched',()=>{
+  const o=thirst({drink:true,medicine:false},'thirst and bleeding');const charge=o.flask()!.charge!;
+  stepHumans(o.r,o.hw,T0+1000);stepHumans(o.r,o.hw,T0+20000);
+  expect(o.patient.state).toBe('DOWNED');expect(o.patient.thirst).toBe(0);expect(o.flask()!.charge).toBe(charge);
+  expect(o.kinds('human.treat')).toHaveLength(0);expect(o.kinds('human.medical.water')).toHaveLength(0);
+ });
+
+ it('negative: a collapse that is not from thirst gets no water-only answer',()=>{
+  const o=thirst({drink:true,medicine:false},'accident');const charge=o.flask()!.charge!;
+  stepHumans(o.r,o.hw,T0+1000);stepHumans(o.r,o.hw,T0+20000);
+  expect(o.patient.state).toBe('DOWNED');expect(o.flask()!.charge).toBe(charge);expect(o.kinds('human.treat')).toHaveLength(0);
+ });
+
+ it('negative: no drink in the pack — the old rule holds: one dose, back on their feet, still without water',()=>{
+  const o=thirst({drink:false,medicine:true},'thirst');const doses=o.doses();
+  o.run(120000);
+  expect(o.patient.state).toBe('IDLE');expect(o.patient.thirst).toBe(0);expect(o.doses()).toBe(doses-1);
+  expect(o.kinds('human.medical.water')).toHaveLength(0);
+ });
 });

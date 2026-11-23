@@ -245,6 +245,8 @@ function taskCandidates(r: RunState, hw: HumanWorld, h: HumanRecord): HumanWorkT
       !comm.memberIds.some(id=>hw.people[id]?.intent?.work?.patientId===p.actorId));
     seen.sort((a,b)=>Number(b.state==='DOWNED')-Number(a.state==='DOWNED') || a.hp-b.hp || a.actorId.localeCompare(b.actorId));
     for(const p of seen){
+      // Down from thirst alone and the medic carries a drink: the drink is the treatment, and no dose is spent.
+      if(downedByThirst(p)&&carriedDrink(r,h)){tasks.push({...start('medical',undefined,[],6000),patientId:p.actorId,observedPatient:patientTile(p)});continue;}
       const key=available('bandage',1)?'bandage':available('herb',1)?'herb':undefined;
       if(key)tasks.push({...start('medical',undefined,[[key,1]],6000),patientId:p.actorId,observedPatient:patientTile(p)});
     }
@@ -256,6 +258,31 @@ function taskCandidates(r: RunState, hw: HumanWorld, h: HumanRecord): HumanWorkT
 // a medic must see the patient, reach them and consume another real dose.
 export const needsFollowup=(p:HumanRecord)=>p.state==='IDLE' && p.hp>0 && p.hp<30 && p.wounds.some(w=>w.treated);
 const patientTile=(p:HumanRecord)=>({gx:p.gx,gy:p.gy,floor:p.floor});
+/** A collapse from thirst alone: down, out of water, and no wound still bleeding. For this patient water is the first
+ *  aid (Creator ruling 2026-11-23): a drink brings them round, where a dose of medicine would only put them back on
+ *  their feet as thirsty as before, to fall again minutes later. A bleeding patient still needs the bleeding stopped. */
+export function downedByThirst(h:HumanRecord):boolean {return h.state==='DOWNED'&&h.thirst<1&&!h.wounds.some(w=>w.bleeding&&!w.treated);}
+/** The first thing in a responder's own pack that they could drink themselves, and so can hand to a patient. */
+function carriedDrink(r:RunState,h:HumanRecord):Stack|undefined {
+  return pack(r,h).slots.find((s):s is Stack=>{
+    if(!s||s.production||s.qty<=0)return false;
+    const d=ITEMS[s.key];
+    return (d.charge==null||(s.charge??0)>0) && ((d.food?.thirst??0)>0||!!d.waterContainer);
+  });
+}
+/** One serving leaves the responder's pack and goes into the patient: the same debit and the same effect as when a
+ *  resident drinks it themselves. Nothing is created; with no drink in the pack nothing happens. */
+function giveDrink(r:RunState,h:HumanRecord,p:HumanRecord,s:Stack,now:number,job:string){
+  const d=ITEMS[s.key],food=d.food,thirstBefore=p.thirst,clamp=(v:number,hi:number)=>Math.max(0,Math.min(hi,v));
+  p.hunger=clamp(p.hunger+(food?.hunger??0),100);
+  p.thirst=clamp(p.thirst+(food?.thirst??(d.waterContainer?30:0)),100);
+  p.hp=clamp(p.hp+(food?.hp??0),p.maxHp);
+  p.warmth=clamp(p.warmth+(food?.warmth??0),100);
+  p.rad=clamp(p.rad+(food?.rad??0),100);
+  if(d.charge!=null)s.charge=s.charge!-1;
+  else if(--s.qty<=0){const slots=pack(r,h).slots;slots[slots.indexOf(s)]=null;}
+  receipt(r,now,'human.medical.water',JSON.stringify({worker:h.actorId,patient:p.actorId,job,key:s.key,uid:s.uid,thirstBefore,thirstAfter:p.thirst}));
+}
 function eligiblePatient(h:HumanRecord,p:HumanRecord|undefined):p is HumanRecord {
   return !!p && p!==h && p.community===h.community && p.floor===h.floor && !p.transit &&
     !['DEAD','EVACUATED','ON_VESSEL','FIGHTING'].includes(p.state) &&
@@ -289,6 +316,12 @@ export function dispatchMedicalResponse(r:RunState,hw:HumanWorld,p:HumanRecord,n
   let hasDose=false,witnessed=false;
   for(const h of helpers){
     if(!clearSurvivorSight(r,h,p))continue;witnessed=true;
+    // Down from thirst alone and this eyewitness carries a drink: they answer with it and no medicine is taken.
+    if(downedByThirst(p)&&carriedDrink(r,h)){
+      hasDose=true;const path=route(h,p.gx,p.gy,p.floor);if(!path)continue;
+      h.intent={intentId:uid(r,'hw'),actorId:h.actorId,kind:'work',target:'occupation:medical',reserved:[],preconditions:['community casualty','physical treatment and one carried drink'],startAt:now,dueAt:now+6000,route:path,work:{kind:'medical',phase:'travel',inputs:[],duration:6000,patientId:p.actorId,observedPatient:patientTile(p)}};
+      h.state=path.length?'MOVING':'WORKING';receipt(r,now,'human.medical.respond',`${h.actorId}:${p.actorId}:water:${path.length}`);return;
+    }
     const medicine=['bandage','herb'];let key=medicine.find(k=>count(r,h.inv.packId,k)>0),phase:HumanWorkTask['phase']='travel';
     let dest:[number,number,number]=[p.gx,p.gy,p.floor];
     // Emergency first aid already permits an eyewitness to use a carried dose.
@@ -427,6 +460,20 @@ export function executeHumanWork(r: RunState, hw: HumanWorld, h: HumanRecord, no
     const p=hw.people[task.patientId];
     if(!eligiblePatient(h,p) || Math.abs(p.gx-h.gx)+Math.abs(p.gy-h.gy)>1 || !clearSurvivorSight(r,h,p))return fail('patient moved, obstructed or no longer needs treatment');
     const medicine = task.inputs.length===1 && task.inputs[0][1]===1 && ['bandage','herb'].includes(task.inputs[0][0]) ? task.inputs : [];
+    // A patient whose water is exhausted is given one drink if the responder carries one.
+    const drink=p.thirst<1?carriedDrink(r,h):undefined;
+    if(!task.inputs.length){
+      // The answer that set out with a drink and no medicine. It is good only while the patient is still down from
+      // thirst alone and the drink is still in the pack; otherwise nothing is spent and the next review decides.
+      if(!drink||!downedByThirst(p))return fail('patient no longer needs water, or the drink is gone');
+      delete p.nextMedicalReviewAt;delete p.lastWorkBlock;
+      // The collapse left a wound that never bled; with its cause answered it needs no bandage. No health is restored:
+      // that still takes a real dose from a medic (needsFollowup).
+      p.wounds.forEach(w=>{w.treated=true;});
+      giveDrink(r,h,p,drink,now,intent.intentId);
+      p.downedAt=undefined;p.state='IDLE';
+      receipt(r,now,'human.treat',`${h.actorId}:${p.actorId}:water`);
+    } else {
     const inputs=medicine.length && materialPayment(pack(r,h),medicine,true);
     if(!inputs)return fail('medicine missing or reserved');
     delete p.nextMedicalReviewAt;delete p.lastWorkBlock;
@@ -435,6 +482,8 @@ export function executeHumanWork(r: RunState, hw: HumanWorld, h: HumanRecord, no
     if(p.state==='DOWNED'){p.downedAt=undefined;p.state='IDLE';}
     receipt(r,now,'human.medical.payment',JSON.stringify({worker:h.actorId,patient:p.actorId,job:intent.intentId,seen:task.observedPatient,at:patientTile(p),hpBefore,hpAfter:p.hp,inputs}));
     receipt(r,now,'human.treat',`${h.actorId}:${p.actorId}:${medicine.map(m=>m[0]).join('+')}`);
+    if(drink)giveDrink(r,h,p,drink,now,intent.intentId);
+    }
   } else if(task.kind==='build' && task.catchment){
     if(!installCatchment(r,hw,h,comm,task.catchment,now))return fail('Rain barrel site obstructed or materials unavailable.');
   } else if(task.kind==='build' && task.rebuildSite){
