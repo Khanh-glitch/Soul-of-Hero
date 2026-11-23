@@ -150,10 +150,12 @@ const toPoint = (k: string): Point => {
 // A save happens every few seconds; almost every stored search is untouched between two of them. Each cache entry is
 // keyed by the object itself plus every saved field that can change, so a hit is byte-for-byte what a fresh encoding
 // would produce:
-//  * Pending: heap, costs, parent, points and blocked are written only inside the expansion loop of
-//    human-navigation.ts, and every pass of that loop first increments `expanded`. `touched` is the only saved field
-//    that moves on its own, so it stays outside the cached body. The collection sizes are part of the key as well
-//    (the first frontier node is pushed while `expanded` is still 0).
+//  * Pending: heap, costs, parent, points and blocked are written only inside the two expansion loops of
+//    human-navigation.ts (the owner's, and `help`, which advances another resident's search), and every pass of
+//    either loop increments `expanded` together with its pop. `touched` is the only saved field that moves on its
+//    own, so it stays outside the cached body. The collection sizes are part of the key as well (the first frontier
+//    node is pushed while `expanded` is still 0). A search emptied to a ticket, or a ticket started again, is a NEW
+//    object (`emptySearch`), never a rewrite in place — the same counts on the same object always mean the same bytes.
 //  * Failed and Component records are created once and only their unsaved `checked` / `resources` are rewritten.
 type Encoded = { bytes: Uint8Array; points: number };
 const pendingBodies = new WeakMap<Pending, Encoded & { expanded: number; sizes: string }>();

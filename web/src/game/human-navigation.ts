@@ -30,12 +30,49 @@ type SearchNode={p:HumanWaypoint;g:number;score:number};
  * here declares a route impossible — a search is only ever made to WAIT or to start again.
  *  - a search nobody has asked about for STALE_SECONDS is abandoned work (the actor walked on, changed
  *    its mind or died) and is dropped the next time anyone starts a search;
- *  - small searches always run; past SMALL_SEARCH_CELLS a search grows only while the live searches
- *    larger than it hold less than GROWTH_CELL_BUDGET — the most advanced finish first, the rest queue;
- *  - if everything in flight still exceeds HARD_CELL_CAP, the least recently asked-about go first;
+ *  - small searches always run; past SMALL_SEARCH_CELLS only the GROWING_SEARCHES most advanced live
+ *    searches grow — they finish first, the rest queue. ("Live" = asked about in the last LIVE_SECONDS;
+ *    a search nobody asks about holds no place.) One search stops at SEARCH_LIMIT_CELLS examined, about
+ *    53,000 held, so the growing ones stay near 106,000 cells and leave room for the queue;
+ *  - a queued resident's planner turn is not thrown away: it is spent on the most advanced growing
+ *    search (`help` below). The planner gives one turn a second to residents away from the player, so
+ *    the work done per hour is the same as if every search grew at once — only the memory is bounded;
+ *  - if everything in flight still exceeds HARD_CELL_CAP, the cheapest work goes first: searches nobody
+ *    asks about are dropped (oldest first); then queued searches are emptied, smallest first, down to
+ *    a TICKET — the start cell and the old count — which keeps helping and starts again when a lane is
+ *    free; then small searches are dropped (oldest first); a growing search only when nothing else is
+ *    left.
+ * Why this replaced the first queue: that one let a search grow while the larger ones held under
+ * 100,000 cells and dropped the "least recently asked-about" one at the cap. Four or five searches of
+ * similar size grew together past the cap, and because everybody in a queue asks every second the one
+ * dropped was arbitrary — often one at 20,000-40,000 cells, about to finish. Replayed from h288 of the
+ * 336 h campaign (23 residents asking for a route to a berth): 225,000-313,000 cells of work thrown
+ * away per hour and one resident setting out in four hours.
  *  - a SEARCH_LIMIT record keeps only the nearest part of its boundary (it is "unconfirmed", not a proof). */
-const STALE_SECONDS=1800,SMALL_SEARCH_CELLS=4096,GROWTH_CELL_BUDGET=100_000,HARD_CELL_CAP=160_000,LIMIT_BOUNDARY_CELLS=256,FAILED_SEARCHES=256,COMPONENT_CELL_BUDGET=60_000;
+const STALE_SECONDS=1800,LIVE_SECONDS=120,SMALL_SEARCH_CELLS=4096,GROWING_SEARCHES=2,SEARCH_LIMIT_CELLS=48000,HARD_CELL_CAP=160_000,LIMIT_BOUNDARY_CELLS=256,FAILED_SEARCHES=256,COMPONENT_CELL_BUDGET=60_000;
 const searchActor=(id:string)=>id.split(':')[3];
+type Search=NonNullable<ReturnType<typeof searches.get>> extends Map<string,infer S>?S:never;
+/** The long searches allowed to grow now: the GROWING_SEARCHES largest live ones, largest first; equal sizes keep the order they were started in. */
+function growing(pending:Map<string,Search>,stamp:number):Search[]{
+ const best:Search[]=[];
+ for(const s of pending.values()){
+  if(s.points.size<SMALL_SEARCH_CELLS||stamp-(s.touched??0)>LIVE_SECONDS)continue;
+  let i=best.length;while(i>0&&best[i-1].points.size<s.points.size)i--;
+  if(i<GROWING_SEARCHES){best.splice(i,0,s);if(best.length>GROWING_SEARCHES)best.pop();}
+ }
+ return best;
+}
+/** A queued search emptied at the cap: only its start cell, an empty frontier, and a count from before. No search
+ *  that is still running looks like this — an empty frontier ends a search in the call that empties it. */
+const isTicket=(s:Search)=>s.points.size===1&&!s.heap.length&&s.expanded>=SMALL_SEARCH_CELLS;
+/** A new object every time (never a rewrite in place): the save reuses the bytes of a search object it has seen with the same counts. */
+const emptySearch=(startKey:string,start:HumanWaypoint,from:{checked:string;resources?:string;touched?:number},expanded:number):Search=>
+ ({heap:[],costs:new Map([[startKey,0]]),parent:new Map(),points:new Map([[startKey,start]]),expanded,checked:from.checked,resources:from.resources,blocked:new Map(),touched:from.touched});
+const heapPush=(heap:SearchNode[],n:SearchNode)=>{heap.push(n);let i=heap.length-1;while(i){const parent=(i-1)>>1;if(heap[parent].score<=n.score)break;heap[i]=heap[parent];i=parent;}heap[i]=n;};
+const heapPop=(heap:SearchNode[])=>{const first=heap[0],last=heap.pop()!;if(heap.length){let i=0;while(i*2+1<heap.length){let c=i*2+1;if(c+1<heap.length&&heap[c+1].score<heap[c].score)c++;if(heap[c].score>=last.score)break;heap[i]=heap[c];i=c;}heap[i]=last;}return first;};
+// Floor transitions may move between different x/y stair endpoints: zero heuristic is safe there.
+const estimate=(p:HumanWaypoint,target:HumanWaypoint)=>p.floor===target.floor&&p.floor===0?Math.max(0,Math.abs(p.tx-target.tx)+Math.abs(p.ty-target.ty)-1):0;
+const atGoal=(p:HumanWaypoint,target:HumanWaypoint)=>p.floor===target.floor&&Math.abs(p.tx-target.tx)+Math.abs(p.ty-target.ty)<=1;
 interface NavigationRead { all:Entity[]; blockMap:Map<string,number>; at:Map<string,Entity[]>;physical:()=>string }
 const planningReads=new WeakMap<RunState,NavigationRead>();
 /** Synchronous planning read only; never retained across work, save or external edits. */
@@ -133,33 +170,68 @@ export function humanNavigation(r:RunState,occupied=new Set<string>(),avoidCrowd
    for(const [id,other] of pending){if(other===state)continue;const actor=r.humanWorld?.people[searchActor(id)];if(stamp-(other.touched??0)>STALE_SECONDS||actor&&(actor.state==='DEAD'||actor.state==='EVACUATED'))pending.delete(id);}
    if(pending.size>512)pending.delete(pending.keys().next().value!);}
   state.checked=physical;state.resources=resources(state.blocked.values());state.touched=stamp;
-  const {heap,costs,parent,points}=state;
-  // Queue discipline for long searches (see the memory law above).
-  if(points.size>=SMALL_SEARCH_CELLS){
-   let ahead=0;for(const other of pending.values())if(other!==state&&other.points.size>points.size&&stamp-(other.touched??0)<=STALE_SECONDS)ahead+=other.points.size;
-   if(ahead>=GROWTH_CELL_BUDGET){status('PENDING_SEARCH',state.expanded);h.lastWorkBlock=`Checking physical route (${state.expanded} cells examined; waiting for longer searches ahead).`;return null;}
-  }
-  const push=(n:SearchNode)=>{heap.push(n);let i=heap.length-1;while(i){const parent=(i-1)>>1;if(heap[parent].score<=n.score)break;heap[i]=heap[parent];i=parent;}heap[i]=n;};
-  const pop=()=>{const first=heap[0],last=heap.pop()!;if(heap.length){let i=0;while(i*2+1<heap.length){let c=i*2+1;if(c+1<heap.length&&heap[c+1].score<heap[c].score)c++;if(heap[c].score>=last.score)break;heap[i]=heap[c];i=c;}heap[i]=last;}return first;};
-  // Floor transitions may move between different x/y stair endpoints: zero heuristic is safe there.
-  const estimate=(p:HumanWaypoint)=>p.floor===target.floor&&p.floor===0?Math.max(0,Math.abs(p.tx-target.tx)+Math.abs(p.ty-target.ty)-1):0;
-  if(!heap.length&&state.expanded===0)push({p:start,g:0,score:estimate(start)});let visited=0;
-  while(heap.length&&visited++<Math.min(maxVisited,256)){const n=pop(),k=key(n.p);state.expanded++;countWorldWork('routeExpansions');if(n.g!==costs.get(k))continue;if(k!==startKey&&!free(n.p,h,true)){state.blocked.set(k,n.p);continue;}
-   if(n.p.floor===target.floor&&Math.abs(n.p.tx-target.tx)+Math.abs(n.p.ty-target.ty)<=1){const result:HumanWaypoint[]=[];for(let q=k;q!==startKey;q=parent.get(q)!)result.push(points.get(q)!);pending.delete(searchKey);const path=result.reverse();if(!path.every(p=>free(p,h,true))){status('PENDING_SEARCH',state.expanded);h.lastWorkBlock='Route changed during planning; checking again.';return null;}status('FOUND',state.expanded);return path;}
+  // One node's neighbours, for whichever search is being advanced (`who` = that search's owner: doors answer to the owner).
+  const spread=(s:Search,who:HumanRecord,to:HumanWaypoint,n:SearchNode,k:string)=>{
    const neighbors=[{...n.p,tx:n.p.tx+1},{...n.p,tx:n.p.tx-1},{...n.p,ty:n.p.ty+1},{...n.p,ty:n.p.ty-1},...(stairs.get(k)??[])];
    // Occupants are not permanent walls: retain a lawful static route and
    // reserve/revalidate its NEXT edge against actual bodies at execution time.
-   for(const p of neighbors){if(!free(p,h,true)){state.blocked.set(key(p),p);continue;}const nk=key(p),g=n.g+1+(avoidCrowding&&occupied.has(`${p.floor}:${p.tx}:${p.ty}`)?4:0);if(g>=(costs.get(nk)??Infinity))continue;costs.set(nk,g);parent.set(nk,k);points.set(nk,p);push({p,g,score:g+estimate(p)});}
-  }
-  if(heap.length&&state.expanded<48000){
-   let total=0;for(const other of pending.values())total+=other.points.size;
+   for(const p of neighbors){if(!free(p,who,true)){s.blocked.set(key(p),p);continue;}const nk=key(p),g=n.g+1+(avoidCrowding&&occupied.has(`${p.floor}:${p.tx}:${p.ty}`)?4:0);if(g>=(s.costs.get(nk)??Infinity))continue;s.costs.set(nk,g);s.parent.set(nk,k);s.points.set(nk,p);heapPush(s.heap,{p,g,score:g+estimate(p,to)});}
+  };
+  // The cap of the memory law. `spare`: the search this call has just advanced.
+  const enforceCap=(spare?:Search)=>{
+   let total=0;for(const other of pending!.values())total+=other.points.size;
    while(total>HARD_CELL_CAP){
-    let oldId:string|undefined,oldAt=Infinity;for(const [id,other] of pending)if(other!==state&&(other.touched??0)<oldAt){oldId=id;oldAt=other.touched??0;}
+    const keep=growing(pending!,stamp);
+    let oldId:string|undefined,oldRank=Infinity,oldOrder=Infinity;
+    for(const [id,other] of pending!){
+     if(other===spare)continue;
+     const at=other.touched??0,size=other.points.size;
+     const [rank,order]=stamp-at>LIVE_SECONDS?[0,at]:keep.includes(other)?[3,size]:size>=SMALL_SEARCH_CELLS?[1,size]:[2,at];
+     if(rank<oldRank||rank===oldRank&&order<oldOrder){oldId=id;oldRank=rank;oldOrder=order;}
+    }
     if(oldId===undefined)break;
-    total-=pending.get(oldId)!.points.size;pending.delete(oldId);
+    const old=pending!.get(oldId)!;
+    if(oldRank===1){const [k0,p0]=old.points.entries().next().value!;total-=old.points.size-1;pending!.set(oldId,emptySearch(k0,p0,old,Math.max(old.expanded,SMALL_SEARCH_CELLS)));}
+    else {total-=old.points.size;pending!.delete(oldId);}
    }
+  };
+  // A queued resident's turn advances the most advanced search that still needs work, under that search's owner's
+  // access. It never ENDS a search: it stops before the goal, at the limit, or at an empty frontier, so the owner's
+  // next call ends it and takes the result. The goal node is looked at, not popped — the frontier is not disturbed.
+  const help=()=>{
+   let budget=Math.min(maxVisited,256);
+   for(const s of growing(pending!,stamp)){
+    if(budget<=0)break;
+    let id:string|undefined;for(const [k,v] of pending!)if(v===s){id=k;break;}
+    if(!id||id.split(':')[0]!==String(avoidCrowding))continue;
+    const who=r.humanWorld?.people[searchActor(id)];if(!who||who.state==='DEAD'||who.state==='EVACUATED')continue;
+    const [floor,tx,ty]=id.slice(id.lastIndexOf('>')+1).split(/[:,]/).map(Number),to={tx,ty,floor},from=s.points.keys().next().value!;
+    while(budget>0&&s.heap.length&&s.expanded<SEARCH_LIMIT_CELLS){
+     const top=s.heap[0],tk=key(top.p);
+     if(top.g===s.costs.get(tk)&&(tk===from||free(top.p,who,true))&&atGoal(top.p,to))break;
+     const n=heapPop(s.heap),k=tk;budget--;s.expanded++;countWorldWork('routeExpansions');
+     if(n.g!==s.costs.get(k))continue;
+     if(k!==from&&!free(n.p,who,true)){s.blocked.set(k,n.p);continue;}
+     spread(s,who,to,n,k);
+    }
+   }
+   enforceCap();
+  };
+  const queued=(examined:number)=>{help();status('PENDING_SEARCH',examined);h.lastWorkBlock=`Checking physical route (${examined} cells examined; waiting for longer searches ahead).`;return null;};
+  // Queue discipline for long searches (see the memory law above).
+  if(isTicket(state)){
+   if(growing(pending,stamp).length>=GROWING_SEARCHES)return queued(state.expanded);
+   state=emptySearch(startKey,start,state,0);state.touched=stamp;pending.set(searchKey,state);   // a lane is free: start again
   }
-  if(!heap.length||state.expanded>=48000){
+  const {heap,costs,parent,points}=state;
+  if(points.size>=SMALL_SEARCH_CELLS&&!growing(pending,stamp).includes(state))return queued(state.expanded);
+  if(!heap.length&&state.expanded===0)heapPush(heap,{p:start,g:0,score:estimate(start,target)});let visited=0;
+  while(heap.length&&visited++<Math.min(maxVisited,256)){const n=heapPop(heap),k=key(n.p);state.expanded++;countWorldWork('routeExpansions');if(n.g!==costs.get(k))continue;if(k!==startKey&&!free(n.p,h,true)){state.blocked.set(k,n.p);continue;}
+   if(atGoal(n.p,target)){const result:HumanWaypoint[]=[];for(let q=k;q!==startKey;q=parent.get(q)!)result.push(points.get(q)!);pending.delete(searchKey);const path=result.reverse();if(!path.every(p=>free(p,h,true))){status('PENDING_SEARCH',state.expanded);h.lastWorkBlock='Route changed during planning; checking again.';return null;}status('FOUND',state.expanded);return path;}
+   spread(state,h,target,n,k);
+  }
+  if(heap.length&&state.expanded<SEARCH_LIMIT_CELLS)enforceCap(state);
+  if(!heap.length||state.expanded>=SEARCH_LIMIT_CELLS){
    if(!heap.length){components.push({access,checked:physical,resources:resources(state.blocked.values()),points:new Set(points.keys()),blocked:[...state.blocked.values()],expanded:state.expanded});if(components.length>64)components.shift();for(let cells=components.reduce((n,c)=>n+c.points.size,0);cells>COMPONENT_CELL_BUDGET&&components.length>1;)cells-=components.shift()!.points.size;componentFailures.set(r,components);}
    const outcome=!heap.length?'NO_PATH':'SEARCH_LIMIT';status(outcome,state.expanded);const boundary=outcome==='SEARCH_LIMIT'?[...state.blocked.values()].slice(0,LIMIT_BOUNDARY_CELLS):[...state.blocked.values()];failed.set(searchKey,{checked:physical,resources:resources(boundary),blocked:boundary,status:outcome,expanded:state.expanded});if(failed.size>FAILED_SEARCHES)failed.delete(failed.keys().next().value!);pending.delete(searchKey);h.lastWorkBlock=!heap.length?'No legal path through the currently known geometry.':'Physical route search limit reached; destination remains unconfirmed.';}
   else {status('PENDING_SEARCH',state.expanded);h.lastWorkBlock=`Checking physical route (${state.expanded} cells examined; no travel claimed).`;}
