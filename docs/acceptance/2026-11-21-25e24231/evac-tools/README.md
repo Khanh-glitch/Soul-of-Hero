@@ -48,4 +48,6 @@ the resident's id should be (the patch read a field that does not exist) — the
   production build served on port 4174. STAGED: it puts one resident beside the player, thirst 0, downed; everything
   after that goes through the game's own panel. Exit 0 = the resident stood up with thirst 29-30, one drink gone from
   the flask, trust 55, no page error.
-
+- `i1-trade.mjs` — same harness and port. STAGED: the nearest resident is moved beside the player, nothing else. Barter
+  through the panel: one item each way, review, accept. Exit 0 = the player's pack changed and no page error.
+- `h1-buildmenu.mjs` — same harness and port. Opens the build bar of a new game and lists the wall shapes.

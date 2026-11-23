@@ -479,9 +479,10 @@ Bốn lượt gần nhất (`eca8d96`, `0d9cc3b3`, `4ab22fac`, `6c4b8933`) cho c
 - `e1-save.mjs` (tự lưu, hai kho, tải lại, Continue): đạt, không có lỗi trang.
 - Thực đơn xây (phím B) ở ván mới: nhóm Wall có 8 hình, tất cả bằng gỗ; không có Plank Wall hay Iron-braced Wall. Tệp mã của bản dựng không còn chứa hai tên này (bản dựng trước ngày 23/11 thì có). **Chưa kiểm** việc mở một file lưu cũ có sẵn hai loại tường này trên trình duyệt; phần đó mới có bài kiểm thử tự động.
 - `g1-water-aid.mjs` (cho uống nước qua đúng bảng của game): đạt. **Cảnh dựng sẵn:** kịch bản tự đặt một cư dân cạnh người chơi, khát = 0, đang gục. Phần còn lại là giao diện thật: danh sách "Nearby survivors" → Help → "Offer Water Flask" → 6 giây. Kết quả: cư dân đứng dậy, khát 30, bình nước 2 → 1 ngụm, lòng tin 50 → 55, không có lỗi trang.
-- Hai điều thấy được trong lần kiểm này, **chưa sửa**:
+- `i1-trade.mjs` (đổi đồ với cư dân qua đúng bảng của game): đạt. **Cảnh dựng sẵn:** kịch bản chỉ đặt cư dân gần nhất ra cạnh người chơi. Chọn "Trade items", thêm 1 Wood Club bên mình và 1 Parts bên họ, "Review exchange", "Accept & exchange": đồ đổi chủ đúng như chọn, lòng tin 50 → 51, bảng báo "Selected goods exchanged.", không có lỗi trang. Mới thử một cư dân, một lần đổi; chưa thử trường hợp bị từ chối hay "counter-offer".
+- Hai điều thấy được trong lần kiểm cho uống nước, **chưa sửa**:
   - Cư dân đứng dậy với **chưa tới 1 máu** (0,56 trên 90). Trong lúc nằm gục máu vẫn tụt dần, và nước không hồi máu.
   - 0,6 giây sau khi cư dân đã đứng dậy, bảng vẫn còn dòng "Giving water · stay beside the patient for six seconds." Tôi chưa xem dòng này tự mất sau bao lâu.
 - Lần chạy đầu của kịch bản báo trượt vì chính kịch bản đòi khát ≥ 30, trong khi 0,6 giây sau khi uống khát đã là 29,999. Tôi sửa điều kiện của kịch bản (khát trong khoảng 29–30, bình còn 1 ngụm, lòng tin 55) rồi chạy lại. Game không đổi giữa hai lần.
 
-**Chưa làm trong đợt này:** các mục kiểm tra trên trình duyệt còn nợ từ trước vẫn còn nguyên (sổ tay chương 3–11, giao dịch với cư dân, sơ tán thủ công, Elder bơi, cảnh A–I, đánh với thú biết đánh trả, trường hợp kẹt khi gậy và rìu cùng hỏng). Sương mù một lớp mới chỉ được xem qua ảnh chụp của công cụ đo.
+**Chưa làm trong đợt này:** các mục kiểm tra trên trình duyệt còn nợ từ trước vẫn còn nguyên (sổ tay chương 3–11, sơ tán thủ công, Elder bơi, cảnh A–I, đánh với thú biết đánh trả, trường hợp kẹt khi gậy và rìu cùng hỏng). Sương mù một lớp mới chỉ được xem qua ảnh chụp của công cụ đo.
