@@ -37,7 +37,7 @@ Cập nhật: 2026-11-22 (lần 7 — sổ tay tân thủ mới, lượt khoá S
 
 Đây là chạy lại từ save h288 bằng bài kiểm thử tạm, **không phải** bài endurance 336 giờ chính thức và chưa qua `npc-campaign-gate`.
 
-**Lỗi của `8d882e6`:** bản giới hạn đầu tiên đóng sớm các lượt tìm đường dài. Chạy lại từ h288 thì không ai sơ tán được (0 người tới h307, trong khi bản gốc có 6 người cập bến lúc h295). `43e4713` thay bằng hàng chờ và kết quả sơ tán trở lại như bản gốc.
+**Lỗi của `8d882e6`:** bản giới hạn đầu tiên đóng sớm các lượt tìm đường dài. Chạy lại từ h288 thì không ai sơ tán được (0 người tới h307, trong khi bản gốc có 6 người sơ tán được; con số "cập bến lúc h295" tôi ghi ở đây lúc đó **không còn dữ liệu để kiểm lại**, ba lượt chạy đủ 336 giờ sau này đều rời bến giờ 294 và cập bến giờ 298). `43e4713` thay bằng hàng chờ và kết quả sơ tán trở lại như bản gốc.
 
 **Trình duyệt (Chromium 131, 640×360, bản build `01021db`, không lỗi trang):**
 
@@ -383,7 +383,7 @@ Công cụ và số đo thô: `evac-tools/`. Mọi thứ dưới đây là chạ
 
 **Nguyên nhân chính: cư dân không "nghĩ" được đường đủ xa.**
 
-- Một lượt tìm đường dừng ở 48.000 ô đã xét. Giới hạn này có từ ngày 17/11, trước đợt nghiệm thu.
+- Một lượt tìm đường dừng ở 48.000 ô đã xét. Giới hạn này có từ ngày 17/11 (commit `cbc6d0ee`), trước đợt nghiệm thu.
 - Bến tây cách phần lớn khu dân cư hơn 900 bước. Số ô cần xét để tìm ra đường, đo từng người (`evac-tools/result-run10-state-limit-lifted-probe-5h.txt` và `result-run10-state-limit-96000-10h.txt`):
 
 | Ai (lượt 10, giờ 288) | Đường dài | Số ô cần xét | Với giới hạn 48.000 |
@@ -397,7 +397,7 @@ Công cụ và số đo thô: `evac-tools/`. Mọi thứ dưới đây là chạ
 - Nên chỉ vài người ở gần nhất mới lên đường được. Lượt 9 có đúng 6 người như vậy (h2, h7, h8, h9, h2l, h4i) và tàu đủ 6 ở giờ 294. Trong lần chạy lại, h2l tìm ra đường ở ô thứ 47.737, **sát giới hạn**.
 - Lượt 10: h9 bị thương lần thứ tư và gục lúc giờ 15,8, không được cứu dậy, đã chết trước giờ 264 (ở lượt 9 h9 chỉ có ba vết thương, đều đã chữa). h2l đứng lệch **một ô** so với lượt 9 và hết 48.000 ô. Tàu tây chưa lúc nào đủ 6 người.
 
-Bốn lượt gần nhất (`eca8d96`, `0d9cc3b3`, `4ab22fac`, `6c4b8933`) cho cùng kết cục 6 / 33 / 247, và hai lượt cuối trùng mã băm từng giờ. Đó gần như là **một** diễn biến được chạy lại, không phải bốn lần thử độc lập. Lượt 10 là lần đầu diễn biến đổi sớm. **Tôi đã báo 15/15 mà không biết nó mong manh như vậy.**
+Bốn lượt gần nhất (`eca8d96`, `0d9cc3b3`, `4ab22fac`, `6c4b8933`) cho cùng kết cục 6 / 33 / 247. Ba lượt sau còn dữ liệu trên máy và tôi đã đọc lại: cùng 588 lượt gục, 402 lượt chữa, rời bến giờ 294, cập bến giờ 298, và **cùng mã băm ở giờ 336**. Lượt `eca8d96` chỉ còn con số ghi trong tài liệu này. Đó gần như là **một** diễn biến được chạy lại, không phải bốn lần thử độc lập. Lượt 10 là lần đầu diễn biến đổi sớm. **Tôi đã báo 15/15 mà không biết nó mong manh như vậy.**
 
 **Nguyên nhân phụ, do chính PR này gây ra: hàng chờ tìm đường.**
 
@@ -477,10 +477,11 @@ Bốn lượt gần nhất (`eca8d96`, `0d9cc3b3`, `4ab22fac`, `6c4b8933`) cho c
 **Kiểm trên trình duyệt, bản dựng thật (cổng 4174):**
 
 - `e1-save.mjs` (tự lưu, hai kho, tải lại, Continue): đạt, không có lỗi trang.
+- Thực đơn xây (phím B) ở ván mới: nhóm Wall có 8 hình, tất cả bằng gỗ; không có Plank Wall hay Iron-braced Wall. Tệp mã của bản dựng không còn chứa hai tên này (bản dựng trước ngày 23/11 thì có). **Chưa kiểm** việc mở một file lưu cũ có sẵn hai loại tường này trên trình duyệt; phần đó mới có bài kiểm thử tự động.
 - `g1-water-aid.mjs` (cho uống nước qua đúng bảng của game): đạt. **Cảnh dựng sẵn:** kịch bản tự đặt một cư dân cạnh người chơi, khát = 0, đang gục. Phần còn lại là giao diện thật: danh sách "Nearby survivors" → Help → "Offer Water Flask" → 6 giây. Kết quả: cư dân đứng dậy, khát 30, bình nước 2 → 1 ngụm, lòng tin 50 → 55, không có lỗi trang.
 - Hai điều thấy được trong lần kiểm này, **chưa sửa**:
   - Cư dân đứng dậy với **chưa tới 1 máu** (0,56 trên 90). Trong lúc nằm gục máu vẫn tụt dần, và nước không hồi máu.
-  - Sau khi cư dân đã đứng dậy, bảng vẫn còn dòng "Giving water · stay beside the patient for six seconds."
+  - 0,6 giây sau khi cư dân đã đứng dậy, bảng vẫn còn dòng "Giving water · stay beside the patient for six seconds." Tôi chưa xem dòng này tự mất sau bao lâu.
 - Lần chạy đầu của kịch bản báo trượt vì chính kịch bản đòi khát ≥ 30, trong khi 0,6 giây sau khi uống khát đã là 29,999. Tôi sửa điều kiện của kịch bản (khát trong khoảng 29–30, bình còn 1 ngụm, lòng tin 55) rồi chạy lại. Game không đổi giữa hai lần.
 
-**Chưa làm trong đợt này:** các mục kiểm tra trên trình duyệt còn nợ từ trước vẫn còn nguyên (sổ tay chương 3–11, giao dịch với cư dân, sơ tán thủ công, Elder bơi, cảnh A–I, đánh với thú biết đánh trả, trường hợp kẹt khi gậy và rìu cùng hỏng, thực đơn xây không còn hai loại tường). Sương mù một lớp mới chỉ được xem qua ảnh chụp của công cụ đo.
+**Chưa làm trong đợt này:** các mục kiểm tra trên trình duyệt còn nợ từ trước vẫn còn nguyên (sổ tay chương 3–11, giao dịch với cư dân, sơ tán thủ công, Elder bơi, cảnh A–I, đánh với thú biết đánh trả, trường hợp kẹt khi gậy và rìu cùng hỏng). Sương mù một lớp mới chỉ được xem qua ảnh chụp của công cụ đo.

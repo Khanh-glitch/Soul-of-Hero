@@ -250,7 +250,7 @@ Creator quyết định ngày 23/11: chấp nhận cách vẽ sương mù thành
 
 ## Đã làm gì
 
-Cách cũ vẽ sương bằng hàng nghìn ô vuông nhỏ mỗi khung hình, mỗi ô một lệnh vẽ. Cách mới tính sương vào một ảnh nhỏ rồi vẽ ảnh đó lên màn hình bằng một lệnh. Công thức sương không đổi. Mã ở `web/src/game/fog-layer.ts`.
+Cách cũ vẽ sương bằng hàng nghìn ô vuông nhỏ mỗi khung hình, mỗi ô một lệnh vẽ. Cách mới tính sương vào một lớp ảnh cỡ khung nhìn (640×360) rồi vẽ lớp đó lên màn hình bằng một lệnh. Công thức sương không đổi. Mã ở `web/src/game/fog-layer.ts`.
 
 ## Số đo (phiên 8, `6c4b8933` → cùng mã có thêm lớp sương, file lưu giờ 8, sương mù ở mọi dòng, thứ tự cũ, mới, mới, cũ, 1.800 khung hình)
 
@@ -263,14 +263,14 @@ Cách cũ vẽ sương bằng hàng nghìn ô vuông nhỏ mỗi khung hình, m�
 **Cách đọc:**
 
 - Khi trời sương mù, mỗi khung hình bớt khoảng 1,6–2,3 ms, FPS tăng khoảng 10 trên máy thử. Khung hình chậm nhất trong 100 khung (p95) giảm từ 15,0–16,9 ms xuống 12,2–14,1 ms.
-- Bước mô phỏng không đổi.
+- Bước mô phỏng: 2,11–2,42 ms ở bản cũ, 2,21–2,51 ms ở bản mới. Mức chênh (khoảng 0,1 ms) nhỏ hơn mức dao động giữa hai lượt của cùng một bản.
 - **Chỉ có lợi khi trời sương mù.** Trời khác không vẽ sương nên không đổi gì.
 - Máy thử không có card đồ hoạ; trên máy người chơi con số tuyệt đối sẽ khác.
 
 ## Hình ảnh lệch bao nhiêu
 
 - `f1-fog-pixels.mjs` vẽ cùng một khung sương bằng hai cách trong trình duyệt thật: kênh màu lệch nhiều nhất là 2/255.
-- Ảnh chụp cuối lượt chạy (921.600 điểm ảnh): 807.936 điểm trùng hẳn, 111.832 điểm lệch 1–2 đơn vị, 1.832 điểm lệch nhiều hơn. Các điểm lệch nhiều nằm quanh nhân vật và bảng HUD, và cũng xuất hiện khi so hai lượt chạy của **cùng một bản dựng**, nên không phải do sương.
+- Ảnh chụp cuối lượt chạy (1280×720, 921.600 điểm ảnh), bản cũ so với bản mới: 807.936 điểm trùng hẳn, 111.832 điểm lệch 1–2 đơn vị, 1.832 điểm lệch nhiều hơn. Các điểm lệch trên 8 đơn vị nằm ở hai chỗ: quanh nhân vật và một ô nhỏ trên HUD. Cả hai chỗ này cũng lệch khi so hai lượt chạy của **cùng một bản dựng** (cũ với cũ: 348 điểm khác nhau; mới với mới: 2.406 điểm), nên không phải do sương.
 - Tôi chỉ xem sương qua ảnh chụp của công cụ đo; **chưa ai nhìn nó bằng mắt khi chơi thật**.
 
 Số đo thô: `fps-tools/result-ab-8-fog-one-layer.jsonl`.
