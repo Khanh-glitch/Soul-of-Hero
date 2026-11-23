@@ -19,6 +19,9 @@ type Pending = Checked & {
 };
 type Failed = Checked & { blocked: Point[]; status: 'NO_PATH' | 'SEARCH_LIMIT'; expanded: number };
 type Component = Checked & { access: string; points: Set<string>; blocked: Point[]; expanded: number };
+/** One route search stops after examining this many cells (`SEARCH_LIMIT`); a call may overshoot by its own 256. The
+ *  loader refuses a larger count. 48,000 until 2026-11-23: see the memory law in human-navigation.ts. */
+export const SEARCH_LIMIT_CELLS = 96_000;
 export const searches = new WeakMap<RunState, Map<string, Pending>>();
 export const failedSearches = new WeakMap<RunState, Map<string, Failed>>();
 export const componentFailures = new WeakMap<RunState, Component[]>();
@@ -251,7 +254,7 @@ export function loadNavigation(r: RunState, encoded: unknown) {
   // observed boundary on next use. A restored route still cannot enter a wall.
   for (let count = b.n(512); count; count--) {
     const id = b.text(),
-      expanded = b.n(48256),
+      expanded = b.n(SEARCH_LIMIT_CELLS + 256),
       touched = version >= 2 ? b.n() : 0,
       ps = b.points(),
       keys = ps.map(key),
@@ -279,14 +282,14 @@ export function loadNavigation(r: RunState, encoded: unknown) {
   }
   for (let n = b.n(512); n; n--) {
     const id = b.text(),
-      expanded = b.n(48256),
+      expanded = b.n(SEARCH_LIMIT_CELLS + 256),
       status = b.n(1) === 0 ? 'NO_PATH' : 'SEARCH_LIMIT';
     check(!failed.has(id));
     failed.set(id, { expanded, status, blocked: b.points(), checked: '' });
   }
   for (let n = b.n(64); n; n--) {
     const access = b.text(),
-      expanded = b.n(48256),
+      expanded = b.n(SEARCH_LIMIT_CELLS + 256),
       points = new Set(b.points().map(key));
     components.push({ access, expanded, points, blocked: b.points(), checked: '' });
   }

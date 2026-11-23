@@ -1,7 +1,7 @@
 import { it, expect } from 'vitest';
 import { newGame, startRun } from '../src/game/engine';
 import { humanNavigation } from '../src/game/human-navigation';
-import { searches, failedSearches } from '../src/game/navigation-save';
+import { searches, failedSearches, SEARCH_LIMIT_CELLS } from '../src/game/navigation-save';
 import { serializeSnapshot, selectSnapshots } from '../src/game/persist';
 import { setActiveLayout } from '../src/game/world';
 import { T0 } from './helpers/g1b-kit';
@@ -108,11 +108,11 @@ it('keeps the saved search continuation bounded: abandoned and dead searches go,
   expect(cells).toBeLessThanOrEqual(160_000 + 1_100);            // one slice of headroom for the search in hand
   for (const f of (failedSearches.get(r) ?? new Map()).values()) {
     if (f.status !== 'SEARCH_LIMIT') continue;
-    expect(f.expanded).toBeGreaterThanOrEqual(48_000);
+    expect(f.expanded).toBeGreaterThanOrEqual(SEARCH_LIMIT_CELLS);
     expect(f.blocked.length).toBeLessThanOrEqual(256);
   }
   expect(crowd.some((h) => h.lastWorkBlock?.includes('waiting for longer searches ahead'))).toBe(true);
-  expect(crowd.every((h) => h.routeSearch?.status !== 'SEARCH_LIMIT' || h.routeSearch.expanded >= 48_000)).toBe(true);
+  expect(crowd.every((h) => h.routeSearch?.status !== 'SEARCH_LIMIT' || h.routeSearch.expanded >= SEARCH_LIMIT_CELLS)).toBe(true);
 
   // 4. The whole continuation stays a small part of the save and still restores.
   const text = serializeSnapshot(gs);

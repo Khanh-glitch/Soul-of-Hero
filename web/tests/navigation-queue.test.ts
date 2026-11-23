@@ -6,7 +6,7 @@ import { describe, expect, it } from 'vitest';
 import { newGame, startRun } from '../src/game/engine';
 import { setActiveLayout } from '../src/game/world';
 import { humanNavigation, type HumanWaypoint } from '../src/game/human-navigation';
-import { loadNavigation, saveNavigation, searches } from '../src/game/navigation-save';
+import { loadNavigation, saveNavigation, searches, SEARCH_LIMIT_CELLS } from '../src/game/navigation-save';
 import { measureWorldWork } from '../src/game/world-work';
 import type { HumanRecord } from '../src/game/humanworld';
 import type { RunState } from '../src/game/core';
@@ -14,16 +14,17 @@ import { T0 } from './helpers/g1b-kit';
 
 const SMALL = 4096, CAP = 160_000, CALL = 256, LIVE_SECONDS = 120;
 
-function scene(copies: number) {
+function scene(copies: number, of = 'h7') {
   setActiveLayout('veyra05-world');
   const gs = newGame();
   expect(startRun(gs, 'female', T0, null, 7606).ok).toBe(true);
   const r = gs.run!, hw = r.humanWorld!;
   const berth = hw.evacuation['evac:po_evac_west'];
   const target: HumanWaypoint = { tx: berth.siteGx, ty: berth.siteGy, floor: 0 };
-  // The cook of Greywater who boarded at this berth in the campaign (951 steps from his door).
-  const base = hw.people.h7;
-  expect([base.community, base.floor]).toEqual(['com:po_greywater', 0]);
+  // h7: the cook of Greywater who boarded at this berth in the campaign (951 steps from his door).
+  const base = hw.people[of];
+  expect(base.floor).toBe(0);
+  if (of === 'h7') expect(base.community).toBe('com:po_greywater');
   const crowd: HumanRecord[] = [];
   for (let i = 0; i < copies; i++) { const h = { ...base, actorId: `q${i}`, routeSearch: undefined } as HumanRecord; hw.people[h.actorId] = h; crowd.push(h); }
   return { r, hw, target, base, crowd };
@@ -47,7 +48,7 @@ describe('planner memory law: long searches queue, queued turns help, nothing ne
   it('the staged search is a long one that a lone resident finishes', () => {
     expect(alone.path.length).toBeGreaterThan(900);
     expect(alone.examined).toBeGreaterThan(6 * SMALL);
-    expect(alone.examined).toBeLessThan(48000);
+    expect(alone.examined).toBeLessThan(48000);                                   // short enough for two to run side by side to the end
     expect(alone.calls).toBe(Math.ceil(alone.examined / CALL));
     console.log('SOLO', alone.path.length, alone.examined, alone.calls);
   });
@@ -106,5 +107,70 @@ describe('planner memory law: long searches queue, queued turns help, nothing ne
     expect(cSearch().points.size).toBeLessThan(SMALL + 3 * CALL);                 // still queued after two silent minutes
     for (let i = 0; i < 400 && !path; i++) { tick(r); path = nav.route(c, target); }
     expect(path).toEqual(alone.path);                                           // then the lane was his
+  }, 600000);
+});
+
+// The berths are far: at h288 of the campaign most residents who wanted to leave needed 49,000-85,000 cells of search
+// to find the west berth. STAGED scenes again — copies of real residents at their own doors on the day-one island.
+describe('planner memory law: a search may run to 96,000 cells, and the second lane holds still instead of being lost', () => {
+  const OLD_LIMIT = 48_000;
+
+  it('a resident whose route needs more than the old 48,000-cell limit gets it, and the search survives a save on the way', () => {
+    // The builder of Sapgrove: 1,380 steps from the west berth.
+    const { r, target, crowd: [h] } = scene(1, 'h4w'), nav = humanNavigation(r);
+    let path: HumanWaypoint[] | null = null, calls = 0, savedPast = 0;
+    while (!path && calls < 1000) {
+      calls++; tick(r); path = nav.route(h, target);
+      if (path) break;
+      expect(h.routeSearch?.status).toBe('PENDING_SEARCH');
+      if (!savedPast && h.routeSearch!.expanded > OLD_LIMIT + CALL) {              // past what the old loader accepted
+        const saved = saveNavigation(r)!; loadNavigation(r, saved); expect(saveNavigation(r)).toBe(saved); savedPast = h.routeSearch!.expanded;
+      }
+    }
+    console.log('FAR', path?.length, h.routeSearch?.expanded, calls, savedPast);
+    expect(h.routeSearch?.status).toBe('FOUND');
+    expect(path!.length).toBeGreaterThan(1300);
+    expect(savedPast).toBeGreaterThan(OLD_LIMIT + CALL);
+    expect(h.routeSearch!.expanded).toBeGreaterThan(OLD_LIMIT + CALL);
+    expect(h.routeSearch!.expanded).toBeLessThan(SEARCH_LIMIT_CELLS);
+    expect(calls).toBe(Math.ceil(h.routeSearch!.expanded / CALL));                // the save in the middle cost no work
+  }, 600000);
+
+  it('two searches that both run to the limit, with a queue behind: the cap holds and neither loses a cell', () => {
+    // Two cooks of the Glade (their door is beyond even the new limit). They search alone for a while, side by side,
+    // so that the second is itself a long search when it has to hold still; then ten of the Greywater cook arrive
+    // behind them and spend their turns on the first.
+    const far = scene(2, 'h4u'), { r, hw, target } = far, nav = humanNavigation(r);
+    const behind: HumanRecord[] = [];
+    for (let i = 0; i < 10; i++) { const h = { ...hw.people.h7, actorId: `b${i}`, routeSearch: undefined } as HumanRecord; hw.people[h.actorId] = h; behind.push(h); }
+    const everyone = [...far.crowd, ...behind], done = new Map<string, string>(), held = new Map<string, number>();
+    const ALONE = 220;
+    let rounds = 0, maxCells = 0, maxPair = 0, maxSecond = 0, tickets = 0;
+    while (done.size < everyone.length && rounds < 3000) {
+      rounds++; tick(r);
+      for (const h of rounds <= ALONE ? far.crowd : everyone) {
+        if (done.has(h.actorId)) continue;
+        const path = nav.route(h, target), status = h.routeSearch!.status;
+        if (status !== 'PENDING_SEARCH') done.set(h.actorId, status);
+        expect(!!path).toBe(status === 'FOUND');
+        const pending = pendingOf(r), total = cells(r); maxCells = Math.max(maxCells, total);
+        expect(total).toBeLessThanOrEqual(CAP);                                     // 1. the cap, after every call
+        // 2. the two far searches never shrink: nothing they hold is dropped or emptied before their owner gets the answer
+        for (const [id, s] of pending) {
+          const who = owner(id); if (who !== 'q0' && who !== 'q1') continue;
+          expect([who, s.points.size >= (held.get(who) ?? 0)]).toEqual([who, true]); held.set(who, s.points.size);
+        }
+        for (const who of ['q0', 'q1']) if (!done.has(who) && held.has(who)) expect([who, [...pending.keys()].some(id => owner(id) === who)]).toEqual([who, true]);
+        const sizes = [...pending.values()].map(s => s.points.size).sort((a, b) => b - a);
+        if (sizes.length > 1 && !done.has('q0') && !done.has('q1')) { maxPair = Math.max(maxPair, sizes[0] + sizes[1]); maxSecond = Math.max(maxSecond, sizes[1]); }
+        tickets = Math.max(tickets, [...pending.values()].filter(s => s.points.size === 1 && !s.heap.length && s.expanded >= SMALL).length);
+      }
+    }
+    console.log('PAIR', { rounds, maxCells, maxPair, maxSecond, tickets, done: [...done] });
+    expect(done.get('q0')).toBe('SEARCH_LIMIT'); expect(done.get('q1')).toBe('SEARCH_LIMIT');
+    for (const who of ['q0', 'q1']) { expect(hw.people[who].routeSearch!.expanded).toBeGreaterThanOrEqual(SEARCH_LIMIT_CELLS); expect(held.get(who)).toBeGreaterThan(SEARCH_LIMIT_CELLS); }
+    expect(maxSecond).toBeGreaterThan(40_000);                                    // the second really was a long search held still
+    expect(maxPair).toBeGreaterThan(140_000);                                     // and the first really ran on beside it
+    for (const h of behind) expect([h.actorId, done.get(h.actorId)]).toEqual([h.actorId, 'FOUND']);   // the queue was served afterwards
   }, 600000);
 });

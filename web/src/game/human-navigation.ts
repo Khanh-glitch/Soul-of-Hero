@@ -1,4 +1,4 @@
-import {searches,failedSearches,componentFailures} from './navigation-save';
+import {searches,failedSearches,componentFailures,SEARCH_LIMIT_CELLS} from './navigation-save';
 import {timedWorldWork} from './world-work';
 import {countWorldWork} from './world-work';
 /** Global physical navigation. Routes contain actual cardinal steps or authored stair edges.
@@ -33,7 +33,9 @@ type SearchNode={p:HumanWaypoint;g:number;score:number};
  *  - small searches always run; past SMALL_SEARCH_CELLS only the GROWING_SEARCHES most advanced live
  *    searches grow — they finish first, the rest queue. ("Live" = asked about in the last LIVE_SECONDS;
  *    a search nobody asks about holds no place.) One search stops at SEARCH_LIMIT_CELLS examined, about
- *    53,000 held, so the growing ones stay near 106,000 cells and leave room for the queue;
+ *    104,000 held. The second of the two holds still once the pair passes TWO_LANE_CELLS (so it holds
+ *    at most half of that), keeping what it has, and goes on when the first ends: the first can run to
+ *    its limit and the pair stays under 150,000 cells, so the cap never has to take the second's work;
  *  - a queued resident's planner turn is not thrown away: it is spent on the most advanced growing
  *    search (`help` below). The planner gives one turn a second to residents away from the player, so
  *    the work done per hour is the same as if every search grew at once — only the memory is bounded;
@@ -48,11 +50,17 @@ type SearchNode={p:HumanWaypoint;g:number;score:number};
  * dropped was arbitrary — often one at 20,000-40,000 cells, about to finish. Replayed from h288 of the
  * 336 h campaign (23 residents asking for a route to a berth): 225,000-313,000 cells of work thrown
  * away per hour and one resident setting out in four hours.
+ * Why SEARCH_LIMIT_CELLS went from 48,000 to 96,000 (2026-11-23): the evacuation berths are farther
+ * than 48,000 cells of search from most of Greywater. Measured at h288 of two campaigns: routes of
+ * 927-1,333 steps to the west berth needed 48,990, 60,591, 62,082 and 84,835 cells, so only the six or
+ * so residents living nearest could ever set out, the vessel waits for six passengers, and one death
+ * among those six meant nobody left the island. HARD_CELL_CAP is unchanged, so the save is no larger.
  *  - a SEARCH_LIMIT record keeps only the nearest part of its boundary (it is "unconfirmed", not a proof). */
-const STALE_SECONDS=1800,LIVE_SECONDS=120,SMALL_SEARCH_CELLS=4096,GROWING_SEARCHES=2,SEARCH_LIMIT_CELLS=48000,HARD_CELL_CAP=160_000,LIMIT_BOUNDARY_CELLS=256,FAILED_SEARCHES=256,COMPONENT_CELL_BUDGET=60_000;
+const STALE_SECONDS=1800,LIVE_SECONDS=120,SMALL_SEARCH_CELLS=4096,GROWING_SEARCHES=2,TWO_LANE_CELLS=90_000,HARD_CELL_CAP=160_000,LIMIT_BOUNDARY_CELLS=256,FAILED_SEARCHES=256,COMPONENT_CELL_BUDGET=60_000;
 const searchActor=(id:string)=>id.split(':')[3];
 type Search=NonNullable<ReturnType<typeof searches.get>> extends Map<string,infer S>?S:never;
-/** The long searches allowed to grow now: the GROWING_SEARCHES largest live ones, largest first; equal sizes keep the order they were started in. */
+/** The long searches that hold a lane now: the GROWING_SEARCHES largest live ones, largest first; equal sizes keep the
+ *  order they were started in. */
 function growing(pending:Map<string,Search>,stamp:number):Search[]{
  const best:Search[]=[];
  for(const s of pending.values()){
@@ -62,6 +70,8 @@ function growing(pending:Map<string,Search>,stamp:number):Search[]{
  }
  return best;
 }
+/** True while the second of the two must hold still (it keeps its lane and everything it has). */
+const secondHolds=(lanes:Search[])=>lanes.length>1&&lanes[0].points.size+lanes[1].points.size>TWO_LANE_CELLS;
 /** A queued search emptied at the cap: only its start cell, an empty frontier, and a count from before. No search
  *  that is still running looks like this — an empty frontier ends a search in the call that empties it. */
 const isTicket=(s:Search)=>s.points.size===1&&!s.heap.length&&s.expanded>=SMALL_SEARCH_CELLS;
@@ -200,8 +210,9 @@ export function humanNavigation(r:RunState,occupied=new Set<string>(),avoidCrowd
   // next call ends it and takes the result. The goal node is looked at, not popped — the frontier is not disturbed.
   const help=()=>{
    let budget=Math.min(maxVisited,256);
-   for(const s of growing(pending!,stamp)){
-    if(budget<=0)break;
+   const lanes=growing(pending!,stamp);
+   for(const s of lanes){
+    if(budget<=0||s===lanes[1]&&secondHolds(lanes))break;
     let id:string|undefined;for(const [k,v] of pending!)if(v===s){id=k;break;}
     if(!id||id.split(':')[0]!==String(avoidCrowding))continue;
     const who=r.humanWorld?.people[searchActor(id)];if(!who||who.state==='DEAD'||who.state==='EVACUATED')continue;
@@ -224,7 +235,7 @@ export function humanNavigation(r:RunState,occupied=new Set<string>(),avoidCrowd
    state=emptySearch(startKey,start,state,0);state.touched=stamp;pending.set(searchKey,state);   // a lane is free: start again
   }
   const {heap,costs,parent,points}=state;
-  if(points.size>=SMALL_SEARCH_CELLS&&!growing(pending,stamp).includes(state))return queued(state.expanded);
+  if(points.size>=SMALL_SEARCH_CELLS){const lanes=growing(pending,stamp);if(!lanes.includes(state)||state===lanes[1]&&secondHolds(lanes))return queued(state.expanded);}
   if(!heap.length&&state.expanded===0)heapPush(heap,{p:start,g:0,score:estimate(start,target)});let visited=0;
   while(heap.length&&visited++<Math.min(maxVisited,256)){const n=heapPop(heap),k=key(n.p);state.expanded++;countWorldWork('routeExpansions');if(n.g!==costs.get(k))continue;if(k!==startKey&&!free(n.p,h,true)){state.blocked.set(k,n.p);continue;}
    if(atGoal(n.p,target)){const result:HumanWaypoint[]=[];for(let q=k;q!==startKey;q=parent.get(q)!)result.push(points.get(q)!);pending.delete(searchKey);const path=result.reverse();if(!path.every(p=>free(p,h,true))){status('PENDING_SEARCH',state.expanded);h.lastWorkBlock='Route changed during planning; checking again.';return null;}status('FOUND',state.expanded);return path;}
