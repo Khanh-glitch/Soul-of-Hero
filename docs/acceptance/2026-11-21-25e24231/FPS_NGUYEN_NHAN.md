@@ -165,7 +165,7 @@ Vẽ khi có sương mù (hồ sơ CPU, giờ 8, giây 30–60): 7,0 → 5,3 ms 
 1. **FPS trung bình: bốn phiên đầu không kết luận được.** Các cặp đo liền nhau ở phiên 1–4 (trước → sau): file lưu giờ 8 đứng yên 20,3 → 15,5; 18,8 → 19,0; 18,6 → 16,3; 9,4 → 19,3; 16,2 → 21,3; 19,1 → 21,2. Đang đi 17,8 → 15,9; 12,0 → 21,0. Ván mới 27,4 → 24,9; 31,0 → 30,9; 17,7 → 14,8; 29,6 → 17,9. Máy thử lúc đó chạy chậm thất thường (xem "Về máy thử" ở trên), cùng một bản chạy hai lần đã lệch nhau ±5 FPS. Chỉ phiên 5 cho thấy bản sửa nhanh hơn. Phần nặng đều đặn của mỗi khung hình vẫn là tính 286 cư dân và vẽ sương mù; bản sửa không đụng tới phần cư dân.
 2. **Đã kiểm tra hai nghi ngờ, cả hai đều sai.** (a) "Luồng phụ giành nhân xử lý với game": tắt luồng phụ thì chậm hơn (14,8–15,1 FPS, khung dài nhất 1.262 ms), không nhanh hơn. (b) "Mã mới làm bước mô phỏng chậm đi": chạy riêng bước mô phỏng trong Node, mã cũ và mã mới xen kẽ, 5.400 khung hình mỗi lượt: trung vị 4,8 và 4,3 ms (cũ) so với 4,5 và 3,9 ms (mới). Không chậm hơn.
 3. **Sương mù.** Phần tính nhiễu (2,7 ms) đã hết, nhưng tổng thời gian vẽ khi có sương vẫn khoảng 14,8 ms. Phần còn lại là các lệnh tô từng chấm nhỏ. Hai cách vẽ gộp đã thử đều cho hình lệch tới 2/255 mỗi kênh màu nên đã bỏ.
-4. **Cư dân mỗi khung hình: chưa sửa.** Đo theo từng dòng mã, phần "tính lặp" có thể bỏ mà không đụng thiết kế chỉ khoảng 0,5–1 ms trong khung hình 15–25 ms của máy thử. Các chỗ đó (lập lại danh sách vật thể, lập lại bảng giường mỗi lần gọi) lại là chốt an toàn có chủ ý trong mã. Lợi ít, rủi ro có, nên chưa làm.
+4. **Cư dân mỗi khung hình: chưa sửa.** Đo theo từng dòng mã, phần "tính lặp" có thể bỏ mà không đụng thiết kế chỉ khoảng 0,5–1 ms trong khung hình 15–25 ms của máy thử. Các chỗ đó (lập lại danh sách vật thể, lập lại bảng giường mỗi lần gọi) lại là chốt an toàn có chủ ý trong mã. Lợi ít, rủi ro có, nên chưa làm. **Cập nhật:** sau khi Creator đồng ý, phần này đã làm ở bản `6c4b8933`; xem phần "Cư dân chờ tới việc kế tiếp" ở cuối tệp.
 5. **Vẫn còn giật trong 30 giây đầu của ván mới** (3–5 lần dựng vùng trên luồng game): luồng phụ chưa kịp dựng xong khi người chơi bấm bắt đầu.
 6. **Lưu nhẹ vẫn chiếm 81 ms trên máy thử ở giờ 8** (kiểm tra hợp lệ 28, đổi thành chữ 28, gói tìm đường 20). Ba bước này phải chạy trên luồng game để bản lưu nhất quán. File lưu càng lớn thì càng lâu.
 7. **Bộ nhớ tăng.** Trình duyệt dùng 756–860 MB (sau) so với 600–725 MB (trước) trong 5 phút đầu sau khi vào file lưu giờ 8; sau khi luồng phụ tắt và trình duyệt dọn bộ nhớ: 570–585 MB so với 510–540 MB.
@@ -190,5 +190,54 @@ Chưa kiểm: chơi tay trên máy thật có card đồ hoạ; bộ nhớ trên
 
 ## Muốn FPS tăng thêm nữa thì cần Creator quyết định
 
-- **Cư dân không tính ở mọi khung hình.** Ví dụ tính nhu cầu và kế hoạch 10 lần mỗi giây thay vì 60. Bước mô phỏng hiện chiếm 3–5 ms trong khung hình 7–10 ms (phiên 5); ước lượng cách này bớt được khoảng một nửa số đó. Đây là ước lượng, chưa đo. Đây cũng là thay đổi cách mô phỏng: các mốc đói, khát có thể trễ tối đa 0,1 giây, nên phải chạy lại toàn bộ bài kiểm tra cư dân và lượt 336 giờ.
+- **Cư dân không tính ở mọi khung hình: Creator đã đồng ý, đã làm.** Kết quả thật thấp hơn ước lượng ghi ở đây trước kia (bớt 0,7 ms chứ không phải "khoảng một nửa của 3–5 ms"). Chi tiết ở phần ngay dưới.
 - **Sương mù vẽ gộp thành một lớp.** Hình lệch tối đa 2/255 mỗi kênh màu (mắt không thấy), đổi lại bớt phần lớn thời gian vẽ sương. Chưa đo được mức bớt chính xác.
+
+# Cư dân chờ tới việc kế tiếp (2026-11-22, bản `6c4b8933`)
+
+Creator đã đồng ý cho cư dân được tính thưa hơn. Phần này ghi lại cái đã làm, số đo, và chỗ nó khác với lời mô tả lúc xin ý kiến.
+
+## Đã làm gì
+
+Trước đây, mỗi khung hình game đều chạy trọn "bước cư dân" cho 286 người: trừ đói khát, xét kế hoạch, bước đi. Bây giờ, khi đang chơi trực tiếp, bước này **được bỏ qua ở những khung hình mà không cư dân nào có việc đến hạn**, tối đa 50 mili giây (3 khung hình) rồi phải chạy lại.
+
+- **Mọi mốc có hẹn giờ vẫn được tính đúng thời điểm của nó, không trễ:** mốc đói khát, lúc đặt chân tới ô kế tiếp, lúc làm xong việc, lúc tới lượt suy nghĩ, giờ tàu rời bến, đợt tấn công của Elder. Game hỏi trước "việc kế tiếp của cư dân là lúc nào" rồi dừng đúng ở đó.
+- **Cái có thể trễ tối đa 0,05 giây** là phản ứng với việc không hẹn trước: một con thú vừa lọt vào tầm nhìn, kho vừa đổi hàng, cú đánh đầu tiên trúng một cư dân.
+- **Không bao giờ chờ** khi: có cư dân đang đánh nhau hoặc đang nhắm đánh, có người đi theo người chơi, đang sơ cứu, Elder đã thức, có người đang dịch chuyển bằng lõi, hoặc có người vừa tới một ô và sắp bước tiếp.
+- Tua ngoại tuyến (khi vắng mặt, khi Continue) **không đổi một dòng nào**.
+
+**Khác với lời mô tả lúc xin ý kiến.** Lúc đó tôi viết "ví dụ tính 10 lần mỗi giây, các mốc đói khát có thể trễ 0,1 giây". Bản đã làm chặt hơn: mốc đói khát không trễ, chỉ phản ứng với việc bất ngờ mới trễ, và tối đa 0,05 giây.
+
+## Số đo (phiên 7, `4ab22fac` → `6c4b8933`, thứ tự cũ, mới, mới, cũ)
+
+| Cảnh | Thời tiết | FPS cũ → mới | ms mỗi khung hình | Bước mô phỏng (ms) | Khung dài hơn 33 ms |
+|---|---|---|---|---|---|
+| Giờ 8 đứng yên, 30 giây đầu | Sương mù | 38,7 và 39,4 → 39,2 và 43,3 | 11,50 và 11,09 → 10,50 và 9,65 | 2,99 và 2,89 → 2,32 và 2,18 | 18 và 11 → 17 và 15 |
+| Giờ 8 đứng yên, giây 30–60 | Sương mù | 39,4 và 40,9 → 43,2 và 42,5 | 10,98 và 10,34 → 9,16 và 9,43 | 3,08 và 3,02 → 2,25 và 2,29 | 13 và 12 → 13 và 12 |
+| Ván mới, 30 giây đầu | Mưa | 48,1 và 42,6 → 44,9 và 47,8 | 9,16 và 10,58 → 9,80 và 8,88 | 4,47 và 5,27 → 4,53 và 4,16 | 19 và 25 → 20 và 17 |
+| Ván mới, phút 1,6 | Mưa | 54,5 và 55,3 → 52,9 và 52,0 | 7,68 và 7,28 → 7,92 và 7,84 | 4,21 và 4,03 → 4,21 và 4,12 | 7 và 6 → 7 và 18 |
+
+**Cách đọc:**
+
+- **File lưu giờ 8:** bước mô phỏng bớt khoảng 0,7 ms mỗi khung hình (3,0 → 2,26). Trung bình bốn cửa sổ: 10,98 → 9,69 ms mỗi khung hình, FPS 39,6 → 42,1. Số khung dài hơn 33 ms không đổi.
+- **Ván mới: không được gì.** Ở đầu ván luôn có 6–13 cư dân đang đi; cứ mỗi lần một người tới ô mới thì bước cư dân phải chạy, nên nó vẫn chạy ở 875 trên 900 khung hình (đếm trong bài kiểm tra, 15 giây đầu của ván mới). Các con số ở hai dòng ván mới chỉ là dao động giữa các lượt.
+- **Ước lượng trước kia của tôi sai.** Tôi đã viết "bớt khoảng một nửa của 3–5 ms". Thực tế là 0,7 ms, và chỉ ở cảnh ít người đi lại.
+- Phần vẽ (5–6 ms ở giờ 8 khi có sương) không đổi và vẫn là phần lớn nhất của khung hình.
+
+## Một cách làm đã thử rồi bỏ
+
+Phiên 6 đo một bản không có luật "người sắp bước tiếp thì không chờ". Bản đó bớt được 0,4–0,8 ms cả ở ván mới. Đổi lại, người đang đi bị vẽ đứng khựng tới 3 khung hình ở mỗi ô rồi nhảy tối đa khoảng 3,6 điểm ảnh: tắt luật này đi thì bài kiểm tra đếm được 627 lượt "đứng giữa hai ô" trong 900 khung hình, bật lên thì 0. Đây là thay đổi hình ảnh nên đã bỏ. Số đo thô của bản đó vẫn giữ ở `fps-tools/result-ab-6-resident-wait-early-variant.jsonl`.
+
+## Nghiệm thu trên `6c4b8933`
+
+| Hạng mục | Kết quả |
+|---|---|
+| `typecheck`, `typecheck:tests`, `build` | Sạch |
+| Bài kiểm tra mới `tests/resident-step-wait.test.ts` | Đạt. Chạy 900 khung hình với đủ 286 cư dân: không mốc nào bị bỏ qua, không ai bị tính trễ quá 50 ms, người đang đi được vẽ đúng vị trí theo đồng hồ và đi đủ số ô theo tốc độ của mình, không ai bị vẽ đứng giữa hai ô |
+| Hồi quy 264 tệp (263 cũ + bài mới) | **251 đạt, 0 đỏ**, 13 tệp chỉ có bài tự chọn. 1.575 bài đạt, 0 bài trượt. Lần này không tệp nào phải chạy lại |
+| Chạy bền 336 giờ, seed 7606, không người chơi | Cổng chiến dịch **15/15**. Sơ tán 6, sống sót 33, chết 247. **Mã băm trạng thái của cả 336 giờ trùng từng giờ với lượt trên `4ab22fac`** |
+| Tự lưu trên bản dựng thật trong trình duyệt (`e1-save.mjs`) | Đạt, không có lỗi trang |
+
+Lượt 336 giờ chỉ đi qua đường tua ngoại tuyến, là đường không bị sửa, nên kết quả trùng khít là điều phải có; nó xác nhận bản sửa không rò sang đường đó. Phần chơi trực tiếp được kiểm bằng bài kiểm tra mới và các tệp hồi quy có gọi bước chơi trực tiếp.
+
+**Chưa kiểm:** chưa có ai nhìn cư dân đi lại bằng mắt trên máy thật sau bản sửa này. Vị trí cư dân dùng để xét trúng đòn có thể cũ tối đa 0,05 giây (lệch tối đa khoảng 3,6 điểm ảnh với người đang đi) ở những khung hình bước cư dân đang chờ. Khi có cư dân đang đánh nhau thì không có khung hình nào như vậy.

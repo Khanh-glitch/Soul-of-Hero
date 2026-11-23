@@ -78,6 +78,7 @@ describe('residents wait for their next event in live play', () => {
     expect(worstLag).toBeLessThan(HUMAN_DRAW_LEAD_MS);
     expect(worstOverdue).toBeLessThanOrEqual(1e-6);
     expect(walkerFrames).toBeGreaterThan(frames);        // the scene really has people walking
+    expect(standing).toBe(0);                            // nobody is drawn standing between two tiles of a route
     // Pace: a walker seen for whole strides finished them in stride time (the instant of arrival is exact, so the
     // count can only be short by the stride still under way).
     let checked = 0;

@@ -130,6 +130,14 @@ Chi tiết: `endurance-hourly-census.csv`, `endurance-campaign-gate.json`.
 - **Giữ cách nhường đường mới của dân** (sửa kèm đợt tăng tốc, có hiệu lực cả khi chơi trực tiếp), với điều kiện tìm hiểu vì sao số lượt gục tăng — đã tìm hiểu, kết quả ở `TIEN_DO_SUA_LOI.md`.
 - **Ba tệp kiểm thử tua hàng trăm giờ bị loại khỏi điều kiện nghiệm thu**: `src/veyra05/audit-closure`, `src/veyra05/review-r2-acceptance`, `tests/economic-network-m2`. Chúng vẫn nằm trong repo nhưng **chưa được kiểm chứng** trên mã cuối; đây là ngoại lệ so với quyết định 5.
 
+**Quyết định ngày 22/11 (sau phần sửa lỗi):**
+
+- **Sổ tay sinh tồn:** chọn "1 B, 2 C, 3 B", đã làm ở `0d9cc3b3`; Creator **đã duyệt**.
+- **Nhịp tự lưu:** chọn phương án **B** (không lưu dày hơn 5 giây một lần; lưu đầy đủ khi mở bảng, khi chết, khi nghỉ; lưu nhẹ khi đứng yên an toàn; đang đi hoặc đang đánh thì chờ, tối đa 20 giây).
+- **Cư dân được tính thưa hơn khi chơi trực tiếp:** đồng ý. Bản đã làm chỉ chờ tối đa 0,05 giây và chỉ khi không cư dân nào có việc đến hạn (`6c4b8933`).
+- **Tạo project Vercel `soul-of-hero`:** đồng ý, đã tạo.
+- Chưa trả lời: có vẽ sương mù gộp thành một lớp hay không (hình lệch tối đa 2/255 mỗi kênh màu).
+
 Tiến độ thực hiện từng mục: xem `TIEN_DO_SUA_LOI.md` cùng thư mục.
 
 ## 8. Việc còn thiếu để tới final
@@ -143,7 +151,7 @@ Tiến độ thực hiện từng mục: xem `TIEN_DO_SUA_LOI.md` cùng thư m�
 5. Gỡ nút QA Sandbox và Creator Inspector khỏi build production (chỉ còn khi `VITE_SOH_QA=1`).
 6. Sửa sáu khiếm khuyết UI ở mục 3 (gộp chồng gỗ, hai mâu thuẫn Return Chronicle, tên NPC lệch nghề, và quyết định số phận Classic Island không NPC).
 7. Sửa `10_KE_HOACH_FINAL.md` mục (1) "xã hội sống tới cuối game" theo quyết định 3: mục tiêu mới là người chơi **cứu được** người, không phải xã hội tự sống.
-8. Đóng lại ZIP từ SHA cuối, có `offline-return-worker`, cập nhật SHA256 trong sổ `07`.
+8. Đóng lại ZIP từ SHA cuối, có `offline-return-worker`, cập nhật SHA256 trong sổ `07`. **Đã làm (23/11):** đóng từ `6c4b8933`, SHA256 `15cfece6…39a8`, đã ghi vào sổ `07`.
 9. Mở một PR duy nhất `arena/25e24231-soul-of-hero` → `main`; đóng hoặc ghi "để sau" cho 9 PR không thuộc final.
 10. Cập nhật số tệp test trong tài liệu (260) và dừng việc test ghi đè evidence được Git theo dõi.
 

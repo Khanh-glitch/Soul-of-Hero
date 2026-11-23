@@ -28,3 +28,7 @@ Run one build at a time: a second process on the same machine spoils the timings
 - `ab5.sh` + `result-ab-5-quiet-machine.jsonl` — the last session, on the final commit, after the machine had settled
   (hour-8 scene twice, in both orders). Sessions 1–4 ran while the machine was erratically slow.
 - `result-ab-1.jsonl` … `result-ab-4-*.jsonl`, `result-ab-4-memory-samples.txt`, `result-tick-node.txt` — raw numbers.
+- `ab6.sh` (env `A`, `B`, `TAG`) — residents' step waiting for their next event: new game and hour-8 save, order
+  old, new, new, old. `result-ab-7-resident-wait-final.jsonl` is `4ab22fac` against `6c4b8933` (the shipped rule);
+  `result-ab-6-resident-wait-early-variant.jsonl` is an earlier variant that let walkers stand between two tiles
+  (rejected: visible stutter). Each row carries the weather of the run.

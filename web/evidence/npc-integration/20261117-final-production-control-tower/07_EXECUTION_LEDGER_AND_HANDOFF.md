@@ -576,3 +576,12 @@ Bộ hồi quy cứu hộ ban đầu đạt 28/29: phép quét `stepHumans` mộ
 Hai kiểm tra TS và build production đạt. Hồi quy liên quan 28 đạt, 1 bỏ qua (Greywater yêu cầu save trước sửa lối vào); gồm ca tự nhiên Glade, Fishcamp, Hook, Tidecamp. Đã chạy lại riêng Glade 2/2 với biên nhận. Đối chiếu riêng h51→h61 dùng bước giờ giống nhau ở hai bản; chỉ dùng kết quả khi cả hai tới h61. Chưa đạt cổng h264/h312/h336, chưa xác nhận phát hành.
 
 **Đã khép đối chiếu Glade h61**: cùng save h51, cùng bước giờ tròn trên `34b7c8a` và `b4a1196`. Trước sửa `h4t` chết ở lần lấy mẫu h57. Sau sửa có bốn lượt uống thật từ cùng thùng, h61 còn 95 HP và nước 46,54; 6/7 dân Glade hoạt động thay vì 5/7. Số liệu từng giờ và dấu vân tay mã ở [bảng đối chiếu](../glade-water-appeal/README.md). Đã khởi chạy ngày đầu seed độc lập 7542 từ New Game trên bản nguồn `b4a1196` cố định, đích đầu h24. Chưa dùng lượt đó để xác nhận h264/h312.
+
+### Gói chơi được đóng lại sau đợt nghiệm thu và sửa FPS (2026-11-23)
+
+Mã game `6c4b89336d3eced4496dc431a5c16f3df6289561` (nhánh `arena/0f6091f9-soul-of-hero`). `web/releases/Soul-of-Hero-Web.zip`: 64.359.032 byte, 220 tệp, SHA256 `15cfece6d9c16787851bc7563cdf493407a1a4ca944f584704e08279952739a8`. Thư mục `game/` trùng từng tệp với `web/dist` của cùng commit; có `offline-return-worker`, `region-prebuild.worker`, `save-writer.worker`. Gói trước (`dfea43a0…5eb1`, đóng ở `373d999`) không còn dùng.
+
+Trên cùng commit: hai lượt typecheck và build sạch; hồi quy 264 tệp: 251 đạt, 0 đỏ, 13 tệp chỉ có bài tự chọn; chạy bền 336 giờ seed 7606: cổng chiến dịch 15/15, sơ tán 6, sống sót 33, chết 247. Chi tiết: [`docs/acceptance/2026-11-21-25e24231/`](../../../../docs/acceptance/2026-11-21-25e24231/TIEN_DO_SUA_LOI.md). Đây chưa phải chữ ký cho 13 cổng: các lượt trình duyệt A–I, giao dịch NPC, sơ tán thủ công và chơi tay sổ tay chương 3–11 chưa làm.
+
+Bản xem trực tuyến: project Vercel `soul-of-hero`, dựng từ cùng commit, `https://soul-of-hero.vercel.app` (dựng xong; chưa có ai mở kiểm tra).
+

@@ -311,3 +311,13 @@ Chi tiết và số đo: `FPS_NGUYEN_NHAN.md`, phần "Sau khi sửa". Tóm tắ
 - Đã sửa ba chỗ gây giật mà không bỏ hình ảnh hay tính năng nào: tự lưu (nhịp B), dựng vùng (chuyển sang luồng phụ), tính nhiễu của sương mù.
 - Hồi quy 263 tệp: 250 đạt, 0 đỏ, 13 tệp tự chọn. Chạy bền 336 giờ: cổng 15/15, kết cục cư dân không đổi (6 / 33 / 247).
 - Chưa làm: giảm việc tính 286 cư dân mỗi khung hình (cần Creator quyết định); bộ nhớ tăng trong vài phút đầu; giới hạn 5 MB của localStorage khi đóng tab.
+
+## Cư dân chờ tới việc kế tiếp, ZIP và Vercel (2026-11-22/23) — bản `6c4b8933`
+
+Creator trả lời ngày 22/11: bản xem thử "ổn hơn tí"; đồng ý cho cư dân tính thưa hơn; duyệt Sổ tay sinh tồn; đồng ý tạo project Vercel `soul-of-hero`.
+
+- **Cư dân:** khi chơi trực tiếp, bước cư dân được bỏ qua ở khung hình không ai có việc đến hạn, tối đa 50 ms. Mọi mốc có hẹn giờ vẫn tính đúng thời điểm. Được: khoảng 0,7 ms mỗi khung hình ở file lưu giờ 8 (FPS 39,6 → 42,1 trên máy thử); ván mới không được gì. Chi tiết và số đo: `FPS_NGUYEN_NHAN.md`, phần cuối.
+- **Nghiệm thu:** hồi quy 264 tệp: 251 đạt, 0 đỏ, 13 tệp tự chọn. Chạy bền 336 giờ: cổng 15/15, kết cục 6 / 33 / 247, mã băm 336 giờ trùng từng giờ với `4ab22fac`.
+- **ZIP phát hành** `web/releases/Soul-of-Hero-Web.zip` đã đóng lại từ bản dựng của `6c4b8933`: 64.359.032 byte, 220 tệp, SHA256 `15cfece6d9c16787851bc7563cdf493407a1a4ca944f584704e08279952739a8`. Thư mục `game/` trong ZIP trùng từng tệp với `web/dist`; có đủ ba tệp luồng phụ (`offline-return-worker`, `region-prebuild.worker`, `save-writer.worker`).
+- **Vercel:** đã tạo project `soul-of-hero` (nhóm `menden`), nối với repo, thư mục gốc `web`. Bản đầu tiên dựng từ nhánh `arena/0f6091f9-soul-of-hero` ở `6c4b8933`, trạng thái READY, địa chỉ `https://soul-of-hero.vercel.app`. Vercel tự xếp bản đầu tiên của project vào mục production. Project **không** tự dựng lại khi có commit mới (cùng cấu hình với các project khác của tài khoản). **Chưa mở được địa chỉ này từ máy thử** (máy thử bị chặn mạng ra ngoài), nên mới biết là dựng xong, chưa biết là chơi được.
+- **Chưa làm:** gộp vào `main` (chờ 13 cổng và Creator duyệt); chơi tay chương 3–11 của sổ tay; các mục "Chưa làm" ở trên vẫn còn nguyên trừ ZIP và Vercel.
