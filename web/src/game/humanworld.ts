@@ -1497,6 +1497,10 @@ function rewardHelpOnce(hw:HumanWorld,h:HumanRecord,kind:keyof NonNullable<Human
   h.helpTrustReceipts??={};
   if(!selfCaused && !h.helpTrustReceipts[kind]){h.trust=clamp((h.trust??50)+amount,0,100);h.helpTrustReceipts[kind]=id;}
 }
+/** A collapse from thirst alone: down, out of water, and no wound still bleeding. For this patient water is the first
+ *  aid (Creator ruling 2026-11-23): a drink brings them round, where a bandage would only put them back on their feet
+ *  as thirsty as before. A bleeding patient still needs the bleeding stopped first. */
+export function downedByThirst(h:HumanRecord):boolean {return h.state==='DOWNED'&&h.thirst<1&&!h.wounds.some(w=>w.bleeding&&!w.treated);}
 export function startHumanAid(r:RunState,hw:HumanWorld,h:HumanRecord,id:string,stackUid:string,now:number): {ok:boolean;reason?:string;msg?:string} {
   if(hw.playerAid)return {ok:false,reason:'Finish or cancel your current aid first.'};
   if(['DEAD','EVACUATED','FIGHTING'].includes(h.state))return {ok:false,reason:'It is not safe to help right now.'};
@@ -1504,10 +1508,11 @@ export function startHumanAid(r:RunState,hw:HumanWorld,h:HumanRecord,id:string,s
   const d=ITEMS[s.key];
   const kind=(['bandage','herb'].includes(s.key)&&(h.state==='DOWNED'||h.wounds.some(w=>!w.treated)))?'medical':d.waterContainer&&(s.charge??0)>0&&h.thirst<35?'water':d.food?.hunger&&h.hunger<35&&h.state!=='DOWNED'?'food':undefined;
   if(!kind)return {ok:false,reason:'That item does not meet a current urgent need.'};
-  if(h.state==='DOWNED'&&kind!=='medical')return {ok:false,reason:'Stabilize the patient before feeding them.'};
-  hw.playerAid={id,actorId:h.actorId,stackUid,kind,startedAt:now,dueAt:now+(kind==='medical'?6000:1500),floor:h.floor,px:r.player.x,py:r.player.y,hp:r.player.hp};
+  const revive=kind==='water'&&downedByThirst(h);
+  if(h.state==='DOWNED'&&kind!=='medical'&&!revive)return {ok:false,reason:'Stabilize the patient before feeding them.'};
+  hw.playerAid={id,actorId:h.actorId,stackUid,kind,startedAt:now,dueAt:now+(kind==='medical'||revive?6000:1500),floor:h.floor,px:r.player.x,py:r.player.y,hp:r.player.hp};
   receipt(r,now,'human.aid.start',`${id}:${h.actorId}:${kind}:${stackUid}`);
-  return {ok:true,msg:kind==='medical'?'Treating · stay beside the patient for six seconds.':'Offering supplies · stay nearby.'};
+  return {ok:true,msg:kind==='medical'?'Treating · stay beside the patient for six seconds.':revive?'Giving water · stay beside the patient for six seconds.':'Offering supplies · stay nearby.'};
 }
 export function stepPlayerHumanAid(r:RunState,hw:HumanWorld,now:number):void {
   const a=hw.playerAid;if(!a)return;
@@ -1517,13 +1522,17 @@ export function stepPlayerHumanAid(r:RunState,hw:HumanWorld,now:number):void {
   }
   if(now<a.dueAt)return;
   delete hw.playerAid;
-  const d=ITEMS[s.key];let useful=false;
+  const d=ITEMS[s.key];let useful=false,revived=false;
   if(a.kind==='medical'&&['bandage','herb'].includes(s.key)&&(h.state==='DOWNED'||h.wounds.some(w=>!w.treated))){h.wounds.forEach(w=>{w.treated=true;w.bleeding=false;});h.hp=Math.min(h.maxHp,h.hp+30);h.state='IDLE';h.downedAt=undefined;useful=true;}
-  if(a.kind==='water'&&d.waterContainer&&(s.charge??0)>0&&h.thirst<35){h.thirst=Math.min(100,h.thirst+(d.food?.thirst??30));s.charge!--;useful=true;}
+  if(a.kind==='water'&&d.waterContainer&&(s.charge??0)>0&&h.thirst<35&&(h.state!=='DOWNED'||downedByThirst(h))){
+    // The collapse left a wound that never bled; with its cause answered it needs no bandage.
+    if(h.state==='DOWNED'){h.wounds.forEach(w=>{w.treated=true;});h.state='IDLE';h.downedAt=undefined;revived=true;}
+    h.thirst=Math.min(100,h.thirst+(d.food?.thirst??30));s.charge!--;useful=true;
+  }
   if(a.kind==='food'&&d.food?.hunger&&h.hunger<35&&h.state!=='DOWNED'){h.hunger=Math.min(100,h.hunger+d.food.hunger);h.thirst=Math.min(100,h.thirst+(d.food.thirst??0));useful=true;}
   if(!useful){receipt(r,now,'human.aid.cancel',`${a.id}:need changed`);return;}
   if(a.kind!=='water'&&--s.qty===0)C(r,'inv').slots[C(r,'inv').slots.indexOf(s)]=null;
-  rewardHelpOnce(hw,h,a.kind,a.id,a.kind==='medical'?5:3);
+  rewardHelpOnce(hw,h,a.kind,a.id,a.kind==='medical'||revived?5:3);
   receipt(r,now,'human.aid.commit',`${a.id}:${h.actorId}:${a.kind}:${s.uid}`);
 }
 /** Only the injured person who actually sees the player stop their assailant

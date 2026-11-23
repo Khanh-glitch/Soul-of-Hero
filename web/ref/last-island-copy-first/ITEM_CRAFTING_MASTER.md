@@ -286,7 +286,7 @@ Items whose value is what they unlock or prove. None is crafted.
 
 | Item | id | Grp | Policy | Purpose | How it is made, or why it is not | LI id / grade |
 |---|---|---|---|---|---|---|
-| Plank | `plank` | B | CRAFT_ONLY | Sawn timber for Plank Walls: the building upgrade between rough wood and stone. | 2 Wood → 1 | — / NONE |
+| Plank | `plank` | B | CRAFT_ONLY | Sawn timber. Its one use, the Plank Wall, was removed on 2026-11-23; nothing spends it now and the item waits for a ruling. | 2 Wood → 1 | — / NONE |
 | Charcoal | `charcoal` | A | CRAFT_ONLY | Wood burned to carbon. Station fuel, the carbon in Refined Iron, the binder of Fire Essence. | 2 Wood → 1 | charcoal / UNSUPPORTED_CITATION |
 | Iron Ingot | `iron_ingot` | A | BOTH | Smelted iron. The plain metal body of tools, devices and components. | 1 Iron Ore → 1 | iron_ingot / DIRECT |
 | Refined Iron Ingot | `refined_iron_ingot` | A | BOTH | Iron hardened with charcoal. The tier-2 metal: Pipe, Plate, the best tools and armour, vehicles. | 3 Iron Ingot + 2 Charcoal → 2<br>1 Rich Iron Ore + 2 Charcoal → 2 | refined_iron_ingot / DIRECT |
@@ -498,7 +498,7 @@ Unit cost divides the bill by the yield. Knowledge: Starter = known from the fir
 | `glass` | 1 Glass | 1 Frost Crystal + 1 Stone | — | Furnace | 2 / directed research | 14 s | SOH_ONLY (NONE) | — | KEEP | Stone fused with Crystal. Inland route; competes with Cores for Crystal. Learned by study. |
 | `leather` | 1 Leather | 1 Raw Hide | — | Workbench L1 | 0 / Starter | 8 s | SOH_ONLY (NONE) | — | KEEP | First-step rule, 1:1 at the bench. |
 | `cloth` | 1 Cloth | 6 Plant Fiber | — | Workbench L1 | 0 / Starter | 8 s | SOH_ONLY (NONE) | — | KEEP | First-step rule at the bench: 6 fiber. Twice a rope, so sewn goods are visibly dearer than lashed ones. |
-| `plank` | 1 Plank | 2 Wood | — | Workbench L1 | 1 / Starter | 6 s | SOH_ONLY (NONE) | — | KEEP | First-step rule. One consumer (Plank Wall); kept because the building tier between wood and stone needs its own material. |
+| `plank` | 1 Plank | 2 Wood | — | Workbench L1 | 1 / Starter | 6 s | SOH_ONLY (NONE) | — | KEEP | First-step rule. Its one consumer (Plank Wall) was removed on 2026-11-23 by Creator ruling; the recipe is kept unchanged until the item itself is ruled on. |
 
 ### 03 Food / Medicine / Consumables
 
@@ -782,9 +782,8 @@ Zero-input formulas: `pump_crude` (extraction from finite seep stock). Formulas 
 
 ### Materials with no consumer or one consumer
 
-No consumer: none.
+No consumer: Plank.
 
-- Plank: only `struct:wall_plank`
 - Iron Ore: only `recipe:iron_ingot`
 - Rich Iron Ore: only `recipe:refined_iron_rich`
 - Fur: only `recipe:fur_cloak`

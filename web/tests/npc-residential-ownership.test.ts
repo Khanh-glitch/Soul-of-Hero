@@ -1,7 +1,7 @@
 import {describe,it,expect} from 'vitest';
 import {newGame,startRun,findRunEntity,mkContainer,addItem,C,queuePaidRecipe,stepStations,mkStack,blockGrid,dispatch} from '../src/game/engine';
 import {setActiveLayout} from '../src/game/world';
-import {usingHumanBed,resolveOrder,commandHuman,stepHumans,stepHumanCombat,startHumanAid,stepPlayerHumanAid,killHuman} from '../src/game/humanworld';
+import {usingHumanBed,resolveOrder,commandHuman,stepHumans,stepHumanCombat,startHumanAid,stepPlayerHumanAid,killHuman,downHuman,downedByThirst} from '../src/game/humanworld';
 import {humanEntityTile,moveHumanGoods} from '../src/game/human-jobs';
 import {validate} from '../src/game/persist';
 import {ITEMS} from '../src/game/catalog';
@@ -113,6 +113,35 @@ describe('physical housing and production rights',()=>{
   const charge=water.charge!;stepPlayerHumanAid(r,hw,T0+3500);expect(water.charge).toBe(charge-1);
   h.hunger=10;expect(startHumanAid(r,hw,h,'aid-repeat',food.uid,T0+4000).ok).toBe(true);
   r.player.x+=32;stepPlayerHumanAid(r,hw,T0+5500);expect(food.qty).toBe(before-1);expect(hw.playerAid).toBeUndefined();
+ });
+ it('water is the first aid for a resident who collapsed from thirst alone; bleeding or hunger still need their own answer',()=>{
+  const r=scene().run!,hw=r.humanWorld!,h=Object.values(hw.people)[0];
+  const o=r.sourceMap!.veyra!.originAu,ox=Math.round(o[0]/.5),oy=Math.round(o[1]/.5),grid=blockGrid(r);
+  const cell=grid.findIndex((n,i)=>n===0&&i%200>10&&Math.floor(i/200)>10);
+  h.gx=ox+cell%200;h.gy=oy+Math.floor(cell/200);h.floor=0;h.state='IDLE';h.hunger=60;h.thirst=0;h.trust=50;h.wounds=[];
+  r.player.x=(cell%200+.5)*16;r.player.y=(Math.floor(cell/200)+.5)*16;
+  const food=C(r,'inv').slots.find(s=>s?.key==='berries')!,water=C(r,'inv').slots.find(s=>s?.key==='water_flask')!;
+  downHuman(r,hw,h,T0,'starvation');
+  expect(h.state).toBe('DOWNED');expect(downedByThirst(h)).toBe(true);
+  // Food is still refused for a patient on the ground, however hungry.
+  h.hunger=0;expect(startHumanAid(r,hw,h,'aid-food-down',food.uid,T0).ok).toBe(false);h.hunger=60;
+  const charge=water.charge!,foodBefore=food.qty;
+  expect(startHumanAid(r,hw,h,'aid-water-down',water.uid,T0)).toMatchObject({ok:true,msg:'Giving water · stay beside the patient for six seconds.'});
+  stepPlayerHumanAid(r,hw,T0+5999);expect(h.state).toBe('DOWNED');expect(water.charge).toBe(charge);     // as long as a bandage takes
+  stepPlayerHumanAid(r,hw,T0+6000);
+  expect(h.state).toBe('IDLE');expect(h.downedAt).toBeUndefined();expect(h.thirst).toBe(30);expect(h.wounds.every(w=>w.treated)).toBe(true);
+  expect(water.charge).toBe(charge-1);expect(water.qty).toBe(1);expect(food.qty).toBe(foodBefore);expect(h.trust).toBe(55);expect(hw.playerAid).toBeUndefined();
+  expect(r.receipts.filter(x=>x.kind==='human.aid.commit'&&x.detail.startsWith('aid-water-down:'))).toHaveLength(1);
+  // Down and bleeding: water does not stop blood. Down from hunger with water left in the body: water is not the cure.
+  h.thirst=0;h.wounds=[];downHuman(r,hw,h,T0+7000,'enemy');
+  expect(downedByThirst(h)).toBe(false);
+  expect(startHumanAid(r,hw,h,'aid-water-bleeding',water.uid,T0+7000).ok).toBe(false);
+  h.wounds.forEach(w=>{w.bleeding=false;});h.thirst=20;
+  expect(startHumanAid(r,hw,h,'aid-water-hunger',water.uid,T0+7000)).toMatchObject({ok:false,reason:'Stabilize the patient before feeding them.'});
+  // Moving away while giving water cancels it without spending the water.
+  h.thirst=0;expect(startHumanAid(r,hw,h,'aid-water-leave',water.uid,T0+8000).ok).toBe(true);
+  r.player.x+=32;stepPlayerHumanAid(r,hw,T0+14000);
+  expect(h.state).toBe('DOWNED');expect(water.charge).toBe(charge-1);expect(hw.playerAid).toBeUndefined();
  });
  it('hold cancels walking and work; follow restores real intent; carried cargo enters one corpse only',()=>{
   const r=scene().run!,hw=r.humanWorld!,h=Object.values(hw.people)[0];h.following=true;h.state='MOVING';

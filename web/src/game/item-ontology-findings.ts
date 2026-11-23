@@ -8,7 +8,7 @@
  * P8–P10 stay unimplemented but must end in a concrete conclusion and a resolution path.
  */
 import {
-  CREATURES, ITEMS, MODULE_PENDING_STRUCTURES, PA1_UPGRADE_ONLY_GEOMETRY, RECIPES, STRUCTS, STRUCTURE_UPGRADES,
+  CREATURES, ITEMS, MODULE_PENDING_STRUCTURES, PA1_UPGRADE_ONLY_GEOMETRY, RECIPES, RETIRED_STRUCTURES, STRUCTS, STRUCTURE_UPGRADES,
   WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III, CORE_STUDY, DEPLOYABLE_TYPES,
 } from './catalog';
 import { CREATOR_LOOT_V1 } from './creator-loot';
@@ -102,46 +102,38 @@ function p2(): { unit: Record<string, unknown>; rows: P2Row[]; totals: Record<st
 }
 
 // ───────────────────────────── P6 — Plank ─────────────────────────────
+// Creator ruling 2026-11-23: the Plank Wall and the Iron-braced (brick) Wall are removed. A base is wood, raised at
+// the Territory Cabinet. This section now measures what the removal leaves behind; the Round 2 question (how to
+// make the 240 HP tier reachable) is closed by that ruling.
 function p6() {
   const cost = (id: string) => STRUCTS[id].cost as Bom;
-  const tiers = ['wall_wood', 'wall_plank', 'wall_stone', 'wall_brick'].map((id) => {
+  const tiers = ['wall_wood', 'wall_stone'].map((id) => {
     const direct = !(PA1_UPGRADE_ONLY_GEOMETRY as readonly string[]).includes(id);
     const upgradedFrom = Object.entries(STRUCTURE_UPGRADES).filter(([, to]) => to === id).map(([from]) => from);
     return { id, hp: STRUCTS[id].hp, cost: cost(id), buildable_directly: direct, upgrade_from: upgradedFrom, obtainable: direct || upgradedFrom.length > 0 };
   });
-  const plankWood = RECIPES.plank.ins.find(([k]) => k === 'wood')![1] / RECIPES.plank.qty;
-  const planks = cost('wall_plank').find(([k]) => k === 'plank')![1];
-  const woodWall = cost('wall_wood').find(([k]) => k === 'wood')![1];
+  const retired_walls = Object.entries(RETIRED_STRUCTURES).map(([id, loads_as]) => ({ id, loads_as, still_in_catalog: id in STRUCTS }));
   const plankConsumers = [
     ...Object.entries(RECIPES).filter(([, rc]) => rc.ins.some(([k]) => k === 'plank')).map(([k]) => 'recipe:' + k),
     ...Object.entries(STRUCTS).filter(([, s]) => (s.cost as Bom).some(([k]) => k === 'plank')).map(([k]) => 'structure:' + k),
   ];
   const drops = Object.entries(CREATURES).filter(([, c]) => (c.drops as [string, number, number][]).some(([k]) => k === 'plank')).map(([k]) => k);
-  const wp = tiers.find((t) => t.id === 'wall_plank')!;
-  const route = {
-    today_if_reachable: { wood: woodWall + planks * plankWood, bench_seconds: planks * RECIPES.plank.secs, needs: ['Territory Cabinet (upgrade)', 'Workbench (plank)'], hp: STRUCTS.wall_plank.hp },
-    without_workbench: { wood: woodWall + planks * plankWood, bench_seconds: 0, needs: ['Territory Cabinet (upgrade)'], hp: STRUCTS.wall_plank.hp },
-    workbench_one_time: STRUCTS.workbench.cost as Bom,
-    hp_per_wood: { wall_wood: r3(STRUCTS.wall_wood.hp / woodWall), wall_plank_cumulative: r3(STRUCTS.wall_plank.hp / (woodWall + planks * plankWood)), wall_plank_upgrade_step_only: r3((STRUCTS.wall_plank.hp - STRUCTS.wall_wood.hp) / (planks * plankWood)) },
-  };
   return {
-    tiers, plank: { recipe: `${RECIPES.plank.ins.map(([k, q]) => `${q} ${k}`).join(' + ')} → ${RECIPES.plank.qty} @ ${RECIPES.plank.station}, ${RECIPES.plank.secs}s`, consumers: plankConsumers, creature_drops: drops },
-    structure_upgrades: { ...STRUCTURE_UPGRADES }, upgrade_only: [...PA1_UPGRADE_ONLY_GEOMETRY], route,
+    tiers, retired_walls,
+    plank: { recipe: `${RECIPES.plank.ins.map(([k, q]) => `${q} ${k}`).join(' + ')} → ${RECIPES.plank.qty} @ ${RECIPES.plank.station}, ${RECIPES.plank.secs}s`, consumers: plankConsumers, creature_drops: drops },
+    structure_upgrades: { ...STRUCTURE_UPGRADES }, upgrade_only: [...PA1_UPGRADE_ONLY_GEOMETRY],
     unobtainable_structures: UNOBTAINABLE_STRUCTURES.map((id) => ({ id, name: STRUCTS[id].name, hp: STRUCTS[id].hp, cost: cost(id) })),
     conclusion: [
-      wp.obtainable
-        ? 'The 240 HP Plank Wall is obtainable.'
-        : `MEASURED BLOCKER: a player cannot obtain the 240 HP Plank Wall in the live build. It is upgrade-only geometry (buildReason refuses to place it), and no entry of STRUCTURE_UPGRADES leads to it (wall_wood upgrades straight to ${STRUCTURE_UPGRADES.wall_wood}). The "240 HP wall route" the question asks about does not exist at this base.`,
-      `The same test finds every structure in that state: ${UNOBTAINABLE_STRUCTURES.map((id) => `${id} (${STRUCTS[id].hp} HP)`).join(', ')}. The Brick Wall is affected exactly like the Plank Wall.`,
-      `Consequence: Plank has ${plankConsumers.length} listed consumer (${plankConsumers.join(', ')}) and zero REACHABLE consumers. It is craftable (${RECIPES.plank.secs}s at a Workbench) and drops from ${drops.join(', ') || 'nothing'}, but nothing a player can do spends it. The Round 1 projection counted the structure cost as a consumer; that was an over-count.`,
-      `If the tier were reachable, removing the Workbench step would leave the wood bill unchanged (${route.today_if_reachable.wood} wood cumulative) and save ${route.today_if_reachable.bench_seconds}s of bench time per wall plus the one-time Workbench. HP per wood: Wood Wall ${route.hp_per_wood.wall_wood}, Plank Wall cumulative ${route.hp_per_wood.wall_plank_cumulative} — the plank tier is LESS wood-efficient than the wood wall, so the bench step is not what protects the wood tier.`,
+      `CLOSED BY RULING (Creator, 2026-11-23): ${retired_walls.map((w) => w.id).join(' and ')} are removed from the catalog. Walls are ${tiers.map((t) => `${t.id} (${t.hp} HP)`).join(' → ')}, the second reached only by the Territory Cabinet upgrade.`,
+      `A save made by an older build that still holds one loads it as ${retired_walls.map((w) => `${w.id} → ${w.loads_as}`).join(', ')}, health capped at the live wall's.`,
+      UNOBTAINABLE_STRUCTURES.length
+        ? `Structures that still cannot be obtained: ${UNOBTAINABLE_STRUCTURES.map((id) => `${id} (${STRUCTS[id].hp} HP)`).join(', ')}.`
+        : 'No structure is left that can neither be placed nor reached by an upgrade.',
+      `OPEN: Plank now has ${plankConsumers.length} listed consumers${plankConsumers.length ? ` (${plankConsumers.join(', ')})` : ''}. It is still craftable (${RECIPES.plank.secs}s at a Workbench) and still drops from ${drops.join(', ') || 'nothing'}, and nothing spends it.`,
     ],
     resolution: [
-      'RULING APPLIED: Plank stays; nothing is retired. The Round 1 disposition RETIRE_CANDIDATE is withdrawn (now DEFER, flagged NO_REACHABLE_CONSUMER).',
-      'Option A — intermediate tier: route wall_wood → wall_plank → wall_stone. Measured side effect: the Stone Wall route gains one upgrade step (+' + planks * plankWood + ' wood, +' + planks * RECIPES.plank.secs + 's) unless STRUCTURE_UPGRADES is taught to branch. That is a cost change on a live route and needs approval.',
-      'Option B — move the processing step: let a placed Wood Wall be upgraded to Plank Wall as an OPTIONAL side branch (map becomes one-to-many), Stone route untouched. No existing cost moves; this is the cheapest way to make Plank live.',
-      'Option C — retire the Plank Wall tier and the item together. Rejected for this round by the ruling.',
-      'Recommended next action: decide A or B in the building ontology PR (#56 line), because the upgrade map lives there; then re-run this section — it will flip to "obtainable" on its own.',
+      'The wall half of P6 is done: no code path places, upgrades to, draws or pens with either retired wall.',
+      'Still to rule: the Plank item. Either retire its recipe and drop (a recipe cutover: frozen definition, RECIPE_REVISION bump, queued jobs finish under their own bill) or give it a consumer. Until then the item, saved stacks and queued jobs stay valid and its description says no building uses it.',
     ],
   };
 }
@@ -337,11 +329,13 @@ export function round2FindingsMd(f: Round2Findings): string {
   o.push('');
   list(o, 'Other measured facts', f.P2.other_facts); list(o, 'Conclusion', f.P2.conclusion); list(o, 'Resolution path', f.P2.resolution);
 
-  o.push('## P6 — Plank and the 240 HP wall');
+  o.push('## P6 — Plank and the wall tiers');
   o.push('');
   o.push(table(['Wall', 'HP', 'Cost', 'Placeable directly', 'Upgrade from', 'Obtainable today'], f.P6.tiers.map((t) => [t.id, t.hp, bom(t.cost), t.buildable_directly ? 'yes' : 'no (upgrade-only)', t.upgrade_from.join(', ') || 'nothing', t.obtainable ? 'yes' : '**NO**'])));
   o.push('');
-  o.push(`Plank: ${f.P6.plank.recipe}. Listed consumers: ${f.P6.plank.consumers.join(', ')}. Creature drops: ${f.P6.plank.creature_drops.join(', ') || 'none'}. Upgrade map: ${Object.entries(f.P6.structure_upgrades).map(([a, b]) => `${a} → ${b}`).join(', ')}.`);
+  o.push(`Removed walls: ${f.P6.retired_walls.map((w) => `${w.id} (an old save loads it as ${w.loads_as})`).join(', ')}.`);
+  o.push('');
+  o.push(`Plank: ${f.P6.plank.recipe}. Listed consumers: ${f.P6.plank.consumers.join(', ') || 'none'}. Creature drops: ${f.P6.plank.creature_drops.join(', ') || 'none'}. Upgrade map: ${Object.entries(f.P6.structure_upgrades).map(([a, b]) => `${a} → ${b}`).join(', ')}.`);
   o.push('');
   o.push(table(['Unobtainable structure', 'HP', 'Cost'], f.P6.unobtainable_structures.map((u) => [`${u.id} (${u.name})`, u.hp, bom(u.cost)])));
   o.push('');

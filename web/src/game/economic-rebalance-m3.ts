@@ -339,9 +339,9 @@ const TERRITORY_STRESS_PRESETS: { name: string; structs: [string, number][] }[] 
     ],
   },
   {
-    name: 'Standard_4x4_Plank',
+    name: 'Standard_4x4_Wood',
     structs: [
-      ['claim', 1], ['floor_wood', 16], ['wall_plank', 14], ['door_wood', 2],
+      ['claim', 1], ['floor_wood', 16], ['wall_wood', 14], ['door_wood', 2],
       ['roof_thatch', 16], ['bed_straw', 1], ['chest_large', 2], ['campfire', 1],
       ['furnace', 1], ['workbench', 1], ['research', 1],
     ],
@@ -355,9 +355,9 @@ const TERRITORY_STRESS_PRESETS: { name: string; structs: [string, number][] }[] 
     ],
   },
   {
-    name: 'Brick_Citadel_6x6_Armed',
+    name: 'Stone_Citadel_6x6_Armed',
     structs: [
-      ['claim', 1], ['floor_stone', 36], ['wall_brick', 22], ['door_powered', 2],
+      ['claim', 1], ['floor_stone', 36], ['wall_stone', 22], ['door_powered', 2],
       ['roof_tile', 36], ['chest_large', 4], ['furnace', 2], ['workbench', 1],
       ['research', 1], ['refinery', 1], ['base_generator', 2], ['power_cable', 10],
       ['arrow_turret', 4], ['ir_sensor', 2], ['bear_trap', 2], ['farm_controller', 1],

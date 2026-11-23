@@ -720,7 +720,7 @@ function runSuite2Archetypes() {
       const rB = gsB.run!;
       const baseB = setupBaseAndClaim(gsB, w, BASE_AUDIT_NOW, { walls: 8, addBedChest: true, addFurnace: true, addWorkbench: true, addResearch: true });
       const claimEntB = baseB.claimId ? rB.entities[baseB.claimId] : null;
-      // Add fortified stone/brick walls + refinery + generator
+      // Add fortified stone walls + refinery + generator
       const moreTiles = findBuildableCluster(rB, w, 30);
       addItem(rB, 'inv', 'brick', 60);
       addItem(rB, 'inv', 'iron_ingot', 40);
@@ -729,7 +729,7 @@ function runSuite2Archetypes() {
       addItem(rB, 'inv', 'spares', 30);
       addItem(rB, 'inv', 'glass', 10);
       addItem(rB, 'inv', 'wood', 40);
-      if (moreTiles[15]) dispatch(gsB, { id: nextIntentId(), type: 'build', struct: 'wall_brick', tx: moreTiles[15][0], ty: moreTiles[15][1] }, BASE_AUDIT_NOW);
+      if (moreTiles[15]) dispatch(gsB, { id: nextIntentId(), type: 'build', struct: 'wall_stone', tx: moreTiles[15][0], ty: moreTiles[15][1] }, BASE_AUDIT_NOW);
       if (moreTiles[16]) dispatch(gsB, { id: nextIntentId(), type: 'build', struct: 'door_iron', tx: moreTiles[16][0], ty: moreTiles[16][1] }, BASE_AUDIT_NOW);
       if (moreTiles[17]) dispatch(gsB, { id: nextIntentId(), type: 'build', struct: 'base_generator', tx: moreTiles[17][0], ty: moreTiles[17][1] }, BASE_AUDIT_NOW);
       if (moreTiles[18]) dispatch(gsB, { id: nextIntentId(), type: 'build', struct: 'arrow_turret', tx: moreTiles[18][0], ty: moreTiles[18][1] }, BASE_AUDIT_NOW);
@@ -912,11 +912,11 @@ function runSuite3TerritoryMatrix() {
       ],
     },
     {
-      name: 'Standard_4x4_Plank',
+      name: 'Standard_4x4_Wood',
       structs: [
         ['claim', 1],
         ['floor_wood', 16],
-        ['wall_plank', 14],
+        ['wall_wood', 14],
         ['door_wood', 2],
         ['roof_thatch', 16],
         ['bed_straw', 1],
@@ -945,11 +945,11 @@ function runSuite3TerritoryMatrix() {
       ],
     },
     {
-      name: 'Brick_Citadel_6x6_Armed',
+      name: 'Stone_Citadel_6x6_Armed',
       structs: [
         ['claim', 1],
         ['floor_stone', 36],
-        ['wall_brick', 22],
+        ['wall_stone', 22],
         ['door_powered', 2],
         ['roof_tile', 36],
         ['chest_large', 4],

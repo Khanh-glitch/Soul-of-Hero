@@ -201,7 +201,7 @@ export const ITEM_DESIGN: Readonly<Record<string, Row>> = Object.freeze({
   needle_tube: ['WORLD_ONLY', 'A sterile injector body. The scavenged half of a Syringe.', SCAV],
   feather: ['WORLD_ONLY', 'Grouse feather. Fletching for the better arrow.', RAW],
   // 02 PROCESSED MATERIALS / COMPONENTS
-  plank: ['CRAFT_ONLY', 'Sawn timber for Plank Walls: the building upgrade between rough wood and stone.'],
+  plank: ['CRAFT_ONLY', 'Sawn timber. Its one use, the Plank Wall, was removed on 2026-11-23; nothing spends it now and the item waits for a ruling.'],
   charcoal: ['CRAFT_ONLY', 'Wood burned to carbon. Station fuel, the carbon in Refined Iron, the binder of Fire Essence.'],
   iron_ingot: ['BOTH', 'Smelted iron. The plain metal body of tools, devices and components.'],
   refined_iron_ingot: ['BOTH', 'Iron hardened with charcoal. The tier-2 metal: Pipe, Plate, the best tools and armour, vehicles.'],
@@ -361,7 +361,7 @@ export const RECIPE_DESIGN: Readonly<Record<string, RRow>> = Object.freeze({
   rope: ['KEEP', 'First-step rule, by hand: 3 fiber.'],
   cloth: ['KEEP', 'First-step rule at the bench: 6 fiber. Twice a rope, so sewn goods are visibly dearer than lashed ones.'],
   leather: ['KEEP', 'First-step rule, 1:1 at the bench.'],
-  plank: ['KEEP', 'First-step rule. One consumer (Plank Wall); kept because the building tier between wood and stone needs its own material.'],
+  plank: ['KEEP', 'First-step rule. Its one consumer (Plank Wall) was removed on 2026-11-23 by Creator ruling; the recipe is kept unchanged until the item itself is ruled on.'],
   glass: ['KEEP', 'Stone fused with Crystal. Inland route; competes with Cores for Crystal. Learned by study.'],
   shell_glass: ['KEEP', 'Alternative with a real trade: Shell as lime instead of Crystal. Coastal route, starter-known, slower and takes two of each.'],
   metal_pipe: ['KEEP', 'Component rule: Refined Iron + Parts, yields 2. One pipe = 1 Refined Iron + 1 Part.'],

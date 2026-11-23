@@ -47,7 +47,7 @@ export const ACCEPTANCE_TRACKER: readonly TrackerRow[] = [
     owner: 'PA1 Building', pr: 56, sha: null, acceptance: 'HANDOFF_ACKNOWLEDGED',
     receipt: 'https://github.com/Khanh-glitch/Soul-of-Hero/pull/56#issuecomment-6877505704',
     gate: 'Optional upgrades Wood→Reinforced Wood, Wood→Stone, Reinforced Wood→Stone, Stone→Brick work through real build intents; resources debited; save/restart; browser; formula graph. Saved Plank stacks, placed Plank Walls, queued jobs and reclaim refunds conserved (an old Plank Wall must not refund from the live cost table).',
-    note: 'Work order: docs/design/PA1_BUILDING_ONTOLOGY_WALL_TIER_HANDOFF_2026-11-14.md. No building code in PR #61.' },
+    note: 'Work order: docs/design/PA1_BUILDING_ONTOLOGY_WALL_TIER_HANDOFF_2026-11-14.md. No building code in PR #61. Superseded in part by the Creator ruling of 2026-11-23 (PR #65): both walls were removed instead of made reachable, so the upgrade gate above no longer applies; the Plank item still has no consumer and waits for a ruling.' },
   { id: 'T-P8-MATERIALS', proposal: 'P8', defect: 'Ash Chitin and Crawler Optic have no source on Veyra',
     owner: 'UNASSIGNED — Veyra World / Ecology has no confirmed owner or PR', pr: null, sha: null, acceptance: 'BLOCKED_OR_UNRESOLVED',
     gate: 'Creature placed in a fitting Veyra habitat, actually spawns, is fought, drops loot that is physically picked up, survives restart. Before any renewable Scrap Crawler population: measured Parts per hour, research pace and farming exploit check. No invented drops, no changed probabilities without design authority.',

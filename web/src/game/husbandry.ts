@@ -116,7 +116,7 @@ export interface PenInspection {
   capacity: number;
 }
 
-const PEN_WALL_TYPES = new Set(['wall_wood', 'wall_plank', 'wall_stone', 'wall_brick', 'barricade']);
+const PEN_WALL_TYPES = new Set(['wall_wood', 'wall_stone', 'barricade']);
 const PEN_DOOR_TYPES = new Set(['door_wood', 'door_iron', 'door_powered']);
 const MAX_PEN_INTERIOR_TILES = 144;
 

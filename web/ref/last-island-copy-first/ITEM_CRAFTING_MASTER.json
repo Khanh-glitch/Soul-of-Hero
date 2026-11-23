@@ -1084,7 +1084,7 @@
     "STACKABLE"
    ],
    "acquire_policy": "CRAFT_ONLY",
-   "player_purpose": "Sawn timber for Plank Walls: the building upgrade between rough wood and stone.",
+   "player_purpose": "Sawn timber. Its one use, the Plank Wall, was removed on 2026-11-23; nothing spends it now and the item waits for a ruling.",
    "recipes": [
     "plank"
    ],
@@ -1094,14 +1094,12 @@
    "upstream": [
     "wood"
    ],
-   "downstream": [
-    "struct:wall_plank"
-   ],
+   "downstream": [],
    "li_id": null,
    "li_grade": "NONE",
    "li_edition": null,
    "li_source_url": null,
-   "chosen_rule": "First-step rule. One consumer (Plank Wall); kept because the building tier between wood and stone needs its own material."
+   "chosen_rule": "First-step rule. Its one consumer (Plank Wall) was removed on 2026-11-23 by Creator ruling; the recipe is kept unchanged until the item itself is ruled on."
   },
   {
    "id": "stone",
@@ -1132,7 +1130,6 @@
     "struct:claim",
     "struct:floor_stone",
     "struct:wall_stone",
-    "struct:wall_brick",
     "struct:roof_tile",
     "struct:campfire",
     "struct:furnace",
@@ -1473,7 +1470,6 @@
     "recipe:scrap_helm",
     "recipe:cart_kit",
     "recipe:core_earth",
-    "struct:wall_brick",
     "struct:door_iron",
     "struct:chest_large",
     "struct:oil_pump",
@@ -10182,7 +10178,7 @@
    "provenance_note": "No LI bill recorded for this id.",
    "confidence": "SOH_PROVISIONAL (no LI figure exists)",
    "decision": "KEEP",
-   "learning_rationale": "First-step rule. One consumer (Plank Wall); kept because the building tier between wood and stone needs its own material.",
+   "learning_rationale": "First-step rule. Its one consumer (Plank Wall) was removed on 2026-11-23 by Creator ruling; the recipe is kept unchanged until the item itself is ruled on.",
    "ingredient_roles": [
     "Wood = frame, handle or shaft"
    ],
@@ -14512,12 +14508,10 @@
     "policy": "WORLD_ONLY"
    }
   ],
-  "dead_end_materials": [],
+  "dead_end_materials": [
+   "plank"
+  ],
   "single_consumer_materials": [
-   {
-    "id": "plank",
-    "only_consumer": "struct:wall_plank"
-   },
    {
     "id": "iron_ore",
     "only_consumer": "recipe:iron_ingot"

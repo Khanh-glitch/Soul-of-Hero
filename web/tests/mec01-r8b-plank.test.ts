@@ -1,4 +1,5 @@
-// MEC-01 R8B: wood -> plank -> plank wall (K4 "gỗ→ván→nhà"). SOH_PROVISIONAL numbers, no LI plank figure exists.
+// MEC-01 R8B: wood -> plank (K4 "gỗ→ván"). SOH_PROVISIONAL numbers, no LI plank figure exists.
+// The plank wall this chain once ended in was removed on 2026-11-23; the plank recipe itself is unchanged.
 // CRAFTED = real craft/build/move intents with real stepStations timing. FIXTURE = granted wood/stone for the bench and walls.
 // Not claimed: natural harvest of this wood, natural play, human play, or native Godot behaviour.
 import {dispatchCarryingPack} from './helpers/build-kit';
@@ -57,10 +58,9 @@ describe('MEC-01 R8B plank chain', () => {
     expect(JSON.stringify(back)).toContain('"plank"');
   });
 
-  // PA1 (design ledger §24) made the Plank Wall upgrade-only geometry, and no upgrade path leads to it
-  // (STRUCTURE_UPGRADES: wall_wood -> wall_stone), so today a Plank Wall cannot be placed at all. The
-  // rule this test protects is the part that still holds: real planks are never spent on a refusal.
-  it('a plank wall cannot be placed directly: the build is refused, no plank is spent and no wall appears', () => {
+  // The Plank Wall was removed on 2026-11-23 (Creator ruling; see tests/retired-walls.test.ts). The rule this test
+  // protects still holds: real planks are never spent on a refusal.
+  it('a plank wall no longer exists: the build is refused, no plank is spent and no wall appears', () => {
     const g=start();const r=g.run!;
     const sp=legalTileNear(g,r.player.x/TILE|0,r.player.y/TILE|0,'workbench');
     expect(act(g,'build',{struct:'workbench',tx:sp[0],ty:sp[1]},START+20).ok).toBe(true);
@@ -68,13 +68,12 @@ describe('MEC-01 R8B plank chain', () => {
     addItem(r,'inv','wood',6);
     craftPlank(g,bench,START+40);craftPlank(g,bench,START+60);craftPlank(g,bench,START+80);
     expect(countItem(r,'inv','plank')).toBe(3);
-    // Per wood: plank wall 240/6 = 40 HP per wood; log wall 160/5 = 32 HP per wood
-    expect(STRUCTS.wall_plank.hp/(STRUCTS.wall_plank.cost[0][1]*2)).toBeGreaterThan(STRUCTS.wall_wood.hp/STRUCTS.wall_wood.cost[0][1]);
-    expect(PA1_UPGRADE_ONLY_GEOMETRY).toContain('wall_plank');
+    expect('wall_plank' in STRUCTS).toBe(false);
+    expect(PA1_UPGRADE_ONLY_GEOMETRY).not.toContain('wall_plank');
     expect(Object.values(STRUCTURE_UPGRADES)).not.toContain('wall_plank');
     const wp=legalTileNear(g,r.player.x/TILE|0,r.player.y/TILE|0,'wall_wood');
     place(r,wp[0]-1,wp[1]);
-    expect(buildReason(g,'wall_plank',wp[0],wp[1])).toMatch(/Build the wooden form first/);
+    expect(buildReason(g,'wall_plank',wp[0],wp[1])).toBe('Unknown structure.');
     const refused=act(g,'build',{struct:'wall_plank',tx:wp[0],ty:wp[1]},START+100);
     expect(refused.ok).toBe(false);
     expect(countItem(r,'inv','plank')).toBe(3);

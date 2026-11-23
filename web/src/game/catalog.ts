@@ -81,7 +81,8 @@ export const ITEMS: Record<string, ItemDef> = {
   // resources
   wood: I({ name: 'Wood', cat: 'res', icon: 'log', c1: '#8a5a32', c2: '#c9935a', w: 1, max: 60, desc: 'Split timber. Fuel, tools, walls.', fuel: 20 }),
   // SOH_PROVISIONAL (K4 gỗ→ván): no Last Island plank figure exists in Atlas v1–v11; 2 wood -> 1 plank at a workbench.
-  plank: I({ name: 'Plank', cat: 'res', icon: 'plank', c1: '#b98a52', c2: '#e0b878', w: 1, max: 60, desc: 'Sawn board. Stronger walls per wood than log walls.' }),
+  // Its one consumer, the Plank Wall, was removed on 2026-11-23 (see RETIRED_STRUCTURES); the item and recipe wait for a ruling.
+  plank: I({ name: 'Plank', cat: 'res', icon: 'plank', c1: '#b98a52', c2: '#e0b878', w: 1, max: 60, desc: 'Sawn board. No building uses it at present.' }),
   stone: I({ name: 'Stone', cat: 'res', icon: 'stone', c1: '#7d8088', c2: '#b9bcc4', w: 1.2, max: 60, desc: 'Rough stone. Foundations, furnaces, tools.' }),
   fiber: I({ name: 'Plant Fiber', cat: 'res', icon: 'fiber', c1: '#5d8a3a', c2: '#a5d65e', w: 0.2, max: 80, desc: 'Grass and reed fiber. Rope, thatch, bandages.', fuel: 4 }),
   iron_ore: I({ name: 'Iron Ore', cat: 'res', icon: 'ore', c1: '#6b5a52', c2: '#d08a5a', w: 2, max: 40, desc: 'Smelt in a fueled furnace.' }),
@@ -406,8 +407,13 @@ export const PA1_BASE_GEOMETRY = [
   ...PA1_BUILD_PAGES.Foundation,...PA1_BUILD_PAGES.Wall,...PA1_BUILD_PAGES.Roof
 ] as const;
 export const PA1_UPGRADE_ONLY_GEOMETRY = [
-  'floor_stone','wall_plank','wall_stone','wall_brick','door_iron','roof_tile'
+  'floor_stone','wall_stone','door_iron','roof_tile'
 ] as const;
+/** Structures taken out of the game, and the live structure a saved one becomes on load.
+ *  Creator ruling 2026-11-23: no Plank Wall or Iron-braced (brick) Wall. As in Last Island a base is built in wood
+ *  and raised at the Territory Cabinet: Wood Wall, then Stone Wall. Neither retired wall could be placed or reached
+ *  by an upgrade, so a save holds one only if it was made by an older build. */
+export const RETIRED_STRUCTURES: Readonly<Record<string,string>> = { wall_plank: 'wall_wood', wall_brick: 'wall_stone' };
 export const PA1_STRUCTURE_ITEM = (type:string):string|null =>
   type === 'escrow' ? 'escrow_chest' : (DEPLOYABLE_TYPES as readonly string[]).includes(type) ? 'deploy_'+type : null;
 
@@ -597,9 +603,7 @@ export const STRUCTS: Record<string, StructDef> = {
   wall_pillar_wood: { name:'Wood Pillar', cost:[['wood',5]], hp:160, need:'any', block:true, layer:'wall', sealsRoom:false, visionTransparent:true, desc:'One-tile support post and obstacle. True point footprint not yet modeled.' },
   wall_triangle_wood: { name:'Wood Triangle Gable', cost:[['wood',5]], hp:160, need:'any', block:true, layer:'wall', desc:'Triangular upper wall silhouette. One-tile top-down collision pending height-aware support.' },
   fence_wood: { name:'Wood Fence', cost:[['wood',5]], hp:160, need:'any', block:true, layer:'wall', sealsRoom:false, visionTransparent:true, desc:'Open fence: blocks walkers, lets sight through, never seals shelter.' },
-  wall_plank: { name: 'Plank Wall', cost: [['plank', 3]], hp: 240, need: 'any', block: true, layer: 'wall', desc: 'Sawn boards: 240 HP for 6 wood, against 160 HP for 5 wood in a log wall.' },
   wall_stone: { name: 'Stone Wall', cost: [['stone', 8], ['wood', 1]], hp: 380, need: 'any', block: true, layer: 'wall', desc: 'Heavy wall.' },
-  wall_brick: { name: 'Iron-braced Wall', cost: [['stone', 9], ['iron_ingot', 1]], hp: 600, need: 'any', block: true, layer: 'wall', desc: 'Dressed stone braced with iron. Strongest wall.' },
   door_wood: { name: 'Wood Door', cost: [['wood', 6], ['rope', 1]], hp: 140, need: 'any', block: true, layer: 'wall', desc: 'E to open/close. Creatures cannot open doors.' },
   door_iron: { name: 'Iron Door', cost: [['iron_ingot', 4]], hp: 420, need: 'any', block: true, layer: 'wall', desc: 'Reinforced door.' },
   roof_thatch: { name: 'Thatch Roof', cost: [['wood', 2], ['fiber', 5]], hp: 80, need: 'any', block: false, layer: 'roof', desc: 'Over a floor. Enclosed + roofed = shelter.', shelter: true },

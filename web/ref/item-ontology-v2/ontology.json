@@ -39,8 +39,8 @@
    "brick",
    "reinforced_spear_blade"
   ],
-  "graph_nodes": 705,
-  "graph_edges": 2443,
+  "graph_nodes": 703,
+  "graph_edges": 2427,
   "by_reachability": {
    "SHIPPING_AND_VEYRA": 136,
    "SHIPPING_ONLY": 13,
@@ -785,12 +785,12 @@
    "level": "L1",
    "domain": "BUILDING",
    "source": "craft[plank]; CREATURE_DROP(veyra only)",
-   "consumer": "1 target(s): structure:wall_plank",
-   "action": "ingredient",
+   "consumer": "no craft/build consumer",
+   "action": "none",
    "role": "PROCESSED",
    "LI_reference": "none",
    "decision": "DEFER",
-   "justification": "ROUND 3: handed to the building-ontology owner (PR #56) with a corrective design; the item, saved stock and queued jobs stay valid. ROUND 2 ruling: stays, not retired. Measured (ROUND2_FINDINGS §P6): its only listed consumer, the Plank Wall, is upgrade-only geometry that no upgrade path reaches, so Plank has NO reachable consumer today. The fix is a building-ontology decision (make the 240 HP tier reachable), not an item retirement.",
+   "justification": "ROUND 3: handed to the building-ontology owner (PR #56) with a corrective design; the item, saved stock and queued jobs stay valid. ROUND 2 ruling: stays, not retired. Measured (ROUND2_FINDINGS §P6): its only listed consumer, the Plank Wall, is upgrade-only geometry that no upgrade path reaches, so Plank has NO reachable consumer today. The fix is a building-ontology decision (make the 240 HP tier reachable), not an item retirement. CREATOR RULING 2026-11-23: the Plank Wall and the Brick Wall are removed instead (a base is wood, upgraded at the Territory Cabinet), so Plank has no consumer at all; the item itself still waits for a ruling.",
    "migration_required": "NO (not authorised; nothing changes)",
    "authority_status": "RUNTIME_CATALOG; HANDED_OFF(P6)",
    "station_tier": "workbench_1",
@@ -805,7 +805,7 @@
    "level": "L0",
    "domain": "BUILDING",
    "source": "CREATURE_DROP(veyra only); HARVEST_BONUS; HARVEST_YIELD",
-   "consumer": "16 target(s): make:arrow make:energy_basic make:glass make:large_furnace make:stone_axe make:stone_pick …; 8 upkeep use(s)",
+   "consumer": "15 target(s): make:arrow make:energy_basic make:glass make:large_furnace make:stone_axe make:stone_pick …; 8 upkeep use(s)",
    "action": "ingredient",
    "role": "NATURAL",
    "LI_reference": "none",
@@ -1085,7 +1085,7 @@
    "level": "L1",
    "domain": "INDUSTRY",
    "source": "craft[iron_ingot]; AIRDROP_DROP(shipping only); CREATURE_DROP(veyra only); DISMANTLE_SALVAGE; LOOT_STATIC_FIXED; RECYCLE_OUTPUT",
-   "consumer": "43 target(s): make:cart_kit make:cleaver make:core_blast make:core_demon make:core_dragon make:core_earth …; 18 upkeep use(s)",
+   "consumer": "42 target(s): make:cart_kit make:cleaver make:core_blast make:core_demon make:core_dragon make:core_earth …; 18 upkeep use(s)",
    "action": "ingredient",
    "role": "METAL",
    "LI_reference": "iron_ingot",
@@ -2965,7 +2965,7 @@
    "level": "L3",
    "domain": "INDUSTRY",
    "source": "craft[iron_plate]; HARVEST_BONUS; LOOT_ECOLOGY_POOL(shipping only)",
-   "consumer": "11 target(s): make:iron_plate_boots make:iron_plate_chest make:iron_plate_helmet make:iron_plate_pants make:large_furnace make:motorbike_kit …; 15 upkeep use(s)",
+   "consumer": "11 target(s): make:iron_plate_boots make:iron_plate_chest make:iron_plate_helmet make:iron_plate_pants make:large_furnace make:motorbike_kit …; 13 upkeep use(s)",
    "action": "ingredient",
    "role": "COMPONENT",
    "LI_reference": "iron_plate",
@@ -8069,7 +8069,7 @@
    "name": "Plank",
    "cat": "res",
    "item_class": "PROCESSED",
-   "desc": "Sawn board. Stronger walls per wood than log walls.",
+   "desc": "Sawn board. No building uses it at present.",
    "weight": 1,
    "stack_max": 60,
    "generated_deployable": false,
@@ -8116,57 +8116,15 @@
      "count": 1
     }
    ],
-   "refunds": [
-    {
-     "kind": "RECLAIM_REFUND",
-     "from": "structure:wall_plank",
-     "layer": "BOTH",
-     "qty": 1,
-     "probability": null,
-     "gates": [],
-     "count": 1
-    }
-   ],
+   "refunds": [],
    "maintained_by": [],
-   "consumers": [
-    {
-     "kind": "BUILD_COST",
-     "to": "structure:wall_plank",
-     "layer": "BOTH",
-     "qty": 3,
-     "count": 1
-    }
-   ],
-   "derived_sinks": [
-    {
-     "kind": "RECLAIM_REFUND",
-     "to": "sink:structure_reclaim_loss",
-     "layer": "BOTH",
-     "qty": null,
-     "count": 1
-    },
-    {
-     "kind": "TERRITORY_UPKEEP_PER_24H",
-     "to": "sink:territory_upkeep_24h",
-     "layer": "BOTH",
-     "qty": null,
-     "count": 1
-    },
-    {
-     "kind": "TERRITORY_UPKEEP_PER_24H",
-     "to": "structure:wall_plank",
-     "layer": "BOTH",
-     "qty": null,
-     "count": 1
-    }
-   ],
+   "consumers": [],
+   "derived_sinks": [],
    "produced_by": [
     "plank"
    ],
    "consumed_by": [],
-   "consumer_targets": [
-    "structure:wall_plank"
-   ],
+   "consumer_targets": [],
    "maintenance_targets": [],
    "direct_use": [],
    "recycle": null,
@@ -8180,7 +8138,7 @@
    },
    "signals": [
     "PASS_THROUGH_INTERMEDIATE",
-    "NO_REACHABLE_CONSUMER:wall_plank"
+    "NO_CONSUMER_NO_USE"
    ]
   },
   {
@@ -8309,15 +8267,6 @@
     },
     {
      "kind": "RECLAIM_REFUND",
-     "from": "structure:wall_brick",
-     "layer": "BOTH",
-     "qty": 4,
-     "probability": null,
-     "gates": [],
-     "count": 1
-    },
-    {
-     "kind": "RECLAIM_REFUND",
      "from": "structure:wall_stone",
      "layer": "BOTH",
      "qty": 4,
@@ -8377,13 +8326,6 @@
      "to": "structure:roof_tile",
      "layer": "BOTH",
      "qty": 5,
-     "count": 1
-    },
-    {
-     "kind": "BUILD_COST",
-     "to": "structure:wall_brick",
-     "layer": "BOTH",
-     "qty": 9,
      "count": 1
     },
     {
@@ -8582,14 +8524,14 @@
      "to": "sink:structure_reclaim_loss",
      "layer": "BOTH",
      "qty": null,
-     "count": 9
+     "count": 8
     },
     {
      "kind": "TERRITORY_UPKEEP_PER_24H",
      "to": "sink:territory_upkeep_24h",
      "layer": "BOTH",
      "qty": null,
-     "count": 9
+     "count": 8
     },
     {
      "kind": "TERRITORY_UPKEEP_PER_24H",
@@ -8629,13 +8571,6 @@
     {
      "kind": "TERRITORY_UPKEEP_PER_24H",
      "to": "structure:roof_tile",
-     "layer": "BOTH",
-     "qty": null,
-     "count": 1
-    },
-    {
-     "kind": "TERRITORY_UPKEEP_PER_24H",
-     "to": "structure:wall_brick",
      "layer": "BOTH",
      "qty": null,
      "count": 1
@@ -8685,7 +8620,6 @@
     "structure:floor_stone",
     "structure:furnace",
     "structure:roof_tile",
-    "structure:wall_brick",
     "structure:wall_stone",
     "structure:workbench"
    ],
@@ -8709,9 +8643,7 @@
    "raw_per_unit": {
     "stone": 1
    },
-   "signals": [
-    "CONSUMER_UNOBTAINABLE:wall_brick"
-   ]
+   "signals": []
   },
   {
    "id": "fiber",
@@ -14130,13 +14062,6 @@
      "count": 1
     },
     {
-     "kind": "BUILD_COST",
-     "to": "structure:wall_brick",
-     "layer": "BOTH",
-     "qty": 1,
-     "count": 1
-    },
-    {
      "kind": "CRAFT_INPUT",
      "to": "recipe:cart_kit",
      "layer": "BOTH",
@@ -14570,7 +14495,7 @@
      "to": "sink:structure_reclaim_loss",
      "layer": "BOTH",
      "qty": null,
-     "count": 14
+     "count": 13
     },
     {
      "kind": "RECLAIM_REFUND",
@@ -14584,7 +14509,7 @@
      "to": "sink:territory_upkeep_24h",
      "layer": "BOTH",
      "qty": null,
-     "count": 14
+     "count": 13
     },
     {
      "kind": "TERRITORY_UPKEEP_PER_24H",
@@ -14690,13 +14615,6 @@
      "layer": "BOTH",
      "qty": null,
      "count": 1
-    },
-    {
-     "kind": "TERRITORY_UPKEEP_PER_24H",
-     "to": "structure:wall_brick",
-     "layer": "BOTH",
-     "qty": null,
-     "count": 1
     }
    ],
    "produced_by": [
@@ -14782,8 +14700,7 @@
     "structure:power_switch",
     "structure:pressure_switch",
     "structure:refinery",
-    "structure:research",
-    "structure:wall_brick"
+    "structure:research"
    ],
    "maintenance_targets": [
     "REPAIR_INPUT:item:cleaver",
@@ -14827,9 +14744,7 @@
    "raw_per_unit": {
     "iron_ore": 1
    },
-   "signals": [
-    "CONSUMER_UNOBTAINABLE:wall_brick"
-   ]
+   "signals": []
   },
   {
    "id": "rope",
@@ -27692,13 +27607,6 @@
     },
     {
      "kind": "REPAIR_INPUT",
-     "to": "structure:wall_brick",
-     "layer": "BOTH",
-     "qty": 1,
-     "count": 1
-    },
-    {
-     "kind": "REPAIR_INPUT",
      "to": "structure:wall_doorframe_wood",
      "layer": "BOTH",
      "qty": 1,
@@ -27714,13 +27622,6 @@
     {
      "kind": "REPAIR_INPUT",
      "to": "structure:wall_pillar_wood",
-     "layer": "BOTH",
-     "qty": 1,
-     "count": 1
-    },
-    {
-     "kind": "REPAIR_INPUT",
-     "to": "structure:wall_plank",
      "layer": "BOTH",
      "qty": 1,
      "count": 1
@@ -27822,11 +27723,9 @@
     "REPAIR_INPUT:structure:door_powered",
     "REPAIR_INPUT:structure:door_wood",
     "REPAIR_INPUT:structure:fence_wood",
-    "REPAIR_INPUT:structure:wall_brick",
     "REPAIR_INPUT:structure:wall_doorframe_wood",
     "REPAIR_INPUT:structure:wall_half_wood",
     "REPAIR_INPUT:structure:wall_pillar_wood",
-    "REPAIR_INPUT:structure:wall_plank",
     "REPAIR_INPUT:structure:wall_stone",
     "REPAIR_INPUT:structure:wall_triangle_wood",
     "REPAIR_INPUT:structure:wall_window_wood",
@@ -38168,7 +38067,7 @@
    "recommendation": "APPROVE_LATER",
    "status": "HANDED_OFF",
    "handoff": "docs/design/PA1_BUILDING_ONTOLOGY_WALL_TIER_HANDOFF_2026-11-14.md",
-   "ruling": "ROUND 3: live defect, not an item retirement. Plank Wall and Brick Wall are upgrade-only and unreachable. The fix belongs to the PR #56 building-ontology owner; the corrective design is handed over in writing. Nothing in the building ontology is edited in PR #61.",
+   "ruling": "ROUND 3: live defect, not an item retirement. Plank Wall and Brick Wall are upgrade-only and unreachable. The fix belongs to the PR #56 building-ontology owner; the corrective design is handed over in writing. Nothing in the building ontology is edited in PR #61. CREATOR RULING 2026-11-23 (PR #65): both walls are removed from the catalog rather than made reachable; an old save loads them as Wood Wall and Stone Wall. The Plank item is not ruled on. The before/after rows below are the Round 1 proposal, kept as the record.",
    "title": "Retire Plank",
    "items": [
     "plank"
@@ -38464,7 +38363,7 @@
    "acceptance": "HANDOFF_ACKNOWLEDGED",
    "receipt": "https://github.com/Khanh-glitch/Soul-of-Hero/pull/56#issuecomment-6877505704",
    "gate": "Optional upgrades Wood→Reinforced Wood, Wood→Stone, Reinforced Wood→Stone, Stone→Brick work through real build intents; resources debited; save/restart; browser; formula graph. Saved Plank stacks, placed Plank Walls, queued jobs and reclaim refunds conserved (an old Plank Wall must not refund from the live cost table).",
-   "note": "Work order: docs/design/PA1_BUILDING_ONTOLOGY_WALL_TIER_HANDOFF_2026-11-14.md. No building code in PR #61."
+   "note": "Work order: docs/design/PA1_BUILDING_ONTOLOGY_WALL_TIER_HANDOFF_2026-11-14.md. No building code in PR #61. Superseded in part by the Creator ruling of 2026-11-23 (PR #65): both walls were removed instead of made reachable, so the upgrade gate above no longer applies; the Plank item still has no consumer and waits for a ruling."
   },
   {
    "id": "T-P8-MATERIALS",

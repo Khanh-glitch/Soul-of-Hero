@@ -15,7 +15,7 @@ Audited on `Khanh-glitch/Soul-of-Hero` branch `feature/pa1-building-ontology-202
 | — generated `deploy_*` recipes | 24 | cost copied from `STRUCTS` |
 | Recipe revision | 6 | `recipe-migration.ts` |
 | Retired recipes | fuel_can, vehicle_frame_piped, vehicle_drive, vehicle_drive_geared, fuel_briquette, root_broth, poached_eggs, herb_roast, salted_meat, iron_sword, iron_sword_blade, refine_salvaged_oil, refinery_industrial, refinery_lubricant, refinery_crude, fasteners, treated_canvas, field_repair_kit, recover_drive, mechanical_parts, scrap_ingot, brick, reinforced_spear_blade | `RETIRED_RECIPES` (item kept) |
-| Multigraph | 705 nodes / 2443 edges | `buildSohEconomicGraph` |
+| Multigraph | 703 nodes / 2427 edges | `buildSohEconomicGraph` |
 
 ## 2. Six different things the old audit called "level"
 
@@ -106,15 +106,13 @@ A `PARTS_POSITIVE` row is harmless today (Machine Parts are not a currency) and 
 | treated_canvas | L0 | UNREACHABLE_EVERYWHERE, NO_CONSUMER_NO_USE |
 | field_repair_kit | L0 | UNREACHABLE_EVERYWHERE |
 | fuel_briquette | L0 | UNREACHABLE_EVERYWHERE |
-| plank | L1 | PASS_THROUGH_INTERMEDIATE, NO_REACHABLE_CONSUMER:wall_plank |
-| stone | L0 | CONSUMER_UNOBTAINABLE:wall_brick |
+| plank | L1 | PASS_THROUGH_INTERMEDIATE, NO_CONSUMER_NO_USE |
 | coal | L0 | UNREACHABLE_EVERYWHERE, NO_CONSUMER_NO_USE |
 | raw_salt | L0 | UNREACHABLE_EVERYWHERE, NO_CONSUMER_NO_USE |
 | root_broth | L0 | UNREACHABLE_EVERYWHERE |
 | herb_roast | L0 | UNREACHABLE_EVERYWHERE |
 | salted_meat | L0 | UNREACHABLE_EVERYWHERE |
 | scrap | L0 | UNREACHABLE_EVERYWHERE, NO_CONSUMER_NO_USE |
-| iron_ingot | L1 | CONSUMER_UNOBTAINABLE:wall_brick |
 | chitin | L0 | NOT_REACHABLE_ON_VEYRA, ALL_RECIPE_CONSUMERS_BLOCKED_ON_VEYRA, BLOCKS_VEYRA_RECIPES |
 | brick | L0 | UNREACHABLE_EVERYWHERE, NO_CONSUMER_NO_USE |
 | seed | L0 | UNREACHABLE_EVERYWHERE |
@@ -154,7 +152,7 @@ Recipes that cannot run on Shipping: `pump_crude`. On Veyra: `chitin_armor`, `co
 | Item | Name | Proposal | Why |
 | --- | --- | --- | --- |
 | `crude_petroleum` | Crude Petroleum | P9 | Second raw oil with NO live source: the Oil Pump adapter is test-fixture only. ROUND 3: every player-facing text now says no oil site exists in this world yet. Becomes live only when a real physical site, interaction, production job and restart are demonstrated. |
-| `plank` | Plank | P6 | ROUND 3: handed to the building-ontology owner (PR #56) with a corrective design; the item, saved stock and queued jobs stay valid. ROUND 2 ruling: stays, not retired. Measured (ROUND2_FINDINGS §P6): its only listed consumer, the Plank Wall, is upgrade-only geometry that no upgrade path reaches, so Plank has NO reachable consumer today. The fix is a building-ontology decision (make the 240 HP tier reachable), not an item retirement. |
+| `plank` | Plank | P6 | ROUND 3: handed to the building-ontology owner (PR #56) with a corrective design; the item, saved stock and queued jobs stay valid. ROUND 2 ruling: stays, not retired. Measured (ROUND2_FINDINGS §P6): its only listed consumer, the Plank Wall, is upgrade-only geometry that no upgrade path reaches, so Plank has NO reachable consumer today. The fix is a building-ontology decision (make the 240 HP tier reachable), not an item retirement. CREATOR RULING 2026-11-23: the Plank Wall and the Brick Wall are removed instead (a base is wood, upgraded at the Territory Cabinet), so Plank has no consumer at all; the item itself still waits for a ruling. |
 | `chitin` | Ash Chitin | P8 | Single consumer (Chitin Plate) and no Veyra source. The item is fine; the Veyra gap needs a creature placement decision. |
 | `chitin_armor` | Chitin Plate | P8 | Body armour tier 2; uncraftable on Veyra because Chitin has no source there. |
 
@@ -186,7 +184,7 @@ Scope: `spares`, `mechanical_parts`, `scrap`, `fasteners`, `metal_pipe`, `mechan
 | `fasteners` (Forged Fasteners) | L0 | not craftable | 0 | 0 | 1 | no rule |
 | `metal_pipe` (Metal Pipe) | L3 | metal_pipe | 2 | 5 | 2 | X:pipe-v3 → 1 refined_iron_ingot |
 | `mechanical_gear` (Mechanical Gear) | L2 | mechanical_gear | 2 | 11 | 4 | X:gear-v2 → 2 spares + 1 iron_ingot |
-| `iron_plate` (Iron Plate) | L3 | iron_plate | 2 | 11 | 15 | X:plate-v1 → 1 iron_ingot |
+| `iron_plate` (Iron Plate) | L3 | iron_plate | 2 | 11 | 13 | X:plate-v1 → 1 iron_ingot |
 | `metal_blade` (Metal Blade) | L2 | metal_blade | 1 | 4 | 1 | X:blade-v2 → 2 iron_ingot |
 
 | Criterion | Option A: Two distinct axes | Option B: Collapse to a single Parts item |
@@ -215,7 +213,7 @@ IMPLEMENTED_AND_VERIFIED = working code at the named SHA and the gate passed the
 | T-P7 | Mixed-language display names | Item V2 | #61 | `7b78a55444ee489b7870ea46c7ac095b5f70e4c0` | **IMPLEMENTED_AND_VERIFIED** | item-ontology-v2 suite; item box screenshots |
 | T-P10 | Four legacy cores indistinguishable from the seven Creator Cores | Item V2 | #61 | `7b78a55444ee489b7870ea46c7ac095b5f70e4c0` | **IMPLEMENTED_AND_VERIFIED** | round3 suite (classes, three Creator Core crates, save); 147-item browser layout sweep at 640x360 |
 | T-P9-TEXT | Oil text claimed an "authorized oil site" that no world contains | Item V2 | #61 | `7b78a55444ee489b7870ea46c7ac095b5f70e4c0` | **IMPLEMENTED_AND_VERIFIED** | round3 suite source scan + four oil states; b05 oil suites; pa1-deploy-custody browser driver |
-| T-P6 | Plank Wall (240 HP) and Brick Wall (600 HP) cannot be obtained; Plank has no reachable consumer — Work order: docs/design/PA1_BUILDING_ONTOLOGY_WALL_TIER_HANDOFF_2026-11-14.md. No building code in PR #61. | PA1 Building | #56 | none | **HANDOFF_ACKNOWLEDGED** | Optional upgrades Wood→Reinforced Wood, Wood→Stone, Reinforced Wood→Stone, Stone→Brick work through real build intents; resources debited; save/restart; browser; formula graph. Saved Plank stacks, placed Plank Walls, queued jobs and reclaim refunds conserved (an old Plank Wall must not refund from the live cost table). |
+| T-P6 | Plank Wall (240 HP) and Brick Wall (600 HP) cannot be obtained; Plank has no reachable consumer — Work order: docs/design/PA1_BUILDING_ONTOLOGY_WALL_TIER_HANDOFF_2026-11-14.md. No building code in PR #61. Superseded in part by the Creator ruling of 2026-11-23 (PR #65): both walls were removed instead of made reachable, so the upgrade gate above no longer applies; the Plank item still has no consumer and waits for a ruling. | PA1 Building | #56 | none | **HANDOFF_ACKNOWLEDGED** | Optional upgrades Wood→Reinforced Wood, Wood→Stone, Reinforced Wood→Stone, Stone→Brick work through real build intents; resources debited; save/restart; browser; formula graph. Saved Plank stacks, placed Plank Walls, queued jobs and reclaim refunds conserved (an old Plank Wall must not refund from the live cost table). |
 | T-P8-MATERIALS | Ash Chitin and Crawler Optic have no source on Veyra — Work order: docs/design/VEYRA_WORLD_SOURCE_REPAIR_ORDER_2026-11-14.md. No Keycard work: Veyra has 0 keycard doors. The order exists only as a document in PR #61; nobody responsible has received or accepted it. | UNASSIGNED — Veyra World / Ecology has no confirmed owner or PR | not named | none | **BLOCKED_OR_UNRESOLVED** | Creature placed in a fitting Veyra habitat, actually spawns, is fought, drops loot that is physically picked up, survives restart. Before any renewable Scrap Crawler population: measured Parts per hour, research pace and farming exploit check. No invented drops, no changed probabilities without design authority. |
 | T-P8-RESEARCH | Wolf Fang and Beetle Horn (research routes) have no source on Veyra | UNASSIGNED — Veyra World / Ecology has no confirmed owner or PR | not named | none | **BLOCKED_OR_UNRESOLVED** | Owner evaluates the research routes and either places a source under the gate above or rules the routes Shipping-only. |
 | T-P9-PUMP | Oil Pump is not runnable in natural play; Crude Petroleum is fixture-only — Notice posted on PR #59 (issuecomment-6878207281); no reply, so not acknowledged. Whether the pump lands in PR #59 is the owner's call. | Oil / World Production | #59 | none | **BLOCKED_OR_UNRESOLVED** | Map-owned oil site, normal placement, finite stock debit, production output, separate-process restart. Salvaged Oil (real) kept distinct from pumped Crude Petroleum. |
@@ -236,7 +234,7 @@ IMPLEMENTED = live at recipe revision 6. IMPLEMENTED_PARTIAL = only the authoris
 | P3 | Give the Metal Pipe a real job | IMPLEMENTED_PARTIAL | Approved for the Utility Frame only. `oil_pump` and `refinery` costs must not change this round. | metal_pipe, vehicle_frame |
 | P4 | Make the Metal Blade the edge of the Salvager Axe | IMPLEMENTED | Approved, subject to the blade-before-axe and no-net-material checks. Both passed. | metal_blade, industrial_axe |
 | P5 | Add a Recycler rule for Iron Plate | IMPLEMENTED | Approved as a NEW versioned rule; existing rules untouched. | iron_plate |
-| P6 | Retire Plank | HANDED_OFF | ROUND 3: live defect, not an item retirement. Plank Wall and Brick Wall are upgrade-only and unreachable. The fix belongs to the PR #56 building-ontology owner; the corrective design is handed over in writing. Nothing in the building ontology is edited in PR #61. | plank |
+| P6 | Retire Plank | HANDED_OFF | ROUND 3: live defect, not an item retirement. Plank Wall and Brick Wall are upgrade-only and unreachable. The fix belongs to the PR #56 building-ontology owner; the corrective design is handed over in writing. Nothing in the building ontology is edited in PR #61. CREATOR RULING 2026-11-23 (PR #65): both walls are removed from the catalog rather than made reachable; an old save loads them as Wood Wall and Stone Wall. The Plank item is not ruled on. The before/after rows below are the Round 1 proposal, kept as the record. | plank |
 | P7 | One display language for item names | IMPLEMENTED | Approved. English is the display language; the settled Vietnamese names are kept as alias data. | core_blast, core_meteor, core_dragon, core_elsa, core_earthmother, core_demon, escrow_chest |
 | P8 | Veyra source gaps | HANDED_OFF | ROUND 3: world source repair. Chitin, Crawler Optic, Wolf Fang and Beetle Horn need real Veyra creatures and habitats; that is Veyra ecology/map work and is written up as a work order. NO CONFIRMED OWNER OR PR HAS RECEIVED THE ORDER YET, so the defect is unowned, not handed over (see the acceptance tracker). Inside this PR only the honest "no source on Veyra yet" readiness text is implemented; no source, loot or probability was added and no recipe is hidden. | chitin, chitin_armor, crawler_optic, wolf_fang, beetle_horn, keycard, core_demon, essence_spirit |
 | P9 | Crude Petroleum has no live source | IMPLEMENTED_PARTIAL | ROUND 3: fix the misleading text only. Crude Petroleum stays fixture-only; Oil Pump production is NOT live. Ids, systems and Salvaged Oil → Fuel Can are unchanged. | crude_petroleum |
@@ -438,7 +436,7 @@ Tests:
 
 ### P6. Retire Plank — HANDED_OFF
 
-**Ruling.** ROUND 3: live defect, not an item retirement. Plank Wall and Brick Wall are upgrade-only and unreachable. The fix belongs to the PR #56 building-ontology owner; the corrective design is handed over in writing. Nothing in the building ontology is edited in PR #61.
+**Ruling.** ROUND 3: live defect, not an item retirement. Plank Wall and Brick Wall are upgrade-only and unreachable. The fix belongs to the PR #56 building-ontology owner; the corrective design is handed over in writing. Nothing in the building ontology is edited in PR #61. CREATOR RULING 2026-11-23 (PR #65): both walls are removed from the catalog rather than made reachable; an old save loads them as Wood Wall and Stone Wall. The Plank item is not ruled on. The before/after rows below are the Round 1 proposal, kept as the record.
 
 **Problem.** Plank exists to build one thing. 3 Plank = 6 Wood, and the Plank Wall description already says "for 6 wood". The item adds a bench step and an inventory row, not a choice.
 

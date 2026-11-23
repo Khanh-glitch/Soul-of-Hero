@@ -1,6 +1,6 @@
 /**
  * The drifting dots of fog weather. Each frame used to evaluate 28,800 noise samples to decide where the dots go.
- * The picture is unchanged (the same fills, in the same order); only the deciding is done once:
+ * The dots are unchanged (the same ones, in the same order); the deciding is done once:
  *  - the noise decision of a field cell never changes, so it is remembered while the cell stays near the view (the
  *    field drifts one pixel every 70 ms and follows the camera at half speed);
  *  - while neither the drift nor the camera moved since the previous frame, the previous list of dots is reused.
@@ -58,9 +58,40 @@ export function fogDots(ox: number, oy: number): { xy: Int16Array; count: number
   return { xy: dotXY, count: dotCount };
 }
 
-/** Fill the fog dots for field offset (ox, oy) onto `g`. */
-export function drawFogDots(g: CanvasRenderingContext2D, ox: number, oy: number): void {
+/** Fill the fog dots for field offset (ox, oy) onto `g`, one rectangle per dot (the original way). */
+export function drawFogDotsAsRects(g: CanvasRenderingContext2D, ox: number, oy: number): void {
   const { xy, count } = fogDots(ox, oy);
   g.fillStyle = 'rgba(225,230,238,0.22)';
   for (let i = 0; i < count * 2; i += 2) g.fillRect(xy[i], xy[i + 1], 2, 2);
+}
+
+// The same dots as one picture: painted opaque into a view-sized layer whenever the field offset changes, then laid
+// over the frame at the dots' opacity in a single draw. Several thousand small fills per frame become one. The dots
+// never overlap, so every pixel gets the same colour at the same opacity as before; the browser rounds the blend
+// slightly differently for a picture than for a fill, by at most 2 of 255 per colour channel (Creator ruling
+// 2026-11-23: accepted).
+const DOT_RGBA = (255 << 24 | 238 << 16 | 230 << 8 | 225) >>> 0;   // rgb(225,230,238), opaque, as little-endian RGBA
+const DOT_ALPHA = 0.22;
+let layer: HTMLCanvasElement | undefined, layerG: CanvasRenderingContext2D | null = null;
+let layerImage: ImageData | undefined, layerPx: Uint32Array | undefined, layerOx = NaN, layerOy = NaN;
+
+/** Draw the fog dots for field offset (ox, oy) onto `g`. */
+export function drawFogDots(g: CanvasRenderingContext2D, ox: number, oy: number): void {
+  if (!layer) {
+    if (typeof document === 'undefined') { drawFogDotsAsRects(g, ox, oy); return; }
+    layer = document.createElement('canvas'); layer.width = VIEW_W; layer.height = VIEW_H;
+    layerG = layer.getContext('2d');
+    if (layerG) { layerImage = layerG.createImageData(VIEW_W, VIEW_H); layerPx = new Uint32Array(layerImage.data.buffer); }
+  }
+  if (!layerG || !layerImage || !layerPx) { drawFogDotsAsRects(g, ox, oy); return; }
+  if (ox !== layerOx || oy !== layerOy) {
+    const { xy, count } = fogDots(ox, oy), px = layerPx;
+    px.fill(0);
+    for (let i = 0; i < count * 2; i += 2) {
+      const at = xy[i + 1] * VIEW_W + xy[i];                        // a dot is 2 x 2 and always inside the view
+      px[at] = DOT_RGBA; px[at + 1] = DOT_RGBA; px[at + VIEW_W] = DOT_RGBA; px[at + VIEW_W + 1] = DOT_RGBA;
+    }
+    layerG.putImageData(layerImage, 0, 0); layerOx = ox; layerOy = oy;
+  }
+  const alpha = g.globalAlpha; g.globalAlpha = alpha * DOT_ALPHA; g.drawImage(layer, 0, 0); g.globalAlpha = alpha;
 }

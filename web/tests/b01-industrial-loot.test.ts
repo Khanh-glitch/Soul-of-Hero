@@ -191,10 +191,11 @@ describe('B01-R1 C2: iron plate is a paid bounded patch (25% max HP per plate)',
     expect(dispatch(g,{id:'p2-'+ ++n,type:'repairStructure',eid:id,material:'iron_plate'},T).ok).toBe(true);
     expect(r.entities[id].hp).toBe(max);expect(countItem(r,'inv','iron_plate')).toBe(0);
   });
-  it('metal (brick) wall and door: the same 25% rule applies to their own max HP',()=>{
-    const b=rig('wall_brick',100);addItem(b.r,'inv','iron_plate',1);
+  // The Iron-braced (brick) Wall was removed on 2026-11-23; the Stone Wall is now the strongest wall.
+  it('stone wall and iron door: the same 25% rule applies to their own max HP',()=>{
+    const b=rig('wall_stone',100);addItem(b.r,'inv','iron_plate',1);
     expect(dispatch(b.g,{id:'p3-'+ ++n,type:'repairStructure',eid:b.id,material:'iron_plate'},T).ok).toBe(true);
-    expect(b.r.entities[b.id].hp).toBe(100+patch(STRUCTS.wall_brick.hp));
+    expect(b.r.entities[b.id].hp).toBe(100+patch(STRUCTS.wall_stone.hp));
     const d=rig('door_iron',100);addItem(d.r,'inv','iron_plate',1);
     expect(dispatch(d.g,{id:'p4-'+ ++n,type:'repairStructure',eid:d.id,material:'iron_plate'},T).ok).toBe(true);
     expect(d.r.entities[d.id].hp).toBe(100+patch(STRUCTS.door_iron.hp));

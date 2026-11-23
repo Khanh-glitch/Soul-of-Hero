@@ -161,7 +161,7 @@ describe('PA1 building geometry vs physical device custody',()=>{
     const o=setup();
     addItem(o.r,'inv','wood',40);addItem(o.r,'inv','stone',30);
     const before=countItem(o.r,'inv','stone');
-    for(const high of ['floor_stone','wall_stone','wall_brick','door_iron','roof_tile'])
+    for(const high of ['floor_stone','wall_stone','door_iron','roof_tile'])
       expect(o.build(high).ok).toBe(false);
     expect(countItem(o.r,'inv','stone')).toBe(before);
     expect(o.build('floor_wood').ok).toBe(true);

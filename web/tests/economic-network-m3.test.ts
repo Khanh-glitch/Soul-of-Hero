@@ -33,10 +33,12 @@ describe('SOH M3 Counterfactual Study (DESIGN_PROPOSED / Non-Authoritative) & Au
     expect(rejectedIds).toEqual(expect.arrayContaining(['M2-F01', 'M2-F03', 'M2-F04', 'M2-F06', 'M2-F09', 'M2-F10', 'M2-F13']));
 
     // Existing counterfactual metrics remain reproducible
-    const brickCitadel = res.territoryStressBeforeAfter.find((r) => r.preset === 'Brick_Citadel_6x6_Armed')!;
+    const brickCitadel = res.territoryStressBeforeAfter.find((r) => r.preset === 'Stone_Citadel_6x6_Armed')!;
     // Derived from the LIVE build bills. Item set v3 changed them (Brick retired into Stone, Powered Door bill with
     // Electric Resistors), so the 24-slot figure moved 31.22 -> 27.04 h. Still far below the weighted-cabinet proposal.
-    expect(brickCitadel.before.autonomyHours24Slot).toBe(27.04);
+    // 2026-11-23: the Iron-braced (brick) Wall was removed, so the preset is walled in Stone (8 stone + 1 wood a wall,
+    // where the brick wall took 9 stone + 1 iron ingot) and the figure moved 27.04 -> 28.01 h.
+    expect(brickCitadel.before.autonomyHours24Slot).toBe(28.01);
     expect(brickCitadel.after.autonomyHours32SlotWeighted).toBeGreaterThanOrEqual(168);
     expect(res.exploitAndConservationChecks.recyclerAntiArbitrage.overReturnsAfter).toBe(0);
   });

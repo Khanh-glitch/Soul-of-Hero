@@ -439,7 +439,10 @@ describe('ITEM_CRAFTING_MASTER — the grammar holds in the live catalog', () =>
     expect(g.silent_gates.map(s => s.recipe + ':' + s.ingredient)).toEqual(['cleaver:metal_blade']);
     expect(ITEM_DESIGN.metal_blade[0]).toBe('BOTH');
     for (const i of g.outside_main_component) expect(i.linked_by.length, i.id + ' must be tied to a system').toBeGreaterThan(0);
-    expect(g.dead_end_materials).toEqual([]);
+    // OPEN DEFECT, not a pass: the Creator removed the Plank Wall on 2026-11-23 and it was Plank's one consumer (one
+    // that no player could reach), so Plank is now a material nothing spends. The list must hold Plank and nothing
+    // else until the item is ruled on (retire the recipe and drop, or give it a use); then it goes back to [].
+    expect(g.dead_end_materials).toEqual(['plank']);
   });
 });
 

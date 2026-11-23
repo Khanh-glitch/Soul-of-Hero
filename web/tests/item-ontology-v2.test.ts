@@ -8,7 +8,7 @@ import { ACCEPTANCE_TRACKER, ROUND3_ACCEPTED_SHA } from '../src/game/item-ontolo
 import { beforeAll, describe, expect, it } from 'vitest';
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { ITEMS, RECIPES, STRUCTS, SOH_PROVISIONAL_ITEMS } from '../src/game/catalog';
+import { ITEMS, RECIPES, STRUCTS, RETIRED_STRUCTURES, SOH_PROVISIONAL_ITEMS } from '../src/game/catalog';
 import { FINAL_ITEMS, isRetiredLive } from '../src/game/final-item-set';
 import { buildSohEconomicGraph, type SohEconomicGraph } from '../src/game/economic-graph';
 import { UNOBTAINABLE_STRUCTURES, projectItemOntology, type ItemOntologyProjection } from '../src/game/item-ontology';
@@ -120,9 +120,10 @@ describe('projection is an adapter over the existing multigraph, not a second ca
     // P2 was not authorised in round 2; item set v3 then retired BOTH ids into Parts, so the twin no longer exists.
     expect(isRetiredLive('mechanical_parts') && isRetiredLive('fasteners')).toBe(true);
     expect(p.twin_intermediates.some((t) => [t.a, t.b].includes('mechanical_parts') || [t.a, t.b].includes('fasteners'))).toBe(false);
-    // P6: Plank's only listed consumer cannot exist in a live world.
-    expect(UNOBTAINABLE_STRUCTURES).toContain('wall_plank');
-    expect(item('plank').signals).toContain('NO_REACHABLE_CONSUMER:wall_plank');
+    // P6: the Plank Wall was removed on 2026-11-23 (Creator ruling), so Plank has no consumer left at all.
+    expect(UNOBTAINABLE_STRUCTURES).not.toContain('wall_plank');
+    expect(item('plank').consumer_targets).toEqual([]);
+    expect(item('plank').signals.some((x) => x.startsWith('NO_REACHABLE_CONSUMER'))).toBe(false);
     // Round 2 warned that a merged Parts resource would let the Recycler mint research currency from an Iron Axe.
     // The merge shipped with X:recover-v4, which pays wood and ingots only: no tool or component loop is Parts-positive.
     expect(p.recycle_loops.find((l) => l.item === 'iron_axe')).toMatchObject({ rule: 'X:recover-v4', parts_out: 0, merged_parts_verdict: 'PARTS_NEGATIVE' });
@@ -222,6 +223,8 @@ describe('decisions', () => {
       // Structure costs quoted anywhere must equal the live catalog: round 2 changed NO structure cost.
       // …until item set v3 re-priced the ones that named a retired id; such a quote is then the Round 2 record.
       for (const b of pr.before_structs ?? []) {
+        // A structure removed from the game since (catalog RETIRED_STRUCTURES) is a historical quote as well.
+        if (b.id in RETIRED_STRUCTURES) { expect(STRUCTS[b.id], `${pr.id}:${b.id}`).toBeUndefined(); continue; }
         if (b.cost.some(([k]) => isRetiredLive(k))) { expect(STRUCTS[b.id], `${pr.id}:${b.id}`).toBeDefined(); continue; }
         expect(sorted(b.cost), `${pr.id}:${b.id}`).toEqual(sorted(STRUCTS[b.id].cost as [string, number][]));
       }
@@ -270,7 +273,7 @@ describe('decisions', () => {
     // The V2 decision row is the historical record and still reads KEEP. P6 — not authorised, nothing changed.
     expect(RECIPES.fasteners).toBeUndefined(); expect(isRetiredLive('fasteners')).toBe(true);
     expect(sorted(RECIPES.plank.ins)).toEqual(['wood:2']);
-    expect(sorted(STRUCTS.wall_plank.cost as [string, number][])).toEqual(['plank:3']);
+    expect('wall_plank' in STRUCTS).toBe(false);   // removed 2026-11-23; the recipe above is still untouched
     expect(decisionFor('fasteners')!.decision).toBe('KEEP');
     expect(decisionFor('plank')!.decision).toBe('DEFER');
     expect(data.manifest.filter((m) => ['RENAME', 'REDESIGN', 'MERGE_CANDIDATE', 'RETIRE_CANDIDATE'].includes(m.decision)).map((m) => m.old_id)).toEqual([]);
@@ -288,8 +291,10 @@ describe('decisions', () => {
     expect(f.resolution[0]).toMatch(/^SUPERSEDED by item set v3/);
     // The unit prices are the frozen last-live formulas, kept so the Round 2 arithmetic stays readable.
     expect(f.unit.per_fastener).toEqual({ iron: 0.333, scrap: 0.333 });
-    // P6: the 240 HP wall is not obtainable today.
-    expect(findings.P6.tiers.find((t) => t.id === 'wall_plank')).toMatchObject({ hp: 240, buildable_directly: false, upgrade_from: [], obtainable: false });
+    // P6: the 240 HP wall is gone (Creator ruling 2026-11-23); the finding lists what replaced it and that Plank is unused.
+    expect(findings.P6.tiers.map((t) => t.id)).toEqual(['wall_wood', 'wall_stone']);
+    expect(findings.P6.retired_walls).toEqual([{ id: 'wall_plank', loads_as: 'wall_wood', still_in_catalog: false }, { id: 'wall_brick', loads_as: 'wall_stone', still_in_catalog: false }]);
+    expect(findings.P6.plank.consumers).toEqual([]);
     expect(findings.P6.tiers.find((t) => t.id === 'wall_stone')!.obtainable).toBe(true);
     // P8: the matrix covers the eight named items and agrees with the blocked-recipe list.
     expect(findings.P8.rows.map((x) => x.id)).toEqual(['chitin', 'crawler_optic', 'wolf_fang', 'beetle_horn', 'boar_tusk', 'keycard', 'core_demon', 'essence_spirit']);
@@ -396,8 +401,8 @@ describe('ROUND 3 — P8 world source repair is handed off, not papered over', (
       expect(pr.handoff, pr.id).toBeTruthy();
       expect(existsSync(resolve(__dirname, '../..', pr.handoff!)), pr.handoff).toBe(true);
     }
-    // P6 is still a live defect: both walls remain unobtainable until the building owner ships the fix
-    expect([...UNOBTAINABLE_STRUCTURES].sort()).toEqual(expect.arrayContaining(['wall_brick', 'wall_plank']));
+    // P6: the Creator removed both walls on 2026-11-23 instead of making them reachable, so nothing is unobtainable now.
+    expect([...UNOBTAINABLE_STRUCTURES]).toEqual([]);
   });
 });
 

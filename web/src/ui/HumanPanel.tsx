@@ -3,7 +3,7 @@ import type { Api } from './common';
 import { Icon, Panel } from './common';
 import { drawNpcSprite } from '../game/npc-art';
 import { ITEMS } from '../game/catalog';
-import { barterPrice, demandableGoods, canPointOut, humanRepairOffers, humanContact, counterHumanBarter, quoteHumanBarter, humanPack, type BarterLine } from '../game/humanworld';
+import { barterPrice, demandableGoods, canPointOut, humanRepairOffers, humanContact, counterHumanBarter, quoteHumanBarter, humanPack, downedByThirst, type BarterLine } from '../game/humanworld';
 import { BAL, type Stack } from '../game/core';
 import { CREATURES } from '../game/catalog';
 import type { HumanRecord } from '../game/humanworld';
@@ -114,7 +114,7 @@ function ContactPanel({ api, actorId, onClose }: { api: Api; actorId: string; on
     {reply && <div role="status" aria-live="polite" style={{ color: '#ffe4a2', borderLeft: '2px solid #bd8d47', padding: '3px 5px', margin: '3px 0 5px', lineHeight: 1.25 }}>{reply}</div>}
     {visible==='Help'&&<div style={{margin:'4px 0'}}>
       <div style={{fontWeight:700}}>Help · urgent needs</div>
-      {playerStacks.filter(({s})=>!s.production && (['bandage','herb'].includes(s.key)&&(isDown||h.wounds.some(w=>!w.treated)) || ITEMS[s.key]?.food?.hunger&&h.hunger<35&&!isDown || ITEMS[s.key]?.waterContainer&&(s.charge??0)>0&&h.thirst<35&&!isDown)).map(({s})=><button key={s.uid} className="btn sm" disabled={!!hw.playerAid} onClick={()=>respond('humanAid',{stackUid:s.uid})}>Offer {ITEMS[s.key].name}</button>)}
+      {playerStacks.filter(({s})=>!s.production && (['bandage','herb'].includes(s.key)&&(isDown||h.wounds.some(w=>!w.treated)) || ITEMS[s.key]?.food?.hunger&&h.hunger<35&&!isDown || ITEMS[s.key]?.waterContainer&&(s.charge??0)>0&&h.thirst<35&&(!isDown||downedByThirst(h)))).map(({s})=><button key={s.uid} className="btn sm" disabled={!!hw.playerAid} onClick={()=>respond('humanAid',{stackUid:s.uid})}>Offer {ITEMS[s.key].name}</button>)}
       {humanRepairOffers(r,h,api.now()).map(({item,station,cost})=><button key={item.uid} className="btn sm" onClick={()=>respond('humanRepair',{stackUid:item.uid,eid:station.id})}>Repair {ITEMS[item.key].name} · spend {cost.map(([key,qty])=>`${qty} ${ITEMS[key].name}`).join(', ')}</button>)}
       {hw.playerAid?.actorId===actorId&&<div role="status">Helping · remain beside them…</div>}
       {!isDown&&h.hunger>=35&&h.thirst>=35&&!h.wounds.some(w=>!w.treated)&&<div style={{opacity:.7}}>No urgent food, water or medical need.</div>}

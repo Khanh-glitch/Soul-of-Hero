@@ -38,7 +38,7 @@ function g1bEntityOk(r: any, e: any, offscreen: boolean, seen: Set<string>): boo
   seen.add(g.sid); return true;
 }
 const oilAuthorityOk = (r: any, a: unknown) => a === 'test-fixture-v1' ? r.oilTestFixture === true : a === OIL_SEEP_AUTHORITY ? veyraRun(r) : false;
-import { GARDEN_CROPS, isGardenCrop, LADDER_SPAN, POWERED_DOOR_HOSTS, EQ_SLOTS, starterKnowledge, ITEMS, RECIPES, STRUCTS, SOURCES, ELDERS, PRIMORDIAL_ELDERS, LEGACY_TO_PRIMORDIAL_ELDER, lookupElderDef, CREATURES, VENDOR_SPARES, VENDOR_SECURED, recipeForJob, RECIPE_REVISION, RESEARCH_FAMILIES } from './catalog';
+import { GARDEN_CROPS, isGardenCrop, LADDER_SPAN, POWERED_DOOR_HOSTS, EQ_SLOTS, starterKnowledge, ITEMS, RECIPES, STRUCTS, RETIRED_STRUCTURES, SOURCES, ELDERS, PRIMORDIAL_ELDERS, LEGACY_TO_PRIMORDIAL_ELDER, lookupElderDef, CREATURES, VENDOR_SPARES, VENDOR_SECURED, recipeForJob, RECIPE_REVISION, RESEARCH_FAMILIES } from './catalog';
 import { RETIRED_RECIPES, hasLegacyDefinition } from './recipe-migration';
 import { ITEM_SET_VERSION, isAccessCard, isRetiredLive, RETIRED_ITEM_IDS, liveItemId, liveItemPer, liveRecipeId, RECIPE_SUCCESSOR } from './final-item-set';
 import { newGame, renewableLoot, markDirty, g1bEnsureSources } from './engine';
@@ -106,6 +106,15 @@ export function validate(raw: any): GameState | null {
   const r = raw.run;
   if (!obj(r) || typeof r.id !== 'string' || !r.id || !integer(r.nextId) || r.nextId < 1 || !finite(r.startedAt) || !finite(r.qaOffset) || !integer(r.seed) || !integer(r.rng) || !integer(r.seq) || !obj(r.player) || !obj(r.custody) || !obj(r.entities) || !obj(r.clock)) return null;
   if (r.sourceLayoutVersion !== undefined && r.sourceLayoutVersion !== 2 && r.sourceLayoutVersion !== 3) return null;
+  // Retired structures (catalog RETIRED_STRUCTURES): a wall saved by an older build becomes the live wall named
+  // there, with its health kept up to the new wall's limit. The save loads; nothing else about the wall changes.
+  for (const table of [r.entities, r.veyraOffscreenEntities]) if (obj(table)) for (const e of Object.values(table) as any[]) {
+    if (!obj(e) || e.kind !== 'struct' || typeof e.type !== 'string' || !has(RETIRED_STRUCTURES, e.type)) continue;
+    e.type = RETIRED_STRUCTURES[e.type];
+    const max = STRUCTS[e.type].hp;
+    if (finite(e.hp)) e.hp = Math.min(e.hp, max);
+    if (e.maxHp !== undefined) e.maxHp = max;
+  }
   const layout = r.layoutId || 'shipping'; if (typeof layout !== 'string' || !hasLayout(layout)) return null;
   // G1A: resolve the window world under the placement rules this run was created with (3 = legacy scrap/wreck, 4 = industrial salvage).
   // The digest check below is unchanged and still fails closed; rules 4 exists only for Veyra U=0.5 layouts.
