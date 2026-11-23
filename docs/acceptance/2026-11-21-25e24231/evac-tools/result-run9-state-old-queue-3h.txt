@@ -1,0 +1,33 @@
+  EV ["human.evac.intent h1h:evac:po_evac_hook:336","human.board h1h:evac:po_evac_hook:seat0:4uids","human.evac.intent h2l:evac:po_evac_west:928","human.board h2l:evac:po_evac_west:seat0:4uids","human.evac.intent h8:evac:po_evac_west:959"]
+  TRIP evac:po_evac_west BOARDING manifest h2l / 6 dockIn_h 35.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 
+  TRIP evac:po_evac_south BOARDING manifest  / 6 dockIn_h 35.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 
+  TRIP evac:po_evac_hook BOARDING manifest h1h / 6 dockIn_h 35.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 
+  SEEKERS_ASHORE {"IDLE/-/Checking physical route (10240 cells examined; no travel claimed)./retry0":1,"IDLE/-/Checking physical route (7424 cells examined; no travel claimed)./retry0":1,"MOVING/evacuate/Checking physical route (33280 cells examined; no travel claimed)./retry0":1,"IDLE/-/Checking physical route (8960 cells examined; no travel claimed)./retry0":1,"IDLE/-/Checking physical route (9216 cells examined; no travel claimed)./retry0":1,"IDLE/-/Checking physical route (12544 cells examined; no travel claime
+  W h2l ON_VESSEL engineer hp 95 hu 44 th 47 684 1151 f 0 intent undefined undefined dec seek_berth I will try to reach the berth. | Checking physical route (47616 cells examined; no travel claimed). {}
+  W h8 MOVING medic hp 95 hu 42 th 59 1165 1142 f 0 intent evacuate evac:po_evac_west dec seek_berth I will try to reach the berth. | Checking physical route (33280 cells examined; no travel claimed). {}
+  W h7 IDLE cook hp 95 hu 44 th 72 1580 1141 f 0 intent undefined undefined dec undefined undefined |  {}
+  W h2 IDLE mechanic hp 95 hu 71 th 42 1597 1180 f 0 intent undefined undefined dec seek_berth I will try to reach the berth. | Checking physical route (7424 cells examined; no travel claimed). {}
+  W h4i IDLE medic hp 95 hu 37 th 52 1581 1502 f 0 intent undefined undefined dec seek_berth I will try to reach the berth. | Checking physical route (9216 cells examined; no travel claimed). {}
+HOUR 290 alive 52 DEC {"seek_berth|I will try to reach the berth.":19,"stay|I would rather remain on the island.":17,"stay|I can still defend this place.":13,"seek_berth|I need a passage out; I cannot weather another attack here.":3}
+  EV ["human.board h8:evac:po_evac_west:seat1:2uids","human.evac.intent h5f:evac:po_evac_hook:638","human.board h5f:evac:po_evac_hook:seat1:5uids"]
+  TRIP evac:po_evac_west BOARDING manifest h2l,h8 / 6 dockIn_h 34.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 
+  TRIP evac:po_evac_south BOARDING manifest  / 6 dockIn_h 34.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 
+  TRIP evac:po_evac_hook BOARDING manifest h1h,h5f / 6 dockIn_h 34.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 
+  SEEKERS_ASHORE {"IDLE/-/Checking physical route (4096 cells examined; waiting for longer searches ahead)./retry0":1,"IDLE/-/Checking physical route (11264 cells examined; no travel claimed)./retry0":1,"IDLE/-/Checking physical route (4352 cells examined; waiting for longer searches ahead)./retry0":2,"IDLE/-/Checking physical route (13312 cells examined; no travel claimed)./retry0":1,"IDLE/-/Checking physical route (3328 cells examined; waiting for longer searches ahead)./retry0":1,"IDLE/-/Checking physical route 
+  W h2l ON_VESSEL engineer hp 95 hu 39 th 41 684 1151 f 0 intent undefined undefined dec seek_berth I will try to reach the berth. | Checking physical route (47616 cells examined; no travel claimed). {}
+  W h8 ON_VESSEL medic hp 95 hu 38 th 53 684 1151 f 0 intent undefined undefined dec seek_berth I will try to reach the berth. | Checking physical route (33280 cells examined; no travel claimed). {}
+  W h7 IDLE cook hp 95 hu 39 th 66 1580 1141 f 0 intent undefined undefined dec seek_berth I will try to reach the berth. | Checking physical route (4352 cells examined; waiting for longer searches ahead). {}
+  W h2 IDLE mechanic hp 95 hu 67 th 66 1586 1162 f 0 intent undefined undefined dec seek_berth I will try to reach the berth. | Checking physical route (11264 cells examined; no travel claimed). {}
+  W h4i IDLE medic hp 95 hu 33 th 46 1581 1502 f 0 intent undefined undefined dec seek_berth I will try to reach the berth. | Checking physical route (22784 cells examined; no travel claimed). {}
+HOUR 291 alive 52 DEC {"seek_berth|I will try to reach the berth.":19,"stay|I would rather remain on the island.":17,"stay|I can still defend this place.":13,"seek_berth|I need a passage out; I cannot weather another attack here.":3}
+  EV []
+  TRIP evac:po_evac_west BOARDING manifest h2l,h8 / 6 dockIn_h 33.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 
+  TRIP evac:po_evac_south BOARDING manifest  / 6 dockIn_h 33.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 
+  TRIP evac:po_evac_hook BOARDING manifest h1h,h5f / 6 dockIn_h 33.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 
+  SEEKERS_ASHORE {"IDLE/-/Checking physical route (4096 cells examined; waiting for longer searches ahead)./retry0":1,"IDLE/-/Checking physical route (15360 cells examined; no travel claimed)./retry0":1,"IDLE/-/Checking physical route (26880 cells examined; no travel claimed)./retry0":1,"IDLE/-/Checking physical route (4608 cells examined; waiting for longer searches ahead)./retry0":1,"IDLE/-/Checking physical route (3328 cells examined; waiting for longer searches ahead)./retry0":3,"IDLE/-/Checking physical route 
+  W h2l ON_VESSEL engineer hp 95 hu 35 th 35 684 1151 f 0 intent undefined undefined dec seek_berth I will try to reach the berth. | Checking physical route (47616 cells examined; no travel claimed). {}
+  W h8 ON_VESSEL medic hp 95 hu 34 th 47 684 1151 f 0 intent undefined undefined dec seek_berth I will try to reach the berth. | Checking physical route (33280 cells examined; no travel claimed). {}
+  W h7 IDLE cook hp 95 hu 35 th 60 1580 1141 f 0 intent undefined undefined dec seek_berth I will try to reach the berth. | Checking physical route (26880 cells examined; no travel claimed). {}
+  W h2 IDLE mechanic hp 95 hu 63 th 59 1586 1162 f 0 intent undefined undefined dec seek_berth I will try to reach the berth. | Checking physical route (15360 cells examined; no travel claimed). {}
+  W h4i IDLE medic hp 95 hu 28 th 40 1581 1502 f 0 intent undefined undefined dec seek_berth I will try to reach the berth. | Checking physical route (1536 cells examined; no travel claimed). {}
+   ✓ evac  84577ms

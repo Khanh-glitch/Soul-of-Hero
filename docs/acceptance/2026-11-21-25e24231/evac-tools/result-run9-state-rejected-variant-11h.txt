@@ -1,0 +1,65 @@
+  EV ["human.evac.intent h2:evac:po_evac_west:966","human.board h2:evac:po_evac_west:seat0:4uids","human.evac.intent h1h:evac:po_evac_hook:336","human.board h1h:evac:po_evac_hook:seat0:4uids","human.evac.intent h8:evac:po_evac_west:959","human.board h8:evac:po_evac_west:seat1:2uids"]
+  NAV {"found":1757,"queueWait":384,"foundLong":3,"SEARCH_LIMIT":3} pending 13 cells 113085 top [["h4u",43337,38912],["h6v",27122,28672],["h4m",4352,3584],["h4o",4332,3584],["h5f",4230,3328],["h4s",4229,3328],["h1",4166,4096],["h2l",4164,3328],["h2f",4155,3328],["h4o",4140,3328],["h4i",4115,3328],["h6p",4096,4352]]
+  TRIP evac:po_evac_west BOARDING manifest h2,h8 / 6 dockIn_h 35.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 
+  TRIP evac:po_evac_south BOARDING manifest  / 6 dockIn_h 35.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 
+  TRIP evac:po_evac_hook BOARDING manifest h1h / 6 dockIn_h 35.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 
+HOUR 290 alive 52 DEC {"seek_berth|I will try to reach the berth.":19,"stay|I would rather remain on the island.":17,"stay|I can still defend this place.":13,"seek_berth|I need a passage out; I cannot weather another attack here.":3}
+  EV ["human.evac.intent h5f:evac:po_evac_hook:638","human.board h5f:evac:po_evac_hook:seat1:5uids"]
+  NAV {"queueWait":347,"found":2154,"NO_PATH":1,"SEARCH_LIMIT":2,"foundLong":1} pending 15 cells 136365 top [["h4t",47798,44544],["h4o",33917,31232],["h4s",4338,3584],["h6h",4329,3840],["h7",4320,4352],["h6g",4282,3840],["h4h",4220,3328],["h9",4205,4352],["h1",4166,4096],["h2l",4164,3328],["h2f",4155,3328],["h6c",4130,3584]]
+  TRIP evac:po_evac_west BOARDING manifest h2,h8 / 6 dockIn_h 34.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 
+  TRIP evac:po_evac_south BOARDING manifest  / 6 dockIn_h 34.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 
+  TRIP evac:po_evac_hook BOARDING manifest h1h,h5f / 6 dockIn_h 34.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 
+HOUR 291 alive 52 DEC {"seek_berth|I will try to reach the berth.":19,"stay|I would rather remain on the island.":17,"stay|I can still defend this place.":13,"seek_berth|I need a passage out; I cannot weather another attack here.":3}
+  EV []
+  NAV {"found":2009,"queueWait":634,"SEARCH_LIMIT":3,"hardEvict":3,"evictRank0":3,"hardEvictCells":48195,"maxEvicted":36731} pending 20 cells 121835 top [["h4t",29092,26112],["h7",26492,27904],["h4s",4294,3584],["h6h",4275,3584],["h2f",4250,3328],["h4h",4220,3328],["h9",4205,4352],["h1",4166,4096],["h2l",4164,3328],["h4o",4154,3328],["h6c",4130,3584],["h6g",4120,3584]]
+  TRIP evac:po_evac_west BOARDING manifest h2,h8 / 6 dockIn_h 33.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 
+  TRIP evac:po_evac_south BOARDING manifest  / 6 dockIn_h 33.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 
+  TRIP evac:po_evac_hook BOARDING manifest h1h,h5f / 6 dockIn_h 33.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 
+HOUR 292 alive 52 DEC {"seek_berth|I will try to reach the berth.":19,"stay|I would rather remain on the island.":17,"stay|I can still defend this place.":13,"seek_berth|I need a passage out; I cannot weather another attack here.":3}
+  EV ["human.evac.intent h7:evac:po_evac_west:950","human.board h7:evac:po_evac_west:seat2:3uids"]
+  NAV {"found":2382,"queueWait":586,"foundLong":1,"SEARCH_LIMIT":2,"hardEvict":1,"evictRank0":1,"hardEvictCells":33505,"maxEvicted":33505} pending 22 cells 96672 top [["h4t",38569,35072],["h4s",6646,5120],["h2f",4250,3328],["h4h",4220,3328],["h9",4205,4352],["h1",4166,4096],["h2l",4164,3328],["h4o",4154,3328],["h4s",4132,3328],["h6c",4130,3584],["h6g",4120,3584],["h4i",4115,3328]]
+  TRIP evac:po_evac_west BOARDING manifest h2,h8,h7 / 6 dockIn_h 32.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 
+  TRIP evac:po_evac_south BOARDING manifest  / 6 dockIn_h 32.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 
+  TRIP evac:po_evac_hook BOARDING manifest h1h,h5f / 6 dockIn_h 32.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 
+HOUR 293 alive 52 DEC {"seek_berth|I will try to reach the berth.":19,"stay|I would rather remain on the island.":17,"stay|I can still defend this place.":13,"seek_berth|I need a passage out; I cannot weather another attack here.":3}
+  EV []
+  NAV {"found":1992,"queueWait":602,"SEARCH_LIMIT":4} pending 19 cells 69534 top [["h4h",9333,7680],["h9",7244,7424],["h6h",4360,3584],["h1",4166,4096],["h2l",4164,3328],["h4o",4154,3328],["h4t",4154,3328],["h4s",4132,3328],["h6c",4130,3584],["h6g",4120,3584],["h4m",4120,3328],["h4u",4117,3328]]
+  TRIP evac:po_evac_west BOARDING manifest h2,h8,h7 / 6 dockIn_h 31.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 
+  TRIP evac:po_evac_south BOARDING manifest  / 6 dockIn_h 31.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 
+  TRIP evac:po_evac_hook BOARDING manifest h1h,h5f / 6 dockIn_h 31.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 
+HOUR 294 alive 52 DEC {"seek_berth|I will try to reach the berth.":19,"stay|I would rather remain on the island.":17,"stay|I can still defend this place.":13,"seek_berth|I need a passage out; I cannot weather another attack here.":3}
+  EV ["human.evac.intent h9:evac:po_evac_west:955","human.board h9:evac:po_evac_west:seat3:4uids"]
+  NAV {"found":1912,"queueWait":566,"foundLong":1,"SEARCH_LIMIT":3} pending 15 cells 87841 top [["h1",22989,24064],["h2f",14432,12288],["h4m",4222,3328],["h4h",4217,3328],["h2l",4164,3328],["h4o",4154,3328],["h4t",4154,3328],["h6c",4130,3584],["h6g",4120,3584],["h6h",4120,3328],["h4h",4119,3328],["h4u",4117,3328]]
+  TRIP evac:po_evac_west BOARDING manifest h2,h8,h7,h9 / 6 dockIn_h 30.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 
+  TRIP evac:po_evac_south BOARDING manifest  / 6 dockIn_h 30.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 
+  TRIP evac:po_evac_hook BOARDING manifest h1h,h5f / 6 dockIn_h 30.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 
+HOUR 295 alive 52 DEC {"seek_berth|I will try to reach the berth.":19,"stay|I would rather remain on the island.":17,"stay|I can still defend this place.":13,"seek_berth|I need a passage out; I cannot weather another attack here.":3}
+  EV ["human.evac.intent h1:evac:po_evac_west:950","human.board h1:evac:po_evac_west:seat4:2uids"]
+  NAV {"found":2451,"queueWait":455,"foundLong":1,"SEARCH_LIMIT":2} pending 12 cells 78591 top [["h4h",25248,22272],["h4s",11551,9728],["h4s",4376,3584],["h4m",4352,3584],["h2l",4164,3328],["h4o",4154,3328],["h4t",4154,3328],["h6c",4130,3584],["h6g",4120,3584],["h4u",4117,3328],["h4i",4115,3328],["h4s",4110,3328]]
+  TRIP evac:po_evac_west BOARDING manifest h2,h8,h7,h9,h1 / 6 dockIn_h 29.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 
+  TRIP evac:po_evac_south BOARDING manifest  / 6 dockIn_h 29.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 
+  TRIP evac:po_evac_hook BOARDING manifest h1h,h5f / 6 dockIn_h 29.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 
+HOUR 296 alive 51 DEC {"seek_berth|I will try to reach the berth.":17,"stay|I would rather remain on the island.":17,"stay|I can still defend this place.":13,"seek_berth|I need a passage out; I cannot weather another attack here.":4}
+  EV ["human.evac.release h1:downed at the berth","human.death h1:starvation","human.evac.intent h2l:evac:po_evac_west:928","human.board h2l:evac:po_evac_west:seat4:4uids"]
+  NAV {"found":2415,"queueWait":332,"SEARCH_LIMIT":2,"foundLong":1} pending 13 cells 98632 top [["h4o",29394,26880],["h4o",17357,14848],["h4h",12701,10496],["h6h",4313,3584],["h4t",4154,3328],["h6c",4130,3584],["h6g",4120,3584],["h4u",4117,3328],["h4i",4115,3328],["h4h",4108,3328],["h4s",4104,3328],["h4t",4096,3328]]
+  TRIP evac:po_evac_west BOARDING manifest h2,h8,h7,h9,h2l / 6 dockIn_h 28.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 
+  TRIP evac:po_evac_south BOARDING manifest  / 6 dockIn_h 28.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 
+  TRIP evac:po_evac_hook BOARDING manifest h1h,h5f / 6 dockIn_h 28.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 
+HOUR 297 alive 49 DEC {"stay|I would rather remain on the island.":17,"stay|I can still defend this place.":13,"seek_berth|I will try to reach the berth.":16,"seek_berth|I need a passage out; I cannot weather another attack here.":3}
+  EV ["human.evac.release h2:downed at the berth","human.death h2:starvation","human.evac.release h9:downed at the berth","human.death h9:starvation"]
+  NAV {"found":2894,"queueWait":258,"SEARCH_LIMIT":3} pending 14 cells 79785 top [["h4o",28504,25856],["h4o",11752,10240],["h6g",7553,9216],["h4o",4285,3584],["h4i",4115,3328],["h4h",4108,3328],["h6h",4105,3584],["h4s",4104,3328],["h6c",4103,3328],["h4t",4096,3328],["h5",994,1024],["h5",791,768]]
+  TRIP evac:po_evac_west BOARDING manifest h8,h7,h2l / 6 dockIn_h 27.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 
+  TRIP evac:po_evac_south BOARDING manifest  / 6 dockIn_h 27.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 
+  TRIP evac:po_evac_hook BOARDING manifest h1h,h5f / 6 dockIn_h 27.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 
+HOUR 298 alive 45 DEC {"stay|I would rather remain on the island.":17,"stay|I can still defend this place.":13,"seek_berth|I will try to reach the berth.":13,"seek_berth|I need a passage out; I cannot weather another attack here.":2}
+  EV ["human.evac.release h1h:downed at the berth","human.death h1h:starvation","human.evac.release h5f:downed at the berth","human.death h5f:starvation","human.death h4i:starvation","human.death h4u:starvation"]
+  NAV {"found":2645,"queueWait":197,"SEARCH_LIMIT":4} pending 12 cells 67532 top [["h6g",22714,25088],["h6c",7132,7936],["h6c",4301,3584],["h6h",4236,3328],["h4o",4177,3328],["h4m",4145,3328],["h6h",4130,3584],["h4h",4108,3328],["h4s",4104,3328],["h6c",4103,3328],["h4t",4096,3328],["h6",286,256]]
+  TRIP evac:po_evac_west BOARDING manifest h8,h7,h2l / 6 dockIn_h 26.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 
+  TRIP evac:po_evac_south BOARDING manifest  / 6 dockIn_h 26.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 
+  TRIP evac:po_evac_hook BOARDING manifest  / 6 dockIn_h 26.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 
+HOUR 299 alive 44 DEC {"stay|I would rather remain on the island.":17,"stay|I can still defend this place.":13,"seek_berth|I will try to reach the berth.":12,"seek_berth|I need a passage out; I cannot weather another attack here.":2}
+  EV ["human.evac.release h8:downed at the berth","human.death h8:starvation"]
+  NAV {"found":2376,"queueWait":197,"SEARCH_LIMIT":4} pending 14 cells 94959 top [["h4m",41535,37632],["h4o",22253,19712],["h6c",4286,3584],["h6g",4219,3584],["h6c",4203,3328],["h6h",4142,3584],["h4s",4104,3328],["h6c",4101,3584],["h6g",3665,3328],["h5",866,768],["h5",643,512],["h5",359,256]]
+  TRIP evac:po_evac_west BOARDING manifest h7,h2l / 6 dockIn_h 25.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 
+  TRIP evac:po_evac_south BOARDING manifest  / 6 dockIn_h 25.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 
+  TRIP evac:po_evac_hook BOARDING manifest  / 6 dockIn_h 25.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 

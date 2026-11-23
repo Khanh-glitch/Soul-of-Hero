@@ -241,3 +241,36 @@ Phiên 6 đo một bản không có luật "người sắp bước tiếp thì k
 Lượt 336 giờ chỉ đi qua đường tua ngoại tuyến, là đường không bị sửa, nên kết quả trùng khít là điều phải có; nó xác nhận bản sửa không rò sang đường đó. Phần chơi trực tiếp được kiểm bằng bài kiểm tra mới và các tệp hồi quy có gọi bước chơi trực tiếp.
 
 **Chưa kiểm:** chưa có ai nhìn cư dân đi lại bằng mắt trên máy thật sau bản sửa này. Vị trí cư dân dùng để xét trúng đòn có thể cũ tối đa 0,05 giây (lệch tối đa khoảng 3,6 điểm ảnh với người đang đi) ở những khung hình bước cư dân đang chờ. Khi có cư dân đang đánh nhau thì không có khung hình nào như vậy.
+
+---
+
+# Sương mù vẽ thành một lớp (2026-11-23) — bản `0fae459b`
+
+Creator quyết định ngày 23/11: chấp nhận cách vẽ sương mù thành một lớp, dù hình ảnh lệch tối đa 2/255 mỗi kênh màu so với cách cũ. Trước đó tôi đã bỏ cách này vì quy tắc "không đổi hình ảnh".
+
+## Đã làm gì
+
+Cách cũ vẽ sương bằng hàng nghìn ô vuông nhỏ mỗi khung hình, mỗi ô một lệnh vẽ. Cách mới tính sương vào một ảnh nhỏ rồi vẽ ảnh đó lên màn hình bằng một lệnh. Công thức sương không đổi. Mã ở `web/src/game/fog-layer.ts`.
+
+## Số đo (phiên 8, `6c4b8933` → cùng mã có thêm lớp sương, file lưu giờ 8, sương mù ở mọi dòng, thứ tự cũ, mới, mới, cũ, 1.800 khung hình)
+
+| Cảnh | FPS cũ | FPS mới | ms mỗi khung hình cũ | ms mỗi khung hình mới | Phần vẽ cũ (ms) | Phần vẽ mới (ms) |
+|---|---|---|---|---|---|---|
+| Đứng yên, 30 giây đầu | 43,5 và 41,7 | 52,6 và 52,5 | 9,47 và 9,98 | 7,90 và 7,89 | 5,70 và 5,84 | 4,05 và 4,14 |
+| Đứng yên, giây 30–60 | 45,0 và 41,8 | 54,4 và 53,1 | 8,86 và 9,62 | 6,92 và 7,33 | 5,02 và 5,37 | 3,30 và 3,44 |
+| Đi bộ | 41,0 và 40,6 | 52,6 và 52,9 | 10,13 và 10,25 | 7,87 và 7,81 | 5,90 và 6,01 | 4,02 và 4,02 |
+
+**Cách đọc:**
+
+- Khi trời sương mù, mỗi khung hình bớt khoảng 1,6–2,3 ms, FPS tăng khoảng 10 trên máy thử. Khung hình chậm nhất trong 100 khung (p95) giảm từ 15,0–16,9 ms xuống 12,2–14,1 ms.
+- Bước mô phỏng không đổi.
+- **Chỉ có lợi khi trời sương mù.** Trời khác không vẽ sương nên không đổi gì.
+- Máy thử không có card đồ hoạ; trên máy người chơi con số tuyệt đối sẽ khác.
+
+## Hình ảnh lệch bao nhiêu
+
+- `f1-fog-pixels.mjs` vẽ cùng một khung sương bằng hai cách trong trình duyệt thật: kênh màu lệch nhiều nhất là 2/255.
+- Ảnh chụp cuối lượt chạy (921.600 điểm ảnh): 807.936 điểm trùng hẳn, 111.832 điểm lệch 1–2 đơn vị, 1.832 điểm lệch nhiều hơn. Các điểm lệch nhiều nằm quanh nhân vật và bảng HUD, và cũng xuất hiện khi so hai lượt chạy của **cùng một bản dựng**, nên không phải do sương.
+- Tôi chỉ xem sương qua ảnh chụp của công cụ đo; **chưa ai nhìn nó bằng mắt khi chơi thật**.
+
+Số đo thô: `fps-tools/result-ab-8-fog-one-layer.jsonl`.

@@ -585,3 +585,15 @@ Trên cùng commit: hai lượt typecheck và build sạch; hồi quy 264 tệp:
 
 Bản xem trực tuyến: project Vercel `soul-of-hero`, dựng từ cùng commit, `https://soul-of-hero.vercel.app` (dựng xong; chưa có ai mở kiểm tra).
 
+### Ba quyết định của Creator ngày 23/11, sơ tán, và gói chơi được đóng lại (2026-11-23)
+
+Mã game `d00d779193af5e44cad1882e5203a572cdc16d2e` (nhánh `arena/0f6091f9-soul-of-hero`). `web/releases/Soul-of-Hero-Web.zip`: 64.361.704 byte, 220 tệp, SHA256 `846827f3d4cadc33b5c5d4deeee6a25b98fac567ac19a1475c7d4aab68cea9c8`. Thư mục `game/` trùng từng tệp với `web/dist` của cùng commit. Gói trước (`15cfece6…39a8`, từ `6c4b8933`) đã bị thay.
+
+Có gì mới so với mục trước: sương mù vẽ thành một lớp; cho uống nước là sơ cứu cho người gục vì khát (người chơi và cư dân); bỏ Plank Wall và Iron-braced Wall (file lưu cũ đổi sang Wood Wall / Stone Wall khi mở); hàng chờ tìm đường của cư dân viết lại; đường tới bến sơ tán được tìm tới 96.000 ô (mọi đường khác vẫn 48.000).
+
+Trên cùng commit: hai lượt typecheck và build sạch; hồi quy 265 tệp: 252 đạt, 0 đỏ, 13 tệp chỉ có bài tự chọn; chạy bền 336 giờ seed 7606: cổng chiến dịch 15/15, sơ tán 6, sống sót 40, chết 240. Lượt chạy bền ngay trước đó, trên `b7395731`, **trượt 14/15 (không ai sơ tán)**; nguyên nhân và hai chỗ sửa ghi ở [`TIEN_DO_SUA_LOI.md`](../../../../docs/acceptance/2026-11-21-25e24231/TIEN_DO_SUA_LOI.md), phần cuối, kèm công cụ và số đo thô ở `evac-tools/`.
+
+Thay đổi luật do agent tự quyết, chưa có Creator duyệt: giới hạn tìm đường tới bến 48.000 → 96.000 ô. Còn mở, cần Creator quyết: người đã lên tàu không ăn uống trong lúc chờ đủ 6 người (ở lượt chạy bền này 9 người lên tàu, 6 người đi được, 3 người gục trên một tàu không bao giờ đủ người); ván (Plank) không còn món nào dùng; cư dân được cứu bằng nước đứng dậy với chưa tới 1 máu.
+
+Đây chưa phải chữ ký cho 13 cổng: các lượt trình duyệt A–I, giao dịch, sơ tán thủ công và chơi tay sổ tay chương 3–11 vẫn chưa làm.
+

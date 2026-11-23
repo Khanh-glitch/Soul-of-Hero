@@ -32,3 +32,7 @@ Run one build at a time: a second process on the same machine spoils the timings
   old, new, new, old. `result-ab-7-resident-wait-final.jsonl` is `4ab22fac` against `6c4b8933` (the shipped rule);
   `result-ab-6-resident-wait-early-variant.jsonl` is an earlier variant that let walkers stand between two tiles
   (rejected: visible stutter). Each row carries the weather of the run.
+- `ab8.sh` (env `A`, `B`, `TAG`) + `result-ab-8-fog-one-layer.jsonl` — fog drawn as one layer: `6c4b8933` against the
+  same code with `fog-layer.ts`, hour-8 save (fog weather in every row), standing and walking, order old, new, new, old.
+  `f1-fog-pixels.mjs` draws the same fog frame both ways in a real browser canvas and exits 1 if any colour channel
+  differs by more than 2/255; `f2-shot-diff.mjs <a.png> <b.png>` counts differing pixels between two screenshots.

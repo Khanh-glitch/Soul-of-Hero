@@ -1,0 +1,29 @@
+// Scratch probe (not part of the repo): replay hours from an endurance save and print why residents do or do not go to the berths.
+import { it } from 'vitest';
+import fs from 'node:fs'; import { gunzipSync } from 'node:zlib';
+import { beginReceiptSink, endReceiptSink } from './src/game/engine';
+import { settle } from './src/game/sim';
+import { setActiveLayout } from './src/game/world';
+import { selectSnapshots } from './src/game/persist';
+const T0 = Date.UTC(2026, 10, 15, 8);
+it('evac', () => { (globalThis as any).__navWho = process.env.WHO;
+  const from = process.env.FROM!, hours = Number(process.env.HOURS ?? 3), watch = (process.env.WATCH ?? '').split(',').filter(Boolean);
+  const gs = selectSnapshots([gunzipSync(fs.readFileSync(from)).toString()]).gs!; setActiveLayout(gs.run!.layoutId!);
+  const h0 = Math.round((gs.run!.clock.lastSimAt - T0) / 3600000);
+  for (let h = h0 + 1; h <= h0 + hours; h++) {
+    beginReceiptSink(); let ev: any[]; try { settle(gs, T0 + h * 3600000, true); } finally { ev = endReceiptSink(); }
+    const r = gs.run!, hw = r.humanWorld!, now = T0 + h * 3600000;
+    const alive = Object.values(hw.people).filter(p => p.state !== 'DEAD' && p.state !== 'EVACUATED');
+    const dec: Record<string, number> = {}; for (const p of alive) { const k = p.civilDecision ? `${p.civilDecision.kind}|${p.civilDecision.reason}` : 'none'; dec[k] = (dec[k] ?? 0) + 1; }
+    console.log('HOUR', h, 'alive', alive.length, 'DEC', JSON.stringify(dec));
+    console.log('  EV', JSON.stringify(ev.filter(e => /evac|board|death|medical.water/.test(e.kind)).map(e => `${e.kind} ${String(e.detail).slice(0, 70)}`)).slice(0, 1500));
+    { const P = (globalThis as any).__navPending as Map<string, any> | undefined; const sizes = P ? [...P.entries()].map(([k, v]) => [k.split(':')[3], v.points.size, v.expanded] as const).sort((a, b) => b[1] - a[1]) : [];
+      console.log('  NAV', JSON.stringify((globalThis as any).__nav), 'pending', sizes.length, 'cells', sizes.reduce((a, x) => a + x[1], 0), 'top', JSON.stringify(sizes.slice(0, 12))); for (const k of Object.keys((globalThis as any).__nav ?? {})) delete (globalThis as any).__nav[k]; }
+    { const T = (globalThis as any).__turns ?? {}; console.log('  TURNS', Object.values(T).reduce((a: number, b: any) => a + b, 0), JSON.stringify(Object.entries(T).sort((a: any, b: any) => b[1] - a[1]).slice(0, 14))); for (const k of Object.keys(T)) delete T[k]; }
+    for (const t of Object.values(hw.evacuation)) { const hold = t.vessel && r.custody[t.vessel.holdId];
+      console.log('  TRIP', t.tripId, t.phase, 'manifest', (t.manifest ?? []).map(p => p.actorId).join(','), '/', t.capacity, 'dockIn_h', t.dockUntil ? ((t.dockUntil - now) / 3600000).toFixed(1) : '-', 'hold', hold ? hold.slots.filter(Boolean).map((s: any) => `${s.key}x${s.charge ?? s.qty}`).join(' ') : 'none', 'hull', t.vessel?.hull, 'fail', t.failureReason ?? ''); }
+    const blocks: Record<string, number> = {}; for (const p of alive) if (p.civilDecision?.kind === 'seek_berth' && p.state !== 'ON_VESSEL') { const k = `${p.state}/${p.intent?.kind ?? '-'}/${p.lastWorkBlock ?? ''}/retry${Object.keys(p.berthRetryAt ?? {}).length}`; blocks[k] = (blocks[k] ?? 0) + 1; }
+    console.log('  SEEKERS_ASHORE', JSON.stringify(blocks).slice(0, 900));
+    for (const id of watch) { const p = hw.people[id]; if (p) console.log('  W', id, p.state, p.occupation, 'hp', Math.round(p.hp), 'hu', Math.round(p.hunger), 'th', Math.round(p.thirst), p.gx, p.gy, 'f', p.floor, 'intent', p.intent?.kind, p.intent?.target, 'dec', p.civilDecision?.kind, p.civilDecision?.reason, '|', p.lastWorkBlock ?? '', JSON.stringify(p.berthRetryAt ?? {})); }
+  }
+}, 2147483647);

@@ -172,6 +172,7 @@ Dân vẫn chết vì đói khát với số lượng như cũ.
 - Cơ chế: người khát = 0 gục "vì đói khát" → đồng đội sơ cứu (tốn một liều thuốc) → đứng dậy nhưng vẫn khát = 0 → vài phút sau gục lại. Vòng này **đã có ở bản cũ** (389 lượt gục, 265 lượt chữa). Bản mới dân đi lại thông hơn và còn hoạt động ở cuối game (h288–336: 104 chuyến thu hoạch so với 10) nên người cứu tới được nhiều lần hơn.
 - Chưa kiểm tra từng khoảng còn lại (h48–96) bằng cách ghi tên; kết luận cho khoảng đó là suy ra từ hai khoảng đã đo.
 - Điểm đáng cân nhắc về thiết kế (chưa sửa, cần Creator quyết): sơ cứu cho người sắp chết khát không cho họ uống nước, nên mỗi lần cứu chỉ mua thêm vài phút và tốn một liều thuốc.
+  **Đã sửa ngày 23/11 theo quyết định của Creator** — xem phần "Ba quyết định của Creator ngày 23/11" ở cuối tài liệu.
 
 **Bài kiểm thử phải chỉnh mốc thời gian** (cùng chuỗi sự kiện, khác giây): `npc-guard-response` (điểm kiểm +1 giây), `npc-natural-cook` (theo dõi món ăn tới khi vào kho thay vì mốc cố định), `npc-natural-procurement` (dừng ở món đầu tiên có Tin Can), `npc-hook-boar-stew` (cho 5 phút để nồi được bắc; đầu bếp đang chờ có thể đã nhường một bước), `npc-natural-harvest` (chỉ xét dòng thu hoạch, vì món nấu đầu tiên nay kịp vào sổ kho trong 2 phút). Bài mới: `npc-offline-beat` (3 bài).
 
@@ -321,3 +322,165 @@ Creator trả lời ngày 22/11: bản xem thử "ổn hơn tí"; đồng ý cho
 - **ZIP phát hành** `web/releases/Soul-of-Hero-Web.zip` đã đóng lại từ bản dựng của `6c4b8933`: 64.359.032 byte, 220 tệp, SHA256 `15cfece6d9c16787851bc7563cdf493407a1a4ca944f584704e08279952739a8`. Thư mục `game/` trong ZIP trùng từng tệp với `web/dist`; có đủ ba tệp luồng phụ (`offline-return-worker`, `region-prebuild.worker`, `save-writer.worker`).
 - **Vercel:** đã tạo project `soul-of-hero` (nhóm `menden`), nối với repo, thư mục gốc `web`. Bản đầu tiên dựng từ nhánh `arena/0f6091f9-soul-of-hero` ở `6c4b8933`, trạng thái READY, địa chỉ `https://soul-of-hero.vercel.app`. Vercel tự xếp bản đầu tiên của project vào mục production. **Đính chính (23/11):** trước đây tôi ghi project không tự dựng lại khi có commit mới; điều đó sai. Mỗi lần đẩy commit lên nhánh, Vercel tự dựng một bản xem thử riêng cho nhánh (đã thấy ở commit `1296de88`, hiện thành một mục kiểm tra trên PR #65). Địa chỉ chính `soul-of-hero.vercel.app` vẫn đứng ở bản `6c4b8933`; chưa thử xem đẩy lên `main` thì địa chỉ chính có tự đổi không. **Chưa mở được địa chỉ này từ máy thử** (máy thử bị chặn mạng ra ngoài), nên mới biết là dựng xong, chưa biết là chơi được.
 - **Chưa làm:** gộp vào `main` (chờ 13 cổng và Creator duyệt); chơi tay chương 3–11 của sổ tay; các mục "Chưa làm" ở trên vẫn còn nguyên trừ ZIP và Vercel.
+
+## Ba quyết định của Creator ngày 23/11 — bản `0fae459b`, `b7395731`, `3c2fd48c`, `f00c2cf5`, `d00d7791`
+
+Creator quyết định: (1) vẽ sương mù thành một lớp; (2) cho uống nước được tính là sơ cứu cho người gục vì khát; (3) bỏ hai loại tường không dùng được; và đồng ý gộp PR #65 vào `main`.
+
+### 1. Sương mù một lớp (`0fae459b`)
+
+Khi trời sương mù, FPS trên máy thử tăng khoảng 10 (41–45 → 52–54). Trời khác không đổi. Hình ảnh lệch tối đa 2/255 mỗi kênh màu. Số đo và cách kiểm: `FPS_NGUYEN_NHAN.md`, phần cuối.
+
+### 2. Cho uống nước là sơ cứu
+
+**Người chơi (`0fae459b`):**
+
+- Người gục vì khát (khát = 0, không có vết thương đang chảy máu): trong bảng của người đó, mục Help có thêm bình nước còn nước. Đứng cạnh 6 giây.
+- Xong thì người đó đứng dậy, khát +30, bình mất một ngụm, lòng tin +5 (một lần).
+- Vẫn bị từ chối: đưa nước cho người gục đang chảy máu hoặc chưa khát tới 0; đưa đồ ăn cho bất kỳ người gục nào.
+- Câu thông báo mới ("Giving water · stay beside the patient for six seconds.") **mới có tiếng Anh**.
+
+**Cư dân (`b7395731`):**
+
+- Trước: người cứu tốn một liều thuốc, người gục đứng dậy với khát = 0, vài phút sau gục lại.
+- Nay: nếu người gục vì khát và người cứu **đang mang** đồ uống, người cứu đi tới, mất 6 giây, đưa một ngụm. Người gục đứng dậy với khát 30. Không tốn thuốc.
+- Vừa khát vừa chảy máu, người cứu có cả thuốc lẫn nước: dùng một liều thuốc và một ngụm nước trong cùng một lần tới.
+- Người cứu không mang nước: vẫn chữa bằng thuốc như cũ (người gục đứng dậy, khát vẫn = 0).
+- **Giới hạn:** cư dân không đi lấy nước ở kho để cứu; cứu bằng nước không hồi máu.
+- 6 bài kiểm tra mới trong `tests/npc-medic-response.test.ts`. Đây là **cảnh dựng sẵn**, không phải tình huống tự xảy ra khi chơi.
+- Trong lượt chạy bền 336 giờ, việc này tự xảy ra 5 lần (trên 358 lượt chữa).
+
+### 3. Bỏ hai loại tường (`0fae459b`)
+
+- Đã bỏ Plank Wall (tường ván) và Iron-braced Wall (tường gia cố sắt).
+- Tường còn lại: Wood Wall 160 máu (5 gỗ), nâng cấp lên Stone Wall 380 máu (8 đá + 1 gỗ).
+- File lưu cũ có hai loại tường đó: khi mở, chúng thành Wood Wall / Stone Wall, máu không vượt mức tối đa của loại mới. Bài kiểm tra: `tests/retired-walls.test.ts`.
+- **Còn mở:** ván (Plank) vẫn chế được nhưng **không còn món nào dùng ván**. Bỏ ván cần Creator quyết.
+- Đã xoá bài `mec01-r8e-plank-upkeep`; viết lại bài tường ván; số giờ tự chủ trong bài kinh tế M3 đổi 27,04 → 28,01 giờ.
+
+### 4. Nghiệm thu lượt 10 trên `b7395731`: cổng chiến dịch 14/15
+
+- Hồi quy 264 tệp: 250 đạt, 13 tệp tự chọn, **1 đỏ** (`npc-runtime-throughput`: giới hạn cứng 90 giây; chạy lúc máy đang gánh endurance mất 103 giây). Chạy riêng: đạt, 82 giây.
+- Chạy bền 336 giờ: thoát mã 0. **Cổng 14/15.** Điều kiện trượt: "cùng một ván có người sơ tán tới nơi VÀ có dân được phòng thủ sống sót". Có 4 người được phòng thủ sống sót, nhưng **không ai sơ tán được** (lượt trước: 6 người).
+
+| | `6c4b8933` (lượt 9) | `b7395731` (lượt 10) |
+|---|---|---|
+| Sơ tán / sống sót / chết | 6 / 33 / 247 | 0 / 34 / 252 |
+| Lượt gục | 588 | 474 |
+| Lượt chữa | 402 | 358 |
+| Trong đó cứu bằng nước | 0 | 5 |
+
+Hai lượt giống nhau từng giờ tới giờ 12, khác nhau từ giờ 13 (lần cứu bằng nước đầu tiên). Số lượt gục giảm 19 %.
+
+### 5. Sơ tán: vì sao lượt 10 không ai đi được, và hai chỗ đã sửa
+
+Công cụ và số đo thô: `evac-tools/`. Mọi thứ dưới đây là chạy lại từ file lưu giờ 288 của hai lượt (lúc tàu mở), không phải chơi trên trình duyệt. "Giờ 290" nghĩa là trong khoảng từ giờ 289 tới giờ 290.
+
+**Luật sơ tán đang có (không đổi):**
+
+- Giờ 288 ba tàu mở. Một tàu chỉ rời bến khi **đủ 6 người**, hoặc tới giờ 324 thì chở bất kỳ ai đang ở trên tàu.
+- Người đã lên tàu thì **không ăn uống** trong lúc chờ. Đói hoặc khát về 0 thì gục và bị đưa lên bờ. Trong các lần chạy lại, người lên tàu gục sau 1–9 giờ.
+
+**Nguyên nhân chính: cư dân không "nghĩ" được đường đủ xa.**
+
+- Một lượt tìm đường dừng ở 48.000 ô đã xét. Giới hạn này có từ ngày 17/11, trước đợt nghiệm thu.
+- Bến tây cách phần lớn khu dân cư hơn 900 bước. Số ô cần xét để tìm ra đường, đo từng người (`evac-tools/result-run10-state-limit-lifted-probe-5h.txt` và `result-run10-state-limit-96000-10h.txt`):
+
+| Ai (lượt 10, giờ 288) | Đường dài | Số ô cần xét | Với giới hạn 48.000 |
+|---|---|---|---|
+| h7, h8, h2 | 950–965 bước | 32.006–34.375 | Tìm được |
+| h2l | 927 bước | 48.990 | **Không** (thiếu 990 ô) |
+| h4u | 1.086 bước | 60.591 | Không |
+| h4s | 1.097 bước | 62.208 | Không |
+| h4w | 1.333 bước | 84.835 | Không |
+
+- Nên chỉ vài người ở gần nhất mới lên đường được. Lượt 9 có đúng 6 người như vậy (h2, h7, h8, h9, h2l, h4i) và tàu đủ 6 ở giờ 294. Trong lần chạy lại, h2l tìm ra đường ở ô thứ 47.737, **sát giới hạn**.
+- Lượt 10: h9 bị thương lần thứ tư và gục lúc giờ 15,8, không được cứu dậy, đã chết trước giờ 264 (ở lượt 9 h9 chỉ có ba vết thương, đều đã chữa). h2l đứng lệch **một ô** so với lượt 9 và hết 48.000 ô. Tàu tây chưa lúc nào đủ 6 người.
+
+Bốn lượt gần nhất (`eca8d96`, `0d9cc3b3`, `4ab22fac`, `6c4b8933`) cho cùng kết cục 6 / 33 / 247, và hai lượt cuối trùng mã băm từng giờ. Đó gần như là **một** diễn biến được chạy lại, không phải bốn lần thử độc lập. Lượt 10 là lần đầu diễn biến đổi sớm. **Tôi đã báo 15/15 mà không biết nó mong manh như vậy.**
+
+**Nguyên nhân phụ, do chính PR này gây ra: hàng chờ tìm đường.**
+
+- Để file lưu không vượt 5 MB, bản `43e47139` giới hạn tổng số ô của các lượt tìm đường đang dở ở 160.000 và cho xếp hàng.
+- Hàng chờ đó có hai chỗ sai. (a) Nó cho 4–5 lượt cỡ gần bằng nhau cùng lớn, vượt giới hạn. (b) Khi vượt, nó bỏ lượt "lâu chưa được hỏi nhất"; nhưng ai trong hàng cũng hỏi mỗi giây, nên lượt bị bỏ là ngẫu nhiên, nhiều khi là lượt đã xét 20.000–34.000 ô và sắp xong.
+- Đo trên trạng thái giờ 288 của lượt 10: mỗi giờ bỏ 13–23 lượt, mất 225.000–313.000 ô công; 23 người muốn đi, **4 giờ chỉ 1 người lên tàu**.
+- Người đang xếp hàng dùng lượt nghĩ của mình (mỗi giây một lượt cho cả nhóm ở xa người chơi) chỉ để nhận câu "chờ đi".
+
+**Sửa lần 1 (`3c2fd48c`) — hàng chờ:**
+
+- Chỉ hai lượt tìm đường dài nhất được chạy; các lượt khác xếp hàng.
+- Người đang xếp hàng dùng lượt nghĩ của mình để **tìm giúp** lượt dài nhất. Việc giúp không bao giờ kết thúc một lượt tìm: nó dừng ngay trước đích, và chủ của lượt đó tự nhận kết quả ở lượt nghĩ kế tiếp.
+- Khi vượt 160.000 ô: bỏ trước các lượt không còn ai hỏi; rồi làm rỗng các lượt đang xếp hàng (nhỏ nhất trước), chúng giữ chỗ và bắt đầu lại khi tới lượt; lượt đang chạy chỉ bị bỏ khi không còn gì khác.
+- Riêng bản này chưa đủ: trạng thái lượt 10 có 4 người lên tàu tây trong 3 giờ (trước đó: không ai trong 4 giờ), nhưng vẫn không đủ 6.
+
+**Sửa lần 2 (`f00c2cf5`, thu hẹp lại ở `d00d7791`) — đường tới bến tàu được tìm xa gấp đôi:**
+
+- Một lượt tìm đường **tới bến sơ tán** được xét tới 96.000 ô. Mọi đường khác (đi làm, đi lấy đồ, về nhà) vẫn 48.000 như cũ.
+- Tổng 160.000 ô **không đổi**, nên file lưu không lớn hơn. Để giữ được điều đó: khi hai lượt đang chạy cộng lại quá 90.000 ô thì lượt nhỏ hơn đứng yên (giữ nguyên phần đã tìm) và chạy tiếp khi lượt lớn xong.
+- Định dạng file lưu không đổi. File lưu cũ mở bình thường.
+- **Đây là thay đổi luật của game do tôi tự quyết, chưa xin ý kiến trước:** cư dân ở xa hơn nay tìm được đường tới bến. Nếu Creator không muốn, đổi lại là một dòng (và cổng chiến dịch sẽ lại phụ thuộc vào may rủi như mục trên).
+
+**Một bước sai của tôi ở giữa:** bản `f00c2cf5` nâng giới hạn cho **mọi** đường đi. Chạy bền trên bản đó cho thấy ngay trong 3 giờ đầu: diễn biến y hệt lượt 10 (biên nhận và trạng thái cư dân trùng nhau suốt 85 giờ đã chạy), nhưng giờ đầu tiên tính lâu hơn 30 % (bài `npc-runtime-throughput` đo liền nhau dưới cùng tải: 122–129 giây so với 96 giây). Lý do: vài đường đi làm chạy tiếp tới 96.000 ô rồi vẫn thất bại, và một lượt tìm dài gấp đôi tốn công khoảng gấp bốn. Tôi dừng lượt chạy đó và thu hẹp lại chỉ còn đường tới bến. Đo lại liền nhau: bản cuối 82,7 và 90,4 giây, bản `b7395731` 94,6 giây — không chậm hơn (máy thử dao động; bài này có giới hạn cứng 90 giây và vốn sát mức).
+
+**Kết quả chạy lại 10 giờ từ giờ 288:**
+
+| Trạng thái | Mã `b7395731` | Sau sửa lần 1 | Sau sửa lần 2 (bản cuối `d00d7791`) |
+|---|---|---|---|
+| Lượt 9 | Tàu tây đủ 6, rời bến giờ 294 | Rời bến giờ 291 | Rời bến giờ 290, 6 người cập bến giờ 294 |
+| Lượt 10 | 4 giờ: 1 người lên tàu Hook, 0 người tàu tây | Tàu tây 4 người, không bao giờ đủ 6, gục dần từ giờ 295 | Rời bến giờ 290, 6 người cập bến giờ 294 |
+
+- Số ô đang giữ cao nhất: 160.288 (trước khi cắt về 160.000). Không lượt tìm đang chạy nào bị bỏ.
+- Số người tìm được đường tới bến tây trong hai giờ đầu: 3–4 người → 6 người ở cả hai trạng thái (đủ một tàu; sau đó tàu đã đi).
+
+**Chưa sửa, cần Creator quyết:**
+
+- **Người trên tàu vẫn không ăn uống khi chờ.** Trong cả hai lần chạy lại, 2–3 người lên tàu Hook không bao giờ đủ 6, gục sau 6–9 giờ và chết đói. Hướng xử lý (cho ăn từ hàng trên tàu, hoặc cho tàu rời bến sớm khi chờ quá lâu) là luật chơi.
+- Vẫn còn người xét hết giới hạn mà không tới bến nào: 21 lượt tìm (trạng thái lượt 9) và 32 lượt tìm (trạng thái lượt 10) trong 10 giờ, phần lớn là tới bến nam.
+
+**Hai cách đã thử rồi bỏ:**
+
+- Hai lượt chạy, người xếp hàng chỉ chờ và hỏi lại mỗi 60 giây. Trên trạng thái lượt 9 nó chậm hơn cả mã cũ: tới giờ 296 mới có người thứ sáu lên tàu, đúng lúc một người trên tàu gục. Số đo: `evac-tools/result-run9-state-rejected-variant-11h.txt`.
+- Khi hai lượt cộng lại quá ngưỡng thì lượt nhỏ **nhường hẳn chỗ**. Các lượt đang xếp hàng tưởng có chỗ trống, bắt đầu lại rồi bị làm rỗng liên tục, và lượt nhỏ kia mất hết phần đã tìm. Bài kiểm tra mới bắt được lỗi này.
+
+**Bài kiểm tra** `tests/navigation-queue.test.ts` (6 bài, cảnh dựng sẵn trên đảo thật ở ngày đầu):
+
+- 40 người cùng xin một đường dài 1.025 bước: cả 40 nhận đúng con đường mà một người đi một mình nhận được; tổng số ô không lúc nào vượt 160.000; hai lượt dẫn đầu không bao giờ bị bỏ; không lượt nghĩ nào bị phí.
+- Một người cách bến 1.380 bước tìm ra đường ở ô thứ 89.069, kể cả khi lưu rồi mở lại giữa chừng.
+- Cùng người đó đi tới một ô cách bến hai ô (không phải bến): dừng ở 48.000, dù có người tìm giúp hay không.
+- Hai lượt cùng chạy tới giới hạn, 10 người xếp hàng phía sau: không lượt nào mất ô nào (hai lượt giữ nhiều nhất 144.847 ô, tổng 159.993).
+- Làm hỏng thử 11 chỗ, bài kiểm tra đỏ ở cả 11: tắt phần tìm giúp; dùng lại luật bỏ cũ; cho phần tìm giúp đi quá đích (ba chỗ này thử trên `3c2fd48c`); ngưỡng 120.000; giới hạn bến 48.000; bộ đọc file lưu chỉ nhận 48.256; mọi đường đều được 96.000; người tìm giúp dừng lượt tới bến ở 48.000; người tìm giúp đẩy mọi lượt tới 96.000; lượt đứng yên vẫn tự lớn; lượt đứng yên nhường chỗ.
+
+### 6. Nghiệm thu lượt 13 trên `d00d7791`
+
+**Chạy bền 336 giờ (seed 7606, không người chơi):** thoát mã 0, 4.672 giây. Cổng chiến dịch **15/15**.
+
+| | `6c4b8933` (lượt 9) | `b7395731` (lượt 10) | `d00d7791` (lượt 13) |
+|---|---|---|---|
+| Cổng chiến dịch | 15/15 | 14/15 | **15/15** |
+| Sơ tán / sống sót / chết | 6 / 33 / 247 | 0 / 34 / 252 | **6 / 40 / 240** |
+| Lượt gục | 588 | 474 | 432 |
+| Lượt chữa | 402 | 358 | 284 |
+| Trong đó cứu bằng nước | 0 | 5 | 4 |
+| File lưu lớn nhất | 4,14 MB (giờ 312) | 4,13 MB (giờ 321) | 4,27 MB (giờ 302) |
+
+- Lượt 13 **trùng mã băm từng giờ với lượt 10 tới hết giờ 288**, khác từ giờ 289. Tức hai chỗ sửa không đổi gì trong 12 ngày đầu; chúng chỉ có tác dụng khi tàu mở.
+- Tàu tây đủ 6 người và rời bến trong giờ 290, cập bến trong giờ 294, đúng như lần chạy lại đã báo trước. Hành khách: h2l, h4w, h4u, h2, h7, h8. Ba người trong đó (h2l, h4w, h4u) là người mà giới hạn cũ không cho tìm ra đường.
+- 5 người được phòng thủ sống sót (h2c, h4h, h5h, h6p, h6s).
+- **9 người lên tàu, 6 người đi được.** 3 người còn lại lên một tàu khác trong giờ 289–291; tàu đó không bao giờ đủ 6 người, và cả ba gục trên tàu ở giờ 298 và giờ 300 rồi bị đưa lên bờ. Đây là vấn đề "người trên tàu không ăn uống khi chờ" nêu ở mục 5, chưa sửa.
+- **File lưu lớn nhất tăng 0,14 MB**, còn cách mức 5 MB của localStorage 0,73 MB. 5 giờ trong 336 giờ có file lưu trên 4,0 MB (lượt 10: 4 giờ).
+- Vẫn chỉ là **một** diễn biến của một seed. Điều khác trước: tàu tây nay có 6 người tìm được đường trong 2 giờ đầu ở cả hai diễn biến đã thử, thay vì cần đúng 6 người cụ thể.
+
+**Hồi quy 265 tệp (264 cũ + `navigation-queue`):** **252 đạt, 0 đỏ**, 13 tệp chỉ có bài tự chọn (cùng 13 tệp như các lượt trước). 1.587 bài đạt, 0 bài trượt, 7.081 giây. `npc-runtime-throughput` đạt ở 93 giây tính cả khởi động (bài có giới hạn cứng 90 giây cho phần chạy; nó vẫn sát mức như trước).
+
+**Bản dựng và ZIP:** hai lượt typecheck và `build` sạch. `web/releases/Soul-of-Hero-Web.zip` đóng lại từ bản dựng của `d00d7791`: 64.361.704 byte, 220 tệp, SHA256 `846827f3d4cadc33b5c5d4deeee6a25b98fac567ac19a1475c7d4aab68cea9c8`. Thư mục `game/` trùng từng tệp với `web/dist` (216 tệp), có đủ ba tệp luồng phụ.
+
+**Kiểm trên trình duyệt, bản dựng thật (cổng 4174):**
+
+- `e1-save.mjs` (tự lưu, hai kho, tải lại, Continue): đạt, không có lỗi trang.
+- `g1-water-aid.mjs` (cho uống nước qua đúng bảng của game): đạt. **Cảnh dựng sẵn:** kịch bản tự đặt một cư dân cạnh người chơi, khát = 0, đang gục. Phần còn lại là giao diện thật: danh sách "Nearby survivors" → Help → "Offer Water Flask" → 6 giây. Kết quả: cư dân đứng dậy, khát 30, bình nước 2 → 1 ngụm, lòng tin 50 → 55, không có lỗi trang.
+- Hai điều thấy được trong lần kiểm này, **chưa sửa**:
+  - Cư dân đứng dậy với **chưa tới 1 máu** (0,56 trên 90). Trong lúc nằm gục máu vẫn tụt dần, và nước không hồi máu.
+  - Sau khi cư dân đã đứng dậy, bảng vẫn còn dòng "Giving water · stay beside the patient for six seconds."
+- Lần chạy đầu của kịch bản báo trượt vì chính kịch bản đòi khát ≥ 30, trong khi 0,6 giây sau khi uống khát đã là 29,999. Tôi sửa điều kiện của kịch bản (khát trong khoảng 29–30, bình còn 1 ngụm, lòng tin 55) rồi chạy lại. Game không đổi giữa hai lần.
+
+**Chưa làm trong đợt này:** các mục kiểm tra trên trình duyệt còn nợ từ trước vẫn còn nguyên (sổ tay chương 3–11, giao dịch với cư dân, sơ tán thủ công, Elder bơi, cảnh A–I, đánh với thú biết đánh trả, trường hợp kẹt khi gậy và rìu cùng hỏng, thực đơn xây không còn hai loại tường). Sương mù một lớp mới chỉ được xem qua ảnh chụp của công cụ đo.
