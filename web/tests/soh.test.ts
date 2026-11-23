@@ -2,9 +2,9 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { TILE, WW, WH, T, HOUR, SAVE_VERSION, type GameState } from '../src/game/core';
 import { getWorld, getActiveLayout, setActiveLayout, SRC_KEYS } from '../src/game/world';
 import { MAP_CONTENT_PACKS, validateAllContentPacks, validateContentPack } from '../src/game/content';
-import { newGame, dispatch, harvestHit, addItem, countItem, C, blockedAt, effTile, killPlayer, markDirty, endRun, sourceAt, claimAt, mkContainer, stepStations } from '../src/game/engine';
+import { newGame, dispatch, harvestHit, addItem, countItem, C, blockedAt, effTile, killPlayer, markDirty, endRun, sourceAt, claimAt, mkContainer, stepStations, mkStack } from '../src/game/engine';
 import { ITEMS, SOURCES, RECIPES, STRUCTS, validateGameplayCatalog } from '../src/game/catalog';
-import { migrate } from '../src/game/persist';
+import { migrate, validate, serializeSnapshot } from '../src/game/persist';
 import { tick, settle, decayTraces, nextContiguousTrace, HAZ, PROJ, type Input } from '../src/game/sim';
 
 const T0 = Date.UTC(2026, 10, 1, 12);
@@ -126,8 +126,8 @@ describe('salt-shale source + dried meat content chain', () => {
     expect(approach).toBeTruthy(); tp(gs, (tx + approach![0]) * TILE + 8, (ty + approach![1]) * TILE + 8);
     const px = r.player.x, py = r.player.y, aim = idle(tx * TILE + 8, ty * TILE + 8);
     const swing = (now: number) => { tick(gs, { ...aim, attackPressed: true }, 16, now); for (let frame = 0; frame < 32; frame++) tick(gs, aim, 16, now + 16 * (frame + 1)); };
-    swing(T0); // starting club cannot harvest ore
-    expect(sourceAt(r, tx, ty)?.stock).toBe(SOURCES.salt_shale.stock); // wrong tool did not debit source
+    swing(T0); // one swing of the starting Stone Axe (ore power 1) only chips the shale
+    expect(sourceAt(r, tx, ty)?.stock).toBe(SOURCES.salt_shale.stock); // a single chip does not free a unit
     addItem(r, 'inv', 'stone_pick', 1); const pickSlot = C(r, 'inv').slots.findIndex(s => s?.key === 'stone_pick'); r.player.active = pickSlot;
     for (let hit = 0; hit < 6 && !Object.values(r.entities).some(e => e.kind === 'drop' && e.c && C(r, e.c).slots[0]?.key === 'stone'); hit++) swing(T0 + 1000 * (hit + 1));
     expect(Object.values(r.entities).some(e => e.kind === 'drop' && e.c && C(r, e.c).slots[0]?.key === 'stone')).toBe(true);
@@ -175,13 +175,33 @@ describe('C01/C05 harvesting & shared hit rules', () => {
     const tx=83,ty=95; expect(sourceAt(r,tx,ty)?.key).toBe('oak'); expect(sourceAt(r,tx+1,ty)?.key).toBe('grass');
     r.player.x=(tx+1)*TILE+8; r.player.y=ty*TILE+8; r.sources[ty*WW+tx+1]={stock:0,hp:0,regrowAt:T0+300000}; markDirty();
     const aim=idle(tx*TILE+8,ty*TILE+8);tick(gs,{...aim,attackPressed:true},16,T0+1);for(let i=1;i<=24;i++)tick(gs,aim,16,T0+1+i*16);
-    expect(sourceAt(r,tx,ty)?.hp).toBe(17);expect(r.sources[ty*WW+tx+1].stock).toBe(0);setActiveLayout('shipping');
+    expect(sourceAt(r,tx,ty)?.hp).toBe(SOURCES.oak.hp-ITEMS.stone_axe.power!.wood!);expect(r.sources[ty*WW+tx+1].stock).toBe(0);setActiveLayout('shipping');
   });
-  it.each([['rock','stone'],['oak','wood']] as const)('the starting club harvests finite %s', (source,item) => {
+  // Creator ruling 2026-11-24 (follow Last Island): a run starts with a Stone Axe, and natural nodes belong to the axe line.
+  it.each([['rock','stone'],['oak','wood'],['iron','iron_ore']] as const)('the starting Stone Axe harvests finite %s', (source,item) => {
     const gs=fresh(),r=gs.run!,w=getWorld();r.creatures=[];const i=w.sourceV3.findIndex((key,j)=>key===source&&[[-1,0],[1,0],[0,-1],[0,1]].some(([dx,dy])=>!blockedAt(r,j%WW+dx,Math.floor(j/WW)+dy)));
-    expect(i).toBeGreaterThanOrEqual(0);const tx=i%WW,ty=Math.floor(i/WW),offset=[[-1,0],[1,0],[0,-1],[0,1]].find(([dx,dy])=>!blockedAt(r,tx+dx,ty+dy))!;tp(gs,(tx+offset[0])*TILE+8,(ty+offset[1])*TILE+8);const aim=idle(tx*TILE+8,ty*TILE+8),stock=sourceAt(r,tx,ty)!.stock,initial=totalItems(gs,item);expect(C(r,'inv').slots[0]?.key).toBe('wood_club');
+    expect(i).toBeGreaterThanOrEqual(0);const tx=i%WW,ty=Math.floor(i/WW),offset=[[-1,0],[1,0],[0,-1],[0,1]].find(([dx,dy])=>!blockedAt(r,tx+dx,ty+dy))!;tp(gs,(tx+offset[0])*TILE+8,(ty+offset[1])*TILE+8);const aim=idle(tx*TILE+8,ty*TILE+8),stock=sourceAt(r,tx,ty)!.stock,initial=totalItems(gs,item);expect(C(r,'inv').slots[0]?.key).toBe('stone_axe');
     for(let hit=0;hit<SOURCES[source].hp+3 && sourceAt(r,tx,ty)!.stock>0;hit++){const at=T0+hit*1000;tick(gs,{...aim,attackPressed:true},16,at);for(let frame=0;frame<32;frame++)tick(gs,aim,16,at+16*(frame+1));}
-    expect(sourceAt(r,tx,ty)!.stock).toBe(0);expect(totalItems(gs,item)-initial).toBe(stock);expect(C(r,'inv').slots[0]?.dur).toBeLessThan(ITEMS.wood_club.dur!);
+    expect(sourceAt(r,tx,ty)!.stock).toBe(0);expect(totalItems(gs,item)-initial).toBe(stock);expect(C(r,'inv').slots[0]?.dur).toBeLessThan(ITEMS.stone_axe.dur!);
+  });
+  it.each([['rock'],['oak'],['iron']] as const)('a Wood Club is a weapon: it takes nothing from %s', (source) => {
+    const gs=fresh(),r=gs.run!,w=getWorld();r.creatures=[];const i=w.sourceV3.findIndex((key,j)=>key===source&&[[-1,0],[1,0],[0,-1],[0,1]].some(([dx,dy])=>!blockedAt(r,j%WW+dx,Math.floor(j/WW)+dy)));
+    expect(i).toBeGreaterThanOrEqual(0);const tx=i%WW,ty=Math.floor(i/WW),offset=[[-1,0],[1,0],[0,-1],[0,1]].find(([dx,dy])=>!blockedAt(r,tx+dx,ty+dy))!;tp(gs,(tx+offset[0])*TILE+8,(ty+offset[1])*TILE+8);const aim=idle(tx*TILE+8,ty*TILE+8);
+    C(r,'inv').slots[0]=mkStack(r,'wood_club',1);markDirty();const before={...sourceAt(r,tx,ty)!};
+    for(let hit=0;hit<6;hit++){const at=T0+hit*1000;tick(gs,{...aim,attackPressed:true},16,at);for(let frame=0;frame<32;frame++)tick(gs,aim,16,at+16*(frame+1));}
+    expect(sourceAt(r,tx,ty)!.stock).toBe(before.stock);expect(sourceAt(r,tx,ty)!.hp).toBe(before.hp);expect(ITEMS.wood_club.power).toEqual({plant:1,scrap:2});
+  });
+  it('every wake-up after a death comes with one Stone Axe; the old gear stays in the bag', () => {
+    const gs=fresh(),r=gs.run!;r.creatures=[];const old=C(r,'inv').slots[0]!.uid;
+    killPlayer(gs,T0+1000,'test');expect(C(r,'inv').slots.every(s=>!s)).toBe(true);
+    expect(dispatch(gs,{id:id(),type:'respawn'},T0+2000).ok).toBe(true);
+    const held=C(r,'inv').slots.filter(s=>s);expect(held.map(s=>s!.key)).toEqual(['stone_axe']);expect(held[0]!.uid).not.toBe(old);expect(held[0]!.dur).toBe(ITEMS.stone_axe.dur);
+    expect(r.receipts.filter(q=>q.kind==='respawn.kit').map(q=>q.detail)).toEqual(['stone_axe:'+held[0]!.uid]);
+    // a second death and wake-up issues another one; the first now lies in its own bag
+    killPlayer(gs,T0+3000,'test');expect(dispatch(gs,{id:id(),type:'respawn'},T0+4000).ok).toBe(true);
+    expect(C(r,'inv').slots.filter(s=>s).map(s=>s!.key)).toEqual(['stone_axe']);expect(r.receipts.filter(q=>q.kind==='respawn.kit')).toHaveLength(2);
+    // a save taken after the issue loads clean
+    expect(validate(JSON.parse(JSON.parse(serializeSnapshot(gs)).payload))).toBeTruthy();
   });
   it('the same club swing damages a creature through the real input path', () => {
     const gs = fresh(); const r = gs.run!; const p = r.player;

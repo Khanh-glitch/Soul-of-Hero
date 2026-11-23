@@ -336,11 +336,11 @@ Items whose value is what they unlock or prove. None is crafted.
 | Stone Pickaxe | `stone_pick` | B | CRAFT_ONLY | Stone Pickaxe. First tool for stone and ore. | 3 Wood + 4 Stone + 1 Rope → 1 | — / NONE |
 | Iron Pickaxe | `iron_pick` | B | BOTH | Iron Pickaxe. Faster on stone and ore; can free Rich Iron Ore. | 3 Iron Ingot + 2 Wood + 1 Leather → 1 | — / NONE |
 | Salvager Pick | `industrial_pick` | B | CRAFT_ONLY | Salvager Pick. The top pick; an Iron Pick rebuilt with refined metal. | 1 Iron Pickaxe + 2 Refined Iron Ingot + 1 Metal Pipe → 1<br>*alt* 1 Iron Pickaxe + 1 Mechanical Gear + 2 Parts → 1 | — / NONE |
-| Stone Axe | `stone_axe` | A | CRAFT_ONLY | Stone Axe. First tool for trees. | 3 Wood + 3 Stone + 1 Rope → 1 | — / NONE |
+| Stone Axe | `stone_axe` | A | BOTH | Stone Axe. Issued on landing and at every wake-up; fells trees and chips stone and ore slowly. | 3 Wood + 3 Stone + 1 Rope → 1 | — / NONE |
 | Iron Axe | `iron_axe` | A | BOTH | Iron Axe. Faster on trees. | 3 Iron Ingot + 2 Wood + 1 Leather → 1 | iron_axe / DIRECT |
 | Salvager Axe | `industrial_axe` | A | CRAFT_ONLY | Salvager Axe. The top axe; an Iron Axe rebuilt with a Blade and refined metal. | 1 Iron Axe + 1 Metal Blade + 2 Refined Iron Ingot + 1 Metal Pipe → 1 | refined_iron_axe / DIRECT |
 | Torch | `torch` | A | CRAFT_ONLY | Torch. Light and a little warmth; also the flame of a Torch Post. | 1 Wood + 2 Plant Fiber → 1 | — / NONE |
-| Wood Club | `wood_club` | A | BOTH | Wood Club. Issued on landing; craft a replacement by hand from wood. | 12 Wood → 1 | wood_club / DIRECT |
+| Wood Club | `wood_club` | A | CRAFT_ONLY | Wood Club. The first weapon, made by hand from wood; also breaks open roadside salvage. | 12 Wood → 1 | wood_club / DIRECT |
 | Cleaver | `cleaver` | A | BOTH | Cleaver. A short, quick blade; the first use of a Metal Blade. | 1 Iron Ingot + 1 Metal Blade → 1 | cleaver / DIRECT |
 | Machete | `machete` | A | BOTH | Machete. The iron long blade and the best crafted melee weapon. | 4 Iron Ingot + 3 Metal Blade → 1 | machete / DIRECT |
 | Fire-hardened Spear | `wood_spear` | B | CRAFT_ONLY | Fire-hardened Spear. Reach without metal. | 4 Wood + 1 Rope → 1 | — / NONE |
@@ -705,7 +705,7 @@ Unit cost divides the bill by the yield. Knowledge: Starter = known from the fir
 | Oathless Nodachi | Side bosses | Unique drop of one side boss; equipped and used like any gear. | `catalog.ts CREATURES.boss_*.uniqueDrop` |
 | Saltwick Trident | Side bosses | Unique drop of one side boss; equipped and used like any gear. | `catalog.ts CREATURES.boss_*.uniqueDrop` |
 | Archive Lantern | Side bosses | Unique drop of one side boss; equipped and used like any gear. | `catalog.ts CREATURES.boss_*.uniqueDrop` |
-| Wood Club | Starting kit | Issued at the start of a run; the baseline tool. | `engine.ts startRun` |
+| Stone Axe | Starting kit | Issued at the start of a run and at every wake-up after a death; the baseline tool. | `engine.ts startRun / respawn` |
 | Survival Knife | Industrial salvage | Carried by resident salvagers; strips roadside salvage two points a hit, twice the Stone Axe. | `catalog.ts G1A_HARVEST, humanworld.ts salvager kit` |
 
 ## 6. Cross-family graph audit

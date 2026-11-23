@@ -583,7 +583,7 @@ function resolveSwing(gs: GameState, now: number, slot: number, a: number) {
     const x = best.tx * TILE + 8, y = best.ty * TILE + 8;
     const ignited = s?.key === 'torch' && ignite(gs, best.tx, best.ty, now);
     if (res.result === 'yield') { fx('chip', { x, y, mat: res.mat, key: res.key, depleted: res.depleted, rich: (res.quality ?? 0) > 0 }); hitAny = true; if (res.depleted) fx('fell', { x, y, key: res.key }); }
-    else if (res.result === 'nopower' && !ignited) { fx('clank', { x, y, mat: res.mat }); fx('toast', { text: res.mat === 'wood' ? 'Too slow with this — an axe would fell it.' : res.mat === 'stone' || res.mat === 'ore' ? 'You need a pickaxe for this.' : 'Wrong tool for this.', key: 'tool' + res.mat }); }
+    else if (res.result === 'nopower' && !ignited) { fx('clank', { x, y, mat: res.mat }); fx('toast', { text: res.mat === 'wood' ? 'Too slow with this — an axe would fell it.' : res.mat === 'stone' || res.mat === 'ore' ? 'You need an axe or a pickaxe for this.' : 'Wrong tool for this.', key: 'tool' + res.mat }); }
     else if (res.result === 'empty') { fx('clank', { x, y, mat: res.mat, soft: true }); fx('toast', { text: regrowNote(r, best.tx, best.ty, now) ?? 'Exhausted — no stock remains.', key: 'source-empty' }); }
     if (ignited) { hitAny = true; fx('toast', { text: 'Tree burning — E uses flask water to douse.', key: 'fire-danger' }); }
   }

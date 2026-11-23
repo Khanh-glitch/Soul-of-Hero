@@ -2181,8 +2181,8 @@
    "tags": [
     "DURABILITY_ON_ACTION"
    ],
-   "acquire_policy": "CRAFT_ONLY",
-   "player_purpose": "Stone Axe. First tool for trees.",
+   "acquire_policy": "BOTH",
+   "player_purpose": "Stone Axe. Issued on landing and at every wake-up; fells trees and chips stone and ore slowly.",
    "recipes": [
     "stone_axe"
    ],
@@ -2194,7 +2194,9 @@
     "stone",
     "rope"
    ],
-   "downstream": [],
+   "downstream": [
+    "system:Starting kit"
+   ],
    "li_id": null,
    "li_grade": "NONE",
    "li_edition": null,
@@ -4566,8 +4568,8 @@
    "tags": [
     "DURABILITY_ON_ACTION"
    ],
-   "acquire_policy": "BOTH",
-   "player_purpose": "Wood Club. Issued on landing; craft a replacement by hand from wood.",
+   "acquire_policy": "CRAFT_ONLY",
+   "player_purpose": "Wood Club. The first weapon, made by hand from wood; also breaks open roadside salvage.",
    "recipes": [
     "wood_club"
    ],
@@ -4577,9 +4579,7 @@
    "upstream": [
     "wood"
    ],
-   "downstream": [
-    "system:Starting kit"
-   ],
+   "downstream": [],
    "li_id": "wood_club",
    "li_grade": "DIRECT",
    "li_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
@@ -13702,10 +13702,10 @@
     "anchor": "catalog.ts CREATURES.boss_*.uniqueDrop"
    },
    {
-    "item": "wood_club",
+    "item": "stone_axe",
     "system": "Starting kit",
-    "what": "Issued at the start of a run; the baseline tool.",
-    "anchor": "engine.ts startRun"
+    "what": "Issued at the start of a run and at every wake-up after a death; the baseline tool.",
+    "anchor": "engine.ts startRun / respawn"
    },
    {
     "item": "knife",

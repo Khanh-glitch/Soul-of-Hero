@@ -52,7 +52,7 @@ export const QA_PRESETS: QaPresetMeta[] = [
   // nearest interactable inside 30 px, so the prompt can name only one of them).
   { id: 'research_access', title: 'Recovered Research Table · Open Ground', tag: 'PA1 PANEL EVIDENCE', desc: 'A single authorized Research Table beside the spawn on free ground: walk up to it and press E for the technology families.' },
   { id: 'death_recovery', title: 'Death & Bag Recovery Preview', tag: 'STAGED PREVIEW', desc: 'Preassembled fallen-state overlay with recoverable bag; use Full Gear to test a natural combat death.' },
-  { id: 'fresh', title: 'Fresh-Start Survival', tag: 'BASELINE', desc: 'Clean Day 1 wash-up with wood club, flask & berries.' },
+  { id: 'fresh', title: 'Fresh-Start Survival', tag: 'BASELINE', desc: 'Clean Day 1 wash-up with stone axe, flask & berries.' },
 ];
 
 function placeStruct(r: RunState, type: string, tx: number, ty: number, extra: Partial<Entity> = {}): Entity {

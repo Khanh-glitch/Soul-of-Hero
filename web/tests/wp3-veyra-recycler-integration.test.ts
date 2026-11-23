@@ -233,17 +233,17 @@ describe('WP3: End-to-End Veyra Natural-Source -> Foundry Recycler -> Floor -1 -
 
     const nowRef = { t: NOW + 1000 };
 
-    // 2. Natural tool (starter-tool law 373d999): the Wood Club strikes wood, stone and plants but cannot pry a wreck.
-    //    Gather wood, stone and fiber with the club, twist rope and knap a Stone Pickaxe by hand — no item injection.
-    expect(C(r, 'inv').slots[0]?.key).toBe('wood_club');
-    expect(ITEMS.wood_club.power?.scrap ?? 0).toBe(0);
+    // 2. Natural tool (Creator ruling 2026-11-24, follow Last Island): the run starts with a Stone Axe, which fells trees
+    //    and chips stone slowly. Gather wood, stone and fiber with it, twist rope and knap a Stone Pickaxe by hand — no item injection.
+    expect(C(r, 'inv').slots[0]?.key).toBe('stone_axe');
+    expect(ITEMS.stone_axe.power).toMatchObject({ wood: 3, stone: 1, ore: 1 });
     const WOOD_SOURCES = ['oak', 'pine', 'snowpine', 'palm', 'willow'] as const;
     const pickBill = new Map<string, number>(RECIPES.stone_pick.ins);
     const ropeBill = new Map<string, number>(RECIPES.rope.ins);
     const gather = (keys: readonly string[], item: string, want: number) => {
       for (const src of findReachableSources(r, keys, nowRef.t)) {
         if (countItem(r, 'inv', item) >= want) break;
-        harvestSourceNaturally(gs, src.tx, src.ty, 'wood_club', nowRef, [item]);
+        harvestSourceNaturally(gs, src.tx, src.ty, 'stone_axe', nowRef, [item]);
       }
       expect(countItem(r, 'inv', item), `natural ${item}`).toBeGreaterThanOrEqual(want);
     };
@@ -267,7 +267,7 @@ describe('WP3: End-to-End Veyra Natural-Source -> Foundry Recycler -> Floor -1 -
     const SALVAGE_SOURCES = ['road_relay_wreck', 'road_salvage_bale'] as const;
     for (const k of SALVAGE_SOURCES) {
       expect(SOURCES[k].harvestBy?.stone_pick ?? 0, `${k} answers to the Stone Pickaxe`).toBeGreaterThan(0);
-      expect(SOURCES[k].harvestBy?.wood_club ?? 0, `${k} ignores the Wood Club`).toBe(0);
+      expect(SOURCES[k].harvestBy?.wood_club ?? 0, `${k} answers to the Wood Club (the melee line works the roadside)`).toBe(2);
     }
     const RECYCLABLE = ['mechanical_gear', 'metal_pipe', 'iron_plate'] as const;
     const WANT_SPARES = 6;

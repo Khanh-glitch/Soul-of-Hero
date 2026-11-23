@@ -558,7 +558,7 @@ export function generateItemFunctionAuditCsv(): { csv: string; rowCount: number 
       const spec = milestoneRewardSpec(m.id);
       if (spec?.items.some(([k]) => k === itemId)) spawnParts.push(`journey:${m.id}`);
     }
-    if (itemId === 'wood_club') spawnParts.push('starter_equip(startRun_slot0)');
+    if (itemId === 'stone_axe') spawnParts.push('starter_equip(startRun_slot0)', 'respawn_kit(one_per_wake)');
     if (VENDOR_SECURED[itemId]) spawnParts.push(`vendor_secured(${VENDOR_SECURED[itemId].price}sc;stock=${VENDOR_SECURED[itemId].stock})`);
     if (VENDOR_SPARES[itemId]) spawnParts.push(`vendor_spares(${VENDOR_SPARES[itemId].price}sp->${VENDOR_SPARES[itemId].qty};stock=${VENDOR_SPARES[itemId].stock})`);
     if (itemId === 'escrow_chest') spawnParts.push(`vendor_cash(${BAL.economy.escrowChestPrice}_rcash;stock=4)`);

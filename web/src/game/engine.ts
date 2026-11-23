@@ -324,7 +324,7 @@ export function startRun(gs: GameState, character: 'male' | 'female', now: numbe
   r.spawnChoice={x:sp.tx,y:sp.ty,contract:'seeded-geographic-v1'};
   r.custody.inv = { id: 'inv', kind: 'inv', slots: Array(24).fill(null) };
   r.custody.eq = { id: 'eq', kind: 'eq', slots: EQ_SLOTS.map(() => null) };
-  r.custody.inv.slots[0] = mkStack(r, 'wood_club', 1);
+  r.custody.inv.slots[0] = mkStack(r, STARTER_TOOL, 1);
   const fl = mkStack(r, 'water_flask', 1); fl.charge = 2; r.custody.inv.slots[1] = fl;
   r.custody.inv.slots[2] = mkStack(r, 'berries', 3);
   if (VFX_TEST_KIT) { const inv = r.custody.inv.slots; inv[8] = inv[1]; inv[9] = inv[2]; VFX_TEST_CORES.forEach((k, i) => { const s = mkStack(r, k, 1); s.lvl = 3; inv[1 + i] = s; }); r.qaUsed = true; }
@@ -2214,6 +2214,18 @@ export function killPlayer(gs: GameState, now: number, cause: string) {
   receipt(r, now, 'death', `${cause}; bag=${bag?.id ?? 'none'}`);
   pushLog(r, now, bag ? `You died (${cause}). Your belongings lie in a bag where you fell.` : `You died (${cause}). You were carrying nothing.`, 'red');
 }
+/** Creator ruling 2026-11-24 (follow Last Island): every wake-up comes with one Stone Axe, so a survivor who lost or broke
+ *  every tool can always fell a tree again. Death has already moved the old gear to the ground bag, so this is the only
+ *  tool in hand; a survivor who somehow still carries a working axe is not handed a second one. */
+export const STARTER_TOOL = 'stone_axe';
+function issueStarterTool(r: RunState, now: number) {
+  const inv = C(r, 'inv');
+  if (inv.slots.some(s => s && s.key === STARTER_TOOL && s.dur !== 0)) return;
+  const at = inv.slots.findIndex(s => !s); if (at < 0) return;
+  const s = mkStack(r, STARTER_TOOL, 1); inv.slots[at] = s; markDirty();
+  receipt(r, now, 'respawn.kit', `${STARTER_TOOL}:${s.uid}`);
+  pushLog(r, now, `You wake with a ${ITEMS[STARTER_TOOL].name} in hand.`, 'gold');
+}
 export function respawn(gs: GameState, now: number): Result {
   const r = gs.run!; const p = r.player; if (!p.dead) return { ok: false, reason: 'Not dead.' };
   const isVeyra = !!r.layoutId && isVeyra05Layout(r.layoutId);
@@ -2249,7 +2261,9 @@ export function respawn(gs: GameState, now: number): Result {
   }
   const { x, y } = wake;
   Object.assign(p, { x, y, dead: false, hp: 60, stamina: 60, hunger: Math.max(p.hunger, 40), thirst: Math.max(p.thirst, 40), warmth: 80, rad: Math.min(p.rad, 20), invuln: 2000 });
-  return { ok: true, receipt: receipt(r, now, 'respawn', `${Math.round(x)},${Math.round(y)}`) };
+  const rc = receipt(r, now, 'respawn', `${Math.round(x)},${Math.round(y)}`);
+  issueStarterTool(r, now);
+  return { ok: true, receipt: rc };
 }
 
 // ---------------- run end (C22/C23) ----------------

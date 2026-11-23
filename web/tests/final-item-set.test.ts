@@ -195,10 +195,11 @@ describe('IV — Veyra: measured from the real window data, not from the catalog
 });
 
 describe('VI — engine scenarios on the Veyra world (two spawns, real intents, fixture stations)', () => {
-  it('S1 club survival, spawn A: grass gives fiber and — sometimes — a Sunroot seed; wood becomes a club; no Core needed', () => {
+  it('S1 first hours, spawn A: the start kit is a Stone Axe; grass gives fiber and — sometimes — a Sunroot seed; wood becomes a club; no Core needed', () => {
     const gs = veyraRun('male', 4021), r = gs.run!, ww = getWindowWorld(r.layoutId!)!;
     expect(C(r, 'inv').slots.some(s => s && (ITEMS[s.key].creatorCore || ITEMS[s.key].core)), 'no Core in the start kit').toBe(false);
-    for (const id of NEW_IDS) expect(inv(gs, id), 'start kit: ' + id).toBe(id === 'wood_club' ? 1 : 0);
+    for (const id of NEW_IDS) expect(inv(gs, id), 'start kit: ' + id).toBe(0);
+    expect(C(r, 'inv').slots[0]?.key, 'Creator ruling 2026-11-24: the start tool is the Stone Axe').toBe('stone_axe');
     const tool = ITEMS[C(r,'inv').slots[0]!.key].power!; let seeds = 0, fiber = 0, hits = 0;
     const src = ww.floors.ground.sources;
     for (let i = 0; i < src.length && seeds < 1; i++) if (src[i] === 'grass') {
@@ -208,10 +209,10 @@ describe('VI — engine scenarios on the Veyra world (two spawns, real intents, 
       seeds = inv(gs, 'seed_sunroot'); fiber = inv(gs, 'fiber') + 0;
       if (fiber > 30) { /* keep the pack from filling with fiber */ const sl = C(r, 'inv').slots.findIndex(s => s?.key === 'fiber'); C(r, 'inv').slots[sl] = null; }
     }
-    expect(seeds, 'a Sunroot seed from wild grass with the starting club').toBeGreaterThan(0);
+    expect(seeds, 'a Sunroot seed from wild grass with the starting axe').toBeGreaterThan(0);
     expect(inv(gs, 'seed'), 'the generic seed no longer exists').toBe(0);
     give(gs, 'wood', 12); expect(act(gs, 'craft', { recipe: 'wood_club' }).ok).toBe(true);
-    expect(inv(gs, 'wood_club')).toBe(2); expect(inv(gs, 'wood')).toBe(0);
+    expect(inv(gs, 'wood_club')).toBe(1); expect(inv(gs, 'wood')).toBe(0);
     expect(C(r, 'inv').slots.find(s => s?.key === 'wood_club')!.dur).toBe(ITEMS.wood_club.dur);
   });
   it('S1b spawn B: a boar pays fat, the fat renders into a canister at a furnace, and a second spawn point works the same', () => {

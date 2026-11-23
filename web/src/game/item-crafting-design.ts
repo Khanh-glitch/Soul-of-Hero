@@ -243,11 +243,11 @@ export const ITEM_DESIGN: Readonly<Record<string, Row>> = Object.freeze({
   stone_pick: ['CRAFT_ONLY', 'Stone Pickaxe. First tool for stone and ore.'],
   iron_pick: ['BOTH', 'Iron Pickaxe. Faster on stone and ore; can free Rich Iron Ore.'],
   industrial_pick: ['CRAFT_ONLY', 'Salvager Pick. The top pick; an Iron Pick rebuilt with refined metal.'],
-  stone_axe: ['CRAFT_ONLY', 'Stone Axe. First tool for trees.'],
+  stone_axe: ['BOTH', 'Stone Axe. Issued on landing and at every wake-up; fells trees and chips stone and ore slowly.'],
   iron_axe: ['BOTH', 'Iron Axe. Faster on trees.'],
   industrial_axe: ['CRAFT_ONLY', 'Salvager Axe. The top axe; an Iron Axe rebuilt with a Blade and refined metal.'],
   torch: ['CRAFT_ONLY', 'Torch. Light and a little warmth; also the flame of a Torch Post.'],
-  wood_club: ['BOTH', 'Wood Club. Issued on landing; craft a replacement by hand from wood.'],
+  wood_club: ['CRAFT_ONLY', 'Wood Club. The first weapon, made by hand from wood; also breaks open roadside salvage.'],
   cleaver: ['BOTH', 'Cleaver. A short, quick blade; the first use of a Metal Blade.'],
   machete: ['BOTH', 'Machete. The iron long blade and the best crafted melee weapon.'],
   wood_spear: ['CRAFT_ONLY', 'Fire-hardened Spear. Reach without metal.'],
@@ -526,7 +526,7 @@ export const SYSTEM_CONSUMERS: readonly { item: string; system: string; what: st
   { item: 'torch', system: 'Light and heat', what: 'Held for light and warmth.', anchor: 'catalog.ts ITEMS.torch, thermal.ts' },
   ...['stone_surtur', 'stone_typhon', 'stone_aion', 'stone_atlas', 'stone_argus', 'stone_anubis'].map(item => ({ item, system: 'Primordial Elders', what: 'Claimed from its Elder; the record of that fight.', anchor: 'catalog.ts PRIMORDIAL_ELDERS' })),
   ...['relic_shaleheart', 'ronin_nodachi', 'tidemarshal_trident', 'custodian_lantern'].map(item => ({ item, system: 'Side bosses', what: 'Unique drop of one side boss; equipped and used like any gear.', anchor: 'catalog.ts CREATURES.boss_*.uniqueDrop' })),
-  { item: 'wood_club', system: 'Starting kit', what: 'Issued at the start of a run; the baseline tool.', anchor: 'engine.ts startRun' },
+  { item: 'stone_axe', system: 'Starting kit', what: 'Issued at the start of a run and at every wake-up after a death; the baseline tool.', anchor: 'engine.ts startRun / respawn' },
   { item: 'knife', system: 'Industrial salvage', what: 'Carried by resident salvagers; strips roadside salvage two points a hit, twice the Stone Axe.', anchor: 'catalog.ts G1A_HARVEST, humanworld.ts salvager kit' },
 ]);
 

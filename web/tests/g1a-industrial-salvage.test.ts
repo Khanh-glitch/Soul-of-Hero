@@ -100,7 +100,8 @@ describe('G1A catalog contract', () => {
     expect(ITEMS.knife.power).toMatchObject({ scrap: 1 }); expect(ITEMS.stone_pick.power).toMatchObject({ scrap: 2 }); expect(ITEMS.iron_pick.power).toMatchObject({ scrap: 4 }); expect(ITEMS.industrial_pick.power).toMatchObject({ scrap: 7 });
     expect(ITEMS.cleaver.power).toEqual({ plant: 3 }); expect(ITEMS.machete.power).toEqual({ plant: 3 });
     expect([ITEMS.knife.dmg, ITEMS.cleaver.dmg, ITEMS.machete.dmg]).toEqual([9, 17, 24]);
-    expect(G1A_HARVEST).toEqual({ stone_axe: 1, stone_pick: 1, knife: 2, cleaver: 3, machete: 4, iron_pick: 1, industrial_pick: 1 });
+    // Creator ruling 2026-11-24 (follow Last Island): the melee line works the roadside, so the Wood Club joins the table at 2.
+    expect(G1A_HARVEST).toEqual({ stone_axe: 1, stone_pick: 1, knife: 2, wood_club: 2, cleaver: 3, machete: 4, iron_pick: 1, industrial_pick: 1 });
   });
 });
 

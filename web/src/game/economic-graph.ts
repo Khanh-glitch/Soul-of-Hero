@@ -2457,7 +2457,7 @@ function computeReachabilityDiagnostics(nodes: EconNode[], edges: EconEdge[]): E
 
   const solveReachable = (edgeFilter: (e: EconEdge) => boolean): { items: Set<string>; craftableRecipes: Set<string> } => {
     const activeEdges = edges.filter(edgeFilter);
-    const items = new Set<string>(['wood_club', 'water_flask', 'berries']); // starter pack
+    const items = new Set<string>(['stone_axe', 'water_flask', 'berries']); // starter pack
     const knownRecipes = new Set<string>(ALWAYS_KNOWN_RECIPES);
     const currencies = new Set<string>(['secured_cash']);
 
