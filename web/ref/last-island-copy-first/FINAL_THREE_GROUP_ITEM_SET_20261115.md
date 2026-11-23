@@ -2,6 +2,8 @@
 
 **Khóa phạm vi thiết kế:** 15/11/2026 · **quy tắc từ Creator trong cuộc hội thoại này** · dựa trên `web/ref/bible.md` và nguồn LI đã import trong PR #62. **Đây là quyết định thiết kế final; chưa có nghĩa code production đã đổi hoặc 157 item playable.**
 
+**Sửa đổi sau bản `98ee24ac` (Creator: "bỏ cuốc và dung hợp chức năng nó với rìu"):** `stone_pick`, `iron_pick`, `industrial_pick` rời danh sách final và vào danh sách retired; save cũ đổi 1:1 sang `stone_axe`, `iron_axe`, `industrial_axe`. Các con số bên dưới ghi theo ngày 15/11; con số hiện hành là **154 = 78 A + 39 B + 37 C**, retired **22**. Tệp JSON cùng tên đã cập nhật theo con số hiện hành.
+
 ## Nguyên tắc duy nhất
 
 **(A)** Item giữ như Last Island nếu vai trò và nguồn/công thức gốc đủ phù hợp. **(B)** Chỉ chuyển hóa item khi gameplay SOH thật sự khác: cặp **súng/đạn LI ⇒ Core/năng lượng SOH**, PvE không PvP, Core tác động môi trường, một bàn nghiên cứu dùng chung, turret dùng Arrow, keycard phù hợp POI, v.v. **(C)** Chỉ phát minh item nếu cần cho hệ riêng SOH: mùa/vườn/chăn nuôi/vật mẫu của Veyra, side boss, sáu Elder, Ragnarok.
@@ -149,9 +151,9 @@ Không copy cả vật phẩm cũ lẫn vật phẩm thay thế nếu chúng ph�
 | `water_flask` | Water Flask | Catalog SOH hiện có | Bình nước khởi đầu dùng nước thật K5 |
 | `antirad` | Purge Tonic | Catalog SOH hiện có | Thuốc giảm phơi nhiễm theo hazard K2/K5 |
 | `knife` | Survival Knife | Catalog SOH hiện có | Dao sinh tồn ban đầu đa chức năng, vẫn tự vệ khi chưa có Core |
-| `stone_pick` | Stone Pickaxe | Catalog SOH hiện có | Cuốc đá chuyên khai mỏ trong world K3 |
-| `iron_pick` | Iron Pickaxe | Catalog SOH hiện có | Cuốc sắt nâng khai thác quặng |
-| `industrial_pick` | Salvager Pick | Catalog SOH hiện có | Cuốc khai thác nâng cao; dùng chất lượng công cụ, không bắt Gear vô cớ |
+| ~~`stone_pick`~~ | ~~Stone Pickaxe~~ | Catalog SOH hiện có | **RETIRED sau bản `98ee24ac`:** gộp vào rìu cùng cấp (xem "Sửa đổi" ở đầu tệp) |
+| ~~`iron_pick`~~ | ~~Iron Pickaxe~~ | Catalog SOH hiện có | **RETIRED sau bản `98ee24ac`:** gộp vào rìu cùng cấp (xem "Sửa đổi" ở đầu tệp) |
+| ~~`industrial_pick`~~ | ~~Salvager Pick~~ | Catalog SOH hiện có | **RETIRED sau bản `98ee24ac`:** gộp vào rìu cùng cấp (xem "Sửa đổi" ở đầu tệp) |
 | `wood_spear` | Fire-hardened Spear | Catalog SOH hiện có | Giáo đầu run tạo tầm đánh khác LI Wood Club |
 | `bow` | Hunting Bow | Catalog SOH hiện có | Vũ khí bắn xa tiêu Arrow cho đường PvE không Core |
 | `reinforced_spear` | Reinforced Spear | Catalog SOH hiện có | Giáo cao cấp cho tuyến PvE không Core, có tầm đánh riêng |

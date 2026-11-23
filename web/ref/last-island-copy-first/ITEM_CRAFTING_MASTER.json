@@ -3,7 +3,7 @@
  "status": "SPEC_READY / RECIPE_READY. Not PLAYABLE, not VISUAL_ACCEPTED. Source, loot, container and map design are out of scope.",
  "authority": "This is the one canonical item and recipe document. It supersedes the recipe sections of ARENA1_ROUND1_REPORT.md, ARENA1_ROUND2_REPORT.md, SOH_147_ITEMS_BY_ROLE.md and earlier item audits. The 157-id roster itself stays in FINAL_THREE_GROUP_ITEM_SET_20261115.json.",
  "generated_by": "web/tests/item-crafting-master.test.ts (numbers from live code) + web/src/game/item-crafting-design.ts (authored meaning)",
- "recipe_revision": 6,
+ "recipe_revision": 7,
  "reading_notes": [
   "acquire_policy is design intent. WORLD_ONLY / BOTH do not assert that a map source exists today; placing sources is the next phase.",
   "provenance: LI_EXACT / LI_SCALED / SOH_ADJUSTED / SOH_ONLY. provenance_basis LEDGER = hand-audited row in final-item-ledger.ts; AUDIT_DERIVED = classified mechanically against the li_source_audit row; NONE = no LI bill recorded.",
@@ -12,10 +12,10 @@
   "Three separate axes per recipe: knowledge (STARTER, DIRECTED_RESEARCH for tier < 3, otherwise random research / blueprint / specimen / core study), bench level, and bill."
  ],
  "counts": {
-  "items": 157,
+  "items": 154,
   "by_group": {
    "A": 78,
-   "B": 42,
+   "B": 39,
    "C": 37
   },
   "by_family": {
@@ -24,7 +24,7 @@
    "01": 20,
    "02": 14,
    "03": 22,
-   "04": 16,
+   "04": 13,
    "05": 14,
    "06": 17,
    "07": 17,
@@ -33,32 +33,32 @@
   },
   "by_policy": {
    "BOTH": 33,
-   "CRAFT_ONLY": 74,
+   "CRAFT_ONLY": 71,
    "WORLD_ONLY": 37,
    "SPECIAL_AUTHORITY": 13
   },
-  "live_recipes": 114,
-  "explicit_recipes": 90,
+  "live_recipes": 111,
+  "explicit_recipes": 87,
   "pack_recipes": 24,
-  "retired_this_revision": 1,
-  "items_with_bill": 108,
+  "retired_this_revision": 5,
+  "items_with_bill": 105,
   "items_without_bill": 49,
   "recipes_by_provenance": {
-   "SOH_ONLY": 70,
+   "SOH_ONLY": 67,
    "SOH_ADJUSTED": 20,
    "LI_SCALED": 19,
    "LI_EXACT": 5
   },
   "recipes_by_li_grade": {
-   "NONE": 70,
+   "NONE": 67,
    "DIRECT": 31,
    "LEGACY_CLAIM": 10,
    "INDIRECT": 3
   },
   "recipes_by_decision": {
-   "KEEP": 107,
-   "REVISE": 7,
-   "RETIRED": 1
+   "KEEP": 103,
+   "REVISE": 8,
+   "RETIRED": 5
   }
  },
  "families": [
@@ -183,7 +183,7 @@
    "role": "Held items that wear with use. Cores are the main weapon system; these are tools and side arms.",
    "rules": [
     "Three tool tiers, same shape each time: Stone (wood + stone + rope, by hand), Iron (3 Iron + 2 wood + 1 leather, bench 1), Salvager (the Iron tool itself + 2 Refined Iron + a Pipe, bench 2).",
-    "An axe and a pick of one tier cost the same, except where the head differs: the Stone Pick takes one more stone, the Salvager Axe takes a Blade.",
+    "One axe per tier does all gathering (the pickaxes were folded into the axes at revision 7). The Salvager Axe takes a Blade on top of the tier rule; its starter-known route swaps the Pipe and one Refined Iron for a Gear and Parts.",
     "Every edged weapon above stone is priced in Blades: Cleaver 1, Reinforced Spear 1, Machete 3.",
     "An upgrade consumes the thing it upgrades (Salvager tools consume the Iron tool), so progress is never two parallel grinds.",
     "Weapons with no metal are made by hand and are disposable: Club, Fire-hardened Spear, Torch."
@@ -193,12 +193,9 @@
     "Cleaver 1 Iron + 1 Blade; Machete 4 Iron + 3 Blades.",
     "Arrow 6 per wood + stone + fiber; 8 per wood + stone + feather."
    ],
-   "infer": "Knowing the Iron Axe and the Salvager Axe, the Salvager Pick is predictable: the Iron Pick plus the same Refined Iron and Pipe, without the Blade.",
+   "infer": "Knowing the Stone Axe (wood, stone, rope) and the Iron Axe (iron, wood, leather), the Salvager Axe is predictable: the Iron Axe itself plus refined metal, a Pipe for the handle and a Blade for the edge.",
    "members": [
     "knife",
-    "stone_pick",
-    "iron_pick",
-    "industrial_pick",
     "stone_axe",
     "iron_axe",
     "industrial_axe",
@@ -471,7 +468,6 @@
   "bandage": "dressing",
   "torch": "flame",
   "wooden_ladder": "the ladder being upgraded",
-  "iron_pick": "the tool being upgraded",
   "iron_axe": "the tool being upgraded",
   "seed_bitterleaf": "living nature binder",
   "seed_wildberry": "feed value"
@@ -997,14 +993,12 @@
     "recipe:arrow_fletched",
     "recipe:torch",
     "recipe:stone_axe",
-    "recipe:stone_pick",
     "recipe:wood_spear",
     "recipe:charcoal",
     "recipe:arrow",
     "recipe:bow",
     "recipe:plank",
     "recipe:iron_axe",
-    "recipe:iron_pick",
     "recipe:cart_kit",
     "struct:claim",
     "struct:floor_wood",
@@ -1083,8 +1077,8 @@
    "tags": [
     "STACKABLE"
    ],
-   "acquire_policy": "CRAFT_ONLY",
-   "player_purpose": "Sawn timber. Its one use, the Plank Wall, was removed on 2026-11-23; nothing spends it now and the item waits for a ruling.",
+   "acquire_policy": "BOTH",
+   "player_purpose": "Sawn timber: packed fuel. One Plank burns as long as the 2 Wood it is sawn from at half the weight. Bridge Raiders also carry them.",
    "recipes": [
     "plank"
    ],
@@ -1094,12 +1088,14 @@
    "upstream": [
     "wood"
    ],
-   "downstream": [],
+   "downstream": [
+    "system:Station fuel"
+   ],
    "li_id": null,
    "li_grade": "NONE",
    "li_edition": null,
    "li_source_url": null,
-   "chosen_rule": "First-step rule. Its one consumer (Plank Wall) was removed on 2026-11-23 by Creator ruling; the recipe is kept unchanged until the item itself is ruled on."
+   "chosen_rule": "First-step rule, unchanged. The Plank Wall was removed on 2026-11-23; since the delegated ruling on build 98ee24ac a Plank is fuel worth exactly its 2 Wood (40 s), so the bill packs fuel and mints nothing."
   },
   {
    "id": "stone",
@@ -1123,7 +1119,6 @@
     "recipe:large_furnace",
     "recipe:arrow_fletched",
     "recipe:stone_axe",
-    "recipe:stone_pick",
     "recipe:shell_glass",
     "recipe:glass",
     "recipe:arrow",
@@ -1234,7 +1229,7 @@
     "STACKABLE"
    ],
    "acquire_policy": "WORLD_ONLY",
-   "player_purpose": "High-grade ore freed by an iron-class pick. Smelts straight to Refined Iron, skipping the ingot step.",
+   "player_purpose": "High-grade ore freed by an iron-class axe. Smelts straight to Refined Iron, skipping the ingot step.",
    "recipes": [],
    "build_cost": null,
    "no_recipe_reason": "NO_RECIPE_BY_DESIGN: a raw material. It is harvested or dropped; making it from something else would hide where things come from.",
@@ -1380,11 +1375,11 @@
     "recipe:core_meteor",
     "recipe:core_dragon",
     "recipe:core_elsa",
+    "recipe:industrial_axe_geared",
     "recipe:metal_pipe",
     "recipe:metal_blade",
     "recipe:mechanical_gear",
     "recipe:iron_plate",
-    "recipe:industrial_pick_geared",
     "recipe:gas_mask",
     "recipe:core_fire",
     "recipe:core_earth",
@@ -1466,7 +1461,6 @@
     "recipe:large_furnace",
     "recipe:refined_iron_ingot",
     "recipe:iron_axe",
-    "recipe:iron_pick",
     "recipe:scrap_helm",
     "recipe:cart_kit",
     "recipe:core_earth",
@@ -1541,7 +1535,6 @@
     "recipe:wooden_ladder",
     "recipe:lead_rope",
     "recipe:stone_axe",
-    "recipe:stone_pick",
     "recipe:wood_spear",
     "recipe:water_flask",
     "recipe:bow",
@@ -1622,7 +1615,6 @@
     "recipe:trail_pack",
     "recipe:trail_canteen",
     "recipe:iron_axe",
-    "recipe:iron_pick",
     "recipe:leather_armor",
     "recipe:chitin_armor",
     "recipe:scrap_helm",
@@ -2182,7 +2174,7 @@
     "DURABILITY_ON_ACTION"
    ],
    "acquire_policy": "BOTH",
-   "player_purpose": "Stone Axe. Issued on landing and at every wake-up; fells trees and chips stone and ore slowly.",
+   "player_purpose": "Stone Axe. Issued on landing and at every wake-up; the one tool for trees, stone, ore and scrap.",
    "recipes": [
     "stone_axe"
    ],
@@ -2204,36 +2196,6 @@
    "chosen_rule": "Stone-tier rule: wood handle, stone head, rope lashing, by hand."
   },
   {
-   "id": "stone_pick",
-   "name": "Stone Pickaxe",
-   "provenance_group": "B",
-   "origin": "SOH_CURRENT",
-   "family": "04",
-   "family_label": "Tools / Non-Core Weapons",
-   "tags": [
-    "DURABILITY_ON_ACTION"
-   ],
-   "acquire_policy": "CRAFT_ONLY",
-   "player_purpose": "Stone Pickaxe. First tool for stone and ore.",
-   "recipes": [
-    "stone_pick"
-   ],
-   "build_cost": null,
-   "no_recipe_reason": null,
-   "has_bill": true,
-   "upstream": [
-    "wood",
-    "stone",
-    "rope"
-   ],
-   "downstream": [],
-   "li_id": null,
-   "li_grade": "NONE",
-   "li_edition": null,
-   "li_source_url": null,
-   "chosen_rule": "Stone-tier rule. One more stone than the axe: a pick head is heavier."
-  },
-  {
    "id": "iron_axe",
    "name": "Iron Axe",
    "provenance_group": "A",
@@ -2244,7 +2206,7 @@
     "DURABILITY_ON_ACTION"
    ],
    "acquire_policy": "BOTH",
-   "player_purpose": "Iron Axe. Faster on trees.",
+   "player_purpose": "Iron Axe. Faster on trees, stone and ore; can free Rich Iron Ore.",
    "recipes": [
     "iron_axe"
    ],
@@ -2257,79 +2219,14 @@
     "leather"
    ],
    "downstream": [
-    "recipe:industrial_axe"
+    "recipe:industrial_axe",
+    "recipe:industrial_axe_geared"
    ],
    "li_id": "iron_axe",
    "li_grade": "DIRECT",
    "li_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
    "li_source_url": "https://www.aspxhome.com/youxi/2023/397622.htm",
    "chosen_rule": "Iron-tier rule: 3 Iron head, 2 wood handle, 1 leather grip."
-  },
-  {
-   "id": "iron_pick",
-   "name": "Iron Pickaxe",
-   "provenance_group": "B",
-   "origin": "SOH_CURRENT",
-   "family": "04",
-   "family_label": "Tools / Non-Core Weapons",
-   "tags": [
-    "DURABILITY_ON_ACTION"
-   ],
-   "acquire_policy": "BOTH",
-   "player_purpose": "Iron Pickaxe. Faster on stone and ore; can free Rich Iron Ore.",
-   "recipes": [
-    "iron_pick"
-   ],
-   "build_cost": null,
-   "no_recipe_reason": null,
-   "has_bill": true,
-   "upstream": [
-    "iron_ingot",
-    "wood",
-    "leather"
-   ],
-   "downstream": [
-    "recipe:industrial_pick",
-    "recipe:industrial_pick_geared"
-   ],
-   "li_id": null,
-   "li_grade": "NONE",
-   "li_edition": null,
-   "li_source_url": null,
-   "chosen_rule": "Iron-tier rule, identical to the axe."
-  },
-  {
-   "id": "industrial_pick",
-   "name": "Salvager Pick",
-   "provenance_group": "B",
-   "origin": "SOH_CURRENT",
-   "family": "04",
-   "family_label": "Tools / Non-Core Weapons",
-   "tags": [
-    "DURABILITY_ON_ACTION"
-   ],
-   "acquire_policy": "CRAFT_ONLY",
-   "player_purpose": "Salvager Pick. The top pick; an Iron Pick rebuilt with refined metal.",
-   "recipes": [
-    "industrial_pick",
-    "industrial_pick_geared"
-   ],
-   "build_cost": null,
-   "no_recipe_reason": null,
-   "has_bill": true,
-   "upstream": [
-    "iron_pick",
-    "refined_iron_ingot",
-    "metal_pipe",
-    "mechanical_gear",
-    "spares"
-   ],
-   "downstream": [],
-   "li_id": null,
-   "li_grade": "NONE",
-   "li_edition": null,
-   "li_source_url": null,
-   "chosen_rule": "Salvager rule: the Iron Pick itself + 2 Refined Iron + Pipe handle. Learned by study."
   },
   {
    "id": "industrial_axe",
@@ -2342,9 +2239,10 @@
     "DURABILITY_ON_ACTION"
    ],
    "acquire_policy": "CRAFT_ONLY",
-   "player_purpose": "Salvager Axe. The top axe; an Iron Axe rebuilt with a Blade and refined metal.",
+   "player_purpose": "Salvager Axe. The top tool for trees, stone, ore and wrecks; an Iron Axe rebuilt with a Blade and refined metal.",
    "recipes": [
-    "industrial_axe"
+    "industrial_axe",
+    "industrial_axe_geared"
    ],
    "build_cost": null,
    "no_recipe_reason": null,
@@ -2353,7 +2251,9 @@
     "iron_axe",
     "metal_blade",
     "refined_iron_ingot",
-    "metal_pipe"
+    "metal_pipe",
+    "mechanical_gear",
+    "spares"
    ],
    "downstream": [],
    "li_id": "refined_iron_axe",
@@ -3068,8 +2968,8 @@
    "downstream": [
     "recipe:vehicle_frame",
     "recipe:motorbike_kit",
-    "recipe:industrial_pick",
     "recipe:industrial_axe",
+    "recipe:industrial_axe_geared",
     "recipe:metal_pipe",
     "recipe:iron_plate",
     "recipe:refined_iron_helmet",
@@ -3113,7 +3013,6 @@
    ],
    "downstream": [
     "recipe:vehicle_frame",
-    "recipe:industrial_pick",
     "recipe:industrial_axe",
     "struct:oil_pump",
     "struct:refinery",
@@ -3150,6 +3049,7 @@
    ],
    "downstream": [
     "recipe:industrial_axe",
+    "recipe:industrial_axe_geared",
     "recipe:reinforced_spear",
     "recipe:cleaver",
     "recipe:machete",
@@ -3185,7 +3085,7 @@
    ],
    "downstream": [
     "recipe:motorbike_kit",
-    "recipe:industrial_pick_geared",
+    "recipe:industrial_axe_geared",
     "recipe:steel_folding_ladder",
     "struct:oil_pump",
     "struct:farm_controller",
@@ -6850,75 +6750,6 @@
    "status": "IMPLEMENTED"
   },
   {
-   "id": "industrial_pick",
-   "output": "industrial_pick",
-   "output_name": "Salvager Pick",
-   "qty": 1,
-   "co_products": [],
-   "alias": null,
-   "ingredients": [
-    [
-     "iron_pick",
-     1
-    ],
-    [
-     "refined_iron_ingot",
-     2
-    ],
-    [
-     "metal_pipe",
-     1
-    ]
-   ],
-   "unit_cost": [
-    [
-     "iron_pick",
-     1
-    ],
-    [
-     "refined_iron_ingot",
-     2
-    ],
-    [
-     "metal_pipe",
-     1
-    ]
-   ],
-   "raw_cost_per_unit": {
-    "hide": 1,
-    "iron_ore": 7.5,
-    "spares": 1,
-    "wood": 8
-   },
-   "station": "workbench",
-   "station_level": 2,
-   "knowledge_tier": 2,
-   "seconds": 25,
-   "seconds_per_unit": 25,
-   "craft_class": "STATION",
-   "knowledge": "DIRECTED_RESEARCH",
-   "revision": 5,
-   "frozen_previous": [
-    "industrial_pick@4"
-   ],
-   "provenance": "SOH_ONLY",
-   "provenance_basis": "LEDGER",
-   "li_id": null,
-   "li_grade": "NONE",
-   "li_recipe": null,
-   "li_station": null,
-   "provenance_note": "SOH tool tier. Fasteners retired; the pipe handle stays.",
-   "confidence": "SOH_PROVISIONAL (no LI figure exists)",
-   "decision": "KEEP",
-   "learning_rationale": "Salvager rule: the Iron Pick itself + 2 Refined Iron + Pipe handle. Learned by study.",
-   "ingredient_roles": [
-    "Iron Pickaxe = the tool being upgraded",
-    "Refined Iron Ingot = hardened metal",
-    "Metal Pipe = tube or hollow structural member"
-   ],
-   "status": "IMPLEMENTED"
-  },
-  {
    "id": "industrial_axe",
    "output": "industrial_axe",
    "output_name": "Salvager Axe",
@@ -6994,6 +6825,91 @@
     "Metal Blade = cutting edge",
     "Refined Iron Ingot = hardened metal",
     "Metal Pipe = tube or hollow structural member"
+   ],
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": "industrial_axe_geared",
+   "output": "industrial_axe",
+   "output_name": "Salvager Axe",
+   "qty": 1,
+   "co_products": [],
+   "alias": "Salvager Axe (geared)",
+   "ingredients": [
+    [
+     "iron_axe",
+     1
+    ],
+    [
+     "metal_blade",
+     1
+    ],
+    [
+     "refined_iron_ingot",
+     1
+    ],
+    [
+     "mechanical_gear",
+     1
+    ],
+    [
+     "spares",
+     2
+    ]
+   ],
+   "unit_cost": [
+    [
+     "iron_axe",
+     1
+    ],
+    [
+     "metal_blade",
+     1
+    ],
+    [
+     "refined_iron_ingot",
+     1
+    ],
+    [
+     "mechanical_gear",
+     1
+    ],
+    [
+     "spares",
+     2
+    ]
+   ],
+   "raw_cost_per_unit": {
+    "hide": 1,
+    "iron_ore": 9.5,
+    "spares": 6,
+    "wood": 4
+   },
+   "station": "workbench",
+   "station_level": 2,
+   "knowledge_tier": 2,
+   "seconds": 25,
+   "seconds_per_unit": 25,
+   "craft_class": "STATION",
+   "knowledge": "STARTER",
+   "revision": 7,
+   "frozen_previous": [],
+   "provenance": "SOH_ONLY",
+   "provenance_basis": "NONE",
+   "li_id": null,
+   "li_grade": "NONE",
+   "li_recipe": null,
+   "li_station": null,
+   "provenance_note": "Alternative formula; SOH design.",
+   "confidence": "SOH_PROVISIONAL (no LI figure exists)",
+   "decision": "REVISE",
+   "learning_rationale": "Alternative with a real trade: a Gear and 2 Parts instead of the Pipe and one of the two Refined Iron; the Blade stays. A third of the refined metal, but 6 Parts in total against 2. Starter-known. New id at revision 7: the Salvager Pick's Parts route, moved to the axe; one Refined Iron stays so the recycler never returns metal the route did not hold.",
+   "ingredient_roles": [
+    "Iron Axe = the tool being upgraded",
+    "Metal Blade = cutting edge",
+    "Refined Iron Ingot = hardened metal",
+    "Mechanical Gear = a mechanism that turns",
+    "Parts = fitted mechanical pieces"
    ],
    "status": "IMPLEMENTED"
   },
@@ -7312,73 +7228,6 @@
    "learning_rationale": "Component rule: same bill as the Pipe, yields 2. Sheet instead of tube.",
    "ingredient_roles": [
     "Refined Iron Ingot = hardened metal",
-    "Parts = fitted mechanical pieces"
-   ],
-   "status": "IMPLEMENTED"
-  },
-  {
-   "id": "industrial_pick_geared",
-   "output": "industrial_pick",
-   "output_name": "Salvager Pick",
-   "qty": 1,
-   "co_products": [],
-   "alias": "Salvager Pick (geared)",
-   "ingredients": [
-    [
-     "iron_pick",
-     1
-    ],
-    [
-     "mechanical_gear",
-     1
-    ],
-    [
-     "spares",
-     2
-    ]
-   ],
-   "unit_cost": [
-    [
-     "iron_pick",
-     1
-    ],
-    [
-     "mechanical_gear",
-     1
-    ],
-    [
-     "spares",
-     2
-    ]
-   ],
-   "raw_cost_per_unit": {
-    "hide": 1,
-    "iron_ore": 5,
-    "spares": 5,
-    "wood": 2
-   },
-   "station": "workbench",
-   "station_level": 2,
-   "knowledge_tier": 2,
-   "seconds": 25,
-   "seconds_per_unit": 25,
-   "craft_class": "STATION",
-   "knowledge": "STARTER",
-   "revision": 1,
-   "frozen_previous": [],
-   "provenance": "SOH_ONLY",
-   "provenance_basis": "NONE",
-   "li_id": null,
-   "li_grade": "NONE",
-   "li_recipe": null,
-   "li_station": null,
-   "provenance_note": "Alternative formula; SOH design.",
-   "confidence": "SOH_PROVISIONAL (no LI figure exists)",
-   "decision": "KEEP",
-   "learning_rationale": "Alternative with a real trade: a Gear and 2 Parts instead of refined metal and a Pipe. No furnace work, but 5 Parts in total. Starter-known.",
-   "ingredient_roles": [
-    "Iron Pickaxe = the tool being upgraded",
-    "Mechanical Gear = a mechanism that turns",
     "Parts = fitted mechanical pieces"
    ],
    "status": "IMPLEMENTED"
@@ -9265,72 +9114,6 @@
    "status": "IMPLEMENTED"
   },
   {
-   "id": "stone_pick",
-   "output": "stone_pick",
-   "output_name": "Stone Pickaxe",
-   "qty": 1,
-   "co_products": [],
-   "alias": null,
-   "ingredients": [
-    [
-     "wood",
-     3
-    ],
-    [
-     "stone",
-     4
-    ],
-    [
-     "rope",
-     1
-    ]
-   ],
-   "unit_cost": [
-    [
-     "wood",
-     3
-    ],
-    [
-     "stone",
-     4
-    ],
-    [
-     "rope",
-     1
-    ]
-   ],
-   "raw_cost_per_unit": {
-    "fiber": 3,
-    "stone": 4,
-    "wood": 3
-   },
-   "station": "hand",
-   "station_level": null,
-   "knowledge_tier": 0,
-   "seconds": 2,
-   "seconds_per_unit": 2,
-   "craft_class": "HAND",
-   "knowledge": "STARTER",
-   "revision": 1,
-   "frozen_previous": [],
-   "provenance": "SOH_ONLY",
-   "provenance_basis": "NONE",
-   "li_id": null,
-   "li_grade": "NONE",
-   "li_recipe": null,
-   "li_station": null,
-   "provenance_note": "No LI bill recorded for this id.",
-   "confidence": "SOH_PROVISIONAL (no LI figure exists)",
-   "decision": "KEEP",
-   "learning_rationale": "Stone-tier rule. One more stone than the axe: a pick head is heavier.",
-   "ingredient_roles": [
-    "Wood = frame, handle or shaft",
-    "Stone = mass, head or hearth",
-    "Rope = lashing"
-   ],
-   "status": "IMPLEMENTED"
-  },
-  {
    "id": "wood_spear",
    "output": "wood_spear",
    "output_name": "Fire-hardened Spear",
@@ -9803,7 +9586,7 @@
    "provenance_note": "SOH rich-ore route. Coal -> Charcoal.",
    "confidence": "SOH_PROVISIONAL (no LI figure exists)",
    "decision": "KEEP",
-   "learning_rationale": "Alternative with a real trade: one Rich Ore replaces three ingots and is 6 s faster, but Rich Ore only comes from an iron-class pick.",
+   "learning_rationale": "Alternative with a real trade: one Rich Ore replaces three ingots and is 6 s faster, but Rich Ore only comes from an iron-class axe.",
    "ingredient_roles": [
     "Rich Iron Ore = high-grade metal feedstock",
     "Charcoal = carbon and heat"
@@ -10178,7 +9961,7 @@
    "provenance_note": "No LI bill recorded for this id.",
    "confidence": "SOH_PROVISIONAL (no LI figure exists)",
    "decision": "KEEP",
-   "learning_rationale": "First-step rule. Its one consumer (Plank Wall) was removed on 2026-11-23 by Creator ruling; the recipe is kept unchanged until the item itself is ruled on.",
+   "learning_rationale": "First-step rule, unchanged. The Plank Wall was removed on 2026-11-23; since the delegated ruling on build 98ee24ac a Plank is fuel worth exactly its 2 Wood (40 s), so the bill packs fuel and mints nothing.",
    "ingredient_roles": [
     "Wood = frame, handle or shaft"
    ],
@@ -10246,72 +10029,6 @@
    "confidence": "HIGH for the LI shape; SOH counts provisional",
    "decision": "KEEP",
    "learning_rationale": "Iron-tier rule: 3 Iron head, 2 wood handle, 1 leather grip.",
-   "ingredient_roles": [
-    "Iron Ingot = plain metal body",
-    "Wood = frame, handle or shaft",
-    "Leather = grip, strap or shell"
-   ],
-   "status": "IMPLEMENTED"
-  },
-  {
-   "id": "iron_pick",
-   "output": "iron_pick",
-   "output_name": "Iron Pickaxe",
-   "qty": 1,
-   "co_products": [],
-   "alias": null,
-   "ingredients": [
-    [
-     "iron_ingot",
-     3
-    ],
-    [
-     "wood",
-     2
-    ],
-    [
-     "leather",
-     1
-    ]
-   ],
-   "unit_cost": [
-    [
-     "iron_ingot",
-     3
-    ],
-    [
-     "wood",
-     2
-    ],
-    [
-     "leather",
-     1
-    ]
-   ],
-   "raw_cost_per_unit": {
-    "hide": 1,
-    "iron_ore": 3,
-    "wood": 2
-   },
-   "station": "workbench",
-   "station_level": 1,
-   "knowledge_tier": 1,
-   "seconds": 15,
-   "seconds_per_unit": 15,
-   "craft_class": "STATION",
-   "knowledge": "STARTER",
-   "revision": 1,
-   "frozen_previous": [],
-   "provenance": "SOH_ONLY",
-   "provenance_basis": "NONE",
-   "li_id": null,
-   "li_grade": "NONE",
-   "li_recipe": null,
-   "li_station": null,
-   "provenance_note": "No LI bill recorded for this id.",
-   "confidence": "SOH_PROVISIONAL (no LI figure exists)",
-   "decision": "KEEP",
-   "learning_rationale": "Iron-tier rule, identical to the axe.",
    "ingredient_roles": [
     "Iron Ingot = plain metal body",
     "Wood = frame, handle or shaft",
@@ -12580,6 +12297,99 @@
  ],
  "retired_recipes": [
   {
+   "id": "stone_pick",
+   "successor": "stone_axe",
+   "frozen": [
+    "stone_pick@6"
+   ],
+   "frozen_bill": [
+    [
+     "wood",
+     3
+    ],
+    [
+     "stone",
+     4
+    ],
+    [
+     "rope",
+     1
+    ]
+   ],
+   "decision": "RETIRED",
+   "why": "Retired at revision 7 (Creator ruling on build 98ee24ac: the axe takes over the pickaxe's work; Last Island has no pickaxe). Successor: stone_axe."
+  },
+  {
+   "id": "iron_pick",
+   "successor": "iron_axe",
+   "frozen": [
+    "iron_pick@6"
+   ],
+   "frozen_bill": [
+    [
+     "iron_ingot",
+     3
+    ],
+    [
+     "wood",
+     2
+    ],
+    [
+     "leather",
+     1
+    ]
+   ],
+   "decision": "RETIRED",
+   "why": "Retired at revision 7 with the Stone Pickaxe. Successor: iron_axe. Old jobs finish under iron_pick@6 and pay out an Iron Axe."
+  },
+  {
+   "id": "industrial_pick",
+   "successor": "industrial_axe",
+   "frozen": [
+    "industrial_pick@4",
+    "industrial_pick@6"
+   ],
+   "frozen_bill": [
+    [
+     "iron_pick",
+     1
+    ],
+    [
+     "refined_iron_ingot",
+     2
+    ],
+    [
+     "metal_pipe",
+     1
+    ]
+   ],
+   "decision": "RETIRED",
+   "why": "Retired at revision 7 with the Stone Pickaxe. Successor: industrial_axe. Old jobs finish under industrial_pick@6 and pay out a Salvager Axe."
+  },
+  {
+   "id": "industrial_pick_geared",
+   "successor": "industrial_axe_geared",
+   "frozen": [
+    "industrial_pick_geared@6"
+   ],
+   "frozen_bill": [
+    [
+     "iron_pick",
+     1
+    ],
+    [
+     "mechanical_gear",
+     1
+    ],
+    [
+     "spares",
+     2
+    ]
+   ],
+   "decision": "RETIRED",
+   "why": "Retired at revision 7 with the Salvager Pick it made. Its Parts route moved to industrial_axe_geared. Old jobs finish under industrial_pick_geared@6."
+  },
+  {
    "id": "reinforced_spear_blade",
    "successor": "reinforced_spear",
    "frozen": [
@@ -12849,19 +12659,6 @@
      ]
     ]
    },
-   "stone_pick": {
-    "station": "workbench",
-    "cost": [
-     [
-      "stone",
-      1
-     ],
-     [
-      "wood",
-      1
-     ]
-    ]
-   },
    "iron_axe": {
     "station": "workbench",
     "cost": [
@@ -12871,32 +12668,6 @@
      ],
      [
       "wood",
-      1
-     ]
-    ]
-   },
-   "iron_pick": {
-    "station": "workbench",
-    "cost": [
-     [
-      "iron_ingot",
-      1
-     ],
-     [
-      "wood",
-      1
-     ]
-    ]
-   },
-   "industrial_pick": {
-    "station": "workbench",
-    "cost": [
-     [
-      "refined_iron_ingot",
-      1
-     ],
-     [
-      "spares",
       1
      ]
     ]
@@ -13375,10 +13146,6 @@
    }
   },
   "vendor_for_rcash": {
-   "iron_pick": {
-    "price": 12,
-    "stock": 1
-   },
    "iron_axe": {
     "price": 12,
     "stock": 1
@@ -13478,6 +13245,12 @@
     "system": "Station fuel",
     "what": "Station fuel (stationBurnable).",
     "anchor": "catalog.ts stationBurnable"
+   },
+   {
+    "item": "plank",
+    "system": "Station fuel",
+    "what": "Station fuel (stationBurnable): 40 s, the burn of the 2 Wood it is sawn from, at half the weight.",
+    "anchor": "catalog.ts ITEMS.plank.fuel, stationBurnable"
    },
    {
     "item": "arrow",
@@ -13704,8 +13477,8 @@
    {
     "item": "stone_axe",
     "system": "Starting kit",
-    "what": "Issued at the start of a run and at every wake-up after a death; the baseline tool.",
-    "anchor": "engine.ts startRun / respawn"
+    "what": "Issued at the start of a run and at every wake-up after a fall (death or the menu's give-up); the baseline tool.",
+    "anchor": "engine.ts startRun / respawn / giveUp"
    },
    {
     "item": "knife",
@@ -13721,19 +13494,10 @@
     "item": "iron_ingot",
     "name": "Iron Ingot",
     "family": "02",
-    "recipes": 24,
+    "recipes": 23,
     "packs": 12,
     "other": 6,
-    "total": 42
-   },
-   {
-    "item": "wood",
-    "name": "Wood",
-    "family": "01",
-    "recipes": 15,
-    "packs": 17,
-    "other": 1,
-    "total": 33
+    "total": 41
    },
    {
     "item": "spares",
@@ -13742,6 +13506,15 @@
     "recipes": 18,
     "packs": 8,
     "other": 5,
+    "total": 31
+   },
+   {
+    "item": "wood",
+    "name": "Wood",
+    "family": "01",
+    "recipes": 13,
+    "packs": 17,
+    "other": 1,
     "total": 31
    },
    {
@@ -13757,19 +13530,19 @@
     "item": "rope",
     "name": "Rope",
     "family": "02",
-    "recipes": 11,
+    "recipes": 10,
     "packs": 3,
     "other": 0,
-    "total": 14
+    "total": 13
    },
    {
     "item": "stone",
     "name": "Stone",
     "family": "01",
-    "recipes": 8,
+    "recipes": 7,
     "packs": 5,
     "other": 1,
-    "total": 14
+    "total": 13
    },
    {
     "item": "refined_iron_ingot",
@@ -13813,19 +13586,10 @@
     "item": "iron_ingot",
     "name": "Iron Ingot",
     "family": "02",
-    "recipes": 24,
+    "recipes": 23,
     "packs": 12,
     "other": 6,
-    "total": 42
-   },
-   {
-    "item": "wood",
-    "name": "Wood",
-    "family": "01",
-    "recipes": 15,
-    "packs": 17,
-    "other": 1,
-    "total": 33
+    "total": 41
    },
    {
     "item": "spares",
@@ -13834,6 +13598,15 @@
     "recipes": 18,
     "packs": 8,
     "other": 5,
+    "total": 31
+   },
+   {
+    "item": "wood",
+    "name": "Wood",
+    "family": "01",
+    "recipes": 13,
+    "packs": 17,
+    "other": 1,
     "total": 31
    },
    {
@@ -13849,19 +13622,19 @@
     "item": "rope",
     "name": "Rope",
     "family": "02",
-    "recipes": 11,
+    "recipes": 10,
     "packs": 3,
     "other": 0,
-    "total": 14
+    "total": 13
    },
    {
     "item": "stone",
     "name": "Stone",
     "family": "01",
-    "recipes": 8,
+    "recipes": 7,
     "packs": 5,
     "other": 1,
-    "total": 14
+    "total": 13
    },
    {
     "item": "refined_iron_ingot",
@@ -13936,17 +13709,17 @@
     "total": 7
    },
    {
-    "item": "leather",
-    "name": "Leather",
-    "family": "02",
-    "recipes": 7,
-    "packs": 0,
-    "other": 0,
-    "total": 7
-   },
-   {
     "item": "cloth",
     "name": "Cloth",
+    "family": "02",
+    "recipes": 6,
+    "packs": 0,
+    "other": 0,
+    "total": 6
+   },
+   {
+    "item": "leather",
+    "name": "Leather",
     "family": "02",
     "recipes": 6,
     "packs": 0,
@@ -13972,11 +13745,11 @@
     "total": 5
    },
    {
-    "item": "metal_pipe",
-    "name": "Metal Pipe",
+    "item": "metal_blade",
+    "name": "Metal Blade",
     "family": "02",
-    "recipes": 3,
-    "packs": 2,
+    "recipes": 5,
+    "packs": 0,
     "other": 0,
     "total": 5
    },
@@ -13999,11 +13772,11 @@
     "total": 4
    },
    {
-    "item": "metal_blade",
-    "name": "Metal Blade",
+    "item": "metal_pipe",
+    "name": "Metal Pipe",
     "family": "02",
-    "recipes": 4,
-    "packs": 0,
+    "recipes": 2,
+    "packs": 2,
     "other": 0,
     "total": 4
    },
@@ -14062,8 +13835,8 @@
     "total": 2
    },
    {
-    "item": "iron_pick",
-    "name": "Iron Pickaxe",
+    "item": "iron_axe",
+    "name": "Iron Axe",
     "family": "04",
     "recipes": 2,
     "packs": 0,
@@ -14137,15 +13910,6 @@
     "item": "gland",
     "name": "Mire Gland",
     "family": "01",
-    "recipes": 1,
-    "packs": 0,
-    "other": 0,
-    "total": 1
-   },
-   {
-    "item": "iron_axe",
-    "name": "Iron Axe",
-    "family": "04",
     "recipes": 1,
     "packs": 0,
     "other": 0,
@@ -14239,16 +14003,6 @@
     ]
    },
    {
-    "item": "wood",
-    "families": [
-     "02",
-     "04",
-     "07",
-     "08",
-     "09"
-    ]
-   },
-   {
     "item": "spares",
     "families": [
      "02",
@@ -14257,6 +14011,16 @@
      "06",
      "07",
      "08"
+    ]
+   },
+   {
+    "item": "wood",
+    "families": [
+     "02",
+     "04",
+     "07",
+     "08",
+     "09"
     ]
    },
    {
@@ -14329,7 +14093,7 @@
     ]
    }
   ],
-  "main_component_size": 135,
+  "main_component_size": 132,
   "outside_main_component": [
    {
     "id": "knife",
@@ -14508,10 +14272,12 @@
     "policy": "WORLD_ONLY"
    }
   ],
-  "dead_end_materials": [
-   "plank"
-  ],
+  "dead_end_materials": [],
   "single_consumer_materials": [
+   {
+    "id": "plank",
+    "only_consumer": "system:Station fuel"
+   },
    {
     "id": "iron_ore",
     "only_consumer": "recipe:iron_ingot"
@@ -14552,7 +14318,7 @@
   "reachability": {
    "final_bench_level": 3,
    "unreachable_recipes": [],
-   "craftable_items_reached": 107,
+   "craftable_items_reached": 104,
    "note": "Start set = every item without a formula, treated as obtainable; map placement ignored."
   },
   "silent_gates": [
@@ -14642,14 +14408,14 @@
     "trade": "Bulk route needs a level-3 bench and Charcoal; per unit it saves a third of the Crystal and Iron."
    },
    {
-    "output": "industrial_pick",
+    "output": "industrial_axe",
     "routes": [
      {
-      "id": "industrial_pick",
+      "id": "industrial_axe",
       "raw": {
        "hide": 1,
-       "iron_ore": 7.5,
-       "spares": 1,
+       "iron_ore": 10.5,
+       "spares": 2,
        "wood": 8
       },
       "secs": 25,
@@ -14658,12 +14424,12 @@
       "starter": false
      },
      {
-      "id": "industrial_pick_geared",
+      "id": "industrial_axe_geared",
       "raw": {
        "hide": 1,
-       "iron_ore": 5,
-       "spares": 5,
-       "wood": 2
+       "iron_ore": 9.5,
+       "spares": 6,
+       "wood": 4
       },
       "secs": 25,
       "level": 2,
@@ -14673,7 +14439,7 @@
     ],
     "strictly_dominated": [],
     "verdict": "LEGITIMATE",
-    "trade": "Refined route (2 Refined Iron + Pipe, study) against Parts route (Gear + 2 Parts = 5 Parts, starter-known). Furnace time against scarce Parts."
+    "trade": "Refined route (Blade + 2 Refined Iron + Pipe, study) against Parts route (Blade + 1 Refined Iron + Gear + 2 Parts, starter-known). Refined metal against scarce Parts: 2 Parts by the first, 6 by the second."
    },
    {
     "output": "arrow",
@@ -14735,7 +14501,7 @@
     ],
     "strictly_dominated": [],
     "verdict": "LEGITIMATE",
-    "trade": "Rich Ore route: 1 ore instead of 3 ingots and faster, but Rich Ore needs an iron-class pick and is a separate, scarcer world material."
+    "trade": "Rich Ore route: 1 ore instead of 3 ingots and faster, but Rich Ore needs an iron-class axe and is a separate, scarcer world material."
    },
    {
     "output": "glass",
@@ -15394,6 +15160,24 @@
    "status": "IMPLEMENTED"
   },
   {
+   "id": "stone_pick / iron_pick / industrial_pick / industrial_pick_geared",
+   "kind": "RETIRED",
+   "before": "three pickaxes and a geared alias; stone and ore needed a pick, wood needed an axe",
+   "after": "retired at recipe revision 7; each axe carries its pickaxe's stone, ore and scrap power",
+   "evidence": "LI DIRECT: the Last Island axe line (Stone, Iron, Refined Iron) gathers wood and ore; Last Island has no pickaxe. Creator ruling on build 98ee24ac. The power numbers are the retired picks' own.",
+   "consequence": "Recipe count 114 -> 111 (four formulas out, industrial_axe_geared in). One tool slot instead of two. A pick in an old save becomes the same-tier axe at the same wear; a queued pick job pays that axe; knowledge of the formulas is pruned on load.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": "industrial_axe_geared",
+   "kind": "BILL",
+   "before": "industrial_pick_geared: Iron Pickaxe + 1 Refined Iron + 1 Gear + 2 Parts",
+   "after": "Iron Axe + 1 Blade + 1 Refined Iron + 1 Gear + 2 Parts",
+   "evidence": "SOH_PROVISIONAL. No LI figure. Keeps a starter-known Gear route to the top tool after the pick left. The Blade matches the main Salvager Axe bill; the Refined Iron is what the recycler pays back for a full-condition Salvager Axe.",
+   "consequence": "Mechanical Gear keeps three recipe consumers. The recycler returns no more than the route holds.",
+   "status": "IMPLEMENTED"
+  },
+  {
    "id": "refined_iron_helmet / chest / legs / boots",
    "kind": "KNOWLEDGE",
    "before": "research tier 3 (random tinkering only)",
@@ -15413,7 +15197,7 @@
   }
  ],
  "migration": {
-  "revision": 6,
+  "revision": 7,
   "cut_over_at_5": [
    "reinforced_spear",
    "reinforced_spear_blade",

@@ -51,13 +51,18 @@ describe('recycler economic proof (cumulative tiers, actual recovery plans)', ()
     // the frozen rows return more Parts than the tool's live formula holds. This is pinned, not hidden: it is a one-time
     // payout bounded by the jobs sitting in a recycler queue when the save was migrated; recoveryPlan() never selects
     // these versions for a new job (asserted in sys03-recycler and b01-industrial-loot).
-    expect(overItems('X:recover-v1',keysOf('recyclerV1'))).toEqual(['industrial_axe','iron_axe','iron_pick','reinforced_spear']);
+    // Recipe revision 7: the pickaxes are folded into the axes, so an `iron_pick` row is now read as the Iron Axe it became
+    // (same verdict as the `iron_axe` row). The Salvager Axe left the v1 and v3 lists: its cheapest route is now the
+    // geared one, which holds 6 Parts, more than those rows pay back; the v2 row also returns a Pipe, which that route lacks.
+    expect(overItems('X:recover-v1',keysOf('recyclerV1'))).toEqual(['iron_axe','iron_pick','reinforced_spear']);
     expect(overItems('X:recover-v2',keysOf('recyclerV2'))).toEqual(['industrial_axe','iron_axe','iron_pick']);
-    expect(overItems('X:recover-v3',keysOf('recyclerV3'))).toEqual(['industrial_axe','iron_axe','iron_pick']);
+    expect(overItems('X:recover-v3',keysOf('recyclerV3'))).toEqual(['iron_axe','iron_pick']);
     expect(proveItem('mechanical_gear','X:gear-v1').rows.map((r:any)=>r.verdict)).toEqual(['OVER_RETURN']);
     expect(proveItem('metal_blade','X:blade-v1').rows.map((r:any)=>r.verdict)).toEqual(['OVER_RETURN']);
+    // an `iron_pick` row is priced as the Iron Axe the pick became, through the axe's own frozen row
+    expect(proveItem('iron_pick','X:recover-v2').rows).toEqual(proveItem('iron_axe','X:recover-v2').rows);
     const r=proveItem('iron_pick','X:recover-v2').rows.find((x:any)=>x.tier==='high') as any;
-    expect(r.mintedNonNumeraire).toEqual(['spares:+2','charcoal:+1']); expect(r.ieRecovered).toBeGreaterThan(r.ieCraft);
+    expect(r.mintedNonNumeraire).toEqual(['spares:+4','charcoal:+1']); expect(r.verdict).toBe('OVER_RETURN');   // the pick's own row also returned more iron than it held; the axe's row over-returns in Parts and charcoal only
   });
   it('craft cost is priced in live atoms only: no route through a retired id', () => {
     for(const k of ['mechanical_gear','metal_pipe','metal_blade','iron_plate','vehicle_frame']){const e=expand(k,1)!;expect(e.route).toBe(k);for(const atom of Object.keys(e.vec))expect(['iron_ingot','charcoal','spares','wood']).toContain(atom);}

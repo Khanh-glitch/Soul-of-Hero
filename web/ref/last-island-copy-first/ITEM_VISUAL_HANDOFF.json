@@ -9,10 +9,10 @@
   "Nothing in this file is final art. No icon was drawn for any new id in ARENA 1 round 1."
  ],
  "counts": {
-  "total": 157,
+  "total": 154,
   "by_asset_status": {
-   "EXISTING_SHARED_ICON": 75,
-   "EXISTING_ICON": 23,
+   "EXISTING_SHARED_ICON": 73,
+   "EXISTING_ICON": 22,
    "TEMP_FALLBACK": 34,
    "TEMP_SHARED_PACK_ICON": 24,
    "NO_ITEM_ICON_STRUCTURE_ONLY": 1
@@ -1196,30 +1196,6 @@
    "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
   },
   {
-   "item_id": "stone_pick",
-   "icon_key": "stone_pick",
-   "current_art_key": "pick",
-   "palette": [
-    "#8a8a90",
-    "#7a5a32"
-   ],
-   "name": "Stone Pickaxe",
-   "name_vi": null,
-   "group": "B",
-   "origin": "SOH_CURRENT",
-   "li_id": null,
-   "physical_shape": "as drawn today by art key \"pick\"; no new brief written in round 1",
-   "material": null,
-   "colour_silhouette": null,
-   "display_size": null,
-   "contexts": [
-    "inventory",
-    "world_drop"
-   ],
-   "asset_status": "EXISTING_SHARED_ICON",
-   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
-  },
-  {
    "item_id": "iron_axe",
    "icon_key": "iron_axe",
    "current_art_key": "axe",
@@ -1241,54 +1217,6 @@
     "world_drop"
    ],
    "asset_status": "EXISTING_SHARED_ICON",
-   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
-  },
-  {
-   "item_id": "iron_pick",
-   "icon_key": "iron_pick",
-   "current_art_key": "pick",
-   "palette": [
-    "#c8d0dc",
-    "#5a3a22"
-   ],
-   "name": "Iron Pickaxe",
-   "name_vi": null,
-   "group": "B",
-   "origin": "SOH_CURRENT",
-   "li_id": null,
-   "physical_shape": "as drawn today by art key \"pick\"; no new brief written in round 1",
-   "material": null,
-   "colour_silhouette": null,
-   "display_size": null,
-   "contexts": [
-    "inventory",
-    "world_drop"
-   ],
-   "asset_status": "EXISTING_SHARED_ICON",
-   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
-  },
-  {
-   "item_id": "industrial_pick",
-   "icon_key": "industrial_pick",
-   "current_art_key": "salvage_pick",
-   "palette": [
-    "#71c3c6",
-    "#a37945"
-   ],
-   "name": "Salvager Pick",
-   "name_vi": null,
-   "group": "B",
-   "origin": "SOH_CURRENT",
-   "li_id": null,
-   "physical_shape": "as drawn today by art key \"salvage_pick\"; no new brief written in round 1",
-   "material": null,
-   "colour_silhouette": null,
-   "display_size": null,
-   "contexts": [
-    "inventory",
-    "world_drop"
-   ],
-   "asset_status": "EXISTING_ICON",
    "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
   },
   {

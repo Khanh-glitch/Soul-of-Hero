@@ -21,7 +21,7 @@ export const FAMILY_MEMBERS: Readonly<Record<FamilyId, readonly string[]>> = Obj
   '01': 'crude_petroleum wood stone fiber iron_ore rich_iron_ore crystal sulfur spares hide fur chitin shell gland animal_fat tin_can electronic_parts electric_resistor needle_tube feather'.split(' '),
   '02': 'plank charcoal iron_ingot refined_iron_ingot rope cloth leather glass metal_pipe metal_blade mechanical_gear iron_plate needle_thread vehicle_frame'.split(' '),
   '03': 'berries meat mushroom herb crop cooked_meat dried_meat canned_meat grilled_mushroom mushroom_soup fruit_juice fruit_wine jam stew bandage medkit syringe antirad water_flask trail_canteen fuel_can grouse_egg'.split(' '),
-  '04': 'knife stone_pick iron_pick industrial_pick stone_axe iron_axe industrial_axe torch wood_club cleaver machete wood_spear reinforced_spear bow arrow lead_rope'.split(' '),
+  '04': 'knife stone_axe iron_axe industrial_axe torch wood_club cleaver machete wood_spear reinforced_spear bow arrow lead_rope'.split(' '),
   '05': 'leather_armor scrap_helm gas_mask fur_cloak chitin_armor iron_plate_helmet iron_plate_chest iron_plate_pants iron_plate_boots refined_iron_helmet refined_iron_chest refined_iron_legs refined_iron_boots trail_pack'.split(' '),
   '06': 'energy_basic energy_refined essence_fire essence_nature essence_water essence_spirit core_blast core_meteor core_dragon core_elsa core_earthmother core_mjolnir core_demon core_fire core_earth core_storm core_frost'.split(' '),
   '07': 'deploy_claim deploy_bed_straw deploy_chest_small deploy_chest_large deploy_campfire deploy_furnace deploy_workbench deploy_research deploy_refinery deploy_oil_pump deploy_garden deploy_farm_controller deploy_barrel deploy_feed_trough deploy_torch_post large_furnace escrow_chest'.split(' '),
@@ -72,13 +72,13 @@ export const FAMILY_RULES: Readonly<Record<FamilyId, FamilyRule>> = Object.freez
     label: 'Tools / Non-Core Weapons', role: 'Held items that wear with use. Cores are the main weapon system; these are tools and side arms.',
     rules: [
       'Three tool tiers, same shape each time: Stone (wood + stone + rope, by hand), Iron (3 Iron + 2 wood + 1 leather, bench 1), Salvager (the Iron tool itself + 2 Refined Iron + a Pipe, bench 2).',
-      'An axe and a pick of one tier cost the same, except where the head differs: the Stone Pick takes one more stone, the Salvager Axe takes a Blade.',
+      'One axe per tier does all gathering (the pickaxes were folded into the axes at revision 7). The Salvager Axe takes a Blade on top of the tier rule; its starter-known route swaps the Pipe and one Refined Iron for a Gear and Parts.',
       'Every edged weapon above stone is priced in Blades: Cleaver 1, Reinforced Spear 1, Machete 3.',
       'An upgrade consumes the thing it upgrades (Salvager tools consume the Iron tool), so progress is never two parallel grinds.',
       'Weapons with no metal are made by hand and are disposable: Club, Fire-hardened Spear, Torch.',
     ],
     examples: ['Stone Axe 3 wood + 3 stone + 1 rope -> Iron Axe 3 Iron + 2 wood + 1 leather -> Salvager Axe = Iron Axe + Blade + 2 Refined Iron + Pipe.', 'Cleaver 1 Iron + 1 Blade; Machete 4 Iron + 3 Blades.', 'Arrow 6 per wood + stone + fiber; 8 per wood + stone + feather.'],
-    infer: 'Knowing the Iron Axe and the Salvager Axe, the Salvager Pick is predictable: the Iron Pick plus the same Refined Iron and Pipe, without the Blade.',
+    infer: 'Knowing the Stone Axe (wood, stone, rope) and the Iron Axe (iron, wood, leather), the Salvager Axe is predictable: the Iron Axe itself plus refined metal, a Pipe for the handle and a Blade for the edge.',
   },
   '05': {
     label: 'Armour / Clothing / Carry', role: 'Worn items. Five slots: head, body, back, legs, feet.',
@@ -163,7 +163,7 @@ export const INGREDIENT_MEANING: Readonly<Record<string, string>> = Object.freez
   needle_thread: 'sewn assembly', glass: 'lens, still or vessel', crystal: 'Core focus', sulfur: 'fire element', shell: 'lime (glass flux) or water element', herb: 'medicine or nature element',
   electronic_parts: 'circuit that senses or decides', electric_resistor: 'lock coil', tin_can: 'sealed container', needle_tube: 'injector', animal_fat: 'tallow (fuel or carrier)', gland: 'antitoxin',
   chitin: 'natural plate', feather: 'fletching', crawler_optic: 'spirit element', vehicle_frame: 'chassis', crude_petroleum: 'refinery feedstock', meat: 'protein', mushroom: 'forage', berries: 'sugar and juice',
-  crop: 'farmed staple', bandage: 'dressing', torch: 'flame', wooden_ladder: 'the ladder being upgraded', iron_pick: 'the tool being upgraded', iron_axe: 'the tool being upgraded',
+  crop: 'farmed staple', bandage: 'dressing', torch: 'flame', wooden_ladder: 'the ladder being upgraded', iron_axe: 'the tool being upgraded',
   seed_bitterleaf: 'living nature binder', seed_wildberry: 'feed value',
 });
 
@@ -185,7 +185,7 @@ export const ITEM_DESIGN: Readonly<Record<string, Row>> = Object.freeze({
   stone: ['WORLD_ONLY', 'Mass and hardness: tool heads, hearths, furnaces, walls.', RAW],
   fiber: ['WORLD_ONLY', 'Plant fiber. Twisted into rope, woven into cloth, used raw for binding and bandages.', RAW],
   iron_ore: ['WORLD_ONLY', 'The source of all metal. One ore smelts to one Iron Ingot.', RAW],
-  rich_iron_ore: ['WORLD_ONLY', 'High-grade ore freed by an iron-class pick. Smelts straight to Refined Iron, skipping the ingot step.', RAW],
+  rich_iron_ore: ['WORLD_ONLY', 'High-grade ore freed by an iron-class axe. Smelts straight to Refined Iron, skipping the ingot step.', RAW],
   crystal: ['WORLD_ONLY', 'The Core material: focus of every Core, base of Refined Energy, also one route to Glass.', RAW],
   sulfur: ['WORLD_ONLY', 'The fire element: Fire Essence and every fire Core.', RAW],
   spares: ['WORLD_ONLY', 'Parts (Last Island "Parts"). Fitted mechanical pieces from wrecks and scrap; in every machine and the currency of research.', SCAV + ' Parts must stay non-renewable: a formula for Parts would let research and every machine be paid in ore.'],
@@ -201,7 +201,7 @@ export const ITEM_DESIGN: Readonly<Record<string, Row>> = Object.freeze({
   needle_tube: ['WORLD_ONLY', 'A sterile injector body. The scavenged half of a Syringe.', SCAV],
   feather: ['WORLD_ONLY', 'Grouse feather. Fletching for the better arrow.', RAW],
   // 02 PROCESSED MATERIALS / COMPONENTS
-  plank: ['CRAFT_ONLY', 'Sawn timber. Its one use, the Plank Wall, was removed on 2026-11-23; nothing spends it now and the item waits for a ruling.'],
+  plank: ['BOTH', 'Sawn timber: packed fuel. One Plank burns as long as the 2 Wood it is sawn from at half the weight. Bridge Raiders also carry them.'],
   charcoal: ['CRAFT_ONLY', 'Wood burned to carbon. Station fuel, the carbon in Refined Iron, the binder of Fire Essence.'],
   iron_ingot: ['BOTH', 'Smelted iron. The plain metal body of tools, devices and components.'],
   refined_iron_ingot: ['BOTH', 'Iron hardened with charcoal. The tier-2 metal: Pipe, Plate, the best tools and armour, vehicles.'],
@@ -240,12 +240,9 @@ export const ITEM_DESIGN: Readonly<Record<string, Row>> = Object.freeze({
   grouse_egg: ['WORLD_ONLY', 'Grouse Egg. Food from wild or kept grouse.', FOODRAW],
   // 04 TOOLS / NON-CORE WEAPONS
   knife: ['WORLD_ONLY', 'Survival Knife. Salvagers carry this blade; it cuts plants faster than the club.', 'No hand recipe. Repair at a Workbench for stone and fiber.'],
-  stone_pick: ['CRAFT_ONLY', 'Stone Pickaxe. First tool for stone and ore.'],
-  iron_pick: ['BOTH', 'Iron Pickaxe. Faster on stone and ore; can free Rich Iron Ore.'],
-  industrial_pick: ['CRAFT_ONLY', 'Salvager Pick. The top pick; an Iron Pick rebuilt with refined metal.'],
-  stone_axe: ['BOTH', 'Stone Axe. Issued on landing and at every wake-up; fells trees and chips stone and ore slowly.'],
-  iron_axe: ['BOTH', 'Iron Axe. Faster on trees.'],
-  industrial_axe: ['CRAFT_ONLY', 'Salvager Axe. The top axe; an Iron Axe rebuilt with a Blade and refined metal.'],
+  stone_axe: ['BOTH', 'Stone Axe. Issued on landing and at every wake-up; the one tool for trees, stone, ore and scrap.'],
+  iron_axe: ['BOTH', 'Iron Axe. Faster on trees, stone and ore; can free Rich Iron Ore.'],
+  industrial_axe: ['CRAFT_ONLY', 'Salvager Axe. The top tool for trees, stone, ore and wrecks; an Iron Axe rebuilt with a Blade and refined metal.'],
   torch: ['CRAFT_ONLY', 'Torch. Light and a little warmth; also the flame of a Torch Post.'],
   wood_club: ['CRAFT_ONLY', 'Wood Club. The first weapon, made by hand from wood; also breaks open roadside salvage.'],
   cleaver: ['BOTH', 'Cleaver. A short, quick blade; the first use of a Metal Blade.'],
@@ -351,17 +348,17 @@ export const ITEM_DESIGN: Readonly<Record<string, Row>> = Object.freeze({
 
 const PACK = 'Pack rule: the bill is the structure cost, paid once by hand; placing the pack costs nothing more.';
 type RRow = readonly [decision: Decision, why: string];
-/** Every live recipe id (114) plus the one retired at revision 6. */
+/** Every live recipe id (111) plus the ones retired at revisions 6 and 7. */
 export const RECIPE_DESIGN: Readonly<Record<string, RRow>> = Object.freeze({
   // components
   charcoal: ['KEEP', 'First-step rule: one raw, one station. Two wood make one charcoal, so charcoal is always dearer than the wood it replaces as fuel.'],
   iron_ingot: ['KEEP', 'First-step rule, 1:1. Ore count equals ingot count, so every iron bill reads directly as mining.'],
   refined_iron_ingot: ['KEEP', 'Iron + carbon. 1.5 Iron and 1 Charcoal per ingot: refining costs a burn, not more ore.'],
-  refined_iron_rich: ['KEEP', 'Alternative with a real trade: one Rich Ore replaces three ingots and is 6 s faster, but Rich Ore only comes from an iron-class pick.'],
+  refined_iron_rich: ['KEEP', 'Alternative with a real trade: one Rich Ore replaces three ingots and is 6 s faster, but Rich Ore only comes from an iron-class axe.'],
   rope: ['KEEP', 'First-step rule, by hand: 3 fiber.'],
   cloth: ['KEEP', 'First-step rule at the bench: 6 fiber. Twice a rope, so sewn goods are visibly dearer than lashed ones.'],
   leather: ['KEEP', 'First-step rule, 1:1 at the bench.'],
-  plank: ['KEEP', 'First-step rule. Its one consumer (Plank Wall) was removed on 2026-11-23 by Creator ruling; the recipe is kept unchanged until the item itself is ruled on.'],
+  plank: ['KEEP', 'First-step rule, unchanged. The Plank Wall was removed on 2026-11-23; since the delegated ruling on build 98ee24ac a Plank is fuel worth exactly its 2 Wood (40 s), so the bill packs fuel and mints nothing.'],
   glass: ['KEEP', 'Stone fused with Crystal. Inland route; competes with Cores for Crystal. Learned by study.'],
   shell_glass: ['KEEP', 'Alternative with a real trade: Shell as lime instead of Crystal. Coastal route, starter-known, slower and takes two of each.'],
   metal_pipe: ['KEEP', 'Component rule: Refined Iron + Parts, yields 2. One pipe = 1 Refined Iron + 1 Part.'],
@@ -393,12 +390,13 @@ export const RECIPE_DESIGN: Readonly<Record<string, RRow>> = Object.freeze({
   pump_crude: ['KEEP', 'Extraction job, no inputs: one Crude per cycle out of finite seep stock. Not a craft.'],
   // tools and weapons
   stone_axe: ['KEEP', 'Stone-tier rule: wood handle, stone head, rope lashing, by hand.'],
-  stone_pick: ['KEEP', 'Stone-tier rule. One more stone than the axe: a pick head is heavier.'],
+  stone_pick: ['RETIRED', 'Retired at revision 7 (Creator ruling on build 98ee24ac: the axe takes over the pickaxe\'s work; Last Island has no pickaxe). Successor: stone_axe.'],
   iron_axe: ['KEEP', 'Iron-tier rule: 3 Iron head, 2 wood handle, 1 leather grip.'],
-  iron_pick: ['KEEP', 'Iron-tier rule, identical to the axe.'],
+  iron_pick: ['RETIRED', 'Retired at revision 7 with the Stone Pickaxe. Successor: iron_axe. Old jobs finish under iron_pick@6 and pay out an Iron Axe.'],
   industrial_axe: ['KEEP', 'Salvager rule: the Iron Axe itself + 2 Refined Iron + Pipe handle, and a Blade because it cuts.'],
-  industrial_pick: ['KEEP', 'Salvager rule: the Iron Pick itself + 2 Refined Iron + Pipe handle. Learned by study.'],
-  industrial_pick_geared: ['KEEP', 'Alternative with a real trade: a Gear and 2 Parts instead of refined metal and a Pipe. No furnace work, but 5 Parts in total. Starter-known.'],
+  industrial_pick: ['RETIRED', 'Retired at revision 7 with the Stone Pickaxe. Successor: industrial_axe. Old jobs finish under industrial_pick@6 and pay out a Salvager Axe.'],
+  industrial_pick_geared: ['RETIRED', 'Retired at revision 7 with the Salvager Pick it made. Its Parts route moved to industrial_axe_geared. Old jobs finish under industrial_pick_geared@6.'],
+  industrial_axe_geared: ['REVISE', 'Alternative with a real trade: a Gear and 2 Parts instead of the Pipe and one of the two Refined Iron; the Blade stays. A third of the refined metal, but 6 Parts in total against 2. Starter-known. New id at revision 7: the Salvager Pick\'s Parts route, moved to the axe; one Refined Iron stays so the recycler never returns metal the route did not hold.'],
   torch: ['KEEP', 'By hand: wood + fiber wick.'],
   wood_club: ['KEEP', 'By hand, wood only. Last Island 300 wood at the bulk divisor.'],
   wood_spear: ['KEEP', 'By hand: shaft + lashing.'],
@@ -481,11 +479,11 @@ export const RECIPE_DESIGN: Readonly<Record<string, RRow>> = Object.freeze({
 
 /** Same-output formulas. Every group must name what the cheaper-looking route gives up. */
 export const ALTERNATIVES: Readonly<Record<string, { verdict: 'LEGITIMATE' | 'WEAK_TRADE_RECORDED'; trade: string }>> = Object.freeze({
-  refined_iron_ingot: { verdict: 'LEGITIMATE', trade: 'Rich Ore route: 1 ore instead of 3 ingots and faster, but Rich Ore needs an iron-class pick and is a separate, scarcer world material.' },
+  refined_iron_ingot: { verdict: 'LEGITIMATE', trade: 'Rich Ore route: 1 ore instead of 3 ingots and faster, but Rich Ore needs an iron-class axe and is a separate, scarcer world material.' },
   glass: { verdict: 'LEGITIMATE', trade: 'Crystal route (inland, study, competes with Cores) against Shell route (coast, starter-known, slower, two of each).' },
   fuel_can: { verdict: 'WEAK_TRADE_RECORDED', trade: 'Three routes. Fat route: no oil chain, but 6 fat per can and the slowest. Refinery single against batch: batch is cheaper and faster per can, and gives up only batch size (5 Crude and room for 2 cans). The single route is therefore weak. It belongs to the oil workstream (#59) and was left as is.' },
   energy_refined: { verdict: 'LEGITIMATE', trade: 'Bulk route needs a level-3 bench and Charcoal; per unit it saves a third of the Crystal and Iron.' },
-  industrial_pick: { verdict: 'LEGITIMATE', trade: 'Refined route (2 Refined Iron + Pipe, study) against Parts route (Gear + 2 Parts = 5 Parts, starter-known). Furnace time against scarce Parts.' },
+  industrial_axe: { verdict: 'LEGITIMATE', trade: 'Refined route (Blade + 2 Refined Iron + Pipe, study) against Parts route (Blade + 1 Refined Iron + Gear + 2 Parts, starter-known). Refined metal against scarce Parts: 2 Parts by the first, 6 by the second.' },
   arrow: { verdict: 'LEGITIMATE', trade: 'Fiber gives 6, a Feather gives 8. Feathers come only from grouse.' },
 });
 
@@ -497,6 +495,7 @@ export const SYSTEM_CONSUMERS: readonly { item: string; system: string; what: st
   { item: 'fuel_can', system: 'Power and vehicles', what: 'One can fuels a generator or refills the Motorbike. Stations never burn it.', anchor: 'engine.ts vehicle.refuel, generator fuel intent' },
   { item: 'wood', system: 'Station fuel', what: 'Station fuel (stationBurnable).', anchor: 'catalog.ts stationBurnable' },
   { item: 'charcoal', system: 'Station fuel', what: 'Station fuel (stationBurnable).', anchor: 'catalog.ts stationBurnable' },
+  { item: 'plank', system: 'Station fuel', what: 'Station fuel (stationBurnable): 40 s, the burn of the 2 Wood it is sawn from, at half the weight.', anchor: 'catalog.ts ITEMS.plank.fuel, stationBurnable' },
   { item: 'arrow', system: 'Ammunition', what: 'One arrow is spent per bow shot; the Arrow Turret fires arrows from its own container.', anchor: 'sim.ts (ranged release), engine.ts turret' },
   { item: 'energy_basic', system: 'Core reserves', what: 'Primary reserve of every Core (capacity 40).', anchor: 'creator-contract.ts' },
   { item: 'energy_refined', system: 'Core reserves', what: 'Technique reserve of every Core (capacity 12).', anchor: 'creator-contract.ts' },
@@ -526,7 +525,7 @@ export const SYSTEM_CONSUMERS: readonly { item: string; system: string; what: st
   { item: 'torch', system: 'Light and heat', what: 'Held for light and warmth.', anchor: 'catalog.ts ITEMS.torch, thermal.ts' },
   ...['stone_surtur', 'stone_typhon', 'stone_aion', 'stone_atlas', 'stone_argus', 'stone_anubis'].map(item => ({ item, system: 'Primordial Elders', what: 'Claimed from its Elder; the record of that fight.', anchor: 'catalog.ts PRIMORDIAL_ELDERS' })),
   ...['relic_shaleheart', 'ronin_nodachi', 'tidemarshal_trident', 'custodian_lantern'].map(item => ({ item, system: 'Side bosses', what: 'Unique drop of one side boss; equipped and used like any gear.', anchor: 'catalog.ts CREATURES.boss_*.uniqueDrop' })),
-  { item: 'stone_axe', system: 'Starting kit', what: 'Issued at the start of a run and at every wake-up after a death; the baseline tool.', anchor: 'engine.ts startRun / respawn' },
+  { item: 'stone_axe', system: 'Starting kit', what: 'Issued at the start of a run and at every wake-up after a fall (death or the menu\'s give-up); the baseline tool.', anchor: 'engine.ts startRun / respawn / giveUp' },
   { item: 'knife', system: 'Industrial salvage', what: 'Carried by resident salvagers; strips roadside salvage two points a hit, twice the Stone Axe.', anchor: 'catalog.ts G1A_HARVEST, humanworld.ts salvager kit' },
 ]);
 
@@ -535,6 +534,8 @@ export const CHANGELOG: readonly { id: string; kind: 'BILL' | 'RETIRED' | 'KNOWL
   { id: 'metal_blade', kind: 'BILL', before: '4 Iron + 1 Parts', after: '3 Iron + 1 Parts', evidence: 'LI DIRECT: metal_blade = 30 iron + 15 parts; mechanical_gear = 50 iron + 65 parts. LI prices a blade at well under half a gear. SOH had them equal (5 units each). The new number is SOH_PROVISIONAL.', consequence: 'Cleaver 5 -> 4 Iron in total, Machete 16 -> 13, Reinforced Spear and Salvager Axe 1 less. Recycling a blade still returns 2 Iron of 3 and never the Part, so craft -> recycle loses material every turn.', status: 'IMPLEMENTED' },
   { id: 'reinforced_spear', kind: 'BILL', before: '2 Iron + 1 Blade + 2 wood, 20 s, learned by study', after: '1 Blade + 1 Iron + 2 wood, 16 s, starter-known', evidence: 'SOH_ONLY. No LI figure. Internal contradiction: the alias below produced the same item for strictly less.', consequence: 'One formula instead of two. No player loses anything: everyone already knew the cheaper alias.', status: 'IMPLEMENTED' },
   { id: 'reinforced_spear_blade', kind: 'RETIRED', before: 'alias: 1 Blade + 1 Iron + 2 wood, 16 s, starter-known', after: 'retired; successor reinforced_spear', evidence: 'SOH_ONLY. Strictly dominated the main formula.', consequence: 'Recipe count 115 -> 114. Knowledge of the alias is pruned on load; a job queued under it finishes under reinforced_spear_blade@5.', status: 'IMPLEMENTED' },
+  { id: 'stone_pick / iron_pick / industrial_pick / industrial_pick_geared', kind: 'RETIRED', before: 'three pickaxes and a geared alias; stone and ore needed a pick, wood needed an axe', after: 'retired at recipe revision 7; each axe carries its pickaxe\'s stone, ore and scrap power', evidence: 'LI DIRECT: the Last Island axe line (Stone, Iron, Refined Iron) gathers wood and ore; Last Island has no pickaxe. Creator ruling on build 98ee24ac. The power numbers are the retired picks\' own.', consequence: 'Recipe count 114 -> 111 (four formulas out, industrial_axe_geared in). One tool slot instead of two. A pick in an old save becomes the same-tier axe at the same wear; a queued pick job pays that axe; knowledge of the formulas is pruned on load.', status: 'IMPLEMENTED' },
+  { id: 'industrial_axe_geared', kind: 'BILL', before: 'industrial_pick_geared: Iron Pickaxe + 1 Refined Iron + 1 Gear + 2 Parts', after: 'Iron Axe + 1 Blade + 1 Refined Iron + 1 Gear + 2 Parts', evidence: 'SOH_PROVISIONAL. No LI figure. Keeps a starter-known Gear route to the top tool after the pick left. The Blade matches the main Salvager Axe bill; the Refined Iron is what the recycler pays back for a full-condition Salvager Axe.', consequence: 'Mechanical Gear keeps three recipe consumers. The recycler returns no more than the route holds.', status: 'IMPLEMENTED' },
   { id: 'refined_iron_helmet / chest / legs / boots', kind: 'KNOWLEDGE', before: 'research tier 3 (random tinkering only)', after: 'research tier 2 (directed study allowed)', evidence: 'LI LEGACY_CLAIM for the bills, which are unchanged. The tier is an SOH access rule; Control Tower posture 2026-11-15.', consequence: 'A directed study (9 Parts, 45 s each) reaches the top armour set without four invented blueprint sources. Bench level 2 and the bills are untouched.', status: 'IMPLEMENTED' },
   { id: 'arrow', kind: 'KNOWLEDGE', before: 'learned by study', after: 'starter-known', evidence: 'SOH_ONLY. The better fletched arrow (8 per craft) was starter-known while the plainer one (6) needed study.', consequence: 'A bow owner without feathers can always make arrows. Bill unchanged.', status: 'IMPLEMENTED' },
 ]);

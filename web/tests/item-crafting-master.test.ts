@@ -225,7 +225,7 @@ function expansions() {
 function buildMaster() {
   const items = ROSTER.map(itemRow);
   const recipes = liveIds.map(recipeRow);
-  const retired = Object.keys(RECIPE_DESIGN).filter(id => RECIPE_DESIGN[id][0] === 'RETIRED').map(id => ({ id, successor: RECIPE_SUCCESSOR[id] ?? null, frozen: Object.keys(LEGACY_RECIPES).filter(k => k.startsWith(id + '@')), frozen_bill: LEGACY_RECIPES[id + '@5']?.ins ?? null, decision: 'RETIRED', why: RECIPE_DESIGN[id][1] }));
+  const retired = Object.keys(RECIPE_DESIGN).filter(id => RECIPE_DESIGN[id][0] === 'RETIRED').map(id => ({ id, successor: RECIPE_SUCCESSOR[id] ?? null, frozen: Object.keys(LEGACY_RECIPES).filter(k => k.startsWith(id + '@')), frozen_bill: (LEGACY_RECIPES[id + '@5'] ?? LEGACY_RECIPES[id + '@6'])?.ins ?? null, decision: 'RETIRED', why: RECIPE_DESIGN[id][1] }));
   const policy: Record<string, number> = {}; for (const i of items) policy[i.acquire_policy] = (policy[i.acquire_policy] ?? 0) + 1;
   const prov: Record<string, number> = {}; for (const r of recipes) prov[r.provenance] = (prov[r.provenance] ?? 0) + 1;
   const grade: Record<string, number> = {}; for (const r of recipes) grade[r.li_grade] = (grade[r.li_grade] ?? 0) + 1;
@@ -305,7 +305,7 @@ function renderMd(m: ReturnType<typeof buildMaster>) {
     for (const r of rs) p(`| \`${r.id}\` | ${r.qty} ${r.output_name}${r.co_products.length ? ' + ' + kb(r.co_products) : ''} | ${kb(r.ingredients)} | ${r.qty > 1 ? kb(r.unit_cost) : '—'} | ${st(r)} | ${r.knowledge_tier} / ${know(r.knowledge)} | ${r.seconds} s | ${r.provenance} (${r.li_grade}) | ${r.li_recipe ? rec(r.li_recipe) : '—'} | ${r.decision}${r.revision === m.recipe_revision ? ' (rev ' + r.revision + ')' : ''} | ${r.learning_rationale} |`);
     p();
   }
-  p('### Retired at this revision'); p(); for (const r of m.retired_recipes) p(`- \`${r.id}\` → successor \`${r.successor}\`. Frozen as ${r.frozen.map(x => '`' + x + '`').join(', ')} (${r.frozen_bill ? kb(r.frozen_bill) : ''}). ${r.why}`); p();
+  p('### Retired formulas'); p(); for (const r of m.retired_recipes) p(`- \`${r.id}\` → successor \`${r.successor}\`. Frozen as ${r.frozen.map(x => '`' + x + '`').join(', ')} (${r.frozen_bill ? kb(r.frozen_bill) : ''}). ${r.why}`); p();
   p('## 5. Costs that are not formulas'); p();
   p(`- **Powered Door module:** ${kb(m.non_recipe_consumers.structure_module.door_powered.cost)}. ${m.non_recipe_consumers.structure_module.door_powered.note}`);
   for (const [k, u] of Object.entries(m.non_recipe_consumers.upgrades)) p(`- **${u.note}** (\`${k}\`): ${kb(u.cost)}.`);
@@ -348,12 +348,12 @@ describe('ITEM_CRAFTING_MASTER — the document equals the code', () => {
     expect(readFileSync(JSON_PATH, 'utf8')).toBe(MASTER_JSON);
     expect(readFileSync(MD_PATH, 'utf8')).toBe(MASTER_MD);
   });
-  it('covers exactly the 157 roster ids, one family each, with the ordered family sizes', () => {
-    expect(ROSTER.length).toBe(157);
+  it('covers exactly the 154 roster ids, one family each, with the ordered family sizes', () => {
+    expect(ROSTER.length).toBe(154);   // 157 before the three pickaxes were folded into the axes (Creator ruling on build 98ee24ac)
     const all = FAMILY_ORDER.flatMap(f => FAMILY_MEMBERS[f]);
-    expect(all.length).toBe(157); expect(new Set(all).size).toBe(157);
+    expect(all.length).toBe(154); expect(new Set(all).size).toBe(154);
     expect([...all].sort()).toEqual([...ROSTER].sort());
-    expect(FAMILY_ORDER.map(f => FAMILY_MEMBERS[f].length)).toEqual([20, 14, 22, 16, 14, 17, 17, 10, 4, 4, 19]);
+    expect(FAMILY_ORDER.map(f => FAMILY_MEMBERS[f].length)).toEqual([20, 14, 22, 13, 14, 17, 17, 10, 4, 4, 19]);
     expect(Object.keys(ITEM_DESIGN).sort()).toEqual([...ROSTER].sort());
   });
   it('every item has a purpose and either a bill or a stated reason for having none', () => {
@@ -365,11 +365,12 @@ describe('ITEM_CRAFTING_MASTER — the document equals the code', () => {
       else { expect(i.no_recipe_reason, i.id).toBeTruthy(); expect(['WORLD_ONLY', 'SPECIAL_AUTHORITY'], i.id + ' has no bill').toContain(i.acquire_policy); }
       if (i.id !== 'door_powered' && i.id !== 'crude_petroleum') expect(!!ITEM_DESIGN[i.id][2], i.id + ': a reason exists exactly when no formula does').toBe(i.recipes.length === 0);
     }
-    expect(MASTER.counts.items_with_bill + MASTER.counts.items_without_bill).toBe(157);
+    expect(MASTER.counts.items_with_bill + MASTER.counts.items_without_bill).toBe(154);
     expect(MASTER.counts.items_without_bill).toBe(49);
   });
   it('every live formula has a decision and a rationale; nothing documented is missing from the code', () => {
-    expect(MASTER.counts.live_recipes).toBe(114); expect(MASTER.counts.pack_recipes).toBe(24);
+    expect(MASTER.counts.live_recipes).toBe(111);   // 114 before revision 7: four pickaxe formulas retired, the geared route re-homed on the axe
+    expect(MASTER.counts.pack_recipes).toBe(24);
     const designed = Object.keys(RECIPE_DESIGN).filter(id => RECIPE_DESIGN[id][0] !== 'RETIRED').sort();
     expect(designed).toEqual([...liveIds].sort());
     for (const r of MASTER.recipes) {
@@ -377,7 +378,7 @@ describe('ITEM_CRAFTING_MASTER — the document equals the code', () => {
       expect(r.ingredient_roles.join('|'), r.id).not.toContain('MISSING');
       expect(ROSTER, r.id).toContain(r.output);
       for (const [k] of r.ingredients) expect(ROSTER, r.id + ' input ' + k).toContain(k);
-      expect(r.decision === 'REVISE', r.id + ' REVISE exactly when touched at this revision').toBe(r.revision === RECIPE_REVISION || ['arrow', 'refined_iron_helmet', 'refined_iron_chest', 'refined_iron_legs', 'refined_iron_boots'].includes(r.id));
+      expect(r.decision === 'REVISE', r.id + ' REVISE exactly when touched at a cut-over (revision 6 or 7)').toBe(r.revision === 6 || r.revision === 7 || ['arrow', 'refined_iron_helmet', 'refined_iron_chest', 'refined_iron_legs', 'refined_iron_boots'].includes(r.id));
     }
     for (const id of Object.keys(RECIPE_DESIGN).filter(id => RECIPE_DESIGN[id][0] === 'RETIRED')) { expect(RECIPES[id], id).toBeUndefined(); expect(RETIRED_RECIPES as readonly string[]).toContain(id); }
     expect(validateGameplayCatalog()).toBe(true);
@@ -401,10 +402,17 @@ describe('ITEM_CRAFTING_MASTER — the grammar holds in the live catalog', () =>
     expect(units('metal_blade')).toBeLessThan(units('mechanical_gear'));
     expect(ins('metal_blade').spares).toBeLessThan(ins('mechanical_gear').spares);
   });
-  it('tools: axe and pick of a tier match; a Salvager tool consumes the Iron tool plus refined metal and a Pipe', () => {
-    expect(RECIPES.iron_axe.ins).toEqual(RECIPES.iron_pick.ins);
-    for (const [hi, lo] of [['industrial_axe', 'iron_axe'], ['industrial_pick', 'iron_pick']]) { expect(ins(hi)[lo]).toBe(1); expect(ins(hi).refined_iron_ingot).toBe(2); expect(ins(hi).metal_pipe).toBe(1); }
-    expect(ins('industrial_axe').metal_blade).toBe(1); expect(ins('industrial_pick').metal_blade).toBeUndefined();
+  it('tools: one axe per tier and no pickaxe; the Salvager Axe consumes the Iron Axe plus refined metal, a Pipe and a Blade', () => {
+    for (const id of ['stone_pick', 'iron_pick', 'industrial_pick', 'industrial_pick_geared']) { expect(RECIPES[id], id).toBeUndefined(); expect(LEGACY_RECIPES[id + '@6'], id).toBeTruthy(); }
+    // the Salvager Pick's Parts route lives on, on the axe: Gear + 2 Parts for the Pipe and one Refined Iron, Blade kept
+    expect(ins('industrial_axe_geared')).toEqual({ iron_axe: 1, metal_blade: 1, refined_iron_ingot: 1, mechanical_gear: 1, spares: 2 });
+    expect(LEGACY_RECIPES['industrial_pick_geared@6'].ins).toEqual([['iron_pick', 1], ['mechanical_gear', 1], ['spares', 2]]);
+    expect(RECIPES.industrial_axe_geared.out).toBe('industrial_axe'); expect(RECIPES.industrial_axe_geared.base).toBe(true);
+    expect(ins('stone_axe')).toEqual({ wood: 3, stone: 3, rope: 1 }); expect(ins('iron_axe')).toEqual({ iron_ingot: 3, wood: 2, leather: 1 });
+    expect(ins('industrial_axe').iron_axe).toBe(1); expect(ins('industrial_axe').refined_iron_ingot).toBe(2); expect(ins('industrial_axe').metal_pipe).toBe(1);
+    expect(ins('industrial_axe').metal_blade).toBe(1);
+    // each axe does the stone and ore work its pickaxe did, at the pickaxe's power
+    expect(ITEMS.stone_axe.power).toMatchObject({ wood: 3, stone: 3, ore: 2 }); expect(ITEMS.iron_axe.power).toMatchObject({ wood: 6, stone: 6, ore: 5 }); expect(ITEMS.industrial_axe.power).toMatchObject({ wood: 9, stone: 9, ore: 8 });
     expect(ins('steel_folding_ladder').wooden_ladder).toBe(1);
   });
   it('edged weapons are priced in Blades: Cleaver 1, Reinforced Spear 1, Machete 3', () => {
@@ -439,10 +447,11 @@ describe('ITEM_CRAFTING_MASTER — the grammar holds in the live catalog', () =>
     expect(g.silent_gates.map(s => s.recipe + ':' + s.ingredient)).toEqual(['cleaver:metal_blade']);
     expect(ITEM_DESIGN.metal_blade[0]).toBe('BOTH');
     for (const i of g.outside_main_component) expect(i.linked_by.length, i.id + ' must be tied to a system').toBeGreaterThan(0);
-    // OPEN DEFECT, not a pass: the Creator removed the Plank Wall on 2026-11-23 and it was Plank's one consumer (one
-    // that no player could reach), so Plank is now a material nothing spends. The list must hold Plank and nothing
-    // else until the item is ruled on (retire the recipe and drop, or give it a use); then it goes back to [].
-    expect(g.dead_end_materials).toEqual(['plank']);
+    // Closed on build 98ee24ac + 1: Plank lost its one consumer with the Plank Wall (2026-11-23) and now has a use as
+    // fuel worth exactly the 2 Wood it is sawn from. No material is left that nothing spends.
+    expect(g.dead_end_materials).toEqual([]);
+    expect(ITEMS.plank.fuel).toBe(RECIPES.plank.ins[0][1] * ITEMS.wood.fuel!); expect(RECIPES.plank.ins).toEqual([['wood', 2]]); expect(RECIPES.plank.qty).toBe(1);
+    expect(ITEMS.plank.w).toBeLessThan(RECIPES.plank.ins[0][1] * ITEMS.wood.w);
   });
 });
 
@@ -458,8 +467,10 @@ describe('recipe revision 6 — cut-over and old jobs', () => {
     const e = { id: 'icm-st-' + (++seq), kind: 'struct', type: 'workbench', x: (px + 1) * TILE + 8, y: py * TILE + 8, tx: px + 1, ty: py, hp: 200, maxHp: 200, station: { fuelC: fuel.id, outC: out.id, burn: 0, queue: [], level } } as unknown as Entity;
     r.entities[e.id] = e; markDirty(); return e;
   }
-  it('revision is 6 and every changed id is frozen at 5 with its old bill', () => {
-    expect(RECIPE_REVISION).toBe(6);
+  it('revision 6 froze every changed id at 5 with its old bill; revision 7 froze the pickaxe formulas at 6', () => {
+    expect(RECIPE_REVISION).toBe(7);
+    expect([...(CUT_OVER_REVISIONS[6] as string[])].sort()).toEqual(['industrial_pick', 'industrial_pick_geared', 'iron_pick', 'stone_pick']);
+    expect(LEGACY_RECIPES['iron_pick@6'].ins).toEqual([['iron_ingot', 3], ['wood', 2], ['leather', 1]]);
     expect([...(CUT_OVER_REVISIONS[5] as string[])].sort()).toEqual(['arrow', 'metal_blade', 'refined_iron_boots', 'refined_iron_chest', 'refined_iron_helmet', 'refined_iron_legs', 'reinforced_spear', 'reinforced_spear_blade']);
     for (const id of CUT_OVER_REVISIONS[5] as string[]) expect(LEGACY_RECIPES[id + '@5'], id).toBeTruthy();
     expect(LEGACY_RECIPES['metal_blade@5'].ins).toEqual([['iron_ingot', 4], ['spares', 1]]);
@@ -467,7 +478,8 @@ describe('recipe revision 6 — cut-over and old jobs', () => {
     expect(LEGACY_RECIPES['refined_iron_chest@5'].tier).toBe(3); expect(LEGACY_RECIPES['refined_iron_chest@5'].ins).toEqual(RECIPES.refined_iron_chest.ins);
     expect(recipeForJob('metal_blade', 5)).toBe(LEGACY_RECIPES['metal_blade@5']); expect(recipeForJob('metal_blade', 6)).toBe(RECIPES.metal_blade);
     expect(recipeForJob('reinforced_spear_blade', 5)).toBe(LEGACY_RECIPES['reinforced_spear_blade@5']);
-    expect(recipeForJob('metal_blade', 7)).toBeNull();
+    expect(recipeForJob('metal_blade', 7)).toBe(RECIPES.metal_blade); expect(recipeForJob('metal_blade', 8)).toBeNull();
+    expect(recipeForJob('iron_pick', 6)).toBe(LEGACY_RECIPES['iron_pick@6']); expect(recipeForJob('industrial_pick_geared', 6)).toBe(LEGACY_RECIPES['industrial_pick_geared@6']);
   });
   it('the dominated spear alias is gone and resolves to the one spear formula', () => {
     expect(RECIPES.reinforced_spear_blade).toBeUndefined();
@@ -479,7 +491,7 @@ describe('recipe revision 6 — cut-over and old jobs', () => {
     const gs = run(), st = bench(gs, 2); give(gs, 'iron_ingot', 4); give(gs, 'spares', 1);
     const rc = act(gs, 'craft', { recipe: 'metal_blade', eid: st.id }); expect(rc.ok, JSON.stringify(rc)).toBe(true);
     expect(inv(gs, 'iron_ingot')).toBe(1); expect(inv(gs, 'spares')).toBe(0);
-    expect(st.station!.queue[0].rv).toBe(6);
+    expect(st.station!.queue[0].rv).toBe(RECIPE_REVISION);
     const ms = RECIPES.metal_blade.secs * 1000 + 500; stepStations(gs, ms, at(ms));
     expect(countItem(gs.run!, st.station!.outC, 'metal_blade')).toBe(1);
   });

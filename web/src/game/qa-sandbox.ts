@@ -115,7 +115,6 @@ function equipFullGear(r: RunState) {
     ['machete', 1],
     ['bow', 1],
     ['industrial_axe', 1],
-    ['industrial_pick', 1],
     ['stew', 4],
     ['trail_canteen', 1],
     ['medkit', 4],
@@ -174,7 +173,7 @@ function loadFullGear(r: RunState) {
   inv.slots = Array(24).fill(null);
   cores.forEach((s, i) => { inv.slots[i] = s; });
   const pack: [string, number][] = [
-    ['machete', 1], ['bow', 1], ['industrial_axe', 1], ['industrial_pick', 1],
+    ['machete', 1], ['bow', 1], ['industrial_axe', 1],
     ['arrow', 60], ['stew', 5], ['trail_canteen', 1], ['medkit', 5],
   ];
   pack.forEach(([key, qty], i) => {
@@ -283,7 +282,7 @@ function provisionVehicles(gs: GameState, r: RunState, now: number) {
   const vendor: Entity = { id: `qa_vendor_${r.nextId++}`, kind: 'vendor', x: vendorSpot.tx * TILE + 8, y: vendorSpot.ty * TILE + 8, tx: vendorSpot.tx, ty: vendorSpot.ty, label: 'Mirela the Trader' };
   r.entities[vendor.id] = vendor;
   if (gs.profile.securedCash < 12) gs.profile.securedCash = 120;
-  qaAction(gs, 'buy', { eid: vendor.id, item: 'iron_pick', id: `qa-freight-${r.id}`, freight: true }, now + 5);
+  qaAction(gs, 'buy', { eid: vendor.id, item: 'iron_axe', id: `qa-freight-${r.id}`, freight: true }, now + 5);
   return { bike, cart, vendor };
 }
 

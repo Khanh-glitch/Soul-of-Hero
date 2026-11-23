@@ -567,7 +567,7 @@ export function SkillsPanel({ api }: { api: Api }) {
 }
 
 export function MenuPanel({ api, onQuit, onSave, qaMode = false, returnHistory = [] }: { api: Api; onQuit: () => void; onSave: () => Promise<boolean>; qaMode?: boolean; returnHistory?: StoredReturnEntry[] }) {
-  const [confirm, setConfirm] = useState(false); const pf = api.gs.profile; const r = api.gs.run!; const outlook = wetOutlook(r, api.now()); const survival = offlineSurvivalEstimate(r); const cabinets=Object.values(r.entities).filter(e=>e.type==='claim'&&(e.owner===undefined||e.owner==='player'));
+  const [confirm, setConfirm] = useState(false); const [giveUp, setGiveUp] = useState(false); const pf = api.gs.profile; const r = api.gs.run!; const outlook = wetOutlook(r, api.now()); const survival = offlineSurvivalEstimate(r); const cabinets=Object.values(r.entities).filter(e=>e.type==='claim'&&(e.owner===undefined||e.owner==='player'));
   // VISUAL ARENA: shifted right so the Presentation console docks beside it at 640x360 without overlap.
   return <Panel title="Menu — world time continues" style={{ left: 210, top: 34, width: 424, maxHeight: 300, overflowY: 'auto' }} onClose={() => api.open(null)} className="scroll">
     <div className="flex flex-wrap gap-1">
@@ -591,6 +591,7 @@ export function MenuPanel({ api, onQuit, onSave, qaMode = false, returnHistory =
       <div className="flex flex-wrap gap-1" style={{ marginTop: 3 }}>{[1, 24].map(h => <button key={h} className="btn ghost" onClick={() => api.act('qaAdvance', { hours: h })}>+{h}h</button>)}
         <button className="btn ghost" onClick={() => api.act('qaAdvance', { hours: Math.max(0, 264.05 - runHours(r, api.now())) })}>→ Ragnarok (h264)</button>
         <button className="btn ghost" onClick={() => api.act('qaAdvance', { hours: Math.max(0, 312.05 - runHours(r, api.now())) })}>→ Day 14 (h312)</button></div></div>}
+    {!playerAtSea(r) && !r.player.dead && <div style={{ marginTop: 6 }}>{!giveUp ? <button className="btn" onClick={() => setGiveUp(true)}>Stuck? Give up &amp; wake somewhere safe…</button> : <span className="flex flex-wrap gap-1 items-center" style={{ fontSize: 10 }}>You fall where you stand: everything you carry stays in a bag here. You wake at your bed, or on a safe shore, with a Stone Axe. The run goes on. <button className="btn gold" onClick={() => { const res = api.act('giveUp'); if (res.ok) api.open(null); else setGiveUp(false); }}>Give up &amp; wake</button><button className="btn ghost" onClick={() => setGiveUp(false)}>No</button></span>}</div>}
     <div style={{ marginTop: 6 }}>{!confirm ? <button className="btn danger" onClick={() => setConfirm(true)}>Abandon run…</button> : <span className="flex gap-1 items-center" style={{ fontSize: 10 }}>Abandon wipes all run items, home and unsecured cash. <button className="btn danger" onClick={() => api.act('abandon')}>Confirm abandon</button><button className="btn ghost" onClick={() => setConfirm(false)}>No</button></span>}</div>
   </Panel>;
 }

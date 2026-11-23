@@ -50,12 +50,12 @@ Plank: 2 wood → 1 @ workbench, 6s. Listed consumers: none. Creature drops: orc
 - CLOSED BY RULING (Creator, 2026-11-23): wall_plank and wall_brick are removed from the catalog. Walls are wall_wood (160 HP) → wall_stone (380 HP), the second reached only by the Territory Cabinet upgrade.
 - A save made by an older build that still holds one loads it as wall_plank → wall_wood, wall_brick → wall_stone, health capped at the live wall's.
 - No structure is left that can neither be placed nor reached by an upgrade.
-- OPEN: Plank now has 0 listed consumers. It is still craftable (6s at a Workbench) and still drops from orc_2, and nothing spends it.
+- CLOSED BY DELEGATED RULING (Creator, on build 98ee24ac): a Plank is fuel (40 s, the burn of the 2 Wood it is sawn from). No recipe or structure takes it (0 listed); every fuel slot does. It still drops from orc_2.
 
 **Resolution path**
 
 - The wall half of P6 is done: no code path places, upgrades to, draws or pens with either retired wall.
-- Still to rule: the Plank item. Either retire its recipe and drop (a recipe cutover: frozen definition, RECIPE_REVISION bump, queued jobs finish under their own bill) or give it a consumer. Until then the item, saved stacks and queued jobs stay valid and its description says no building uses it.
+- The Plank half is done without a recipe cutover: the item gained a fuel value equal to the Wood it is sawn from, so every campfire, furnace and generator spends it. Recipe, drop, saved stacks and queued jobs are unchanged.
 
 ## P8 — Veyra source-access matrix
 

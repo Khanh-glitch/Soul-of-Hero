@@ -9,13 +9,13 @@
     "status": "Final DESIGN scope. NOT production migration, not native acceptance."
   },
   "stats": {
-    "final_total": 157,
+    "final_total": 154,
     "A": 78,
-    "B": 42,
+    "B": 39,
     "C": 37,
     "current_catalog": 123,
     "current_technical_packs": 24,
-    "retired_current": 19,
+    "retired_current": 22,
     "legacy_current": 6,
     "li_source_union": 139,
     "li_a_keep": 63,
@@ -427,36 +427,12 @@
       "reason": "Rìu đá đầu game gốc LI (nguồn 2019), thiếu trong tập 139"
     },
     {
-      "id": "stone_pick",
-      "name": "Stone Pickaxe",
-      "group": "B",
-      "origin": "SOH_CURRENT",
-      "li_id": null,
-      "reason": "Cuốc đá chuyên khai mỏ trong world K3"
-    },
-    {
       "id": "iron_axe",
       "name": "Iron Axe",
       "group": "A",
       "origin": "SOH_CURRENT",
       "li_id": "iron_axe",
       "reason": "Giữ item và vai trò LI iron_axe, khôi phục recipe/source LI có chứng cứ"
-    },
-    {
-      "id": "iron_pick",
-      "name": "Iron Pickaxe",
-      "group": "B",
-      "origin": "SOH_CURRENT",
-      "li_id": null,
-      "reason": "Cuốc sắt nâng khai thác quặng"
-    },
-    {
-      "id": "industrial_pick",
-      "name": "Salvager Pick",
-      "group": "B",
-      "origin": "SOH_CURRENT",
-      "li_id": null,
-      "reason": "Cuốc khai thác nâng cao; dùng chất lượng công cụ, không bắt Gear vô cớ"
     },
     {
       "id": "industrial_axe",
@@ -1443,6 +1419,30 @@
       "origin": "SOH_CURRENT",
       "li_id": null,
       "reason": "Không có lý do giữ sau khi copy LI; migrate/save có bảo toàn"
+    },
+    {
+      "id": "stone_pick",
+      "name": "Stone Pickaxe",
+      "group": "RETIRE",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Creator quyết sau bản 98ee24ac: bỏ cuốc, gộp chức năng vào rìu cùng cấp (Last Island không có cuốc); save cũ đổi 1:1 sang rìu"
+    },
+    {
+      "id": "iron_pick",
+      "name": "Iron Pickaxe",
+      "group": "RETIRE",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Creator quyết sau bản 98ee24ac: bỏ cuốc, gộp chức năng vào rìu cùng cấp (Last Island không có cuốc); save cũ đổi 1:1 sang rìu"
+    },
+    {
+      "id": "industrial_pick",
+      "name": "Salvager Pick",
+      "group": "RETIRE",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Creator quyết sau bản 98ee24ac: bỏ cuốc, gộp chức năng vào rìu cùng cấp (Last Island không có cuốc); save cũ đổi 1:1 sang rìu"
     }
   ],
   "legacy_soh_ids": [
@@ -3047,6 +3047,13 @@
         "rope": 3
       },
       "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    }
+  ],
+  "amendments": [
+    {
+      "after_build": "98ee24ac",
+      "ruling": "Creator: bỏ cuốc và dung hợp chức năng của nó với rìu.",
+      "change": "stone_pick, iron_pick, industrial_pick chuyển từ final_items (nhóm B) sang retired_soh_ids. Tổng 157 -> 154; B 42 -> 39; retired 19 -> 22."
     }
   ]
 }

@@ -120,7 +120,7 @@ function p6() {
   const drops = Object.entries(CREATURES).filter(([, c]) => (c.drops as [string, number, number][]).some(([k]) => k === 'plank')).map(([k]) => k);
   return {
     tiers, retired_walls,
-    plank: { recipe: `${RECIPES.plank.ins.map(([k, q]) => `${q} ${k}`).join(' + ')} → ${RECIPES.plank.qty} @ ${RECIPES.plank.station}, ${RECIPES.plank.secs}s`, consumers: plankConsumers, creature_drops: drops },
+    plank: { recipe: RECIPES.plank ? `${RECIPES.plank.ins.map(([k, q]) => `${q} ${k}`).join(' + ')} → ${RECIPES.plank.qty} @ ${RECIPES.plank.station}, ${RECIPES.plank.secs}s` : 'no sawing recipe', consumers: plankConsumers, creature_drops: drops },
     structure_upgrades: { ...STRUCTURE_UPGRADES }, upgrade_only: [...PA1_UPGRADE_ONLY_GEOMETRY],
     unobtainable_structures: UNOBTAINABLE_STRUCTURES.map((id) => ({ id, name: STRUCTS[id].name, hp: STRUCTS[id].hp, cost: cost(id) })),
     conclusion: [
@@ -129,11 +129,13 @@ function p6() {
       UNOBTAINABLE_STRUCTURES.length
         ? `Structures that still cannot be obtained: ${UNOBTAINABLE_STRUCTURES.map((id) => `${id} (${STRUCTS[id].hp} HP)`).join(', ')}.`
         : 'No structure is left that can neither be placed nor reached by an upgrade.',
-      `OPEN: Plank now has ${plankConsumers.length} listed consumers${plankConsumers.length ? ` (${plankConsumers.join(', ')})` : ''}. It is still craftable (${RECIPES.plank.secs}s at a Workbench) and still drops from ${drops.join(', ') || 'nothing'}, and nothing spends it.`,
+      ITEMS.plank.fuel
+        ? `CLOSED BY DELEGATED RULING (Creator, on build 98ee24ac): a Plank is fuel (${ITEMS.plank.fuel} s, the burn of the ${RECIPES.plank?.ins[0]?.[1] ?? 2} Wood it is sawn from). No recipe or structure takes it (${plankConsumers.length} listed); every fuel slot does. It still drops from ${drops.join(', ') || 'nothing'}.`
+        : `OPEN: Plank now has ${plankConsumers.length} listed consumers${plankConsumers.length ? ` (${plankConsumers.join(', ')})` : ''}. It still drops from ${drops.join(', ') || 'nothing'}, and nothing spends it.`,
     ],
     resolution: [
       'The wall half of P6 is done: no code path places, upgrades to, draws or pens with either retired wall.',
-      'Still to rule: the Plank item. Either retire its recipe and drop (a recipe cutover: frozen definition, RECIPE_REVISION bump, queued jobs finish under their own bill) or give it a consumer. Until then the item, saved stacks and queued jobs stay valid and its description says no building uses it.',
+      'The Plank half is done without a recipe cutover: the item gained a fuel value equal to the Wood it is sawn from, so every campfire, furnace and generator spends it. Recipe, drop, saved stacks and queued jobs are unchanged.',
     ],
   };
 }

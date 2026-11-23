@@ -127,7 +127,7 @@ describe('first aid with water for a thirst collapse',()=>{
   expect(o.flask()!.charge).toBe(charge);                                             // nothing is spent before contact
   o.run(120000);
   expect(o.patient.state).toBe('IDLE');expect(o.patient.thirst).toBe(30);expect(o.patient.downedAt).toBeUndefined();
-  expect(o.patient.hp).toBe(1);                                                       // water restores no health
+  expect(o.patient.hp).toBe(10);                                                      // water is not medicine: it only stands the patient up at WATER_REVIVE_HP (10)
   expect(o.patient.wounds.every(w=>w.treated)).toBe(true);
   expect(o.flask()!.charge).toBe(charge-1);expect(o.doses()).toBe(doses);
   const water=o.kinds('human.medical.water').map(q=>JSON.parse(q.detail));

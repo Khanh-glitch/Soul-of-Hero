@@ -21,12 +21,12 @@ function ironTile(r:RunState):[number,number]{
 const richOnGround=(r:RunState)=>Object.values(r.custody).filter(c=>c.kind==='drop').flatMap(c=>c.slots).reduce((a,s)=>a+(s?.key==='rich_iron_ore'?s.qty:0),0);
 
 describe('MEC-01 R8C rich iron ore', () => {
-  it('rate is tier-gated by the source contract: iron pick 8%, salvager 12%, stone pick none, environment none', () => {
+  it('rate is tier-gated by the source contract: Iron Axe 8%, Salvager Axe 12%, Stone Axe none, environment none', () => {
     const iron=SOURCES.iron;
     expect(qualityTierFor(iron,{ore:5},'playerTool')).toEqual({item:'rich_iron_ore',chance:0.08});
     expect(qualityTierFor(iron,{ore:8},'playerTool')).toEqual({item:'rich_iron_ore',chance:0.12});
-    expect(qualityTierFor(iron,{ore:4},'playerTool')).toBeNull();        // NEGATIVE: just below the iron-pick tier
-    expect(qualityTierFor(iron,{ore:2},'playerTool')).toBeNull();        // NEGATIVE: stone pick
+    expect(qualityTierFor(iron,{ore:4},'playerTool')).toBeNull();        // NEGATIVE: just below the Iron Axe tier
+    expect(qualityTierFor(iron,{ore:2},'playerTool')).toBeNull();        // NEGATIVE: Stone Axe
     expect(qualityTierFor(iron,{ore:8},'environment')).toBeNull();       // NEGATIVE: earthquake capability
     expect(qualityTierFor(SOURCES.rock,{stone:6,ore:5},'playerTool')).toBeNull(); // NEGATIVE: source without a contract
   });
@@ -37,15 +37,15 @@ describe('MEC-01 R8C rich iron ore', () => {
     expect(richOnGround(r)).toBe(0);
   });
 
-  it('an iron-pick swing that depletes veins drops at most one rich ore per unit taken; stone-pick swings drop none', () => {
+  it('an Iron Axe swing that depletes veins drops at most one rich ore per unit taken; Stone Axe swings drop none', () => {
     const g=start(811);const r=g.run!;const [tx,ty]=ironTile(r);
     let units=0,rich=0;
-    // Iron-class pick: power ore 5 (same as iron_pick). Count the stock actually taken per swing.
+    // Iron-class axe: power ore 5 (same as iron_axe). Count the stock actually taken per swing.
     for(let i=0;i<60;i++){const s=sourceAt(r,tx,ty,T);if(!s||s.stock<=0)break;const before=s.stock;harvestHit(g,tx,ty,{stone:6,ore:5,scrap:4},T+i*500,tx*TILE,ty*TILE,{extraction:'playerTool'});units+=before-(sourceAt(r,tx,ty,T)?.stock??0);}
     rich=richOnGround(r);
     expect(units).toBeGreaterThan(0);
     expect(rich).toBeLessThanOrEqual(units);         // conservation: never more rich ore than units taken
-    // Stone-pick swings on a fresh iron vein: no rich ore, only stone/iron ore.
+    // Stone Axe swings on a fresh iron vein: no rich ore, only stone/iron ore.
     const g2=start(812);const r2=g2.run!;const [ux,uy]=ironTile(r2);
     for(let i=0;i<60;i++){const s=sourceAt(r2,ux,uy,T);if(!s||s.stock<=0)break;harvestHit(g2,ux,uy,{stone:3,ore:2},T+i*500,ux*TILE,uy*TILE,{extraction:'playerTool'});}
     expect(richOnGround(r2)).toBe(0);

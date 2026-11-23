@@ -1,6 +1,6 @@
 // Foundry exterior gear is still a physical input, but the geared drive recipe is
-// retired. Cover its explicit refusal and the live L2 geared pick transaction.
-// FIXTURE: player positions, bench materials, iron pick and spares. Never grant
+// retired. Cover its explicit refusal and the live L2 geared axe transaction.
+// FIXTURE: player positions, bench materials, iron axe, its Blade and Refined Iron, and spares. Never grant
 // the cache gear in the successful chain. All transfers/upgrades/jobs are paid intents.
 import {describe,it,expect} from 'vitest';
 import {type GameState,type RunState,TILE} from '../src/game/core';
@@ -25,7 +25,7 @@ function legalTileNear(g:GameState,cx:number,cy:number):[number,number]{
 
 const act=(g:GameState,type:string,args:Record<string,unknown>)=>dispatch(g,{id:`p3-${++n}`,type,...args},START+n);
 function benchAtSpawn(g:GameState,tx:number,ty:number,upgrade:boolean){
-  const r=g.run!;for(const [key,qty] of [['wood',14],['stone',4],['iron_ingot',2],['spares',6],['iron_pick',1]] as const)expect(addItem(r,'inv',key,qty)).toBe(0);
+  const r=g.run!;for(const [key,qty] of [['wood',14],['stone',4],['iron_ingot',2],['spares',6],['iron_axe',1],['metal_blade',1],['refined_iron_ingot',1]] as const)expect(addItem(r,'inv',key,qty)).toBe(0);
   expect(act(g,'craft',{recipe:'deploy_workbench'}).ok).toBe(true);
   const [x,y]=legalTileNear(g,tx,ty);expect(act(g,'build',{struct:'workbench',tx:x,ty:y}).ok).toBe(true);
   const bench=Object.values(r.entities).find(e=>e.kind==='struct'&&e.type==='workbench'&&e.tx===x&&e.ty===y)!;
@@ -43,18 +43,18 @@ describe('Foundry cache gear and the paid L2 chain after drive retirement',()=>{
   place(r,cache.tx!+1,cache.ty!);expect(act(g,'move',{from:cache.c,fs,to:'inv'}).ok).toBe(true);expect(countItem(r,cache.c!,'mechanical_gear')).toBe(0);
   const b=benchAtSpawn(g,cx,cy,true),out=b.station!.outC!;g=copy(g);
   expect(act(g,'craft',{eid:b.id,recipe:'vehicle_drive_geared'})).toMatchObject({ok:false,reason:expect.stringContaining('Retired')});
-  expect(countItem(g.run!,'inv','mechanical_gear')).toBe(1);expect(act(g,'craft',{eid:b.id,recipe:'industrial_pick_geared'}).ok).toBe(true);
-  g=copy(g);expect(g.run!.entities[b.id].station!.queue[0].recipe).toBe('industrial_pick_geared');
-  for(const key of ['mechanical_gear','iron_pick','spares'])expect(countItem(g.run!,'inv',key)).toBe(0);
-  stepStations(g,RECIPES.industrial_pick_geared.secs*1000+1000,START+60000);g=copy(g);
-  const slot=g.run!.custody[out].slots.findIndex(s=>s?.key==='industrial_pick');expect(slot).toBeGreaterThanOrEqual(0);
+  expect(countItem(g.run!,'inv','mechanical_gear')).toBe(1);expect(act(g,'craft',{eid:b.id,recipe:'industrial_axe_geared'}).ok).toBe(true);
+  g=copy(g);expect(g.run!.entities[b.id].station!.queue[0].recipe).toBe('industrial_axe_geared');
+  for(const key of ['mechanical_gear','iron_axe','metal_blade','refined_iron_ingot','spares'])expect(countItem(g.run!,'inv',key)).toBe(0);
+  stepStations(g,RECIPES.industrial_axe_geared.secs*1000+1000,START+60000);g=copy(g);
+  const slot=g.run!.custody[out].slots.findIndex(s=>s?.key==='industrial_axe');expect(slot).toBeGreaterThanOrEqual(0);
   const uid=g.run!.custody[out].slots[slot]!.uid;expect(dispatch(g,{id:`collect-${++n}`,type:'move',from:out,fs:slot,to:'inv'},START+61000).ok).toBe(true);
-  g=copy(g);expect(g.run!.custody.inv.slots.some(s=>s?.uid===uid&&s.key==='industrial_pick')).toBe(true);expect(countItem(g.run!,out,'industrial_pick')).toBe(0);
+  g=copy(g);expect(g.run!.custody.inv.slots.some(s=>s?.uid===uid&&s.key==='industrial_axe')).toBe(true);expect(countItem(g.run!,out,'industrial_axe')).toBe(0);
  });
  it.each([true,false])('does not charge a refused geared tool (level two: %s)',upgrade=>{
   const g=start(),r=g.run!,b=benchAtSpawn(g,Math.floor(r.player.x/TILE),Math.floor(r.player.y/TILE),upgrade);
   if(!upgrade)addItem(r,'inv','mechanical_gear',1);
-  const stock=structuredClone(r.custody.inv.slots);expect(act(g,'craft',{eid:b.id,recipe:'industrial_pick_geared'})).toMatchObject({ok:false,reason:expect.stringMatching(upgrade?/Gear 0\/1/i:/level 2/i)});
+  const stock=structuredClone(r.custody.inv.slots);expect(act(g,'craft',{eid:b.id,recipe:'industrial_axe_geared'})).toMatchObject({ok:false,reason:expect.stringMatching(upgrade?/Gear 0\/1/i:/level 2/i)});
   expect(r.custody.inv.slots).toEqual(stock);expect(b.station!.queue).toEqual([]);
  });
 });

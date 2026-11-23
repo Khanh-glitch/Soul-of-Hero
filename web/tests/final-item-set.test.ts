@@ -53,12 +53,13 @@ function craftAt(gs: GameState, e: Entity, recipe: string, fuelKey?: string) {
 const snapshot = (gs: GameState) => JSON.parse(JSON.parse(serializeSnapshot(gs)).payload) as GameState;
 
 describe('II — registration: the runtime registry is the roster, and every id is a real catalog row', () => {
-  it('projects the design roster verbatim: 157 = A 78 + B 42 + C 37', () => {
-    expect(FINAL_ITEM_IDS).toHaveLength(157);
+  // Creator ruling on build 98ee24ac: the three pickaxes left the roster (folded into the axes). 157 -> 154, B 42 -> 39.
+  it('projects the design roster verbatim: 154 = A 78 + B 39 + C 37', () => {
+    expect(FINAL_ITEM_IDS).toHaveLength(154);
     expect(FINAL_ITEM_IDS).toEqual(ROSTER.final_items.map((x: any) => x.id));
     for (const x of ROSTER.final_items) expect([...FINAL_ITEMS[x.id]], x.id).toEqual(x.li_id ? [x.group, x.origin, x.li_id] : [x.group, x.origin]);
     const by = (g: string) => FINAL_ITEM_IDS.filter(id => FINAL_ITEMS[id][0] === g).length;
-    expect([by('A'), by('B'), by('C')]).toEqual([78, 42, 37]);
+    expect([by('A'), by('B'), by('C')]).toEqual([78, 39, 37]);
     expect(RETIRED_ITEM_IDS).toEqual(ROSTER.retired_soh_ids.map((x: any) => x.id));
     expect(LEGACY_STONE_IDS).toEqual(ROSTER.legacy_soh_ids.map((x: any) => x.id));
     expect(Object.keys(ITEM_RETIREMENT).sort()).toEqual([...RETIRED_ITEM_IDS].sort());
@@ -82,9 +83,9 @@ describe('II — registration: the runtime registry is the roster, and every id 
   });
 });
 
-describe('retirement — all 19 ids LIVE, none PENDING', () => {
+describe('retirement — all 22 ids LIVE, none PENDING', () => {
   it('stages are exactly as declared', () => {
-    expect(LIVE_RETIRED.sort()).toEqual(['brick', 'coal', 'damaged_drive', 'fasteners', 'field_repair_kit', 'fuel_briquette', 'herb_roast', 'iron_sword', 'keycard', 'lubricant', 'mechanical_parts', 'raw_salt', 'root_broth', 'salted_meat', 'salvaged_oil', 'scrap', 'seed', 'treated_canvas', 'vehicle_drive']);
+    expect(LIVE_RETIRED.sort()).toEqual(['brick', 'coal', 'damaged_drive', 'fasteners', 'field_repair_kit', 'fuel_briquette', 'herb_roast', 'industrial_pick', 'iron_pick', 'iron_sword', 'keycard', 'lubricant', 'mechanical_parts', 'raw_salt', 'root_broth', 'salted_meat', 'salvaged_oil', 'scrap', 'seed', 'stone_pick', 'treated_canvas', 'vehicle_drive']);
     expect(Object.values(ITEM_RETIREMENT).filter(r => r.stage !== 'LIVE')).toEqual([]);
     expect(RETIRED_ITEM_IDS.filter(id => !isRetiredLive(id))).toEqual([]);
   });
@@ -123,7 +124,8 @@ describe('retirement — all 19 ids LIVE, none PENDING', () => {
 
 describe('III — recipes: LI provenance, closure and no loops', () => {
   it('recipe revisions 4 and 5 freeze every formula they changed or retired', () => {
-    expect(RECIPE_REVISION).toBe(6);   // revision 6 = ITEM_CRAFTING_MASTER cutover, covered by tests/item-crafting-master.test.ts
+    expect(RECIPE_REVISION).toBe(7);   // revision 6 = ITEM_CRAFTING_MASTER cutover; revision 7 = pickaxes folded into the axes
+    for (const id of CUT_OVER_REVISIONS[6]) { expect(LEGACY_RECIPES[id + '@6'], id).toBeDefined(); expect(RETIRED_RECIPES, id).toContain(id); expect(RECIPES[id], id).toBeUndefined(); }
     expect(CUT_OVER_REVISIONS[4]).toHaveLength(28);
     for (const id of CUT_OVER_REVISIONS[4]) { expect(LEGACY_RECIPES[id + '@4'], id).toBeDefined(); expect(recipeForJob(id, 4), id).not.toBeNull(); }
     for (const rc of Object.values(LEGACY_RECIPES)) for (const [k] of rc.ins) expect(ITEMS[k], 'a frozen formula still names a parseable item: ' + k).toBeDefined();
@@ -409,7 +411,7 @@ describe('V — asset contract: ITEM_VISUAL_HANDOFF.json is generated from the r
     };
   }
   it('has one row per roster id with a stable icon_key, and matches the committed file', () => {
-    const doc = build(); expect(doc.items).toHaveLength(157); expect(new Set(doc.items.map(r => r.icon_key)).size).toBe(157);
+    const doc = build(); expect(doc.items).toHaveLength(154); expect(new Set(doc.items.map(r => r.icon_key)).size).toBe(154);
     for (const id of NEW_IDS) expect(VISUAL_BRIEF[id], 'brief for ' + id).toBeDefined();
     const text = JSON.stringify(doc, null, 1) + '\n';
     if (WRITE) writeFileSync(PATH, text);

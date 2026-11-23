@@ -27,7 +27,7 @@ import type { Recipe } from './catalog';
 
 /** Live catalog revision. Bump by exactly 1 whenever a recipe is changed or retired,
  *  and freeze the superseded definition in `LEGACY_RECIPES` under `<id>@<old rev>`. */
-export const RECIPE_REVISION = 6;
+export const RECIPE_REVISION = 7;
 
 /** The revision a save written before job stamping existed must resolve to. */
 export const PRE_STAMPING_REVISION = 1;
@@ -107,12 +107,18 @@ export const LEGACY_RECIPES: Readonly<Record<string, Recipe>> = Object.freeze({
   'refined_iron_legs@5': { out: 'refined_iron_legs', qty: 1, ins: [['refined_iron_ingot', 3], ['hide', 5], ['needle_thread', 6]], station: 'workbench', stationLevel: 2, secs: 32, tier: 3, rev: 5 },
   'refined_iron_boots@5': { out: 'refined_iron_boots', qty: 1, ins: [['refined_iron_ingot', 3], ['hide', 5], ['needle_thread', 6]], station: 'workbench', stationLevel: 2, secs: 28, tier: 3, rev: 5 },
   'arrow@5': { out: 'arrow', qty: 6, ins: [['wood', 1], ['stone', 1], ['fiber', 1]], station: 'workbench', secs: 5, tier: 1 },
+  // Rev 6 — live values before the pickaxes were folded into the axes
+  // (Creator ruling on build 98ee24ac). A queued pick job still pays out; `mkStack` mints the axe of the same tier.
+  'stone_pick@6': { out: 'stone_pick', qty: 1, ins: [['wood', 3], ['stone', 4], ['rope', 1]], station: null, secs: 2, base: true, tier: 0 },
+  'iron_pick@6': { out: 'iron_pick', qty: 1, ins: [['iron_ingot', 3], ['wood', 2], ['leather', 1]], station: 'workbench', secs: 15, base: true, tier: 1 },
+  'industrial_pick@6': { out: 'industrial_pick', qty: 1, ins: [['iron_pick', 1], ['refined_iron_ingot', 2], ['metal_pipe', 1]], station: 'workbench', stationLevel: 2, secs: 25, tier: 2, rev: 5 },
+  'industrial_pick_geared@6': { out: 'industrial_pick', qty: 1, alias: 'Salvager Pick (geared)', ins: [['iron_pick', 1], ['mechanical_gear', 1], ['spares', 2]], station: 'workbench', stationLevel: 2, secs: 25, base: true, tier: 2 },
 });
 
 /** Recipe ids removed from the live catalog by a cutover, in the order retired.
  *  Knowledge carrying one of these ids is pruned on load; a queued job or a held
  *  blueprint referencing it stays valid through `LEGACY_RECIPES`. */
-export const RETIRED_RECIPES: readonly string[] = ['fuel_can', 'vehicle_frame_piped', 'vehicle_drive', 'vehicle_drive_geared', 'fuel_briquette', 'root_broth', 'poached_eggs', 'herb_roast', 'salted_meat', 'iron_sword', 'iron_sword_blade', 'refine_salvaged_oil', 'refinery_industrial', 'refinery_lubricant', 'refinery_crude', 'fasteners', 'treated_canvas', 'field_repair_kit', 'recover_drive', 'mechanical_parts', 'scrap_ingot', 'brick', 'reinforced_spear_blade'];
+export const RETIRED_RECIPES: readonly string[] = ['fuel_can', 'vehicle_frame_piped', 'vehicle_drive', 'vehicle_drive_geared', 'fuel_briquette', 'root_broth', 'poached_eggs', 'herb_roast', 'salted_meat', 'iron_sword', 'iron_sword_blade', 'refine_salvaged_oil', 'refinery_industrial', 'refinery_lubricant', 'refinery_crude', 'fasteners', 'treated_canvas', 'field_repair_kit', 'recover_drive', 'mechanical_parts', 'scrap_ingot', 'brick', 'reinforced_spear_blade', 'stone_pick', 'iron_pick', 'industrial_pick', 'industrial_pick_geared'];
 export const isRetiredRecipe = (id: unknown): boolean =>
   typeof id === 'string' && RETIRED_RECIPES.includes(id);
 /** A blueprint may legally name a retired formula: the paper is a real item the
@@ -131,6 +137,7 @@ export function latestLegacyDefinition(id: unknown): Recipe | null {
 /** Which revisions this cutover touched — used by save migration and by tests that
  *  must prove a legacy job is not re-priced. */
 export const CUT_OVER_REVISIONS: Readonly<Record<number, readonly string[]>> = Object.freeze({
+  6: ['stone_pick', 'iron_pick', 'industrial_pick', 'industrial_pick_geared'],
   5: ['reinforced_spear', 'reinforced_spear_blade', 'metal_blade', 'refined_iron_helmet', 'refined_iron_chest', 'refined_iron_legs', 'refined_iron_boots', 'arrow'],
   4: ['vehicle_frame','refine_salvaged_oil','fasteners','treated_canvas','field_repair_kit','recover_drive','mechanical_parts','scrap_ingot','brick','essence_fire','core_mjolnir','trail_pack','trail_canteen','industrial_pick','industrial_axe','reinforced_spear','metal_pipe','metal_blade','mechanical_gear','iron_plate','refined_iron_ingot','refined_iron_rich','scrap_helm','refinery_fuel','refinery_fuel_batch','refinery_industrial','refinery_lubricant','refinery_crude'],
   1: ['metal_pipe', 'mechanical_gear', 'iron_plate', 'motorbike_kit', 'fuel_can'],

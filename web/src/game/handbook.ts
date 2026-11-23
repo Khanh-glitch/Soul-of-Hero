@@ -15,6 +15,11 @@
 //  · Each chapter issues ONE physical supply bundle per run. Early bundles
 //    (tier 1) hand the newcomer the next chore already done; later bundles
 //    (tier 2-3) are the exciting ones.
+//  · Creator ruling on build 98ee24ac: the player never has to make everything
+//    alone. Every bundle is a SOFT STARTER for a feature the chapter itself did
+//    not teach: a ready-made piece the player can place or use at once, which
+//    points at something deeper to explore. `opens` says in one line what that
+//    is; the ledger prints it under the bundle.
 //
 // Authority rules
 //  · Progress lives in `r.handbook` (run-authoritative, saved with the run).
@@ -70,6 +75,8 @@ export interface FieldLesson {
   tier: RewardTier;
   /** One-time run-local supply bundle. */
   reward: [string, number][];
+  /** One line: the feature this bundle lets the player start on without building it first. */
+  opens: L;
   /** Step ids required before the bundle can be claimed (default: every step). */
   needs?: string[];
   vi: { title: string; motto: string };
@@ -118,20 +125,22 @@ const isCoreSupply = (recipe: string) => { const out = RECIPES[recipe]?.out ?? '
 // CHAPTERS — optional, unordered, receipt-backed.
 // ---------------------------------------------------------------------------
 export const FIELDCRAFT: FieldLesson[] = [
-  { id: 'landfall', title: 'Landfall', motto: 'Hands first, tools second.', icon: 'wood', tier: 1,
-    vi: { title: 'Đặt chân', motto: 'Tay không trước, công cụ sau.' },
-    reward: [['stone_axe', 1], ['stone_pick', 1], ['deploy_claim', 1], ['cooked_meat', 4]],
+  { id: 'landfall', title: 'Landfall', motto: 'An axe in hand, the island ahead.', icon: 'wood', tier: 1,
+    vi: { title: 'Đặt chân', motto: 'Rìu trong tay, hòn đảo trước mặt.' },
+    reward: [['wood_club', 1], ['deploy_claim', 1], ['deploy_campfire', 1], ['cooked_meat', 4]],
+    opens: { en: 'A club for fights and roadside salvage; a Territory Cabinet and a campfire to start a camp of your own.', vi: 'Gậy gỗ để đánh và đập đồ ven đường; Tủ lãnh thổ và bếp lửa để dựng trại riêng.' },
     steps: [
-    { id: 'gather', title: 'Gather by hand', target: 3, icon: 'wood', how: 'Swing LMB at a tree, boulder or bush.', why: 'Every tool, wall and fire begins as raw timber, stone and fiber.', anchor: { kind: 'source', mat: 'wood' }, focus: ['explore'], kinds: ['harvest'], vi: { title: 'Hái lượm bằng tay', how: 'Nhấn chuột trái vào cây, tảng đá hoặc bụi cây.', why: 'Mọi công cụ, bức tường và ngọn lửa đều bắt đầu từ gỗ, đá và sợi thô.' },
+    { id: 'gather', title: 'Gather with your axe', target: 3, icon: 'wood', how: 'Swing LMB at a tree, boulder or bush. Your Stone Axe works all three.', why: 'Every tool, wall and fire begins as raw timber, stone and fiber.', anchor: { kind: 'source', mat: 'wood' }, focus: ['explore'], kinds: ['harvest'], vi: { title: 'Thu hoạch bằng rìu', how: 'Nhấn chuột trái vào cây, tảng đá hoặc bụi cây. Rìu đá làm được cả ba.', why: 'Mọi công cụ, bức tường và ngọn lửa đều bắt đầu từ gỗ, đá và sợi thô.' },
       count: rc => rc.kind === 'harvest' ? harvestUnits(rc) : 0 },
-    { id: 'tool', title: 'Shape a tool', target: 1, icon: 'rope', how: 'Open Survivor [C] and craft anything you can afford.', why: 'Tools multiply what each swing yields and let you break stone and ore.', focus: ['craft'], kinds: ['craft.hand'], vi: { title: 'Chế một món đồ', how: 'Mở Survivor [C] và chế bất cứ món nào đủ nguyên liệu.', why: 'Công cụ giúp mỗi cú đánh thu được nhiều hơn và phá được đá, quặng.' },
+    { id: 'tool', title: 'Shape a tool', target: 1, icon: 'rope', how: 'Open Survivor [C] and craft anything you can afford.', why: 'Better tools take more with each swing; weapons and kits open new work.', focus: ['craft'], kinds: ['craft.hand'], vi: { title: 'Chế một món đồ', how: 'Mở Survivor [C] và chế bất cứ món nào đủ nguyên liệu.', why: 'Công cụ tốt hơn thu được nhiều hơn mỗi nhát; vũ khí và bộ đồ nghề mở ra việc mới.' },
       count: rc => rc.kind === 'craft.hand' ? 1 : 0 },
     { id: 'sustain', title: 'Drink or eat', target: 1, icon: 'berries', how: 'E beside river water, or use food from Quickbar 1–8.', why: 'Hunger and thirst quietly drain stamina and, at the end, health.', anchor: { kind: 'water' }, kinds: ['drink', 'drink.flask', 'consume', 'barrel.drink', 'rest.eat', 'rest.drink'], vi: { title: 'Uống hoặc ăn', how: 'Nhấn E cạnh nước sông, hoặc dùng thức ăn trên Quickbar 1–8.', why: 'Đói và khát âm thầm rút thể lực, cuối cùng rút cả máu.' },
       count: rc => SUSTAIN_KINDS.includes(rc.kind) ? 1 : 0 },
   ] },
   { id: 'shelter', title: 'Hearth & Wall', motto: 'A roof is the first victory.', icon: 'st:wall_wood', tier: 1,
     vi: { title: 'Mái nhà', motto: 'Mái nhà là chiến thắng đầu tiên.' },
-    reward: [['deploy_campfire', 1], ['deploy_chest_small', 1], ['deploy_bed_straw', 1], ['torch', 2]],
+    reward: [['deploy_workbench', 1], ['deploy_chest_small', 1], ['deploy_bed_straw', 1], ['torch', 2]],
+    opens: { en: 'A Workbench to place at once: repairs and the first real recipes. The bed is where you wake after a fall.', vi: 'Bàn chế tạo đặt được ngay: sửa đồ và những công thức đầu tiên. Giường là nơi bạn tỉnh dậy sau khi gục.' },
     steps: [
     { id: 'floor', title: 'Lay a foundation', target: 1, icon: 'st:floor_wood', how: 'B > Foundation > Wood Floor, then click open ground.', why: 'The cabinet and every roof stand on a foundation tile.', focus: ['build'], kinds: ['build'], vi: { title: 'Đặt nền', how: 'Nhấn B > Foundation > Wood Floor, rồi nhấp vào khoảng đất trống.', why: 'Cabinet và mọi mái nhà đều phải đứng trên ô nền.' },
       count: built(t => t.startsWith('floor')) },
@@ -146,7 +155,8 @@ export const FIELDCRAFT: FieldLesson[] = [
   ] },
   { id: 'industry', title: 'Fire & Iron', motto: 'Stations do the waiting for you.', icon: 'iron_ingot', tier: 1,
     vi: { title: 'Lửa và sắt', motto: 'Trạm chế tạo chờ thay cho bạn.' },
-    reward: [['iron_ingot', 6], ['charcoal', 10], ['rope', 4]],
+    reward: [['deploy_research', 1], ['iron_ingot', 6], ['charcoal', 10], ['rope', 4]],
+    opens: { en: 'A Research Table to place at once: study what you find and learn recipes nobody hands you.', vi: 'Bàn nghiên cứu đặt được ngay: nghiên cứu thứ nhặt được để học công thức không ai cho sẵn.' },
     steps: [
     { id: 'fire', title: 'Light a campfire', target: 1, icon: 'st:campfire', how: 'Craft a Campfire in Survivor [C] > Deploy, select the pack and place it. Feed it wood.', why: 'Fire is warmth at night and the first cooking station.', focus: ['craft', 'build'], kinds: ['build'], vi: { title: 'Nhóm lửa trại', how: 'Chế Campfire trong Survivor [C] > Deploy, chọn gói rồi đặt xuống. Cho gỗ vào làm chất đốt.', why: 'Lửa là hơi ấm ban đêm và là bếp nấu đầu tiên.' },
       count: built(t => t === 'campfire') },
@@ -161,7 +171,8 @@ export const FIELDCRAFT: FieldLesson[] = [
   ] },
   { id: 'knowledge', title: 'Paper & Parts', motto: 'What you learn cannot be looted.', icon: 'blueprint', tier: 2,
     vi: { title: 'Tri thức', motto: 'Điều đã học thì không ai cướp được.' },
-    reward: [['spares', 12], ['electronic_parts', 4]],
+    reward: [['deploy_garden', 1], ['seed_sunroot', 4], ['spares', 12], ['electronic_parts', 4]],
+    opens: { en: 'A Garden Plot and seeds: food you grow instead of chase. The Parts feed your next study.', vi: 'Luống vườn và hạt giống: thức ăn tự trồng, khỏi phải đi săn. Linh kiện dùng cho lần nghiên cứu tới.' },
     steps: [
     { id: 'table', title: 'Set up a Research Table', target: 1, icon: 'st:research', how: 'Craft the Research Table pack (wood, Parts, an Iron Ingot) and place it.', why: 'The table turns Parts and specimens into new recipes.', focus: ['craft', 'build'], kinds: ['build'], vi: { title: 'Dựng Research Table', how: 'Chế gói Research Table (gỗ, Parts, một Iron Ingot) rồi đặt xuống.', why: 'Bàn nghiên cứu biến Parts và mẫu vật thành công thức mới.' },
       count: built(t => t === 'research') },
@@ -174,7 +185,8 @@ export const FIELDCRAFT: FieldLesson[] = [
   ] },
   { id: 'provisions', title: 'Field & Flock', motto: 'A full larder is a quiet mind.', icon: 'crop', tier: 2,
     vi: { title: 'Lương thực', motto: 'Kho đầy thì lòng yên.' },
-    reward: [['trail_canteen', 1], ['canned_meat', 3], ['seed_sunroot', 4]],
+    reward: [['lead_rope', 2], ['deploy_feed_trough', 1], ['trail_canteen', 1], ['seed_wildberry', 3]],
+    opens: { en: 'Taming Leads and a Feed Trough: lead a boar, deer, hare or grouse into a pen and keep a flock.', vi: 'Dây dắt thú và máng ăn: dắt lợn rừng, hươu, thỏ hoặc gà gô vào chuồng để nuôi đàn.' },
     steps: [
     { id: 'plot', title: 'Place a Garden Plot', target: 1, icon: 'st:garden', how: 'Craft a Garden Plot pack (wood, fiber) and place it on open ground.', why: 'A garden feeds you without leaving your walls.', focus: ['craft', 'build'], kinds: ['build'], vi: { title: 'Đặt Garden Plot', how: 'Chế gói Garden Plot (gỗ, sợi) rồi đặt lên đất trống.', why: 'Vườn nuôi bạn mà không cần rời khỏi tường nhà.' },
       count: built(t => t === 'garden') },
@@ -187,7 +199,8 @@ export const FIELDCRAFT: FieldLesson[] = [
   ] },
   { id: 'expedition', title: 'Beyond the Treeline', motto: 'The map is earned, step by step.', icon: 'spares', tier: 2,
     vi: { title: 'Khám phá', motto: 'Bản đồ được vẽ bằng từng bước chân.' },
-    reward: [['trail_pack', 1], ['spares', 6], ['bandage', 4]],
+    reward: [['cart_kit', 1], ['trail_pack', 1], ['bandage', 4]],
+    opens: { en: 'A packed Hand Cart: place it, load it, pull it with F. Long hauls stop being a weight problem.', vi: 'Xe kéo tay đóng gói: đặt xuống, chất đồ, kéo bằng phím F. Chở xa không còn lo quá nặng.' },
     steps: [
     { id: 'discover', title: 'Discover two places', target: 2, icon: 'spares', how: 'Travel until a place name rises on screen. Field Chart [M] shows where you have been.', why: 'Places hold loot sites, traders, vaults and Elders.', focus: ['explore'], kinds: ['poi.discover'], vi: { title: 'Khám phá hai địa điểm', how: 'Đi cho tới khi tên địa điểm hiện lên màn hình. Field Chart [M] cho biết bạn đã đi qua đâu.', why: 'Các địa điểm chứa chỗ lục đồ, thương nhân, hầm kín và Elder.' },
       count: rc => rc.kind === 'poi.discover' || rc.kind === OBS_POI ? 1 : 0 },
@@ -199,6 +212,7 @@ export const FIELDCRAFT: FieldLesson[] = [
   { id: 'combat', title: 'Tooth & Steel', motto: 'Learn the tell, then answer it.', icon: 'leather', tier: 2,
     vi: { title: 'Chiến đấu', motto: 'Đọc đòn trước, rồi mới đáp trả.' },
     reward: [['bow', 1], ['arrow', 24], ['medkit', 2]],
+    opens: { en: 'A Hunting Bow and arrows: fight from range and hunt what runs from you.', vi: 'Cung săn và tên: đánh từ xa và săn những con hay bỏ chạy.' },
     steps: [
     { id: 'defend', title: 'Defend yourself', target: 1, icon: 'leather', how: 'LMB to strike, Space to dodge-roll away from tells.', why: 'Creatures guard the best ground. Learning their tells keeps you alive.', kinds: ['creature.kill'], vi: { title: 'Tự vệ', how: 'Chuột trái để đánh, Space để lăn né khi quái ra đòn.', why: 'Quái vật canh giữ những vùng đất tốt nhất. Đọc được đòn của chúng là sống sót.' },
       count: rc => rc.kind === 'creature.kill' ? 1 : 0 },
@@ -212,6 +226,7 @@ export const FIELDCRAFT: FieldLesson[] = [
   { id: 'residents', title: 'Neighbours', motto: 'Everyone here is trying to live.', icon: 'cloth', tier: 3,
     vi: { title: 'Cư dân', motto: 'Ở đây ai cũng đang cố sống.' },
     reward: [['medkit', 3], ['canned_meat', 4], ['fruit_wine', 2]],
+    opens: { en: 'Things other people need: treat the wounded, feed the hungry, and see who follows you.', vi: 'Những thứ người khác cần: chữa người bị thương, cho người đói ăn, rồi xem ai đi theo bạn.' },
     steps: [
     { id: 'talk', title: 'Talk to a survivor', target: 1, icon: 'cloth', how: 'Walk up to a resident and pick them from the Nearby survivors list at the top of the screen.', why: 'They tell you what they need, what they fear and what they will trade.', kinds: ['human.talk'], vi: { title: 'Nói chuyện với một cư dân', how: 'Lại gần một cư dân rồi chọn họ trong danh sách Nearby survivors ở đầu màn hình.', why: 'Họ cho biết họ cần gì, sợ gì và sẵn sàng đổi gì.' },
       count: rc => rc.kind === 'human.talk' ? 1 : 0 },
@@ -223,6 +238,7 @@ export const FIELDCRAFT: FieldLesson[] = [
   { id: 'machines', title: 'Wheels & Wires', motto: 'Let the machine carry it.', icon: 'mechanical_gear', tier: 3,
     vi: { title: 'Máy móc', motto: 'Hãy để máy móc gánh thay.' },
     reward: [['fuel_can', 3], ['mechanical_gear', 4], ['iron_plate', 4]],
+    opens: { en: 'Gears and plates for a Motorbike kit, and fuel to ride it. The frame is yours to build.', vi: 'Bánh răng và tấm sắt cho bộ Xe máy, cùng nhiên liệu để chạy. Khung xe thì bạn tự làm.' },
     steps: [
     { id: 'power', title: 'Bring power to your base', target: 1, icon: 'st:base_generator', how: 'Craft and place a Field Generator, fuel it and switch it on.', why: 'Powered doors, turrets and benches need a generator within reach.', focus: ['craft', 'build'], kinds: ['build', 'power.toggle'], vi: { title: 'Đưa điện về căn cứ', how: 'Chế và đặt Field Generator, đổ nhiên liệu rồi bật lên.', why: 'Cửa điện, tháp bắn và bàn chế chạy điện đều cần máy phát trong tầm.' },
       count: rc => rc.kind === 'power.toggle' || (rc.kind === 'build' && POWER_TYPES.includes(buildType(rc))) ? 1 : 0 },
@@ -235,6 +251,7 @@ export const FIELDCRAFT: FieldLesson[] = [
   { id: 'cores', title: 'Old Power', motto: 'Old power answers a steady hand.', icon: 'core_dragon', tier: 3,
     vi: { title: 'Sức mạnh cổ xưa', motto: 'Sức mạnh cổ xưa đáp lời bàn tay vững.' },
     reward: [['energy_refined', 12], ['energy_basic', 40], ['crystal', 3]],
+    opens: { en: 'Charged cells for a Creator Core: enough to learn what each cast really costs.', vi: 'Pin đã nạp cho Lõi Sáng Tạo: đủ để biết mỗi lần thi triển tốn bao nhiêu.' },
     steps: [
     { id: 'charge', title: 'Make energy cells', target: 1, icon: 'energy_basic', how: 'Survivor [C]: Basic Energy needs only stone and fiber.', why: 'A Core spends cells from your pack on every cast. There is no reload.', focus: ['craft'], kinds: ['craft.hand', 'job.queue'], vi: { title: 'Chế ô năng lượng', how: 'Survivor [C]: Basic Energy chỉ cần đá và sợi.', why: 'Core tiêu ô năng lượng trong túi cho mỗi lần thi triển. Không có nạp lại.' },
       count: rc => (rc.kind === 'craft.hand' && isCoreSupply(rc.detail)) || (rc.kind === 'job.queue' && isCoreSupply(rc.detail.split('@')[0])) ? 1 : 0 },
@@ -246,6 +263,7 @@ export const FIELDCRAFT: FieldLesson[] = [
   { id: 'ragnarok', title: 'The Last 72 Hours', motto: 'Nobody is coming. Decide how it ends.', icon: 'rcash', tier: 3, needs: ['omen'],
     vi: { title: '72 giờ cuối', motto: 'Không ai đến cứu. Hãy tự chọn kết cục.' },
     reward: [['medkit', 4], ['fuel_can', 2], ['energy_refined', 8], ['canned_meat', 4]],
+    opens: { en: 'Supplies for the last three days, whichever ending you choose.', vi: 'Tiếp tế cho ba ngày cuối, dù bạn chọn kết cục nào.' },
     steps: [
     { id: 'omen', title: 'Live to see Ragnarok', target: 1, icon: 'coal', how: 'Stay alive until the final 72 hours begin. The handbook cache opens the moment they do.', why: 'Sealed vaults open and the Elders stir. Everything you built is now tested.', offlineOk: true, kinds: ['achievement'], vi: { title: 'Sống tới Ragnarok', how: 'Sống sót tới khi 72 giờ cuối bắt đầu. Kiện tiếp tế của sổ tay mở ra đúng lúc đó.', why: 'Hầm kín mở ra và các Elder trỗi dậy. Mọi thứ bạn xây giờ bị thử thách.' },
       count: ach('ragnarok') },

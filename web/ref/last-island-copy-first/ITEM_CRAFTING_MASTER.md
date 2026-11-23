@@ -6,7 +6,7 @@
 
 **Authority:** This is the one canonical item and recipe document. It supersedes the recipe sections of ARENA1_ROUND1_REPORT.md, ARENA1_ROUND2_REPORT.md, SOH_147_ITEMS_BY_ROLE.md and earlier item audits. The 157-id roster itself stays in FINAL_THREE_GROUP_ITEM_SET_20261115.json.
 
-**Recipe revision:** 6. **Items:** 157 (A 78 / B 42 / C 37). **Live formulas:** 114 (90 explicit + 24 packs). **Items with a bill:** 108. **Items with no bill by design:** 49.
+**Recipe revision:** 7. **Items:** 154 (A 78 / B 39 / C 37). **Live formulas:** 111 (87 explicit + 24 packs). **Items with a bill:** 105. **Items with no bill by design:** 49.
 
 ## How to read this
 
@@ -20,12 +20,12 @@
 
 | Ingredient | Always means | Used in (formulas / packs / other) |
 |---|---|---|
-| Iron Ingot | plain metal body | 24 / 12 / 6 |
-| Wood | frame, handle or shaft | 15 / 17 / 1 |
+| Iron Ingot | plain metal body | 23 / 12 / 6 |
 | Parts | fitted mechanical pieces | 18 / 8 / 5 |
+| Wood | frame, handle or shaft | 13 / 17 / 1 |
 | Frost Crystal | Core focus | 16 / 0 / 0 |
-| Rope | lashing | 11 / 3 / 0 |
-| Stone | mass, head or hearth | 8 / 5 / 1 |
+| Rope | lashing | 10 / 3 / 0 |
+| Stone | mass, head or hearth | 7 / 5 / 1 |
 | Refined Iron Ingot | hardened metal | 11 / 1 / 0 |
 | Plant Fiber | binding, wick or stuffing | 7 / 3 / 1 |
 | Iron Plate | protective sheet metal | 6 / 1 / 4 |
@@ -34,14 +34,14 @@
 | Needle and Thread | sewn assembly | 10 / 0 / 0 |
 | Electronic Parts | circuit that senses or decides | 1 / 5 / 2 |
 | Glass | lens, still or vessel | 5 / 1 / 1 |
-| Leather | grip, strap or shell | 7 / 0 / 0 |
 | Cloth | fabric or filter | 6 / 0 / 0 |
+| Leather | grip, strap or shell | 6 / 0 / 0 |
 | Charcoal | carbon and heat | 5 / 0 / 0 |
 | Bitterleaf | medicine or nature element | 4 / 0 / 1 |
-| Metal Pipe | tube or hollow structural member | 3 / 2 / 0 |
+| Metal Blade | cutting edge | 5 / 0 / 0 |
 | Berries | sugar and juice | 4 / 0 / 0 |
 | Raw Meat | protein | 4 / 0 / 0 |
-| Metal Blade | cutting edge | 4 / 0 / 0 |
+| Metal Pipe | tube or hollow structural member | 2 / 2 / 0 |
 | Sulfur | fire element | 4 / 0 / 0 |
 | Tin Can | sealed container | 4 / 0 / 0 |
 
@@ -106,14 +106,14 @@ Things used up by using them: eaten, drunk, applied or burned.
 
 **Inferring an unseen formula:** A player who has made Mushroom Soup (5 + tin) and Fruit Wine (5 berries + tin) expects any new tinned food to be "about five of something plus a tin".
 
-### 04 Tools / Non-Core Weapons (16)
+### 04 Tools / Non-Core Weapons (13)
 
 Held items that wear with use. Cores are the main weapon system; these are tools and side arms.
 
 **Rules**
 
 1. Three tool tiers, same shape each time: Stone (wood + stone + rope, by hand), Iron (3 Iron + 2 wood + 1 leather, bench 1), Salvager (the Iron tool itself + 2 Refined Iron + a Pipe, bench 2).
-2. An axe and a pick of one tier cost the same, except where the head differs: the Stone Pick takes one more stone, the Salvager Axe takes a Blade.
+2. One axe per tier does all gathering (the pickaxes were folded into the axes at revision 7). The Salvager Axe takes a Blade on top of the tier rule; its starter-known route swaps the Pipe and one Refined Iron for a Gear and Parts.
 3. Every edged weapon above stone is priced in Blades: Cleaver 1, Reinforced Spear 1, Machete 3.
 4. An upgrade consumes the thing it upgrades (Salvager tools consume the Iron tool), so progress is never two parallel grinds.
 5. Weapons with no metal are made by hand and are disposable: Club, Fire-hardened Spear, Torch.
@@ -124,7 +124,7 @@ Held items that wear with use. Cores are the main weapon system; these are tools
 - Cleaver 1 Iron + 1 Blade; Machete 4 Iron + 3 Blades.
 - Arrow 6 per wood + stone + fiber; 8 per wood + stone + feather.
 
-**Inferring an unseen formula:** Knowing the Iron Axe and the Salvager Axe, the Salvager Pick is predictable: the Iron Pick plus the same Refined Iron and Pipe, without the Blade.
+**Inferring an unseen formula:** Knowing the Stone Axe (wood, stone, rope) and the Iron Axe (iron, wood, leather), the Salvager Axe is predictable: the Iron Axe itself plus refined metal, a Pipe for the handle and a Blade for the edge.
 
 ### 05 Armour / Clothing / Carry (14)
 
@@ -266,7 +266,7 @@ Items whose value is what they unlock or prove. None is crafted.
 | Stone | `stone` | A | WORLD_ONLY | Mass and hardness: tool heads, hearths, furnaces, walls. | NO_RECIPE_BY_DESIGN: a raw material. It is harvested or dropped; making it from something else would hide where things come from. | — / NONE |
 | Plant Fiber | `fiber` | B | WORLD_ONLY | Plant fiber. Twisted into rope, woven into cloth, used raw for binding and bandages. | NO_RECIPE_BY_DESIGN: a raw material. It is harvested or dropped; making it from something else would hide where things come from. | — / NONE |
 | Iron Ore | `iron_ore` | A | WORLD_ONLY | The source of all metal. One ore smelts to one Iron Ingot. | NO_RECIPE_BY_DESIGN: a raw material. It is harvested or dropped; making it from something else would hide where things come from. | raw_iron_ore / DIRECT |
-| Rich Iron Ore | `rich_iron_ore` | A | WORLD_ONLY | High-grade ore freed by an iron-class pick. Smelts straight to Refined Iron, skipping the ingot step. | NO_RECIPE_BY_DESIGN: a raw material. It is harvested or dropped; making it from something else would hide where things come from. | refined_iron_ore / DIRECT |
+| Rich Iron Ore | `rich_iron_ore` | A | WORLD_ONLY | High-grade ore freed by an iron-class axe. Smelts straight to Refined Iron, skipping the ingot step. | NO_RECIPE_BY_DESIGN: a raw material. It is harvested or dropped; making it from something else would hide where things come from. | refined_iron_ore / DIRECT |
 | Frost Crystal | `crystal` | B | WORLD_ONLY | The Core material: focus of every Core, base of Refined Energy, also one route to Glass. | NO_RECIPE_BY_DESIGN: a raw material. It is harvested or dropped; making it from something else would hide where things come from. | — / NONE |
 | Sulfur | `sulfur` | B | WORLD_ONLY | The fire element: Fire Essence and every fire Core. | NO_RECIPE_BY_DESIGN: a raw material. It is harvested or dropped; making it from something else would hide where things come from. | — / NONE |
 | Parts | `spares` | A | WORLD_ONLY | Parts (Last Island "Parts"). Fitted mechanical pieces from wrecks and scrap; in every machine and the currency of research. | NO_RECIPE_BY_DESIGN: a manufactured relic of the old world. The player can find it but not make it, which is what gates the technology that needs it. Parts must stay non-renewable: a formula for Parts would let research and every machine be paid in ore. | parts / DIRECT |
@@ -286,7 +286,7 @@ Items whose value is what they unlock or prove. None is crafted.
 
 | Item | id | Grp | Policy | Purpose | How it is made, or why it is not | LI id / grade |
 |---|---|---|---|---|---|---|
-| Plank | `plank` | B | CRAFT_ONLY | Sawn timber. Its one use, the Plank Wall, was removed on 2026-11-23; nothing spends it now and the item waits for a ruling. | 2 Wood → 1 | — / NONE |
+| Plank | `plank` | B | BOTH | Sawn timber: packed fuel. One Plank burns as long as the 2 Wood it is sawn from at half the weight. Bridge Raiders also carry them. | 2 Wood → 1 | — / NONE |
 | Charcoal | `charcoal` | A | CRAFT_ONLY | Wood burned to carbon. Station fuel, the carbon in Refined Iron, the binder of Fire Essence. | 2 Wood → 1 | charcoal / UNSUPPORTED_CITATION |
 | Iron Ingot | `iron_ingot` | A | BOTH | Smelted iron. The plain metal body of tools, devices and components. | 1 Iron Ore → 1 | iron_ingot / DIRECT |
 | Refined Iron Ingot | `refined_iron_ingot` | A | BOTH | Iron hardened with charcoal. The tier-2 metal: Pipe, Plate, the best tools and armour, vehicles. | 3 Iron Ingot + 2 Charcoal → 2<br>1 Rich Iron Ore + 2 Charcoal → 2 | refined_iron_ingot / DIRECT |
@@ -333,12 +333,9 @@ Items whose value is what they unlock or prove. None is crafted.
 | Item | id | Grp | Policy | Purpose | How it is made, or why it is not | LI id / grade |
 |---|---|---|---|---|---|---|
 | Survival Knife | `knife` | B | WORLD_ONLY | Survival Knife. Salvagers carry this blade; it cuts plants faster than the club. | No hand recipe. Repair at a Workbench for stone and fiber. | — / NONE |
-| Stone Pickaxe | `stone_pick` | B | CRAFT_ONLY | Stone Pickaxe. First tool for stone and ore. | 3 Wood + 4 Stone + 1 Rope → 1 | — / NONE |
-| Iron Pickaxe | `iron_pick` | B | BOTH | Iron Pickaxe. Faster on stone and ore; can free Rich Iron Ore. | 3 Iron Ingot + 2 Wood + 1 Leather → 1 | — / NONE |
-| Salvager Pick | `industrial_pick` | B | CRAFT_ONLY | Salvager Pick. The top pick; an Iron Pick rebuilt with refined metal. | 1 Iron Pickaxe + 2 Refined Iron Ingot + 1 Metal Pipe → 1<br>*alt* 1 Iron Pickaxe + 1 Mechanical Gear + 2 Parts → 1 | — / NONE |
-| Stone Axe | `stone_axe` | A | BOTH | Stone Axe. Issued on landing and at every wake-up; fells trees and chips stone and ore slowly. | 3 Wood + 3 Stone + 1 Rope → 1 | — / NONE |
-| Iron Axe | `iron_axe` | A | BOTH | Iron Axe. Faster on trees. | 3 Iron Ingot + 2 Wood + 1 Leather → 1 | iron_axe / DIRECT |
-| Salvager Axe | `industrial_axe` | A | CRAFT_ONLY | Salvager Axe. The top axe; an Iron Axe rebuilt with a Blade and refined metal. | 1 Iron Axe + 1 Metal Blade + 2 Refined Iron Ingot + 1 Metal Pipe → 1 | refined_iron_axe / DIRECT |
+| Stone Axe | `stone_axe` | A | BOTH | Stone Axe. Issued on landing and at every wake-up; the one tool for trees, stone, ore and scrap. | 3 Wood + 3 Stone + 1 Rope → 1 | — / NONE |
+| Iron Axe | `iron_axe` | A | BOTH | Iron Axe. Faster on trees, stone and ore; can free Rich Iron Ore. | 3 Iron Ingot + 2 Wood + 1 Leather → 1 | iron_axe / DIRECT |
+| Salvager Axe | `industrial_axe` | A | CRAFT_ONLY | Salvager Axe. The top tool for trees, stone, ore and wrecks; an Iron Axe rebuilt with a Blade and refined metal. | 1 Iron Axe + 1 Metal Blade + 2 Refined Iron Ingot + 1 Metal Pipe → 1<br>*alt* 1 Iron Axe + 1 Metal Blade + 1 Refined Iron Ingot + 1 Mechanical Gear + 2 Parts → 1 | refined_iron_axe / DIRECT |
 | Torch | `torch` | A | CRAFT_ONLY | Torch. Light and a little warmth; also the flame of a Torch Post. | 1 Wood + 2 Plant Fiber → 1 | — / NONE |
 | Wood Club | `wood_club` | A | CRAFT_ONLY | Wood Club. The first weapon, made by hand from wood; also breaks open roadside salvage. | 12 Wood → 1 | wood_club / DIRECT |
 | Cleaver | `cleaver` | A | BOTH | Cleaver. A short, quick blade; the first use of a Metal Blade. | 1 Iron Ingot + 1 Metal Blade → 1 | cleaver / DIRECT |
@@ -485,7 +482,7 @@ Unit cost divides the bill by the yield. Knowledge: Starter = known from the fir
 |---|---|---|---|---|---|---|---|---|---|---|
 | `vehicle_frame` | 1 Utility Frame | 1 Metal Pipe + 4 Iron Ingot + 2 Refined Iron Ingot + 4 Parts | — | Workbench L2 | 1 / Starter | 22 s | SOH_ONLY (NONE) | — | KEEP | A Pipe skeleton with iron, refined iron and Parts fittings. Starter-known so the bike chain is visible from the start. |
 | `metal_pipe` | 2 Metal Pipe | 2 Refined Iron Ingot + 2 Parts | 1 Refined Iron Ingot + 1 Parts | Workbench L2 | 2 / Starter | 18 s | LI_SCALED (DIRECT) | 5 Refined Iron Ingot + 30 parts | KEEP | Component rule: Refined Iron + Parts, yields 2. One pipe = 1 Refined Iron + 1 Part. |
-| `metal_blade` | 1 Metal Blade | 3 Iron Ingot + 1 Parts | — | Workbench L2 | 2 / Starter | 16 s | LI_SCALED (DIRECT) | 30 Iron Ingot + 15 parts | REVISE (rev 6) | Component rule: plain Iron + Parts. Revision 6 cut Iron 4 -> 3 so a Blade costs less than a Gear, as it does in Last Island (30 + 15 against 50 + 65). Still above its 2-ingot recycle return. |
+| `metal_blade` | 1 Metal Blade | 3 Iron Ingot + 1 Parts | — | Workbench L2 | 2 / Starter | 16 s | LI_SCALED (DIRECT) | 30 Iron Ingot + 15 parts | REVISE | Component rule: plain Iron + Parts. Revision 6 cut Iron 4 -> 3 so a Blade costs less than a Gear, as it does in Last Island (30 + 15 against 50 + 65). Still above its 2-ingot recycle return. |
 | `mechanical_gear` | 1 Mechanical Gear | 2 Iron Ingot + 3 Parts | — | Workbench L2 | 2 / Starter | 20 s | LI_SCALED (DIRECT) | 50 Iron Ingot + 65 parts | KEEP | Component rule: plain Iron + Parts. The Parts-heaviest component, as in Last Island. |
 | `iron_plate` | 2 Iron Plate | 2 Refined Iron Ingot + 2 Parts | 1 Refined Iron Ingot + 1 Parts | Workbench L2 | 2 / Starter | 18 s | LI_SCALED (DIRECT) | 5 Refined Iron Ingot + 30 parts | KEEP | Component rule: same bill as the Pipe, yields 2. Sheet instead of tube. |
 | `needle_thread` | 2 Needle and Thread | 2 Cloth + 1 Iron Ingot | 1 Cloth + 0.5 Iron Ingot | Workbench L1 | 1 / directed research | 10 s | LI_SCALED (LEGACY_CLAIM) | 10 Cloth + 5 Iron Ingot | KEEP | Cloth is the thread, Iron the needle. Yields 2 so a three-thread armour piece is two crafts. |
@@ -493,12 +490,12 @@ Unit cost divides the bill by the yield. Knowledge: Starter = known from the fir
 | `charcoal` | 1 Charcoal | 2 Wood | — | Campfire | 0 / Starter | 12 s | SOH_ONLY (NONE) | — | KEEP | First-step rule: one raw, one station. Two wood make one charcoal, so charcoal is always dearer than the wood it replaces as fuel. |
 | `iron_ingot` | 1 Iron Ingot | 1 Iron Ore | — | Furnace | 0 / Starter | 10 s | SOH_ONLY (NONE) | — | KEEP | First-step rule, 1:1. Ore count equals ingot count, so every iron bill reads directly as mining. |
 | `refined_iron_ingot` | 2 Refined Iron Ingot | 3 Iron Ingot + 2 Charcoal | 1.5 Iron Ingot + 1 Charcoal | Furnace | 1 / Starter | 20 s | SOH_ADJUSTED (DIRECT) | — | KEEP | Iron + carbon. 1.5 Iron and 1 Charcoal per ingot: refining costs a burn, not more ore. |
-| `refined_iron_rich` | 2 Refined Iron Ingot | 1 Rich Iron Ore + 2 Charcoal | 0.5 Rich Iron Ore + 1 Charcoal | Furnace | 1 / Starter | 14 s | SOH_ONLY (NONE) | — | KEEP | Alternative with a real trade: one Rich Ore replaces three ingots and is 6 s faster, but Rich Ore only comes from an iron-class pick. |
+| `refined_iron_rich` | 2 Refined Iron Ingot | 1 Rich Iron Ore + 2 Charcoal | 0.5 Rich Iron Ore + 1 Charcoal | Furnace | 1 / Starter | 14 s | SOH_ONLY (NONE) | — | KEEP | Alternative with a real trade: one Rich Ore replaces three ingots and is 6 s faster, but Rich Ore only comes from an iron-class axe. |
 | `shell_glass` | 1 Glass | 2 Stone + 2 Crab Shell | — | Furnace | 1 / Starter | 16 s | SOH_ONLY (NONE) | — | KEEP | Alternative with a real trade: Shell as lime instead of Crystal. Coastal route, starter-known, slower and takes two of each. |
 | `glass` | 1 Glass | 1 Frost Crystal + 1 Stone | — | Furnace | 2 / directed research | 14 s | SOH_ONLY (NONE) | — | KEEP | Stone fused with Crystal. Inland route; competes with Cores for Crystal. Learned by study. |
 | `leather` | 1 Leather | 1 Raw Hide | — | Workbench L1 | 0 / Starter | 8 s | SOH_ONLY (NONE) | — | KEEP | First-step rule, 1:1 at the bench. |
 | `cloth` | 1 Cloth | 6 Plant Fiber | — | Workbench L1 | 0 / Starter | 8 s | SOH_ONLY (NONE) | — | KEEP | First-step rule at the bench: 6 fiber. Twice a rope, so sewn goods are visibly dearer than lashed ones. |
-| `plank` | 1 Plank | 2 Wood | — | Workbench L1 | 1 / Starter | 6 s | SOH_ONLY (NONE) | — | KEEP | First-step rule. Its one consumer (Plank Wall) was removed on 2026-11-23 by Creator ruling; the recipe is kept unchanged until the item itself is ruled on. |
+| `plank` | 1 Plank | 2 Wood | — | Workbench L1 | 1 / Starter | 6 s | SOH_ONLY (NONE) | — | KEEP | First-step rule, unchanged. The Plank Wall was removed on 2026-11-23; since the delegated ruling on build 98ee24ac a Plank is fuel worth exactly its 2 Wood (40 s), so the bill packs fuel and mints nothing. |
 
 ### 03 Food / Medicine / Consumables
 
@@ -527,10 +524,9 @@ Unit cost divides the bill by the yield. Knowledge: Starter = known from the fir
 
 | Formula | Makes | Bill | Per unit | Station | Tier / knowledge | Time | Provenance (LI grade) | LI figure | Decision | Why it has this shape |
 |---|---|---|---|---|---|---|---|---|---|---|
-| `industrial_pick` | 1 Salvager Pick | 1 Iron Pickaxe + 2 Refined Iron Ingot + 1 Metal Pipe | — | Workbench L2 | 2 / directed research | 25 s | SOH_ONLY (NONE) | — | KEEP | Salvager rule: the Iron Pick itself + 2 Refined Iron + Pipe handle. Learned by study. |
 | `industrial_axe` | 1 Salvager Axe | 1 Iron Axe + 1 Metal Blade + 2 Refined Iron Ingot + 1 Metal Pipe | — | Workbench L2 | 2 / directed research | 25 s | SOH_ONLY (NONE) | — | KEEP | Salvager rule: the Iron Axe itself + 2 Refined Iron + Pipe handle, and a Blade because it cuts. |
-| `reinforced_spear` | 1 Reinforced Spear | 1 Metal Blade + 1 Iron Ingot + 2 Wood | — | Workbench L2 | 2 / Starter | 16 s | SOH_ONLY (NONE) | — | REVISE (rev 6) | Blade rule: one Blade + Iron socket + shaft. Revision 6 folded the starter-known alias into this id (was 2 Iron, 20 s, study-only; now 1 Iron, 16 s, starter-known). |
-| `industrial_pick_geared` | 1 Salvager Pick | 1 Iron Pickaxe + 1 Mechanical Gear + 2 Parts | — | Workbench L2 | 2 / Starter | 25 s | SOH_ONLY (NONE) | — | KEEP | Alternative with a real trade: a Gear and 2 Parts instead of refined metal and a Pipe. No furnace work, but 5 Parts in total. Starter-known. |
+| `industrial_axe_geared` | 1 Salvager Axe | 1 Iron Axe + 1 Metal Blade + 1 Refined Iron Ingot + 1 Mechanical Gear + 2 Parts | — | Workbench L2 | 2 / Starter | 25 s | SOH_ONLY (NONE) | — | REVISE (rev 7) | Alternative with a real trade: a Gear and 2 Parts instead of the Pipe and one of the two Refined Iron; the Blade stays. A third of the refined metal, but 6 Parts in total against 2. Starter-known. New id at revision 7: the Salvager Pick's Parts route, moved to the axe; one Refined Iron stays so the recycler never returns metal the route did not hold. |
+| `reinforced_spear` | 1 Reinforced Spear | 1 Metal Blade + 1 Iron Ingot + 2 Wood | — | Workbench L2 | 2 / Starter | 16 s | SOH_ONLY (NONE) | — | REVISE | Blade rule: one Blade + Iron socket + shaft. Revision 6 folded the starter-known alias into this id (was 2 Iron, 20 s, study-only; now 1 Iron, 16 s, starter-known). |
 | `wood_club` | 1 Wood Club | 12 Wood | — | Hand | 0 / Starter | 3 s | LI_SCALED (DIRECT) | 300 Wood | KEEP | By hand, wood only. Last Island 300 wood at the bulk divisor. |
 | `cleaver` | 1 Cleaver | 1 Iron Ingot + 1 Metal Blade | — | Workbench L1 | 1 / directed research | 14 s | LI_SCALED (DIRECT) | 15 Iron Ingot + 1 Metal Blade | KEEP | Blade rule: one Blade + one Iron. Level-1 bench on purpose: a found Blade becomes a weapon before the player can forge one (forging needs level 2). |
 | `machete` | 1 Machete | 4 Iron Ingot + 3 Metal Blade | — | Workbench L2 | 2 / specimen / study the item / directed research | 22 s | LI_SCALED (DIRECT) | 100 Iron Ingot + 3 Metal Blade | KEEP | Blade rule: three Blades + 4 Iron. Last Island shape (100 iron + 3 blades). |
@@ -538,12 +534,10 @@ Unit cost divides the bill by the yield. Knowledge: Starter = known from the fir
 | `arrow_fletched` | 8 Arrow | 1 Wood + 1 Stone + 1 Grouse Feather | 0.125 Wood + 0.125 Stone + 0.125 Grouse Feather | Workbench L1 | 1 / Starter | 4 s | SOH_ONLY (NONE) | — | KEEP | Alternative with a real trade: a Feather instead of fiber gives 8, but feathers come only from grouse. |
 | `torch` | 1 Torch | 1 Wood + 2 Plant Fiber | — | Hand | 0 / Starter | 1 s | SOH_ONLY (NONE) | — | KEEP | By hand: wood + fiber wick. |
 | `stone_axe` | 1 Stone Axe | 3 Wood + 3 Stone + 1 Rope | — | Hand | 0 / Starter | 2 s | SOH_ONLY (NONE) | — | KEEP | Stone-tier rule: wood handle, stone head, rope lashing, by hand. |
-| `stone_pick` | 1 Stone Pickaxe | 3 Wood + 4 Stone + 1 Rope | — | Hand | 0 / Starter | 2 s | SOH_ONLY (NONE) | — | KEEP | Stone-tier rule. One more stone than the axe: a pick head is heavier. |
 | `wood_spear` | 1 Fire-hardened Spear | 4 Wood + 1 Rope | — | Hand | 0 / Starter | 2 s | SOH_ONLY (NONE) | — | KEEP | By hand: shaft + lashing. |
 | `arrow` | 6 Arrow | 1 Wood + 1 Stone + 1 Plant Fiber | 0.167 Wood + 0.167 Stone + 0.167 Plant Fiber | Workbench L1 | 1 / Starter | 5 s | SOH_ONLY (NONE) | — | REVISE | Wood shaft, stone head, fiber binding: 6. Revision 6 made it starter-known; the better fletched arrow already was. Bill unchanged. |
 | `bow` | 1 Hunting Bow | 5 Wood + 3 Rope | — | Workbench L1 | 1 / study the item / directed research | 12 s | SOH_ONLY (NONE) | — | KEEP | Wood stave + rope string. Learned by study. |
 | `iron_axe` | 1 Iron Axe | 3 Iron Ingot + 2 Wood + 1 Leather | — | Workbench L1 | 1 / Starter | 15 s | SOH_ADJUSTED (DIRECT) | 75 Iron Ingot + 100 Wood | KEEP | Iron-tier rule: 3 Iron head, 2 wood handle, 1 leather grip. |
-| `iron_pick` | 1 Iron Pickaxe | 3 Iron Ingot + 2 Wood + 1 Leather | — | Workbench L1 | 1 / Starter | 15 s | SOH_ONLY (NONE) | — | KEEP | Iron-tier rule, identical to the axe. |
 
 ### 05 Armour / Clothing / Carry
 
@@ -637,8 +631,12 @@ Unit cost divides the bill by the yield. Knowledge: Starter = known from the fir
 |---|---|---|---|---|---|---|---|---|---|---|
 | `animal_feed` | 3 Fodder Bundle | 3 Plant Fiber + 1 Wild Berry Seed | 1 Plant Fiber + 0.333 Wild Berry Seed | Hand | 0 / Starter | 2 s | SOH_ONLY (NONE) | — | KEEP | Fiber bulk + one seed -> 3. |
 
-### Retired at this revision
+### Retired formulas
 
+- `stone_pick` → successor `stone_axe`. Frozen as `stone_pick@6` (3 Wood + 4 Stone + 1 Rope). Retired at revision 7 (Creator ruling on build 98ee24ac: the axe takes over the pickaxe's work; Last Island has no pickaxe). Successor: stone_axe.
+- `iron_pick` → successor `iron_axe`. Frozen as `iron_pick@6` (3 Iron Ingot + 2 Wood + 1 Leather). Retired at revision 7 with the Stone Pickaxe. Successor: iron_axe. Old jobs finish under iron_pick@6 and pay out an Iron Axe.
+- `industrial_pick` → successor `industrial_axe`. Frozen as `industrial_pick@4`, `industrial_pick@6` (1 Iron Pickaxe + 2 Refined Iron Ingot + 1 Metal Pipe). Retired at revision 7 with the Stone Pickaxe. Successor: industrial_axe. Old jobs finish under industrial_pick@6 and pay out a Salvager Axe.
+- `industrial_pick_geared` → successor `industrial_axe_geared`. Frozen as `industrial_pick_geared@6` (1 Iron Pickaxe + 1 Mechanical Gear + 2 Parts). Retired at revision 7 with the Salvager Pick it made. Its Parts route moved to industrial_axe_geared. Old jobs finish under industrial_pick_geared@6.
 - `reinforced_spear_blade` → successor `reinforced_spear`. Frozen as `reinforced_spear_blade@5` (1 Metal Blade + 1 Iron Ingot + 2 Wood). Retired at revision 6. It made the same spear for less iron, in less time, with no study, so the main formula was never worth using. Its bill is now the one spear formula. Old jobs finish under reinforced_spear_blade@5.
 
 ## 5. Costs that are not formulas
@@ -655,9 +653,9 @@ Unit cost divides the bill by the yield. Knowledge: Starter = known from the fir
 - **Specimen study** (consumes the specimen): Wolf Fang (specimen) → Fur Cloak; Crawler Optic (specimen) → Filter Mask; Boar Tusk (specimen) → Machete; Beetle Horn (specimen) → Chitin Plate.
 - **Studying the item itself** teaches its own formula: Hunting Bow, Machete.
 - **Core study** (taking a Core apart teaches its formula): Ember Core, Quake Core, Storm Core, Rime Core, Meteor, Dragon's Breath, Elsa's Sword, Mjolnir, Demon Core.
-- **Item repair at a station:** Wood Club = 3 Wood; Cleaver = 1 Iron Ingot; Machete = 1 Iron Ingot + 1 Metal Blade; Survival Knife = 1 Stone + 1 Plant Fiber; Stone Axe = 1 Stone + 1 Wood; Stone Pickaxe = 1 Stone + 1 Wood; Iron Axe = 1 Iron Ingot + 1 Wood; Iron Pickaxe = 1 Iron Ingot + 1 Wood; Salvager Pick = 1 Refined Iron Ingot + 1 Parts; Salvager Axe = 1 Refined Iron Ingot + 1 Parts; Hunting Bow = 1 Wood + 2 Plant Fiber; Reinforced Spear = 1 Iron Ingot + 1 Wood; Oathless Nodachi = 1 Refined Iron Ingot + 1 Leather; Saltwick Trident = 2 Iron Ingot + 2 Crab Shell; Archive Lantern = 1 Glass + 1 Parts; Territory Cabinet = 3 Wood + 2 Stone; Straw Bed = 3 Plant Fiber + 1 Wood; Wood Chest = 2 Wood; Iron-bound Chest = 3 Wood + 1 Iron Ingot; Campfire = 2 Wood + 1 Stone; Furnace = 5 Stone + 1 Wood; Oil Pump = 1 Iron Ingot + 1 Mechanical Gear + 1 Metal Pipe + 1 Parts; Oil Refinery = 2 Iron Ingot + 2 Wood + 1 Metal Pipe + 2 Parts + 1 Glass; Workbench = 4 Wood + 1 Stone; Research Table = 3 Wood + 2 Parts + 1 Iron Ingot; Garden Plot = 1 Wood + 1 Plant Fiber; Garden Tender = 3 Wood + 1 Iron Ingot + 1 Mechanical Gear + 1 Electronic Parts + 1 Parts; Rain Barrel = 2 Wood + 1 Rope; Feed & Water Trough = 2 Wood + 1 Stone + 1 Rope; Field Generator = 1 Iron Ingot + 1 Refined Iron Ingot + 1 Electronic Parts + 1 Parts; Power Cable = 1 Iron Ingot + 1 Plant Fiber; Power Switch = 1 Iron Ingot + 1 Electronic Parts + 1 Parts; Pressure Switch = 1 Iron Ingot + 1 Parts + 1 Electronic Parts + 1 Iron Plate; Infrared Sensor = 1 Iron Ingot + 1 Electronic Parts + 1 Parts; Arrow Turret = 3 Wood + 1 Iron Ingot + 1 Mechanical Gear + 1 Rope; Bear Trap = 1 Mechanical Gear + 1 Iron Ingot; Spike Trap = 2 Wood; Barricade = 2 Wood; Torch Post = 1 Wood + 1 Torch.
+- **Item repair at a station:** Wood Club = 3 Wood; Cleaver = 1 Iron Ingot; Machete = 1 Iron Ingot + 1 Metal Blade; Survival Knife = 1 Stone + 1 Plant Fiber; Stone Axe = 1 Stone + 1 Wood; Iron Axe = 1 Iron Ingot + 1 Wood; Salvager Axe = 1 Refined Iron Ingot + 1 Parts; Hunting Bow = 1 Wood + 2 Plant Fiber; Reinforced Spear = 1 Iron Ingot + 1 Wood; Oathless Nodachi = 1 Refined Iron Ingot + 1 Leather; Saltwick Trident = 2 Iron Ingot + 2 Crab Shell; Archive Lantern = 1 Glass + 1 Parts; Territory Cabinet = 3 Wood + 2 Stone; Straw Bed = 3 Plant Fiber + 1 Wood; Wood Chest = 2 Wood; Iron-bound Chest = 3 Wood + 1 Iron Ingot; Campfire = 2 Wood + 1 Stone; Furnace = 5 Stone + 1 Wood; Oil Pump = 1 Iron Ingot + 1 Mechanical Gear + 1 Metal Pipe + 1 Parts; Oil Refinery = 2 Iron Ingot + 2 Wood + 1 Metal Pipe + 2 Parts + 1 Glass; Workbench = 4 Wood + 1 Stone; Research Table = 3 Wood + 2 Parts + 1 Iron Ingot; Garden Plot = 1 Wood + 1 Plant Fiber; Garden Tender = 3 Wood + 1 Iron Ingot + 1 Mechanical Gear + 1 Electronic Parts + 1 Parts; Rain Barrel = 2 Wood + 1 Rope; Feed & Water Trough = 2 Wood + 1 Stone + 1 Rope; Field Generator = 1 Iron Ingot + 1 Refined Iron Ingot + 1 Electronic Parts + 1 Parts; Power Cable = 1 Iron Ingot + 1 Plant Fiber; Power Switch = 1 Iron Ingot + 1 Electronic Parts + 1 Parts; Pressure Switch = 1 Iron Ingot + 1 Parts + 1 Electronic Parts + 1 Iron Plate; Infrared Sensor = 1 Iron Ingot + 1 Electronic Parts + 1 Parts; Arrow Turret = 3 Wood + 1 Iron Ingot + 1 Mechanical Gear + 1 Rope; Bear Trap = 1 Mechanical Gear + 1 Iron Ingot; Spike Trap = 2 Wood; Barricade = 2 Wood; Torch Post = 1 Wood + 1 Torch.
 - **Vendor, paid in Parts** (price / quantity / stock): Iron Ore 3/2/5; Charcoal 3/3/4; Glass 4/1/3; Crude Petroleum 5/1/4.
-- **Vendor, paid in Ragnarok Cash** (price / stock): Iron Pickaxe 12/1; Iron Axe 12/1; Field Medkit 4/4; Hand Cart (packed) 20/1; Leather Jerkin 10/1; Water Flask 3/2.
+- **Vendor, paid in Ragnarok Cash** (price / stock): Iron Axe 12/1; Field Medkit 4/4; Hand Cart (packed) 20/1; Leather Jerkin 10/1; Water Flask 3/2.
 - **Recycler (latest rule per component):** Metal Pipe → 1 Refined Iron Ingot; Mechanical Gear → 2 Parts + 1 Iron Ingot; Metal Blade → 2 Iron Ingot; Iron Plate → 1 Iron Ingot.
 
 | Item | System | What consumes or uses it | Code anchor |
@@ -668,6 +666,7 @@ Unit cost divides the bill by the yield. Knowledge: Starter = known from the fir
 | Fuel Canister | Power and vehicles | One can fuels a generator or refills the Motorbike. Stations never burn it. | `engine.ts vehicle.refuel, generator fuel intent` |
 | Wood | Station fuel | Station fuel (stationBurnable). | `catalog.ts stationBurnable` |
 | Charcoal | Station fuel | Station fuel (stationBurnable). | `catalog.ts stationBurnable` |
+| Plank | Station fuel | Station fuel (stationBurnable): 40 s, the burn of the 2 Wood it is sawn from, at half the weight. | `catalog.ts ITEMS.plank.fuel, stationBurnable` |
 | Arrow | Ammunition | One arrow is spent per bow shot; the Arrow Turret fires arrows from its own container. | `sim.ts (ranged release), engine.ts turret` |
 | Basic Energy | Core reserves | Primary reserve of every Core (capacity 40). | `creator-contract.ts` |
 | Refined Energy | Core reserves | Technique reserve of every Core (capacity 12). | `creator-contract.ts` |
@@ -705,7 +704,7 @@ Unit cost divides the bill by the yield. Knowledge: Starter = known from the fir
 | Oathless Nodachi | Side bosses | Unique drop of one side boss; equipped and used like any gear. | `catalog.ts CREATURES.boss_*.uniqueDrop` |
 | Saltwick Trident | Side bosses | Unique drop of one side boss; equipped and used like any gear. | `catalog.ts CREATURES.boss_*.uniqueDrop` |
 | Archive Lantern | Side bosses | Unique drop of one side boss; equipped and used like any gear. | `catalog.ts CREATURES.boss_*.uniqueDrop` |
-| Stone Axe | Starting kit | Issued at the start of a run and at every wake-up after a death; the baseline tool. | `engine.ts startRun / respawn` |
+| Stone Axe | Starting kit | Issued at the start of a run and at every wake-up after a fall (death or the menu's give-up); the baseline tool. | `engine.ts startRun / respawn / giveUp` |
 | Survival Knife | Industrial salvage | Carried by resident salvagers; strips roadside salvage two points a hit, twice the Stone Axe. | `catalog.ts G1A_HARVEST, humanworld.ts salvager kit` |
 
 ## 6. Cross-family graph audit
@@ -714,12 +713,12 @@ Unit cost divides the bill by the yield. Knowledge: Starter = known from the fir
 
 | # | Ingredient | Formulas | Packs | Other costs | Total |
 |---|---|---|---|---|---|
-| 1 | Iron Ingot | 24 | 12 | 6 | 42 |
-| 2 | Wood | 15 | 17 | 1 | 33 |
-| 3 | Parts | 18 | 8 | 5 | 31 |
+| 1 | Iron Ingot | 23 | 12 | 6 | 41 |
+| 2 | Parts | 18 | 8 | 5 | 31 |
+| 3 | Wood | 13 | 17 | 1 | 31 |
 | 4 | Frost Crystal | 16 | 0 | 0 | 16 |
-| 5 | Rope | 11 | 3 | 0 | 14 |
-| 6 | Stone | 8 | 5 | 1 | 14 |
+| 5 | Rope | 10 | 3 | 0 | 13 |
+| 6 | Stone | 7 | 5 | 1 | 13 |
 | 7 | Refined Iron Ingot | 11 | 1 | 0 | 12 |
 | 8 | Plant Fiber | 7 | 3 | 1 | 11 |
 | 9 | Iron Plate | 6 | 1 | 4 | 11 |
@@ -728,8 +727,8 @@ Unit cost divides the bill by the yield. Knowledge: Starter = known from the fir
 ### Bridge materials (used by formulas in four or more families)
 
 - Iron Ingot: families 02, 03, 04, 05, 06, 07, 08, 09
-- Wood: families 02, 04, 07, 08, 09
 - Parts: families 02, 04, 05, 06, 07, 08
+- Wood: families 02, 04, 07, 08, 09
 - Rope: families 03, 04, 05, 07, 08, 09
 - Stone: families 02, 04, 06, 07
 - Refined Iron Ingot: families 02, 04, 05, 08, 09
@@ -740,7 +739,7 @@ Unit cost divides the bill by the yield. Knowledge: Starter = known from the fir
 
 ### Reachability, ignoring map placement
 
-Start set = every item without a formula, treated as obtainable; map placement ignored. Result: bench level 3 reached; 107 craftable items reached; formulas that cannot be reached: none.
+Start set = every item without a formula, treated as obtainable; map placement ignored. Result: bench level 3 reached; 104 craftable items reached; formulas that cannot be reached: none.
 
 ### Bench-level gates hidden inside a bill
 
@@ -756,13 +755,13 @@ Start set = every item without a formula, treated as obtainable; map placement i
 - **Refined Energy** — LEGITIMATE. Bulk route needs a level-3 bench and Charcoal; per unit it saves a third of the Crystal and Iron.
   - `energy_refined_industrial`: raw per unit 0.167 Frost Crystal + 0.167 Iron Ore + 0.333 Wood; 3.333 s per unit; workbench L3; starter
   - `energy_refined`: raw per unit 0.25 Frost Crystal + 0.25 Iron Ore; 4 s per unit; workbench L2; starter
-- **Salvager Pick** — LEGITIMATE. Refined route (2 Refined Iron + Pipe, study) against Parts route (Gear + 2 Parts = 5 Parts, starter-known). Furnace time against scarce Parts.
-  - `industrial_pick`: raw per unit 1 Raw Hide + 7.5 Iron Ore + 1 Parts + 8 Wood; 25 s per unit; workbench L2; learned
-  - `industrial_pick_geared`: raw per unit 1 Raw Hide + 5 Iron Ore + 5 Parts + 2 Wood; 25 s per unit; workbench L2; starter
+- **Salvager Axe** — LEGITIMATE. Refined route (Blade + 2 Refined Iron + Pipe, study) against Parts route (Blade + 1 Refined Iron + Gear + 2 Parts, starter-known). Refined metal against scarce Parts: 2 Parts by the first, 6 by the second.
+  - `industrial_axe`: raw per unit 1 Raw Hide + 10.5 Iron Ore + 2 Parts + 8 Wood; 25 s per unit; workbench L2; learned
+  - `industrial_axe_geared`: raw per unit 1 Raw Hide + 9.5 Iron Ore + 6 Parts + 4 Wood; 25 s per unit; workbench L2; starter
 - **Arrow** — LEGITIMATE. Fiber gives 6, a Feather gives 8. Feathers come only from grouse.
   - `arrow_fletched`: raw per unit 0.125 Grouse Feather + 0.125 Stone + 0.125 Wood; 0.5 s per unit; workbench L1; starter
   - `arrow`: raw per unit 0.167 Plant Fiber + 0.167 Stone + 0.167 Wood; 0.833 s per unit; workbench L1; starter
-- **Refined Iron Ingot** — LEGITIMATE. Rich Ore route: 1 ore instead of 3 ingots and faster, but Rich Ore needs an iron-class pick and is a separate, scarcer world material.
+- **Refined Iron Ingot** — LEGITIMATE. Rich Ore route: 1 ore instead of 3 ingots and faster, but Rich Ore needs an iron-class axe and is a separate, scarcer world material.
   - `refined_iron_ingot`: raw per unit 1.5 Iron Ore + 2 Wood; 10 s per unit; furnace; starter
   - `refined_iron_rich`: raw per unit 0.5 Rich Iron Ore + 2 Wood; 7 s per unit; furnace; starter
 - **Glass** — LEGITIMATE. Crystal route (inland, study, competes with Cores) against Shell route (coast, starter-known, slower, two of each).
@@ -782,8 +781,9 @@ Zero-input formulas: `pump_crude` (extraction from finite seep stock). Formulas 
 
 ### Materials with no consumer or one consumer
 
-No consumer: Plank.
+No consumer: none.
 
+- Plank: only `system:Station fuel`
 - Iron Ore: only `recipe:iron_ingot`
 - Rich Iron Ore: only `recipe:refined_iron_rich`
 - Fur: only `recipe:fur_cloak`
@@ -796,7 +796,7 @@ No consumer: Plank.
 
 ### Items outside the main crafting graph
 
-Main connected component: 135 of 157 items. The rest have no bill and appear in no bill; each is tied to the game by a system, not a formula:
+Main connected component: 132 of 154 items. The rest have no bill and appear in no bill; each is tied to the game by a system, not a formula:
 
 - Survival Knife (family 04, WORLD_ONLY): system:Industrial salvage
 - Blueprint (family 11, SPECIAL_AUTHORITY): system:Knowledge
@@ -929,6 +929,8 @@ Raw totals expand every intermediate through its main formula. Fractions come fr
 | `metal_blade` | BILL | 4 Iron + 1 Parts | 3 Iron + 1 Parts | LI DIRECT: metal_blade = 30 iron + 15 parts; mechanical_gear = 50 iron + 65 parts. LI prices a blade at well under half a gear. SOH had them equal (5 units each). The new number is SOH_PROVISIONAL. | Cleaver 5 -> 4 Iron in total, Machete 16 -> 13, Reinforced Spear and Salvager Axe 1 less. Recycling a blade still returns 2 Iron of 3 and never the Part, so craft -> recycle loses material every turn. | IMPLEMENTED |
 | `reinforced_spear` | BILL | 2 Iron + 1 Blade + 2 wood, 20 s, learned by study | 1 Blade + 1 Iron + 2 wood, 16 s, starter-known | SOH_ONLY. No LI figure. Internal contradiction: the alias below produced the same item for strictly less. | One formula instead of two. No player loses anything: everyone already knew the cheaper alias. | IMPLEMENTED |
 | `reinforced_spear_blade` | RETIRED | alias: 1 Blade + 1 Iron + 2 wood, 16 s, starter-known | retired; successor reinforced_spear | SOH_ONLY. Strictly dominated the main formula. | Recipe count 115 -> 114. Knowledge of the alias is pruned on load; a job queued under it finishes under reinforced_spear_blade@5. | IMPLEMENTED |
+| `stone_pick / iron_pick / industrial_pick / industrial_pick_geared` | RETIRED | three pickaxes and a geared alias; stone and ore needed a pick, wood needed an axe | retired at recipe revision 7; each axe carries its pickaxe's stone, ore and scrap power | LI DIRECT: the Last Island axe line (Stone, Iron, Refined Iron) gathers wood and ore; Last Island has no pickaxe. Creator ruling on build 98ee24ac. The power numbers are the retired picks' own. | Recipe count 114 -> 111 (four formulas out, industrial_axe_geared in). One tool slot instead of two. A pick in an old save becomes the same-tier axe at the same wear; a queued pick job pays that axe; knowledge of the formulas is pruned on load. | IMPLEMENTED |
+| `industrial_axe_geared` | BILL | industrial_pick_geared: Iron Pickaxe + 1 Refined Iron + 1 Gear + 2 Parts | Iron Axe + 1 Blade + 1 Refined Iron + 1 Gear + 2 Parts | SOH_PROVISIONAL. No LI figure. Keeps a starter-known Gear route to the top tool after the pick left. The Blade matches the main Salvager Axe bill; the Refined Iron is what the recycler pays back for a full-condition Salvager Axe. | Mechanical Gear keeps three recipe consumers. The recycler returns no more than the route holds. | IMPLEMENTED |
 | `refined_iron_helmet / chest / legs / boots` | KNOWLEDGE | research tier 3 (random tinkering only) | research tier 2 (directed study allowed) | LI LEGACY_CLAIM for the bills, which are unchanged. The tier is an SOH access rule; Control Tower posture 2026-11-15. | A directed study (9 Parts, 45 s each) reaches the top armour set without four invented blueprint sources. Bench level 2 and the bills are untouched. | IMPLEMENTED |
 | `arrow` | KNOWLEDGE | learned by study | starter-known | SOH_ONLY. The better fletched arrow (8 per craft) was starter-known while the plainer one (6) needed study. | A bow owner without feathers can always make arrows. Bill unchanged. | IMPLEMENTED |
 

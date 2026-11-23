@@ -60,7 +60,8 @@ export const LI_RECIPE_LEDGER: Readonly<Record<string, LedgerRow>> = Object.free
   core_mjolnir: R(null, 'NONE', null, null, 'SOH_ONLY', 'Group B Core. Machine Parts retired -> Parts at x2, plus the Electronic Parts it already used.', 'Costs 9 Parts where it cost 3 Parts + 3 Machine Parts: the same wreck time, one fewer bench step.'),
   trail_pack: R(null, 'NONE', null, null, 'SOH_ONLY', 'SOH travel gear. Treated Canvas is retired -> Cloth.', 'No tanning step for canvas; the pack is gated by Needle and Thread only.'),
   trail_canteen: R(null, 'NONE', null, null, 'SOH_ONLY', 'SOH travel gear. Treated Canvas is retired -> Cloth.', 'Same as Trail Pack: one fewer intermediate.'),
-  industrial_pick: R(null, 'NONE', null, null, 'SOH_ONLY', 'SOH tool tier. Fasteners retired; the pipe handle stays.', 'Upgrade costs the old pick, 2 Refined Iron and a pipe; no Fasteners to forge first.'),
+  // Historical row: the formula was retired at recipe revision 7 (Last Island has no pickaxe; the Salvager Axe does the work).
+  industrial_pick: R(null, 'NONE', null, null, 'SOH_ONLY', 'SOH tool tier. Fasteners retired; the pipe handle stays. RETIRED at recipe revision 7 with the pickaxe line.', 'While it was live: the old pick, 2 Refined Iron and a pipe; no Fasteners to forge first.'),
   industrial_axe: R(null, 'NONE', null, null, 'SOH_ONLY', 'SOH tool tier. Fasteners retired; blade and pipe stay.', 'Upgrade costs the old axe, a blade, 2 Refined Iron and a pipe.'),
   reinforced_spear: R(null, 'NONE', null, null, 'SOH_ONLY', 'SOH weapon. Fasteners retired.', 'Iron 2 + blade + wood: the blade is the only crafted part.'),
   metal_pipe: R('metal_pipe', 'DIRECT', { refined_iron_ingot: 5, parts: 30 }, null, 'LI_SCALED', UNIT + ' Refined Iron /2.5, Parts /15; yields 2 so a pipe costs 1 Refined Iron + 1 Parts.', 'Was Refined Iron + Machine Parts. Parts come straight from wrecks, so the first pipe needs no Machine Parts bench step.'),

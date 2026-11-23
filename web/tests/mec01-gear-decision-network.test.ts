@@ -5,7 +5,7 @@
 //   iron ingot 5 are granted. The gear itself is NOT granted. Each branch starts from the same save point (snapshot clone).
 // Branches (same carried gear, UID-tracked):
 //   A  Geared Motor Drive (workbench L2 craft, paid queue)     -> vehicle_drive; spends 2 spares + 2 fasteners + 1 ingot.
-//   B  Salvager Pick (geared) (iron pick -> geared upgrade)   -> industrial_pick; spends 2 spares; keeps an L2 bench.
+//   B  Salvager Axe (geared) (iron axe -> geared upgrade)   -> industrial_axe; spends 2 spares; keeps an L2 bench.
 //   C  Foundry Recycler (X:gear-v1, real time, physical output) -> 2 Mechanical Parts + 1 Iron Ingot; spends no spares.
 import {describe,it,expect} from 'vitest';
 import {type GameState,type RunState,TILE} from '../src/game/core';
@@ -29,7 +29,7 @@ function legalTileNear(g:GameState,cx:number,cy:number):[number,number]{
   for (let k=1;k<=8;k++) for (let dy=-k;dy<=k;dy++) for (let dx=-k;dx<=k;dx++) { if (Math.max(Math.abs(dx),Math.abs(dy))!==k) continue; const tx=cx+dx,ty=cy+dy; place(r,tx-1,ty); if (!buildReason(g,'workbench',tx,ty)) return [tx,ty]; }
   throw new Error('no legal workbench tile');
 }
-function invSnapshot(r:RunState){const keys=['mechanical_gear','mechanical_parts','iron_ingot','fasteners','spares','iron_pick','wood','stone','leather','refined_iron_ingot','vehicle_drive','industrial_pick'];return Object.fromEntries(keys.map(k=>[k,countItem(r,'inv',k)]));}
+function invSnapshot(r:RunState){const keys=['mechanical_gear','mechanical_parts','iron_ingot','fasteners','spares','iron_axe','wood','stone','leather','refined_iron_ingot','vehicle_drive','industrial_axe'];return Object.fromEntries(keys.map(k=>[k,countItem(r,'inv',k)]));}
 function moveOut(g:GameState,from:string,key:string,at:number){const r=g.run!;const fs=r.custody[from].slots.findIndex(s=>s?.key===key);expect(fs,key).toBeGreaterThanOrEqual(0);return dispatch(g,{id:'a1-mv-'+(++n),type:'move',from,fs,to:'inv'} as any,at);}
 /** Shared save point: the gear is taken from the authored cache by real moves; fixture materials are granted. */
 function savePoint(){
@@ -41,7 +41,7 @@ function savePoint(){
   for(let k=0;k<6&&r.custody[c.c!].slots.some(s=>s?.key==='spares');k++)expect(moveOut(g,c.c!,'spares',START+6+k).ok).toBe(true);
   expect(r.custody[c.c!].slots.some(s=>s&&isRetiredLive(s.key))).toBe(false);
   expect(countItem(r,'inv','mechanical_gear')).toBe(1);
-  addItem(r,'inv','wood',20);addItem(r,'inv','stone',4);addItem(r,'inv','leather',1);addItem(r,'inv','iron_ingot',5);  // FIXTURE grants (wood: bench + pick)
+  addItem(r,'inv','wood',20);addItem(r,'inv','stone',4);addItem(r,'inv','leather',1);addItem(r,'inv','iron_ingot',5);addItem(r,'inv','metal_blade',1);addItem(r,'inv','refined_iron_ingot',1);  // FIXTURE grants (wood: bench + axe; Blade and Refined Iron: the geared Salvager Axe)
   return {g:copy(g),spawn:{tx:Math.floor(r.player.x/TILE),ty:Math.floor(r.player.y/TILE)}};
 }
 function gearUid(r:RunState){const s=r.custody.inv.slots.find(s=>s?.key==='mechanical_gear');return s!.uid;}
@@ -79,13 +79,13 @@ describe('MEC-01 R2 A1: one found Mechanical Gear, three competing actions', () 
     const out=rc.station!.outC!;
     expect(countItem(r,out,'spares')).toBe(2);expect(countItem(r,out,'iron_ingot')).toBe(1);
     expect(countItem(r,'inv','spares')).toBe(before.spares);   // the pack's own Parts were not touched
-    expect(countItem(r,'inv','iron_pick')).toBe(0);      // no tool was touched
+    expect(countItem(r,'inv','iron_axe')).toBe(0);      // no tool was touched
     expect(rc.station!.queue.length).toBe(0);
   });
 
   // Final item set (rev 4): branch A is no longer a Motor Drive (retired). Keeping the gear for the Motorbike Kit is the
   // competing use; the drive formula itself must now refuse without touching the gear.
-  it('branch A (retired drive: refused, gear kept for the kit) and branch B (geared Salvager Pick) at the real L2 bench', () => {
+  it('branch A (retired drive: refused, gear kept for the kit) and branch B (geared Salvager Axe) at the real L2 bench', () => {
     const {g:base}=savePoint();
     // PA1 §24: pay for the packed Workbench before looking for a site — buildReason demands the pack,
     // not the ore, so the scan below would otherwise never return. (This is why the test failed at 023ec62.)
@@ -100,23 +100,23 @@ describe('MEC-01 R2 A1: one found Mechanical Gear, three competing actions', () 
     const outA=benchA.station!.outC!;expect(benchA.station!.queue).toHaveLength(0);
     const afterA=invSnapshot(rA);expect(afterA).toEqual(midA);void beforeA;
     expect(afterA.mechanical_gear).toBe(1);expect(RECIPES.motorbike_kit.ins).toContainEqual(['mechanical_gear',2]);
-    // ---- B: geared Salvager Pick (needs an Iron Pickaxe first, then the upgrade)
+    // ---- B: geared Salvager Axe (needs an Iron Axe first, then the upgrade)
     const gB=copy(base);const rB=gB.run!;const beforeB=invSnapshot(rB);const benchB=runBench(gB);
-    const ipr=dispatch(gB,{id:'a1-ip-'+(++n),type:'craft',eid:benchB.id,recipe:'iron_pick'},START+22);expect((ipr as any).reason??'ok').toBe('ok');
-    stepStations(gB,RECIPES.iron_pick.secs*1000+500,START+30000);
-    expect(countItem(rB,benchB.station!.outC!,'iron_pick')).toBe(1);
-    const fsP=rB.custody[benchB.station!.outC!].slots.findIndex(s=>s?.key==='iron_pick');
+    const ipr=dispatch(gB,{id:'a1-ip-'+(++n),type:'craft',eid:benchB.id,recipe:'iron_axe'},START+22);expect((ipr as any).reason??'ok').toBe('ok');
+    stepStations(gB,RECIPES.iron_axe.secs*1000+500,START+30000);
+    expect(countItem(rB,benchB.station!.outC!,'iron_axe')).toBe(1);
+    const fsP=rB.custody[benchB.station!.outC!].slots.findIndex(s=>s?.key==='iron_axe');
     expect(dispatch(gB,{id:'a1-ipc-'+(++n),type:'move',from:benchB.station!.outC!,fs:fsP,to:'inv'} as any,START+31000).ok).toBe(true);
-    expect(dispatch(gB,{id:'a1-pk-'+(++n),type:'craft',eid:benchB.id,recipe:'industrial_pick_geared'},START+32000).ok).toBe(true);
-    stepStations(gB,RECIPES.industrial_pick_geared.secs*1000+500,START+70000);
-    expect(countItem(rB,benchB.station!.outC!,'industrial_pick')).toBe(1);
+    expect(dispatch(gB,{id:'a1-pk-'+(++n),type:'craft',eid:benchB.id,recipe:'industrial_axe_geared'},START+32000).ok).toBe(true);
+    stepStations(gB,RECIPES.industrial_axe_geared.secs*1000+500,START+70000);
+    expect(countItem(rB,benchB.station!.outC!,'industrial_axe')).toBe(1);
     const afterB=invSnapshot(rB);
-    expect(afterB.mechanical_gear).toBe(0);expect(beforeB.spares-afterB.spares).toBe(4+2); /* bench upgrade 4 Parts (item set v3) + geared pick 2 Parts */expect(afterB.iron_pick).toBe(0);
-    expect(ITEMS.industrial_pick.power!.ore).toBeGreaterThan(ITEMS.iron_pick.power!.ore!);
-    // A yields a drive (a vehicle component, no pick); B yields a pick and consumes the old iron pick UID.
+    expect(afterB.mechanical_gear).toBe(0);expect(beforeB.spares-afterB.spares).toBe(4+2); /* bench upgrade 4 Parts (item set v3) + geared axe 2 Parts */expect(afterB.iron_axe).toBe(0);
+    expect(ITEMS.industrial_axe.power!.ore).toBeGreaterThan(ITEMS.iron_axe.power!.ore!);
+    // A yields a drive (a vehicle component, no tool); B yields an axe and consumes the old iron axe UID.
     expect(afterA.vehicle_drive).toBe(0);
     expect(countItem(rA,outA,'vehicle_drive')+countItem(rA,outA,'mechanical_gear')).toBe(0);  // nothing was made in branch A
-    expect(beforeB.iron_pick).toBe(0);expect(afterB.industrial_pick).toBe(0);
+    expect(beforeB.iron_axe).toBe(0);expect(afterB.industrial_axe).toBe(0);
   });
 
   it('save/reload while the recycler job is in flight (SNAPSHOT_SAME_PROCESS, not a separate-process reload): the reserved gear UID completes exactly once', () => {

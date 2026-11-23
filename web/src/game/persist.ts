@@ -241,6 +241,18 @@ export function validate(raw: any): GameState | null {
       st.key = toKey; retiredItems++;
     }
   }
+  // Item set v4: a resident's worn gear is embedded in the human ledger, not in a custody container, so the loop above
+  // never sees it. A tool in a resident's hand follows the same rule: same uid, same fraction of durability.
+  if (obj(r.humanWorld) && obj(r.humanWorld.people)) for (const h of Object.values(r.humanWorld.people) as any[]) {
+    if (!obj(h) || !obj(h.equip)) continue;
+    for (const st of Object.values(h.equip) as any[]) {
+      if (!obj(st) || typeof st.key !== 'string' || !isRetiredLive(st.key) || !has(ITEMS, st.key) || liveItemPer(st.key) !== 1) continue;
+      const from = ITEMS[st.key], toKey = liveItemId(st.key), to = ITEMS[toKey];
+      if (!to) return null;
+      if (to.dur) st.dur = from.dur && finite(st.dur) ? (st.dur <= 0 ? 0 : Math.max(1, Math.min(to.dur, Math.round(st.dur / from.dur * to.dur)))) : to.dur; else delete st.dur;
+      st.key = toKey;
+    }
+  }
   if (obj(r.knowledge) && stringArray(r.knowledge.recipes)) for (const list of [r.knowledge.recipes, r.knowledge.studied]) {
     if (!stringArray(list)) continue;
     for (const k of [...list]) { const live = liveRecipeId(k); if (live && live !== k && has(RECIPES, live) && !list.includes(live)) list.push(live); }

@@ -16,7 +16,7 @@
 export type FinalGroup = 'A' | 'B' | 'C';
 export type FinalOrigin = 'SOH_CURRENT' | 'LI_IMPORTED' | 'STRUCT_PACK' | 'SOH_APPROVED_DESIGN_NEW';
 /** Save-level stamp. 1 (or absent) = written before the final item set; 2 = this cutover. */
-export const ITEM_SET_VERSION = 3;
+export const ITEM_SET_VERSION = 4;
 
 /** id -> [group, origin, Last Island id it stands for (when the roster names one)]. */
 export const FINAL_ITEMS: Readonly<Record<string, readonly [FinalGroup, FinalOrigin, string?]>> = Object.freeze({
@@ -69,10 +69,7 @@ export const FINAL_ITEMS: Readonly<Record<string, readonly [FinalGroup, FinalOri
   antirad: ['B', 'SOH_CURRENT'],
   knife: ['B', 'SOH_CURRENT'],
   stone_axe: ['A', 'SOH_CURRENT'],
-  stone_pick: ['B', 'SOH_CURRENT'],
   iron_axe: ['A', 'SOH_CURRENT', 'iron_axe'],
-  iron_pick: ['B', 'SOH_CURRENT'],
-  industrial_pick: ['B', 'SOH_CURRENT'],
   industrial_axe: ['A', 'SOH_CURRENT', 'refined_iron_axe'],
   wood_spear: ['B', 'SOH_CURRENT'],
   bow: ['B', 'SOH_CURRENT'],
@@ -218,8 +215,13 @@ export const ITEM_RETIREMENT: Readonly<Record<string, Retirement>> = Object.free
   scrap: { stage: 'LIVE', to: 'spares', why: 'LI Parts: roadside scrap and wrecks give Parts directly; metal comes back through the Recycler.' },
   brick: { stage: 'LIVE', to: 'stone', per: 1.5, /* 3 stone fired 2 bricks */ why: 'House tiers use LI Stone / Iron.' },
   keycard: { stage: 'LIVE', to: 'green_card', why: 'LI colour cards. The single Vault Keycard was the lowest tier; remaining scans carry over.' },
+  // ---- LIVE in item set v4 (Creator ruling on build 98ee24ac: "drop the pickaxe and merge its work into the axe").
+  //      Last Island has no pickaxe: its three axes take wood and ore. Each pick becomes the axe of its own tier. ----
+  stone_pick: { stage: 'LIVE', to: 'stone_axe', why: 'Last Island has no pickaxe; the Stone Axe takes wood, stone and ore.' },
+  iron_pick: { stage: 'LIVE', to: 'iron_axe', why: 'Last Island has no pickaxe; the Iron Axe takes wood, stone and ore.' },
+  industrial_pick: { stage: 'LIVE', to: 'industrial_axe', why: 'Last Island has no pickaxe; the Salvager Axe takes wood, stone and ore.' },
 });
-export const RETIRED_ITEM_IDS: readonly string[] = Object.freeze(["salvaged_oil", "lubricant", "damaged_drive", "mechanical_parts", "fasteners", "treated_canvas", "field_repair_kit", "fuel_briquette", "coal", "raw_salt", "root_broth", "herb_roast", "salted_meat", "scrap", "brick", "seed", "iron_sword", "keycard", "vehicle_drive"]);
+export const RETIRED_ITEM_IDS: readonly string[] = Object.freeze(["salvaged_oil", "lubricant", "damaged_drive", "mechanical_parts", "fasteners", "treated_canvas", "field_repair_kit", "fuel_briquette", "coal", "raw_salt", "root_broth", "herb_roast", "salted_meat", "scrap", "brick", "seed", "iron_sword", "keycard", "vehicle_drive", "stone_pick", "iron_pick", "industrial_pick"]);
 /** Old-schema Elder stones. Their migration is the existing Elder schema v1 -> v2 path in `persist.ts`. */
 export const LEGACY_STONE_IDS: readonly string[] = Object.freeze(["stone_frost", "stone_magma", "stone_bog", "stone_grove", "stone_tide", "stone_rust"]);
 
@@ -247,6 +249,8 @@ export const RECIPE_SUCCESSOR: Readonly<Record<string, string | null>> = Object.
   fasteners: null, treated_canvas: null, field_repair_kit: null, recover_drive: null, mechanical_parts: null, scrap_ingot: null, brick: 'glass',
   // recipe revision 6: the dominated alias folds into the one spear formula
   reinforced_spear_blade: 'reinforced_spear',
+  // recipe revision 7: the pickaxes fold into the axes
+  stone_pick: 'stone_axe', iron_pick: 'iron_axe', industrial_pick: 'industrial_axe', industrial_pick_geared: 'industrial_axe_geared',
 });
 export function liveRecipeId(id: string): string | null {
   return Object.prototype.hasOwnProperty.call(RECIPE_SUCCESSOR, id) ? RECIPE_SUCCESSOR[id] : id;

@@ -261,6 +261,10 @@ const patientTile=(p:HumanRecord)=>({gx:p.gx,gy:p.gy,floor:p.floor});
 /** A collapse from thirst alone: down, out of water, and no wound still bleeding. For this patient water is the first
  *  aid (Creator ruling 2026-11-23): a drink brings them round, where a dose of medicine would only put them back on
  *  their feet as thirsty as before, to fall again minutes later. A bleeding patient still needs the bleeding stopped. */
+/** Creator delegation (ruling on build 98ee24ac): a person brought round with water used to stand up with whatever was
+ *  left, under 1 HP. They now stand with at least this much. It is below the 30 a dose of medicine gives and below the
+ *  30 that ends `needsFollowup`, so a medic still owes them a real dose. */
+export const WATER_REVIVE_HP=10;
 export function downedByThirst(h:HumanRecord):boolean {return h.state==='DOWNED'&&h.thirst<1&&!h.wounds.some(w=>w.bleeding&&!w.treated);}
 /** The first thing in a responder's own pack that they could drink themselves, and so can hand to a patient. */
 function carriedDrink(r:RunState,h:HumanRecord):Stack|undefined {
@@ -467,10 +471,11 @@ export function executeHumanWork(r: RunState, hw: HumanWorld, h: HumanRecord, no
       // thirst alone and the drink is still in the pack; otherwise nothing is spent and the next review decides.
       if(!drink||!downedByThirst(p))return fail('patient no longer needs water, or the drink is gone');
       delete p.nextMedicalReviewAt;delete p.lastWorkBlock;
-      // The collapse left a wound that never bled; with its cause answered it needs no bandage. No health is restored:
-      // that still takes a real dose from a medic (needsFollowup).
+      // The collapse left a wound that never bled; with its cause answered it needs no bandage. The patient stands with
+      // WATER_REVIVE_HP at least; full health still takes a real dose from a medic (needsFollowup).
       p.wounds.forEach(w=>{w.treated=true;});
       giveDrink(r,h,p,drink,now,intent.intentId);
+      p.hp=Math.min(p.maxHp,Math.max(p.hp,WATER_REVIVE_HP));
       p.downedAt=undefined;p.state='IDLE';
       receipt(r,now,'human.treat',`${h.actorId}:${p.actorId}:water`);
     } else {

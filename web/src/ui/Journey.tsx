@@ -140,6 +140,7 @@ function LessonPage({ gs, store, id, onTrack, onLesson, onOpenReference, onJump,
           : <span className="cache__lock">{qa ? T('not in QA runs', 'không có ở lượt QA', lang) : T(`${left} step${left === 1 ? '' : 's'} to go`, `còn ${left} bước`, lang)}</span>}
       </div>
       <div className="cache__items">{l.reward.map(([k, q]) => <span key={k} className="cache__item" title={ITEMS[k]?.desc}><Icon k={k} size={12} /><i>{q > 1 ? `${q}× ` : ''}{ITEMS[k]?.name ?? k}</i></span>)}</div>
+      <p className="lesson__note">{T('Opens: ', 'Mở ra: ', lang)}{l.opens[lang]}</p>
       {l.needs && !claimed && <p className="lesson__note">{T('Opens as soon as Ragnarok begins — you do not have to finish the chapter first.', 'Mở ngay khi Ragnarok bắt đầu — không cần làm xong cả chương.', lang)}</p>}
     </div>
     <div className="lesson__acts">

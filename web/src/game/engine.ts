@@ -1996,7 +1996,7 @@ export function harvestHit(gs: GameState, tx: number, ty: number, power: Partial
   for (let u = 0; u < units; u++) {
     st.stock--; for (const [k, q] of s.def.yields) { spawnDrop(r, k, q, cx + ox, cy + oy, now); got += q; }
     for (const [k, ch] of (s.key === 'wreck' ? wreckBonuses(r) : s.def.bonus || [])) if (rngNext(r) < ch) { const drop=spawnDrop(r, k, 1, cx + ox, cy + oy, now); if(k==='damaged_drive')receipt(r,now,'harvest.component',`${s.key}@${tx},${ty}:${C(r,drop.c!).slots[0]!.uid}`); }
-    // R8C: a player swing with an iron-class pick can also free high-grade ore from an iron vein (finite, one drop per unit, same RNG stream).
+    // R8C: a player swing with an iron-class axe can also free high-grade ore from an iron vein (finite, one drop per unit, same RNG stream).
     // R8D: typed quality contract. One roll per unit only if the source grants this capability to the caller and the tool reaches a tier.
     const quality = opts?.extraction ? qualityTierFor(s.def, power, opts.extraction) : null;
     if (quality && rngNext(r) < quality.chance) { spawnDrop(r, quality.item, 1, cx + ox, cy + oy, now); richGot++; }
@@ -2264,6 +2264,21 @@ export function respawn(gs: GameState, now: number): Result {
   const rc = receipt(r, now, 'respawn', `${Math.round(x)},${Math.round(y)}`);
   issueStarterTool(r, now);
   return { ok: true, receipt: rc };
+}
+
+/** Creator ruling on build 98ee24ac: "add a give-up button and wake somewhere safe". A survivor with every axe broken and
+ *  no wood left had one way out, which was to wait for death. This is the same way out without the wait: the same fall
+ *  (everything carried stays in a bag where the survivor stood) and the same wake-up (own straw bed, else a safe shore,
+ *  with one Stone Axe in hand). It is booked as a fall with cause "gave up", so it gains nothing over dying. */
+export function giveUp(gs: GameState, now: number): Result {
+  const r = gs.run!; const p = r.player;
+  if (p.dead) return { ok: false, reason: 'You have already fallen. Rise first.' };
+  if (r.spiritTransit) return { ok: false, reason: 'Not during a spirit crossing.' };
+  killPlayer(gs, now, 'gave up');
+  const woke = respawn(gs, now);
+  const rc = receipt(r, now, 'giveup', woke.ok ? 'woke' : 'no-safe-spawn');
+  if (woke.ok) pushLog(r, now, 'You gave up and woke somewhere safe. Your bag lies where you stood.', 'gold');
+  return { ok: true, receipt: rc, msg: woke.ok ? 'You wake somewhere safe.' : undefined };
 }
 
 // ---------------- run end (C22/C23) ----------------
@@ -2650,6 +2665,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       return out.taken ? { ok: true, receipt: latestReceipt(), msg: `Recovered ${out.taken} item${out.taken === 1 ? '' : 's'}.` } : fail(out.reason ?? 'Nothing recovered.');
     }
     case 'respawn': return respawn(gs, now);
+    case 'giveUp': return giveUp(gs, now);
     case 'restStart': return startRest(gs, it, now);
     case 'restCancel': { if (!r.rest) return { ok: false, reason: 'You are not resting.' }; endRest(r, now, 'woke by choice'); return { ok: true, receipt: receipt(r, now, 'rest.cancel', it.id), msg: 'You wake up.' }; }
     case 'husbandry': {

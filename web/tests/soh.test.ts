@@ -126,9 +126,10 @@ describe('salt-shale source + dried meat content chain', () => {
     expect(approach).toBeTruthy(); tp(gs, (tx + approach![0]) * TILE + 8, (ty + approach![1]) * TILE + 8);
     const px = r.player.x, py = r.player.y, aim = idle(tx * TILE + 8, ty * TILE + 8);
     const swing = (now: number) => { tick(gs, { ...aim, attackPressed: true }, 16, now); for (let frame = 0; frame < 32; frame++) tick(gs, aim, 16, now + 16 * (frame + 1)); };
-    swing(T0); // one swing of the starting Stone Axe (ore power 1) only chips the shale
+    swing(T0); // one swing of the starting Stone Axe (ore power 2, the retired Stone Pickaxe's) only chips the shale
     expect(sourceAt(r, tx, ty)?.stock).toBe(SOURCES.salt_shale.stock); // a single chip does not free a unit
-    addItem(r, 'inv', 'stone_pick', 1); const pickSlot = C(r, 'inv').slots.findIndex(s => s?.key === 'stone_pick'); r.player.active = pickSlot;
+    // the same axe keeps going: no pickaxe exists any more, the axe breaks rock and ore
+    expect(C(r, 'inv').slots[r.player.active]?.key).toBe('stone_axe'); expect(ITEMS.stone_axe.power).toMatchObject({ stone: 3, ore: 2 });
     for (let hit = 0; hit < 6 && !Object.values(r.entities).some(e => e.kind === 'drop' && e.c && C(r, e.c).slots[0]?.key === 'stone'); hit++) swing(T0 + 1000 * (hit + 1));
     expect(Object.values(r.entities).some(e => e.kind === 'drop' && e.c && C(r, e.c).slots[0]?.key === 'stone')).toBe(true);
     const drop = Object.values(r.entities).find(e => e.kind === 'drop' && C(r, e.c!).slots[0]?.key === 'stone')!;
@@ -376,16 +377,16 @@ describe('C15–C18, C22–C23 Ragnarok cash, escrow, evacuation, run 2', () => 
     const r2 = gs.run!; expect(totalItems(gs, 'escrow_chest')).toBe(0); expect(Object.values(r2.entities).some(e => e.type === 'claim' || e.type === 'escrow')).toBe(false);
     expect(r2.knowledge.recipes.includes('fur_cloak')).toBe(false); expect(totalItems(gs, 'rcash')).toBe(0);
     const v2 = Object.values(r2.entities).find(e => e.kind === 'vendor')!; tp(gs, v2.x, v2.y + 16);
-    expect(dispatch(gs, { id: id(), type: 'buy', eid: v2.id, item: 'iron_pick' }, T0 + 1000).ok).toBe(false); // 11 < 12: no partial debit
+    expect(dispatch(gs, { id: id(), type: 'buy', eid: v2.id, item: 'iron_axe' }, T0 + 1000).ok).toBe(false); // 11 < 12: no partial debit
     expect(gs.profile.securedCash).toBe(11);
     expect(dispatch(gs, { id: id(), type: 'buy', eid: v2.id, item: 'medkit' }, T0 + 1000).ok).toBe(true);
     expect(gs.profile.securedCash).toBe(7); expect(countItem(r2, 'inv', 'medkit')).toBe(1);
   });
   it('run-2 secured purchase debits the profile exactly once', () => {
     const gs = fresh(); gs.profile.securedCash = 20; const r = gs.run!; const v = Object.values(r.entities).find(e => e.kind === 'vendor')!; tp(gs, v.x, v.y + 16);
-    const bid = id(); expect(dispatch(gs, { id: bid, type: 'buy', eid: v.id, item: 'iron_pick' }, T0).ok).toBe(true); dispatch(gs, { id: bid, type: 'buy', eid: v.id, item: 'iron_pick' }, T0);
-    expect(gs.profile.securedCash).toBe(8); expect(countItem(r, 'inv', 'iron_pick')).toBe(1);
-    expect(dispatch(gs, { id: id(), type: 'buy', eid: v.id, item: 'iron_pick' }, T0).ok).toBe(false); // finite stock
+    const bid = id(); expect(dispatch(gs, { id: bid, type: 'buy', eid: v.id, item: 'iron_axe' }, T0).ok).toBe(true); dispatch(gs, { id: bid, type: 'buy', eid: v.id, item: 'iron_axe' }, T0);
+    expect(gs.profile.securedCash).toBe(8); expect(countItem(r, 'inv', 'iron_axe')).toBe(1);
+    expect(dispatch(gs, { id: id(), type: 'buy', eid: v.id, item: 'iron_axe' }, T0).ok).toBe(false); // finite stock
     void sourceAt;
   });
 });

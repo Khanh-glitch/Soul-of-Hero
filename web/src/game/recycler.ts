@@ -61,6 +61,8 @@ type RuleTable = Record<string,{base:Output[];mid:Output[];high:Output[]}>;
  *  The tables above are never edited; a stored v1/v2/v3 job still resolves through them and its retired outputs are
  *  converted where they are minted. */
 const RULES_V4: RuleTable = Object.freeze({
+  // The two pickaxe rows are kept for jobs already running in an old save. The pickaxes were folded into the axes
+  // (item set v4): a loaded pick becomes the axe of its tier, so no new job can name one.
   iron_pick: { base: [['wood', 1]], mid: [['iron_ingot', 1]], high: [['iron_ingot', 1]] },
   iron_axe: { base: [['wood', 1]], mid: [['iron_ingot', 1]], high: [['iron_ingot', 1]] },
   machete: { base: [['iron_ingot', 1]], mid: [['iron_ingot', 1]], high: [['iron_ingot', 1]] },

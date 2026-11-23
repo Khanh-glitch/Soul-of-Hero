@@ -11,11 +11,11 @@ Audited on `Khanh-glitch/Soul-of-Hero` branch `feature/pa1-building-ontology-202
 | Runtime item ids | 181 | `ITEMS` in `catalog.ts` |
 | — written by hand | 157 | literal rows (includes 12 Elder stones) |
 | — generated packed devices | 24 | `deploy_<type>` loop over `DEPLOYABLE_TYPES` (PA1) |
-| Recipes | 114 | `RECIPES` |
+| Recipes | 111 | `RECIPES` |
 | — generated `deploy_*` recipes | 24 | cost copied from `STRUCTS` |
-| Recipe revision | 6 | `recipe-migration.ts` |
-| Retired recipes | fuel_can, vehicle_frame_piped, vehicle_drive, vehicle_drive_geared, fuel_briquette, root_broth, poached_eggs, herb_roast, salted_meat, iron_sword, iron_sword_blade, refine_salvaged_oil, refinery_industrial, refinery_lubricant, refinery_crude, fasteners, treated_canvas, field_repair_kit, recover_drive, mechanical_parts, scrap_ingot, brick, reinforced_spear_blade | `RETIRED_RECIPES` (item kept) |
-| Multigraph | 703 nodes / 2427 edges | `buildSohEconomicGraph` |
+| Recipe revision | 7 | `recipe-migration.ts` |
+| Retired recipes | fuel_can, vehicle_frame_piped, vehicle_drive, vehicle_drive_geared, fuel_briquette, root_broth, poached_eggs, herb_roast, salted_meat, iron_sword, iron_sword_blade, refine_salvaged_oil, refinery_industrial, refinery_lubricant, refinery_crude, fasteners, treated_canvas, field_repair_kit, recover_drive, mechanical_parts, scrap_ingot, brick, reinforced_spear_blade, stone_pick, iron_pick, industrial_pick, industrial_pick_geared | `RETIRED_RECIPES` (item kept) |
+| Multigraph | 696 nodes / 2410 edges | `buildSohEconomicGraph` |
 
 ## 2. Six different things the old audit called "level"
 
@@ -32,22 +32,22 @@ Audited on `Khanh-glitch/Soul-of-Hero` branch `feature/pa1-building-ontology-202
 
 | Depth | Items | Examples |
 | --- | --- | --- |
-| L0 | 74 | salvaged_oil, lubricant, damaged_drive, mechanical_parts, fasteners, treated_canvas, field_repair_kit, fuel_briquette |
+| L0 | 77 | salvaged_oil, lubricant, damaged_drive, mechanical_parts, fasteners, treated_canvas, field_repair_kit, fuel_briquette |
 | L1 | 37 | energy_basic, essence_nature, essence_water, essence_spirit, crude_petroleum, plank, charcoal, iron_ingot |
-| L2 | 42 | energy_refined, essence_fire, core_blast, core_meteor, core_dragon, core_elsa, core_earthmother, core_mjolnir |
+| L2 | 40 | energy_refined, essence_fire, core_blast, core_meteor, core_dragon, core_elsa, core_earthmother, core_mjolnir |
 | L3 | 17 | trail_pack, trail_canteen, cleaver, machete, refined_iron_helmet, refined_iron_chest, refined_iron_legs, refined_iron_boots |
-| L4 | 10 | iron_plate_helmet, iron_plate_chest, iron_plate_pants, iron_plate_boots, large_furnace, industrial_axe, vehicle_frame |
+| L4 | 9 | iron_plate_helmet, iron_plate_chest, iron_plate_pants, iron_plate_boots, large_furnace, vehicle_frame |
 | L5 | 1 | motorbike_kit |
 
-Reachability: SHIPPING_AND_VEYRA 136 · SHIPPING_ONLY 13 · UNREACHABLE 22 · VEYRA_ONLY 10.
+Reachability: SHIPPING_AND_VEYRA 133 · SHIPPING_ONLY 13 · UNREACHABLE 25 · VEYRA_ONLY 10.
 
 ## 3. One material axis per domain
 
 | Domain | Axis a newcomer should be able to repeat | Items |
 | --- | --- | --- |
 | Industry & metallurgy | Ore → Iron Ingot → Refined Iron Ingot; Scrap → Machine Parts → Gear / Pipe / Plate / Blade. Parts (found, never crafted) pays for knowledge and technology. | 22 |
-| Building | Wood → Stone → Brick → Iron (Glass for windows, Rope for fittings, Iron Plate for patching). | 31 |
-| Power & automation | Solid fuel (Wood → Charcoal → Coal → Briquette) heats stations; Fuel Canister runs generators; packed devices are built from Iron + Machine Parts + Parts. | 9 |
+| Building | Wood → Stone → Brick → Iron (Glass for windows, Rope for fittings, Iron Plate for patching). | 30 |
+| Power & automation | Solid fuel (Wood → Charcoal → Coal → Briquette) heats stations; Fuel Canister runs generators; packed devices are built from Iron + Machine Parts + Parts. | 10 |
 | Transport | Hand Cart (wood + iron) → Utility Motorbike (Frame + Drive + Plates), run on Fuel Canister, serviced with Lubricant. | 5 |
 | Tools, weapons & worn gear | Stone/wood starter → Iron tier → Salvager tier (iron tool + Machine Parts + Parts); hide → Leather → armour; Canvas → pack and canteen. | 36 |
 | Farming | Wild Seeds / Bitterleaf → Garden Plot → Sunroot / Bitterleaf → cooked food and Fodder. | 8 |
@@ -81,8 +81,8 @@ Reachability: SHIPPING_AND_VEYRA 136 · SHIPPING_ONLY 13 · UNREACHABLE 22 · VE
 | --- | --- | --- | --- | --- | --- |
 | machete | X:recover-v4 | 1 iron_ingot + 1 iron_ingot + 1 iron_ingot | 3 | 0 | PARTS_NEGATIVE |
 | iron_axe | X:recover-v4 | 1 wood + 1 iron_ingot + 1 iron_ingot | 0 | 0 | PARTS_NEGATIVE |
-| iron_pick | X:recover-v4 | 1 wood + 1 iron_ingot + 1 iron_ingot | 0 | 0 | PARTS_NEGATIVE |
-| industrial_pick | X:recover-v4 | 1 iron_ingot + 1 iron_ingot + 1 iron_ingot | 1 | 0 | PARTS_NEGATIVE |
+| iron_pick | X:recover-v4 | 1 wood + 1 iron_ingot + 1 iron_ingot | 0 | 0 | SOURCE_ONLY |
+| industrial_pick | X:recover-v4 | 1 iron_ingot + 1 iron_ingot + 1 iron_ingot | 0 | 0 | SOURCE_ONLY |
 | industrial_axe | X:recover-v4 | 1 iron_ingot + 1 iron_ingot + 1 refined_iron_ingot | 2 | 0 | PARTS_NEGATIVE |
 | reinforced_spear | X:recover-v4 | 1 wood + 1 iron_ingot + 1 iron_ingot | 1 | 0 | PARTS_NEGATIVE |
 | metal_pipe | X:pipe-v3 | 1 refined_iron_ingot | 1 | 0 | PARTS_NEGATIVE |
@@ -106,7 +106,6 @@ A `PARTS_POSITIVE` row is harmless today (Machine Parts are not a currency) and 
 | treated_canvas | L0 | UNREACHABLE_EVERYWHERE, NO_CONSUMER_NO_USE |
 | field_repair_kit | L0 | UNREACHABLE_EVERYWHERE |
 | fuel_briquette | L0 | UNREACHABLE_EVERYWHERE |
-| plank | L1 | PASS_THROUGH_INTERMEDIATE, NO_CONSUMER_NO_USE |
 | coal | L0 | UNREACHABLE_EVERYWHERE, NO_CONSUMER_NO_USE |
 | raw_salt | L0 | UNREACHABLE_EVERYWHERE, NO_CONSUMER_NO_USE |
 | root_broth | L0 | UNREACHABLE_EVERYWHERE |
@@ -120,6 +119,8 @@ A `PARTS_POSITIVE` row is harmless today (Machine Parts are not a currency) and 
 | blue_card | L0 | UNREACHABLE_EVERYWHERE, NO_CONSUMER_NO_USE |
 | purple_card | L0 | UNREACHABLE_EVERYWHERE, NO_CONSUMER_NO_USE |
 | knife | L0 | UNREACHABLE_EVERYWHERE |
+| iron_pick | L0 | UNREACHABLE_EVERYWHERE |
+| industrial_pick | L0 | UNREACHABLE_EVERYWHERE |
 | iron_sword | L0 | UNREACHABLE_EVERYWHERE |
 | chitin_armor | L2 | NOT_REACHABLE_ON_VEYRA |
 | wolf_fang | L0 | NOT_REACHABLE_ON_VEYRA |
@@ -144,15 +145,14 @@ Recipes that cannot run on Shipping: `pump_crude`. On Veyra: `chitin_armor`, `co
 | Decision | Count |
 | --- | --- |
 | ADD_CANDIDATE | 5 |
-| DEFER | 4 |
-| KEEP | 177 |
+| DEFER | 3 |
+| KEEP | 178 |
 
 ### DEFER
 
 | Item | Name | Proposal | Why |
 | --- | --- | --- | --- |
 | `crude_petroleum` | Crude Petroleum | P9 | Second raw oil with NO live source: the Oil Pump adapter is test-fixture only. ROUND 3: every player-facing text now says no oil site exists in this world yet. Becomes live only when a real physical site, interaction, production job and restart are demonstrated. |
-| `plank` | Plank | P6 | ROUND 3: handed to the building-ontology owner (PR #56) with a corrective design; the item, saved stock and queued jobs stay valid. ROUND 2 ruling: stays, not retired. Measured (ROUND2_FINDINGS §P6): its only listed consumer, the Plank Wall, is upgrade-only geometry that no upgrade path reaches, so Plank has NO reachable consumer today. The fix is a building-ontology decision (make the 240 HP tier reachable), not an item retirement. CREATOR RULING 2026-11-23: the Plank Wall and the Brick Wall are removed instead (a base is wood, upgraded at the Territory Cabinet), so Plank has no consumer at all; the item itself still waits for a ruling. |
 | `chitin` | Ash Chitin | P8 | Single consumer (Chitin Plate) and no Veyra source. The item is fine; the Veyra gap needs a creature placement decision. |
 | `chitin_armor` | Chitin Plate | P8 | Body armour tier 2; uncraftable on Veyra because Chitin has no source there. |
 
@@ -166,7 +166,7 @@ Recipes that cannot run on Shipping: `pump_crude`. On Veyra: `chitin_armor`, `co
 | animal_fat | animal_fat | — | Reviewed, REJECTED: Duplicates existing fuel routes. |
 | energy_refinery / energy_extractor | energy_refinery / energy_extractor | — | Reviewed, BACKLOG: Unapproved Energy Ore backlog; explicitly out of scope. |
 
-KEEP (177) is listed row by row, with a reason each, in `manifest.csv`.
+KEEP (178) is listed row by row, with a reason each, in `manifest.csv`.
 
 ### Newcomer load
 
@@ -178,11 +178,11 @@ Scope: `spares`, `mechanical_parts`, `scrap`, `fasteners`, `metal_pipe`, `mechan
 
 | Item | Depth | Made by | Non-craft sources | Craft/build targets | Upkeep uses | Recycler |
 | --- | --- | --- | --- | --- | --- | --- |
-| `spares` (Parts) | L0 | not craftable | 9 | 31 | 11 | no rule |
+| `spares` (Parts) | L0 | not craftable | 9 | 31 | 10 | no rule |
 | `mechanical_parts` (Machine Parts) | L0 | not craftable | 0 | 0 | 1 | no rule |
 | `scrap` (Scrap Metal) | L0 | not craftable | 0 | 0 | 0 | no rule |
 | `fasteners` (Forged Fasteners) | L0 | not craftable | 0 | 0 | 1 | no rule |
-| `metal_pipe` (Metal Pipe) | L3 | metal_pipe | 2 | 5 | 2 | X:pipe-v3 → 1 refined_iron_ingot |
+| `metal_pipe` (Metal Pipe) | L3 | metal_pipe | 2 | 4 | 2 | X:pipe-v3 → 1 refined_iron_ingot |
 | `mechanical_gear` (Mechanical Gear) | L2 | mechanical_gear | 2 | 11 | 4 | X:gear-v2 → 2 spares + 1 iron_ingot |
 | `iron_plate` (Iron Plate) | L3 | iron_plate | 2 | 11 | 13 | X:plate-v1 → 1 iron_ingot |
 | `metal_blade` (Metal Blade) | L2 | metal_blade | 1 | 4 | 1 | X:blade-v2 → 2 iron_ingot |
@@ -225,7 +225,7 @@ IMPLEMENTED_AND_VERIFIED = working code at the named SHA and the gate passed the
 
 ## 7. Proposals and their round-3 status
 
-IMPLEMENTED = live at recipe revision 6. IMPLEMENTED_PARTIAL = only the authorised part is live. CLOSED_KEEP = ruled final, items stay as they are. HANDED_OFF = a real defect whose fix belongs to another owner; the work order is the linked document and the defect stays live until that owner ships it. Measured before/after numbers: `web/evidence/item-ontology-v2/round2-simulations.json`. Findings: `ROUND2_FINDINGS.md`. **A HANDED_OFF row is not a fixed row.**
+IMPLEMENTED = live at recipe revision 7. IMPLEMENTED_PARTIAL = only the authorised part is live. CLOSED_KEEP = ruled final, items stay as they are. HANDED_OFF = a real defect whose fix belongs to another owner; the work order is the linked document and the defect stays live until that owner ships it. Measured before/after numbers: `web/evidence/item-ontology-v2/round2-simulations.json`. Findings: `ROUND2_FINDINGS.md`. **A HANDED_OFF row is not a fixed row.**
 
 | Id | Title | Status | Ruling | Items |
 | --- | --- | --- | --- | --- |
@@ -625,7 +625,7 @@ The 137-id historical set (84 shared with these ids, 53 historical-only, 2 atlas
 | raw_iron_ore | Mined ore | iron_ore | HAVE_SAME_ROLE | Same. |
 | refined_iron_axe | Top tool, built from Blades and a Pipe | industrial_axe | HAVE_DIFFERENT_SHAPE | SOH builds it from Machine Parts. Proposal P4 brings the Blade in. |
 | refined_iron_ingot | Second metal tier | refined_iron_ingot | HAVE_SAME_ROLE | Same role; SOH also allows upgrading 3 iron + coal. |
-| refined_iron_ore | Rare ore yield for refined metal | rich_iron_ore | HAVE_SAME_ROLE | Same; SOH ties the yield to pick quality. |
+| refined_iron_ore | Rare ore yield for refined metal | rich_iron_ore | HAVE_SAME_ROLE | Same; SOH ties the yield to axe quality. |
 | rope | Binding | rope | HAVE_SAME_ROLE | Same. |
 | steel_folding_ladder | Climbing | - | NOT_ADDED | No vertical traversal mechanic in SOH. |
 | sulfur_powder | Ammunition reagent | sulfur | HAVE_DIFFERENT_SHAPE | SOH Sulfur feeds Cores and Essences instead of ammunition. |

@@ -97,11 +97,13 @@ describe('G1A catalog contract', () => {
     expect(SOURCES.wreck).toMatchObject({ hp: 30, stock: 8, block: true, art: 'wreck' });
     expect(SOURCES.scrap.harvestBy).toBeUndefined(); expect(SOURCES.wreck.harvestBy).toBeUndefined();
     // global tool power / combat numbers are untouched by G1A
-    expect(ITEMS.knife.power).toMatchObject({ scrap: 1 }); expect(ITEMS.stone_pick.power).toMatchObject({ scrap: 2 }); expect(ITEMS.iron_pick.power).toMatchObject({ scrap: 4 }); expect(ITEMS.industrial_pick.power).toMatchObject({ scrap: 7 });
+    expect(ITEMS.knife.power).toMatchObject({ scrap: 1 }); expect(ITEMS.stone_axe.power).toMatchObject({ scrap: 2 }); expect(ITEMS.iron_axe.power).toMatchObject({ scrap: 4 }); expect(ITEMS.industrial_axe.power).toMatchObject({ scrap: 7 });   // the pickaxes' wreck power, now on the axes
     expect(ITEMS.cleaver.power).toEqual({ plant: 3 }); expect(ITEMS.machete.power).toEqual({ plant: 3 });
     expect([ITEMS.knife.dmg, ITEMS.cleaver.dmg, ITEMS.machete.dmg]).toEqual([9, 17, 24]);
     // Creator ruling 2026-11-23 (follow Last Island): the melee line works the roadside, so the Wood Club joins the table at 2.
-    expect(G1A_HARVEST).toEqual({ stone_axe: 1, stone_pick: 1, knife: 2, wood_club: 2, cleaver: 3, machete: 4, iron_pick: 1, industrial_pick: 1 });
+    // The pickaxes were folded into the axes (Creator ruling on build 98ee24ac); their three rows of 1 left the table.
+    // An unlisted tool still falls back to 1, so the better axes strip the roadside no faster than the Stone Axe.
+    expect(G1A_HARVEST).toEqual({ stone_axe: 1, knife: 2, wood_club: 2, cleaver: 3, machete: 4 });
   });
 });
 
@@ -195,8 +197,8 @@ describe('G1A interaction — real swings', () => {
     }
   }, 300000);
 
-  it('tool matrix: measured hits and time per archetype (Stone Axe 1 / Knife 2 / Cleaver 3 / Machete 4 / picks 1)', () => {
-    const b = runWithTrio(12); const tools = ['stone_axe', 'knife', 'cleaver', 'machete', 'iron_pick', 'stone_pick', 'industrial_pick', 'iron_axe'];
+  it('tool matrix: measured hits and time per archetype (Stone Axe 1 / Knife 2 / Cleaver 3 / Machete 4 / better axes 1)', () => {
+    const b = runWithTrio(12); const tools = ['stone_axe', 'knife', 'cleaver', 'machete', 'iron_axe', 'industrial_axe'];
     const used = new Set<string>(); const table: Record<string, Record<string, { hits: number; ms: number; units: number[] }>> = {};
     for (const key of TRIO) { table[key] = {}; for (const tool of tools) {
       // Residents salvage the same roadside sources (shared, by design). The matrix measures the tool
@@ -220,8 +222,8 @@ describe('G1A interaction — real swings', () => {
       const r = table[key];
       expect(r.knife.hits).toBeLessThan(r.stone_axe.hits); expect(r.cleaver.hits).toBeLessThan(r.knife.hits); expect(r.machete.hits).toBeLessThanOrEqual(r.cleaver.hits);
       expect(r.machete.ms).toBeLessThan(r.knife.ms); expect(r.knife.ms).toBeLessThan(r.stone_axe.ms);
-      // no pick or axe out-harvests the Machete through its inherited `power.scrap`
-      for (const t of ['iron_pick', 'stone_pick', 'industrial_pick', 'iron_axe']) expect(r[t].hits).toBe(SOURCES[key].hp);
+      // no axe out-harvests the Machete through the `power.scrap` it took over from the pickaxes
+      for (const t of ['iron_axe', 'industrial_axe']) expect(r[t].hits).toBe(SOURCES[key].hp);
     }
     mkdirSync(new URL('../evidence/g1a/', import.meta.url), { recursive: true });
     writeFileSync(new URL('../evidence/g1a/tool-matrix.json', import.meta.url), JSON.stringify({ note: 'ENGINE-LEVEL measurement via tick(); ms = sim time from first to last landed hit; units = stock released per hit. SOH_PROVISIONAL tuning.', swingMs: Object.fromEntries(tools.map(t => [t, ITEMS[t].swing])), table }, null, 1) + '\n');

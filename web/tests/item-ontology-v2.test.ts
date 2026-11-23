@@ -120,14 +120,18 @@ describe('projection is an adapter over the existing multigraph, not a second ca
     // P2 was not authorised in round 2; item set v3 then retired BOTH ids into Parts, so the twin no longer exists.
     expect(isRetiredLive('mechanical_parts') && isRetiredLive('fasteners')).toBe(true);
     expect(p.twin_intermediates.some((t) => [t.a, t.b].includes('mechanical_parts') || [t.a, t.b].includes('fasteners'))).toBe(false);
-    // P6: the Plank Wall was removed on 2026-11-23 (Creator ruling), so Plank has no consumer left at all.
+    // P6: the Plank Wall was removed on 2026-11-23 (Creator ruling), so no recipe or structure takes a Plank.
+    // Settled on the build after 98ee24ac: it is fuel worth the 2 Wood it is sawn from.
+    expect(ITEMS.plank.fuel).toBe(2 * ITEMS.wood.fuel!);
     expect(UNOBTAINABLE_STRUCTURES).not.toContain('wall_plank');
     expect(item('plank').consumer_targets).toEqual([]);
     expect(item('plank').signals.some((x) => x.startsWith('NO_REACHABLE_CONSUMER'))).toBe(false);
     // Round 2 warned that a merged Parts resource would let the Recycler mint research currency from an Iron Axe.
     // The merge shipped with X:recover-v4, which pays wood and ingots only: no tool or component loop is Parts-positive.
     expect(p.recycle_loops.find((l) => l.item === 'iron_axe')).toMatchObject({ rule: 'X:recover-v4', parts_out: 0, merged_parts_verdict: 'PARTS_NEGATIVE' });
-    for (const l of p.recycle_loops) expect(l.merged_parts_verdict, l.item).toBe('PARTS_NEGATIVE');
+    // The retired pickaxes keep their v4 rows for jobs already running; nothing makes one any more, so they cannot loop.
+    for (const l of p.recycle_loops) expect(l.merged_parts_verdict, l.item).toBe(isRetiredLive(l.item) ? 'SOURCE_ONLY' : 'PARTS_NEGATIVE');
+    expect(p.recycle_loops.filter((l) => isRetiredLive(l.item)).map((l) => l.item).sort()).toEqual(['industrial_pick', 'iron_pick']);
   });
 });
 
@@ -249,7 +253,7 @@ describe('decisions', () => {
   it('round 2 status: exactly the authorised proposals are live, and nothing else moved', () => {
     const status = Object.fromEntries(PROPOSALS.map((x) => [x.id, x.status]));
     expect(status).toEqual({ P1: 'IMPLEMENTED', P2: 'CLOSED_KEEP', P3: 'IMPLEMENTED_PARTIAL', P4: 'IMPLEMENTED', P5: 'IMPLEMENTED', P6: 'HANDED_OFF', P7: 'IMPLEMENTED', P8: 'HANDED_OFF', P9: 'IMPLEMENTED_PARTIAL', P10: 'IMPLEMENTED' });
-    expect(RECIPE_REVISION).toBe(6); // rev 3 = Item Ontology V2 round 2; rev 4 = final item set v2 (ARENA 1); rev 5/6 = item set v3 + crafting master
+    expect(RECIPE_REVISION).toBe(7); // rev 3 = Item Ontology V2 round 2; rev 4 = final item set v2 (ARENA 1); rev 5/6 = item set v3 + crafting master; rev 7 = pickaxes folded into the axes
     // P1 / P7 — display only, ids untouched
     expect(ITEMS.spares.name).toBe('Parts'); expect(ITEMS.spares.vi).toBe('Linh kiện');
     expect(ITEMS.mechanical_parts.name).toBe('Machine Parts'); expect(ITEMS.mechanical_parts.vi).toBe('Bộ phận máy');
@@ -275,7 +279,7 @@ describe('decisions', () => {
     expect(sorted(RECIPES.plank.ins)).toEqual(['wood:2']);
     expect('wall_plank' in STRUCTS).toBe(false);   // removed 2026-11-23; the recipe above is still untouched
     expect(decisionFor('fasteners')!.decision).toBe('KEEP');
-    expect(decisionFor('plank')!.decision).toBe('DEFER');
+    expect(decisionFor('plank')!.decision).toBe('KEEP');   // was DEFER until the Plank became fuel
     expect(data.manifest.filter((m) => ['RENAME', 'REDESIGN', 'MERGE_CANDIDATE', 'RETIRE_CANDIDATE'].includes(m.decision)).map((m) => m.old_id)).toEqual([]);
     expect(PARTS_RECOMMENDATION.choose).toBe('A');
     for (const id of PARTS_SCOPE) expect(ITEMS[id], id).toBeDefined();

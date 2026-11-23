@@ -11,9 +11,9 @@
   "items": 181,
   "items_static": 157,
   "items_generated_deployable": 24,
-  "recipes": 114,
+  "recipes": 111,
   "recipes_deploy": 24,
-  "recipe_revision": 6,
+  "recipe_revision": 7,
   "retired_recipes": [
    "fuel_can",
    "vehicle_frame_piped",
@@ -37,22 +37,26 @@
    "mechanical_parts",
    "scrap_ingot",
    "brick",
-   "reinforced_spear_blade"
+   "reinforced_spear_blade",
+   "stone_pick",
+   "iron_pick",
+   "industrial_pick",
+   "industrial_pick_geared"
   ],
-  "graph_nodes": 703,
-  "graph_edges": 2427,
+  "graph_nodes": 696,
+  "graph_edges": 2410,
   "by_reachability": {
-   "SHIPPING_AND_VEYRA": 136,
+   "SHIPPING_AND_VEYRA": 133,
    "SHIPPING_ONLY": 13,
-   "UNREACHABLE": 22,
+   "UNREACHABLE": 25,
    "VEYRA_ONLY": 10
   },
   "by_craft_depth": {
-   "L0": 74,
+   "L0": 77,
    "L1": 37,
-   "L2": 42,
+   "L2": 40,
    "L3": 17,
-   "L4": 10,
+   "L4": 9,
    "L5": 1
   },
   "by_class": {
@@ -685,7 +689,7 @@
    "level": "L0",
    "domain": "GEAR",
    "source": "none found in graph",
-   "consumer": "no craft/build consumer; 45 upkeep use(s)",
+   "consumer": "no craft/build consumer; 42 upkeep use(s)",
    "action": "ingredient",
    "role": "KIT",
    "LI_reference": "none",
@@ -765,7 +769,7 @@
    "level": "L0",
    "domain": "BUILDING",
    "source": "CORE_CAST_OUTPUT; HARVEST_YIELD; LOOT_STATIC_FIXED(shipping only)",
-   "consumer": "48 target(s): make:arrow make:bow make:cart_kit make:charcoal make:iron_axe make:iron_pick …; 25 upkeep use(s)",
+   "consumer": "46 target(s): make:arrow make:bow make:cart_kit make:charcoal make:iron_axe make:plank …; 23 upkeep use(s)",
    "action": "fuel",
    "role": "NATURAL",
    "LI_reference": "wood",
@@ -783,14 +787,14 @@
    "proposed_id": "plank",
    "display_name": "Plank",
    "level": "L1",
-   "domain": "BUILDING",
+   "domain": "POWER",
    "source": "craft[plank]; CREATURE_DROP(veyra only)",
    "consumer": "no craft/build consumer",
-   "action": "none",
+   "action": "fuel",
    "role": "PROCESSED",
    "LI_reference": "none",
-   "decision": "DEFER",
-   "justification": "ROUND 3: handed to the building-ontology owner (PR #56) with a corrective design; the item, saved stock and queued jobs stay valid. ROUND 2 ruling: stays, not retired. Measured (ROUND2_FINDINGS §P6): its only listed consumer, the Plank Wall, is upgrade-only geometry that no upgrade path reaches, so Plank has NO reachable consumer today. The fix is a building-ontology decision (make the 240 HP tier reachable), not an item retirement. CREATOR RULING 2026-11-23: the Plank Wall and the Brick Wall are removed instead (a base is wood, upgraded at the Territory Cabinet), so Plank has no consumer at all; the item itself still waits for a ruling.",
+   "decision": "KEEP",
+   "justification": "ROUND 3: handed to the building-ontology owner (PR #56) with a corrective design; the item, saved stock and queued jobs stay valid. ROUND 2 ruling: stays, not retired. Measured (ROUND2_FINDINGS §P6): its only listed consumer, the Plank Wall, is upgrade-only geometry that no upgrade path reaches, so Plank has NO reachable consumer today. The fix is a building-ontology decision (make the 240 HP tier reachable), not an item retirement. CREATOR RULING 2026-11-23: the Plank Wall and the Brick Wall are removed instead (a base is wood, upgraded at the Territory Cabinet), so Plank has no consumer at all; CREATOR DELEGATION on build 98ee24ac (\"settle it yourself\"): Plank is kept as packed fuel. It burns 40 s, exactly the 2 Wood it is sawn from, at half the weight; recipe, drop and saved stock are unchanged.",
    "migration_required": "NO (not authorised; nothing changes)",
    "authority_status": "RUNTIME_CATALOG; HANDED_OFF(P6)",
    "station_tier": "workbench_1",
@@ -805,7 +809,7 @@
    "level": "L0",
    "domain": "BUILDING",
    "source": "CREATURE_DROP(veyra only); HARVEST_BONUS; HARVEST_YIELD",
-   "consumer": "15 target(s): make:arrow make:energy_basic make:glass make:large_furnace make:stone_axe make:stone_pick …; 8 upkeep use(s)",
+   "consumer": "14 target(s): make:arrow make:energy_basic make:glass make:large_furnace make:stone_axe station:furnace_lined …; 7 upkeep use(s)",
    "action": "ingredient",
    "role": "NATURAL",
    "LI_reference": "none",
@@ -870,7 +874,7 @@
    "role": "ORE",
    "LI_reference": "refined_iron_ore",
    "decision": "KEEP",
-   "justification": "Quality tier of the same node (better pick → richer ore). Single recipe consumer is correct for an ore: it IS the shortcut to Refined Iron.",
+   "justification": "Quality tier of the same node (better axe → richer ore; the picks were folded into the axes). Single recipe consumer is correct for an ore: it IS the shortcut to Refined Iron.",
    "migration_required": "NO",
    "authority_status": "RUNTIME_CATALOG; NO_CHANGE_PROPOSED",
    "station_tier": "-",
@@ -1065,7 +1069,7 @@
    "level": "L0",
    "domain": "INDUSTRY",
    "source": "AIRDROP_DROP(shipping only); CREATURE_DROP; ELDER_STONE_DROP; HARVEST_BONUS(shipping only); HARVEST_YIELD; JOURNEY_REQUISITION; LOOT_ECOLOGY_POOL(shipping only); LOOT_STATIC_FIXED; RECYCLE_OUTPUT",
-   "consumer": "31 target(s): make:core_blast make:core_demon make:core_dragon make:core_earth make:core_earthmother make:core_elsa …; 11 upkeep use(s)",
+   "consumer": "31 target(s): make:core_blast make:core_demon make:core_dragon make:core_earth make:core_earthmother make:core_elsa …; 10 upkeep use(s)",
    "action": "ingredient",
    "role": "PARTS",
    "LI_reference": "parts",
@@ -1085,7 +1089,7 @@
    "level": "L1",
    "domain": "INDUSTRY",
    "source": "craft[iron_ingot]; AIRDROP_DROP(shipping only); CREATURE_DROP(veyra only); DISMANTLE_SALVAGE; LOOT_STATIC_FIXED; RECYCLE_OUTPUT",
-   "consumer": "42 target(s): make:cart_kit make:cleaver make:core_blast make:core_demon make:core_dragon make:core_earth …; 18 upkeep use(s)",
+   "consumer": "41 target(s): make:cart_kit make:cleaver make:core_blast make:core_demon make:core_dragon make:core_earth …; 17 upkeep use(s)",
    "action": "ingredient",
    "role": "METAL",
    "LI_reference": "iron_ingot",
@@ -1105,7 +1109,7 @@
    "level": "L1",
    "domain": "BUILDING",
    "source": "craft[rope]; LOOT_STATIC_FIXED",
-   "consumer": "15 target(s): make:bow make:cart_kit make:fur_cloak make:lead_rope make:leather_armor make:stone_axe …; 3 upkeep use(s)",
+   "consumer": "14 target(s): make:bow make:cart_kit make:fur_cloak make:lead_rope make:leather_armor make:stone_axe …; 3 upkeep use(s)",
    "action": "ingredient",
    "role": "PROCESSED",
    "LI_reference": "rope",
@@ -1145,7 +1149,7 @@
    "level": "L1",
    "domain": "GEAR",
    "source": "craft[leather]; LOOT_STATIC_FIXED(shipping only); RECYCLE_OUTPUT",
-   "consumer": "7 target(s): make:chitin_armor make:iron_axe make:iron_pick make:leather_armor make:scrap_helm make:trail_canteen …; 1 upkeep use(s)",
+   "consumer": "6 target(s): make:chitin_armor make:iron_axe make:leather_armor make:scrap_helm make:trail_canteen make:trail_pack; 1 upkeep use(s)",
    "action": "ingredient",
    "role": "PROCESSED",
    "LI_reference": "none",
@@ -2262,9 +2266,9 @@
    "old_id": "stone_pick",
    "proposed_id": "stone_pick",
    "display_name": "Stone Pickaxe",
-   "level": "L2",
+   "level": "L0",
    "domain": "SPECIAL",
-   "source": "craft[stone_pick]",
+   "source": "none found in graph",
    "consumer": "no craft/build consumer",
    "action": "harvest_tool weapon",
    "role": "TOOL",
@@ -2273,9 +2277,9 @@
    "justification": "Elder stone: unique per run, one per Elder. Bible-protected.",
    "migration_required": "NO",
    "authority_status": "BIBLE_PROTECTED; NO_CHANGE_PROPOSED",
-   "station_tier": "hand",
-   "research_tier": "0",
-   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "station_tier": "-",
+   "research_tier": "-",
+   "runtime_reachability": "UNREACHABLE",
    "proposal": ""
   },
   {
@@ -2302,49 +2306,49 @@
    "old_id": "iron_pick",
    "proposed_id": "iron_pick",
    "display_name": "Iron Pickaxe",
-   "level": "L2",
+   "level": "L0",
    "domain": "GEAR",
-   "source": "craft[iron_pick]; VENDOR_TRADE_SECURED",
-   "consumer": "1 target(s): make:industrial_pick",
+   "source": "none found in graph",
+   "consumer": "no craft/build consumer",
    "action": "harvest_tool weapon",
    "role": "TOOL",
    "LI_reference": "none",
    "decision": "KEEP",
-   "justification": "Iron tool tier; unlocks Rich Iron Ore quality.",
+   "justification": "Iron tool tier; unlocks Rich Iron Ore quality. RETIRED LIVE by Creator ruling on build 98ee24ac: folded into the Iron Axe, which now frees Rich Iron Ore.",
    "migration_required": "NO",
    "authority_status": "RUNTIME_CATALOG; NO_CHANGE_PROPOSED",
-   "station_tier": "workbench_1",
-   "research_tier": "1",
-   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "station_tier": "-",
+   "research_tier": "-",
+   "runtime_reachability": "UNREACHABLE",
    "proposal": ""
   },
   {
    "old_id": "industrial_pick",
    "proposed_id": "industrial_pick",
    "display_name": "Salvager Pick",
-   "level": "L3",
+   "level": "L0",
    "domain": "GEAR",
-   "source": "craft[industrial_pick industrial_pick_geared]",
+   "source": "none found in graph",
    "consumer": "no craft/build consumer",
    "action": "harvest_tool weapon",
    "role": "TOOL",
    "LI_reference": "none",
    "decision": "KEEP",
-   "justification": "Top pick; its geared alternate is a real knowledge bypass (more iron, no research).",
+   "justification": "Top pick; its geared alternate is a real knowledge bypass (more iron, no research). RETIRED LIVE by Creator ruling on build 98ee24ac: folded into the Salvager Axe; the geared alternate went with it.",
    "migration_required": "NO",
    "authority_status": "RUNTIME_CATALOG; NO_CHANGE_PROPOSED",
-   "station_tier": "workbench_2",
-   "research_tier": "2",
-   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "station_tier": "-",
+   "research_tier": "-",
+   "runtime_reachability": "UNREACHABLE",
    "proposal": ""
   },
   {
    "old_id": "industrial_axe",
    "proposed_id": "industrial_axe",
    "display_name": "Salvager Axe",
-   "level": "L4",
+   "level": "L3",
    "domain": "GEAR",
-   "source": "craft[industrial_axe]",
+   "source": "craft[industrial_axe industrial_axe_geared]",
    "consumer": "no craft/build consumer",
    "action": "harvest_tool weapon",
    "role": "TOOL",
@@ -2885,7 +2889,7 @@
    "level": "L2",
    "domain": "INDUSTRY",
    "source": "craft[refined_iron_ingot refined_iron_rich]; CREATURE_DROP(veyra only); LOOT_ECOLOGY_POOL(shipping only); RECYCLE_OUTPUT",
-   "consumer": "12 target(s): make:industrial_axe make:industrial_pick make:iron_plate make:metal_pipe make:motorbike_kit make:refined_iron_boots …; 4 upkeep use(s)",
+   "consumer": "11 target(s): make:industrial_axe make:iron_plate make:metal_pipe make:motorbike_kit make:refined_iron_boots make:refined_iron_chest …; 3 upkeep use(s)",
    "action": "ingredient",
    "role": "METAL",
    "LI_reference": "refined_iron_ingot",
@@ -2905,7 +2909,7 @@
    "level": "L3",
    "domain": "INDUSTRY",
    "source": "craft[metal_pipe]; HARVEST_BONUS; LOOT_ECOLOGY_POOL(shipping only)",
-   "consumer": "5 target(s): make:industrial_axe make:industrial_pick make:vehicle_frame structure:oil_pump structure:refinery; 2 upkeep use(s)",
+   "consumer": "4 target(s): make:industrial_axe make:vehicle_frame structure:oil_pump structure:refinery; 2 upkeep use(s)",
    "action": "ingredient",
    "role": "COMPONENT",
    "LI_reference": "metal_pipe",
@@ -2945,12 +2949,12 @@
    "level": "L2",
    "domain": "INDUSTRY",
    "source": "craft[mechanical_gear]; HARVEST_BONUS; LOOT_ECOLOGY_POOL(shipping only)",
-   "consumer": "11 target(s): make:industrial_pick make:motorbike_kit make:steel_folding_ladder station:base_generator station:workbench_3 station:workbench_industrial …; 4 upkeep use(s)",
+   "consumer": "11 target(s): make:industrial_axe make:motorbike_kit make:steel_folding_ladder station:base_generator station:workbench_3 station:workbench_industrial …; 4 upkeep use(s)",
    "action": "ingredient",
    "role": "COMPONENT",
    "LI_reference": "mechanical_gear",
    "decision": "KEEP",
-   "justification": "Four distinct consumers (bear trap, IR sensor, drive, pick) plus a versioned Recycler rule. Same job as LI.",
+   "justification": "Four distinct consumers when this was ruled (bear trap, IR sensor, drive, pick; the pick has since been folded into the axe) plus a versioned Recycler rule. Same job as LI.",
    "migration_required": "NO",
    "authority_status": "RUNTIME_CATALOG; NO_CHANGE_PROPOSED",
    "station_tier": "workbench_2",
@@ -4000,8 +4004,8 @@
   }
  ],
  "disposition_counts": {
-  "KEEP": 177,
-  "DEFER": 4,
+  "KEEP": 178,
+  "DEFER": 3,
   "ADD_CANDIDATE": 5
  },
  "items": [
@@ -6164,28 +6168,14 @@
      "to": "item:industrial_axe",
      "layer": "BOTH",
      "qty": 1,
-     "count": 1
-    },
-    {
-     "kind": "FIELD_REPAIR",
-     "to": "item:industrial_pick",
-     "layer": "BOTH",
-     "qty": 1,
-     "count": 1
+     "count": 2
     },
     {
      "kind": "FIELD_REPAIR",
      "to": "item:iron_axe",
      "layer": "BOTH",
      "qty": 1,
-     "count": 1
-    },
-    {
-     "kind": "FIELD_REPAIR",
-     "to": "item:iron_pick",
-     "layer": "BOTH",
-     "qty": 1,
-     "count": 1
+     "count": 2
     },
     {
      "kind": "FIELD_REPAIR",
@@ -6241,14 +6231,7 @@
      "to": "item:stone_axe",
      "layer": "BOTH",
      "qty": 1,
-     "count": 1
-    },
-    {
-     "kind": "FIELD_REPAIR",
-     "to": "item:stone_pick",
-     "layer": "BOTH",
-     "qty": 1,
-     "count": 1
+     "count": 2
     },
     {
      "kind": "FIELD_REPAIR",
@@ -6319,9 +6302,7 @@
     "FIELD_REPAIR:item:deploy_torch_post",
     "FIELD_REPAIR:item:deploy_workbench",
     "FIELD_REPAIR:item:industrial_axe",
-    "FIELD_REPAIR:item:industrial_pick",
     "FIELD_REPAIR:item:iron_axe",
-    "FIELD_REPAIR:item:iron_pick",
     "FIELD_REPAIR:item:knife",
     "FIELD_REPAIR:item:large_furnace",
     "FIELD_REPAIR:item:machete",
@@ -6330,7 +6311,6 @@
     "FIELD_REPAIR:item:ronin_nodachi",
     "FIELD_REPAIR:item:steel_folding_ladder",
     "FIELD_REPAIR:item:stone_axe",
-    "FIELD_REPAIR:item:stone_pick",
     "FIELD_REPAIR:item:tidemarshal_trident",
     "FIELD_REPAIR:item:torch",
     "FIELD_REPAIR:item:wood_club",
@@ -7382,13 +7362,6 @@
     },
     {
      "kind": "CRAFT_INPUT",
-     "to": "recipe:iron_pick",
-     "layer": "BOTH",
-     "qty": 2,
-     "count": 1
-    },
-    {
-     "kind": "CRAFT_INPUT",
      "to": "recipe:plank",
      "layer": "BOTH",
      "qty": 2,
@@ -7404,13 +7377,6 @@
     {
      "kind": "CRAFT_INPUT",
      "to": "recipe:stone_axe",
-     "layer": "BOTH",
-     "qty": 3,
-     "count": 1
-    },
-    {
-     "kind": "CRAFT_INPUT",
-     "to": "recipe:stone_pick",
      "layer": "BOTH",
      "qty": 3,
      "count": 1
@@ -7588,14 +7554,7 @@
      "to": "item:iron_axe",
      "layer": "BOTH",
      "qty": 1,
-     "count": 1
-    },
-    {
-     "kind": "REPAIR_INPUT",
-     "to": "item:iron_pick",
-     "layer": "BOTH",
-     "qty": 1,
-     "count": 1
+     "count": 2
     },
     {
      "kind": "REPAIR_INPUT",
@@ -7616,14 +7575,7 @@
      "to": "item:stone_axe",
      "layer": "BOTH",
      "qty": 1,
-     "count": 1
-    },
-    {
-     "kind": "REPAIR_INPUT",
-     "to": "item:stone_pick",
-     "layer": "BOTH",
-     "qty": 1,
-     "count": 1
+     "count": 2
     },
     {
      "kind": "REPAIR_INPUT",
@@ -7944,14 +7896,12 @@
     "arrow_fletched",
     "torch",
     "stone_axe",
-    "stone_pick",
     "wood_spear",
     "charcoal",
     "arrow",
     "bow",
     "plank",
     "iron_axe",
-    "iron_pick",
     "cart_kit",
     "deploy_claim",
     "deploy_bed_straw",
@@ -7977,11 +7927,9 @@
     "make:cart_kit",
     "make:charcoal",
     "make:iron_axe",
-    "make:iron_pick",
     "make:plank",
     "make:reinforced_spear",
     "make:stone_axe",
-    "make:stone_pick",
     "make:torch",
     "make:wood_club",
     "make:wood_spear",
@@ -8041,11 +7989,9 @@
     "REPAIR_INPUT:item:deploy_torch_post",
     "REPAIR_INPUT:item:deploy_workbench",
     "REPAIR_INPUT:item:iron_axe",
-    "REPAIR_INPUT:item:iron_pick",
     "REPAIR_INPUT:item:machete",
     "REPAIR_INPUT:item:reinforced_spear",
     "REPAIR_INPUT:item:stone_axe",
-    "REPAIR_INPUT:item:stone_pick",
     "REPAIR_INPUT:item:wood_club"
    ],
    "direct_use": [
@@ -8069,7 +8015,7 @@
    "name": "Plank",
    "cat": "res",
    "item_class": "PROCESSED",
-   "desc": "Sawn board. No building uses it at present.",
+   "desc": "Sawn board. Burns as long as the 2 Wood it was sawn from, at half the weight.",
    "weight": 1,
    "stack_max": 60,
    "generated_deployable": false,
@@ -8118,7 +8064,57 @@
    ],
    "refunds": [],
    "maintained_by": [],
-   "consumers": [],
+   "consumers": [
+    {
+     "kind": "POWER_FUEL",
+     "to": "station:base_generator",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    },
+    {
+     "kind": "POWER_FUEL",
+     "to": "station:farm_controller",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    },
+    {
+     "kind": "STATION_FUEL",
+     "to": "station:campfire",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    },
+    {
+     "kind": "STATION_FUEL",
+     "to": "station:furnace",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    },
+    {
+     "kind": "STATION_FUEL",
+     "to": "station:furnace_lined",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    },
+    {
+     "kind": "STATION_FUEL",
+     "to": "station:oil_pump",
+     "layer": "VEYRA",
+     "qty": 1,
+     "count": 1
+    },
+    {
+     "kind": "STATION_FUEL",
+     "to": "station:refinery",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    }
+   ],
    "derived_sinks": [],
    "produced_by": [
     "plank"
@@ -8126,7 +8122,11 @@
    "consumed_by": [],
    "consumer_targets": [],
    "maintenance_targets": [],
-   "direct_use": [],
+   "direct_use": [
+    "fuel",
+    "graph:POWER_FUEL",
+    "graph:STATION_FUEL"
+   ],
    "recycle": null,
    "recycled_from": [],
    "alt_routes": {
@@ -8136,10 +8136,7 @@
    "raw_per_unit": {
     "wood": 2
    },
-   "signals": [
-    "PASS_THROUGH_INTERMEDIATE",
-    "NO_CONSUMER_NO_USE"
-   ]
+   "signals": []
   },
   {
    "id": "stone",
@@ -8427,13 +8424,6 @@
      "count": 1
     },
     {
-     "kind": "CRAFT_INPUT",
-     "to": "recipe:stone_pick",
-     "layer": "BOTH",
-     "qty": 4,
-     "count": 1
-    },
-    {
      "kind": "REPAIR_INPUT",
      "to": "item:deploy_campfire",
      "layer": "BOTH",
@@ -8480,14 +8470,7 @@
      "to": "item:stone_axe",
      "layer": "BOTH",
      "qty": 1,
-     "count": 1
-    },
-    {
-     "kind": "REPAIR_INPUT",
-     "to": "item:stone_pick",
-     "layer": "BOTH",
-     "qty": 1,
-     "count": 1
+     "count": 2
     },
     {
      "kind": "UPGRADE_COST",
@@ -8596,7 +8579,6 @@
     "large_furnace",
     "arrow_fletched",
     "stone_axe",
-    "stone_pick",
     "shell_glass",
     "glass",
     "arrow",
@@ -8612,7 +8594,6 @@
     "make:glass",
     "make:large_furnace",
     "make:stone_axe",
-    "make:stone_pick",
     "station:furnace_lined",
     "structure:campfire",
     "structure:claim",
@@ -8630,8 +8611,7 @@
     "REPAIR_INPUT:item:deploy_furnace",
     "REPAIR_INPUT:item:deploy_workbench",
     "REPAIR_INPUT:item:knife",
-    "REPAIR_INPUT:item:stone_axe",
-    "REPAIR_INPUT:item:stone_pick"
+    "REPAIR_INPUT:item:stone_axe"
    ],
    "direct_use": [],
    "recycle": null,
@@ -12116,7 +12096,7 @@
     },
     {
      "kind": "CRAFT_INPUT",
-     "to": "recipe:industrial_pick_geared",
+     "to": "recipe:industrial_axe_geared",
      "layer": "BOTH",
      "qty": 2,
      "count": 1
@@ -12224,14 +12204,7 @@
      "to": "item:industrial_axe",
      "layer": "BOTH",
      "qty": 1,
-     "count": 1
-    },
-    {
-     "kind": "REPAIR_INPUT",
-     "to": "item:industrial_pick",
-     "layer": "BOTH",
-     "qty": 1,
-     "count": 1
+     "count": 2
     },
     {
      "kind": "RESEARCH_DIRECTED",
@@ -12403,14 +12376,7 @@
     },
     {
      "kind": "RESEARCH_DIRECTED",
-     "to": "recipe:industrial_pick",
-     "layer": "BOTH",
-     "qty": 9,
-     "count": 1
-    },
-    {
-     "kind": "RESEARCH_DIRECTED",
-     "to": "recipe:industrial_pick_geared",
+     "to": "recipe:industrial_axe_geared",
      "layer": "BOTH",
      "qty": 9,
      "count": 1
@@ -12425,13 +12391,6 @@
     {
      "kind": "RESEARCH_DIRECTED",
      "to": "recipe:iron_ingot",
-     "layer": "BOTH",
-     "qty": 9,
-     "count": 1
-    },
-    {
-     "kind": "RESEARCH_DIRECTED",
-     "to": "recipe:iron_pick",
      "layer": "BOTH",
      "qty": 9,
      "count": 1
@@ -12663,13 +12622,6 @@
     {
      "kind": "RESEARCH_DIRECTED",
      "to": "recipe:stone_axe",
-     "layer": "BOTH",
-     "qty": 9,
-     "count": 1
-    },
-    {
-     "kind": "RESEARCH_DIRECTED",
-     "to": "recipe:stone_pick",
      "layer": "BOTH",
      "qty": 9,
      "count": 1
@@ -12942,14 +12894,7 @@
     },
     {
      "kind": "RESEARCH_RANDOM",
-     "to": "recipe:industrial_pick",
-     "layer": "BOTH",
-     "qty": 4,
-     "count": 1
-    },
-    {
-     "kind": "RESEARCH_RANDOM",
-     "to": "recipe:industrial_pick_geared",
+     "to": "recipe:industrial_axe_geared",
      "layer": "BOTH",
      "qty": 4,
      "count": 1
@@ -12964,13 +12909,6 @@
     {
      "kind": "RESEARCH_RANDOM",
      "to": "recipe:iron_ingot",
-     "layer": "BOTH",
-     "qty": 4,
-     "count": 1
-    },
-    {
-     "kind": "RESEARCH_RANDOM",
-     "to": "recipe:iron_pick",
      "layer": "BOTH",
      "qty": 4,
      "count": 1
@@ -13202,13 +13140,6 @@
     {
      "kind": "RESEARCH_RANDOM",
      "to": "recipe:stone_axe",
-     "layer": "BOTH",
-     "qty": 4,
-     "count": 1
-    },
-    {
-     "kind": "RESEARCH_RANDOM",
-     "to": "recipe:stone_pick",
      "layer": "BOTH",
      "qty": 4,
      "count": 1
@@ -13457,11 +13388,11 @@
     "core_meteor",
     "core_dragon",
     "core_elsa",
+    "industrial_axe_geared",
     "metal_pipe",
     "metal_blade",
     "mechanical_gear",
     "iron_plate",
-    "industrial_pick_geared",
     "gas_mask",
     "core_fire",
     "core_earth",
@@ -13489,7 +13420,7 @@
     "make:core_mjolnir",
     "make:core_storm",
     "make:gas_mask",
-    "make:industrial_pick",
+    "make:industrial_axe",
     "make:iron_plate",
     "make:mechanical_gear",
     "make:metal_blade",
@@ -13519,8 +13450,7 @@
     "REPAIR_INPUT:item:deploy_pressure_switch",
     "REPAIR_INPUT:item:deploy_refinery",
     "REPAIR_INPUT:item:deploy_research",
-    "REPAIR_INPUT:item:industrial_axe",
-    "REPAIR_INPUT:item:industrial_pick"
+    "REPAIR_INPUT:item:industrial_axe"
    ],
    "direct_use": [
     "graph:RESEARCH_DIRECTED",
@@ -14238,13 +14168,6 @@
     },
     {
      "kind": "CRAFT_INPUT",
-     "to": "recipe:iron_pick",
-     "layer": "BOTH",
-     "qty": 3,
-     "count": 1
-    },
-    {
-     "kind": "CRAFT_INPUT",
      "to": "recipe:large_furnace",
      "layer": "BOTH",
      "qty": 8,
@@ -14409,14 +14332,7 @@
      "to": "item:iron_axe",
      "layer": "BOTH",
      "qty": 1,
-     "count": 1
-    },
-    {
-     "kind": "REPAIR_INPUT",
-     "to": "item:iron_pick",
-     "layer": "BOTH",
-     "qty": 1,
-     "count": 1
+     "count": 2
     },
     {
      "kind": "REPAIR_INPUT",
@@ -14641,7 +14557,6 @@
     "large_furnace",
     "refined_iron_ingot",
     "iron_axe",
-    "iron_pick",
     "scrap_helm",
     "cart_kit",
     "core_earth",
@@ -14671,7 +14586,6 @@
     "make:core_mjolnir",
     "make:energy_refined",
     "make:iron_axe",
-    "make:iron_pick",
     "make:large_furnace",
     "make:machete",
     "make:mechanical_gear",
@@ -14717,7 +14631,6 @@
     "REPAIR_INPUT:item:deploy_refinery",
     "REPAIR_INPUT:item:deploy_research",
     "REPAIR_INPUT:item:iron_axe",
-    "REPAIR_INPUT:item:iron_pick",
     "REPAIR_INPUT:item:machete",
     "REPAIR_INPUT:item:reinforced_spear",
     "REPAIR_INPUT:item:tidemarshal_trident"
@@ -15064,13 +14977,6 @@
     },
     {
      "kind": "CRAFT_INPUT",
-     "to": "recipe:stone_pick",
-     "layer": "BOTH",
-     "qty": 1,
-     "count": 1
-    },
-    {
-     "kind": "CRAFT_INPUT",
      "to": "recipe:trail_pack",
      "layer": "BOTH",
      "qty": 2,
@@ -15171,7 +15077,6 @@
     "wooden_ladder",
     "lead_rope",
     "stone_axe",
-    "stone_pick",
     "wood_spear",
     "water_flask",
     "bow",
@@ -15189,7 +15094,6 @@
     "make:lead_rope",
     "make:leather_armor",
     "make:stone_axe",
-    "make:stone_pick",
     "make:trail_pack",
     "make:water_flask",
     "make:wood_spear",
@@ -15501,13 +15405,6 @@
     },
     {
      "kind": "CRAFT_INPUT",
-     "to": "recipe:iron_pick",
-     "layer": "BOTH",
-     "qty": 1,
-     "count": 1
-    },
-    {
-     "kind": "CRAFT_INPUT",
      "to": "recipe:leather_armor",
      "layer": "BOTH",
      "qty": 5,
@@ -15550,7 +15447,6 @@
     "trail_pack",
     "trail_canteen",
     "iron_axe",
-    "iron_pick",
     "leather_armor",
     "chitin_armor",
     "scrap_helm"
@@ -15558,7 +15454,6 @@
    "consumer_targets": [
     "make:chitin_armor",
     "make:iron_axe",
-    "make:iron_pick",
     "make:leather_armor",
     "make:scrap_helm",
     "make:trail_canteen",
@@ -22140,7 +22035,7 @@
    "name": "Stone Axe",
    "cat": "tool",
    "item_class": "TOOL",
-   "desc": "The tool every survivor wakes with. Fells trees; chips stone and ore slowly. Clumsy weapon.",
+   "desc": "The tool every survivor wakes with. Fells trees, breaks stone and ore, pries scrap. Clumsy weapon.",
    "weight": 1.4,
    "stack_max": 1,
    "generated_deployable": false,
@@ -22183,7 +22078,7 @@
      "qty": null,
      "probability": null,
      "gates": [],
-     "count": 1
+     "count": 2
     },
     {
      "kind": "REPAIR_INPUT",
@@ -22194,7 +22089,7 @@
      "gates": [
       "gate:wb_l1"
      ],
-     "count": 1
+     "count": 2
     },
     {
      "kind": "REPAIR_INPUT",
@@ -22205,7 +22100,7 @@
      "gates": [
       "gate:wb_l1"
      ],
-     "count": 1
+     "count": 2
     }
    ],
    "consumers": [
@@ -22246,74 +22141,26 @@
    "name": "Stone Pickaxe",
    "cat": "tool",
    "item_class": "TOOL",
-   "desc": "Breaks stone and ore. Pries scrap.",
+   "desc": "Retired by Creator ruling (the axe took over the pickaxe's work): every Stone Pickaxe is now a Stone Axe. Row kept only so old saves and frozen recipes still parse.",
    "weight": 1.5,
    "stack_max": 1,
    "generated_deployable": false,
-   "craft_depth": 2,
-   "craft_depth_recipe": "stone_pick",
-   "station_tier": "hand",
-   "research_tier": 0,
-   "knowledge": "STARTER",
+   "craft_depth": 0,
+   "craft_depth_recipe": null,
+   "station_tier": null,
+   "research_tier": null,
+   "knowledge": "NOT_CRAFTED",
    "rarity": null,
    "acquisition_types": {
-    "shipping": [
-     "CRAFT_OUTPUT"
-    ],
-    "veyra": [
-     "CRAFT_OUTPUT"
-    ],
+    "shipping": [],
+    "veyra": [],
     "fixture": []
    },
-   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "runtime_reachability": "UNREACHABLE",
    "non_craft_sources_all_gated": false,
-   "sources": [
-    {
-     "kind": "CRAFT_OUTPUT",
-     "from": "recipe:stone_pick",
-     "layer": "BOTH",
-     "qty": 1,
-     "probability": null,
-     "gates": [
-      "gate:knowledge_run_local"
-     ],
-     "count": 1
-    }
-   ],
+   "sources": [],
    "refunds": [],
-   "maintained_by": [
-    {
-     "kind": "FIELD_REPAIR",
-     "from": "item:field_repair_kit",
-     "layer": "BOTH",
-     "qty": null,
-     "probability": null,
-     "gates": [],
-     "count": 1
-    },
-    {
-     "kind": "REPAIR_INPUT",
-     "from": "item:stone",
-     "layer": "BOTH",
-     "qty": 1,
-     "probability": null,
-     "gates": [
-      "gate:wb_l1"
-     ],
-     "count": 1
-    },
-    {
-     "kind": "REPAIR_INPUT",
-     "from": "item:wood",
-     "layer": "BOTH",
-     "qty": 1,
-     "probability": null,
-     "gates": [
-      "gate:wb_l1"
-     ],
-     "count": 1
-    }
-   ],
+   "maintained_by": [],
    "consumers": [
     {
      "kind": "CRAFT_INPUT",
@@ -22324,9 +22171,7 @@
     }
    ],
    "derived_sinks": [],
-   "produced_by": [
-    "stone_pick"
-   ],
+   "produced_by": [],
    "consumed_by": [],
    "consumer_targets": [],
    "maintenance_targets": [],
@@ -22337,22 +22182,22 @@
    "recycle": null,
    "recycled_from": [],
    "alt_routes": {
-    "live_recipes": 1,
+    "live_recipes": 0,
     "non_craft_source_kinds": 0
    },
    "raw_per_unit": {
-    "fiber": 3,
-    "stone": 4,
-    "wood": 3
+    "stone_pick": 1
    },
-   "signals": []
+   "signals": [
+    "UNREACHABLE_EVERYWHERE"
+   ]
   },
   {
    "id": "iron_axe",
    "name": "Iron Axe",
    "cat": "tool",
    "item_class": "TOOL",
-   "desc": "Bites deep into timber; works stone and ore at a steady pace.",
+   "desc": "Bites deep into timber; shatters rock and veins.",
    "weight": 1.6,
    "stack_max": 1,
    "generated_deployable": false,
@@ -22407,7 +22252,7 @@
      "qty": null,
      "probability": null,
      "gates": [],
-     "count": 1
+     "count": 2
     },
     {
      "kind": "REPAIR_INPUT",
@@ -22418,7 +22263,7 @@
      "gates": [
       "gate:wb_l1"
      ],
-     "count": 1
+     "count": 2
     },
     {
      "kind": "REPAIR_INPUT",
@@ -22429,13 +22274,20 @@
      "gates": [
       "gate:wb_l1"
      ],
-     "count": 1
+     "count": 2
     }
    ],
    "consumers": [
     {
      "kind": "CRAFT_INPUT",
      "to": "recipe:industrial_axe",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    },
+    {
+     "kind": "CRAFT_INPUT",
+     "to": "recipe:industrial_axe_geared",
      "layer": "BOTH",
      "qty": 1,
      "count": 1
@@ -22467,7 +22319,8 @@
     "iron_axe"
    ],
    "consumed_by": [
-    "industrial_axe"
+    "industrial_axe",
+    "industrial_axe_geared"
    ],
    "consumer_targets": [
     "make:industrial_axe"
@@ -22511,101 +22364,27 @@
    "name": "Iron Pickaxe",
    "cat": "tool",
    "item_class": "TOOL",
-   "desc": "Shatters rock and veins.",
+   "desc": "Retired by Creator ruling (the axe took over the pickaxe's work): every Iron Pickaxe is now an Iron Axe. Row kept only so old saves and frozen recipes still parse.",
    "weight": 1.7,
    "stack_max": 1,
    "generated_deployable": false,
-   "craft_depth": 2,
-   "craft_depth_recipe": "iron_pick",
-   "station_tier": "workbench_1",
-   "research_tier": 1,
-   "knowledge": "STARTER",
+   "craft_depth": 0,
+   "craft_depth_recipe": null,
+   "station_tier": null,
+   "research_tier": null,
+   "knowledge": "NOT_CRAFTED",
    "rarity": null,
    "acquisition_types": {
-    "shipping": [
-     "CRAFT_OUTPUT",
-     "VENDOR_TRADE_SECURED"
-    ],
-    "veyra": [
-     "CRAFT_OUTPUT",
-     "VENDOR_TRADE_SECURED"
-    ],
+    "shipping": [],
+    "veyra": [],
     "fixture": []
    },
-   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "runtime_reachability": "UNREACHABLE",
    "non_craft_sources_all_gated": false,
-   "sources": [
-    {
-     "kind": "CRAFT_OUTPUT",
-     "from": "recipe:iron_pick",
-     "layer": "BOTH",
-     "qty": 1,
-     "probability": null,
-     "gates": [
-      "gate:knowledge_run_local",
-      "gate:wb_l1"
-     ],
-     "count": 1
-    },
-    {
-     "kind": "VENDOR_TRADE_SECURED",
-     "from": "currency:secured_cash",
-     "layer": "BOTH",
-     "qty": 1,
-     "probability": null,
-     "gates": [],
-     "count": 1
-    }
-   ],
+   "sources": [],
    "refunds": [],
-   "maintained_by": [
-    {
-     "kind": "FIELD_REPAIR",
-     "from": "item:field_repair_kit",
-     "layer": "BOTH",
-     "qty": null,
-     "probability": null,
-     "gates": [],
-     "count": 1
-    },
-    {
-     "kind": "REPAIR_INPUT",
-     "from": "item:iron_ingot",
-     "layer": "BOTH",
-     "qty": 1,
-     "probability": null,
-     "gates": [
-      "gate:wb_l1"
-     ],
-     "count": 1
-    },
-    {
-     "kind": "REPAIR_INPUT",
-     "from": "item:wood",
-     "layer": "BOTH",
-     "qty": 1,
-     "probability": null,
-     "gates": [
-      "gate:wb_l1"
-     ],
-     "count": 1
-    }
-   ],
+   "maintained_by": [],
    "consumers": [
-    {
-     "kind": "CRAFT_INPUT",
-     "to": "recipe:industrial_pick",
-     "layer": "BOTH",
-     "qty": 1,
-     "count": 1
-    },
-    {
-     "kind": "CRAFT_INPUT",
-     "to": "recipe:industrial_pick_geared",
-     "layer": "BOTH",
-     "qty": 1,
-     "count": 1
-    },
     {
      "kind": "CRAFT_INPUT",
      "to": "sink:tool_durability_wear",
@@ -22629,16 +22408,9 @@
     }
    ],
    "derived_sinks": [],
-   "produced_by": [
-    "iron_pick"
-   ],
-   "consumed_by": [
-    "industrial_pick",
-    "industrial_pick_geared"
-   ],
-   "consumer_targets": [
-    "make:industrial_pick"
-   ],
+   "produced_by": [],
+   "consumed_by": [],
+   "consumer_targets": [],
    "maintenance_targets": [],
    "direct_use": [
     "harvest_tool",
@@ -22663,102 +22435,41 @@
    },
    "recycled_from": [],
    "alt_routes": {
-    "live_recipes": 1,
-    "non_craft_source_kinds": 1
+    "live_recipes": 0,
+    "non_craft_source_kinds": 0
    },
    "raw_per_unit": {
-    "hide": 1,
-    "iron_ore": 3,
-    "wood": 2
+    "iron_pick": 1
    },
-   "signals": []
+   "signals": [
+    "UNREACHABLE_EVERYWHERE"
+   ]
   },
   {
    "id": "industrial_pick",
    "name": "Salvager Pick",
    "cat": "tool",
    "item_class": "TOOL",
-   "desc": "An improved pick: faster work on rock, ore and wrecks. Requires an improved bench.",
+   "desc": "Retired by Creator ruling (the axe took over the pickaxe's work): every Salvager Pick is now a Salvager Axe. Row kept only so old saves and frozen recipes still parse.",
    "weight": 1.9,
    "stack_max": 1,
    "generated_deployable": false,
-   "craft_depth": 3,
-   "craft_depth_recipe": "industrial_pick_geared",
-   "station_tier": "workbench_2",
-   "research_tier": 2,
-   "knowledge": "STARTER",
+   "craft_depth": 0,
+   "craft_depth_recipe": null,
+   "station_tier": null,
+   "research_tier": null,
+   "knowledge": "NOT_CRAFTED",
    "rarity": null,
    "acquisition_types": {
-    "shipping": [
-     "CRAFT_OUTPUT"
-    ],
-    "veyra": [
-     "CRAFT_OUTPUT"
-    ],
+    "shipping": [],
+    "veyra": [],
     "fixture": []
    },
-   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "runtime_reachability": "UNREACHABLE",
    "non_craft_sources_all_gated": false,
-   "sources": [
-    {
-     "kind": "CRAFT_OUTPUT",
-     "from": "recipe:industrial_pick_geared",
-     "layer": "BOTH",
-     "qty": 1,
-     "probability": null,
-     "gates": [
-      "gate:knowledge_run_local",
-      "gate:wb_l2"
-     ],
-     "count": 1
-    },
-    {
-     "kind": "CRAFT_OUTPUT",
-     "from": "recipe:industrial_pick",
-     "layer": "BOTH",
-     "qty": 1,
-     "probability": null,
-     "gates": [
-      "gate:knowledge_run_local",
-      "gate:wb_l2"
-     ],
-     "count": 1
-    }
-   ],
+   "sources": [],
    "refunds": [],
-   "maintained_by": [
-    {
-     "kind": "FIELD_REPAIR",
-     "from": "item:field_repair_kit",
-     "layer": "BOTH",
-     "qty": null,
-     "probability": null,
-     "gates": [],
-     "count": 1
-    },
-    {
-     "kind": "REPAIR_INPUT",
-     "from": "item:refined_iron_ingot",
-     "layer": "BOTH",
-     "qty": 1,
-     "probability": null,
-     "gates": [
-      "gate:wb_l1"
-     ],
-     "count": 1
-    },
-    {
-     "kind": "REPAIR_INPUT",
-     "from": "item:spares",
-     "layer": "BOTH",
-     "qty": 1,
-     "probability": null,
-     "gates": [
-      "gate:wb_l1"
-     ],
-     "count": 1
-    }
-   ],
+   "maintained_by": [],
    "consumers": [
     {
      "kind": "CRAFT_INPUT",
@@ -22783,10 +22494,7 @@
     }
    ],
    "derived_sinks": [],
-   "produced_by": [
-    "industrial_pick",
-    "industrial_pick_geared"
-   ],
+   "produced_by": [],
    "consumed_by": [],
    "consumer_targets": [],
    "maintenance_targets": [],
@@ -22813,31 +22521,30 @@
    },
    "recycled_from": [],
    "alt_routes": {
-    "live_recipes": 2,
+    "live_recipes": 0,
     "non_craft_source_kinds": 0
    },
    "raw_per_unit": {
-    "hide": 1,
-    "iron_ore": 7.5,
-    "spares": 1,
-    "wood": 8
+    "industrial_pick": 1
    },
-   "signals": []
+   "signals": [
+    "UNREACHABLE_EVERYWHERE"
+   ]
   },
   {
    "id": "industrial_axe",
    "name": "Salvager Axe",
    "cat": "tool",
    "item_class": "TOOL",
-   "desc": "An improved axe: more work per strike on timber, stone and ore. Requires an improved bench.",
+   "desc": "An improved axe: faster work on timber, rock, ore and wrecks. Requires an improved bench.",
    "weight": 1.8,
    "stack_max": 1,
    "generated_deployable": false,
-   "craft_depth": 4,
-   "craft_depth_recipe": "industrial_axe",
+   "craft_depth": 3,
+   "craft_depth_recipe": "industrial_axe_geared",
    "station_tier": "workbench_2",
    "research_tier": 2,
-   "knowledge": "RESEARCH_OR_BLUEPRINT",
+   "knowledge": "STARTER",
    "rarity": null,
    "acquisition_types": {
     "shipping": [
@@ -22851,6 +22558,18 @@
    "runtime_reachability": "SHIPPING_AND_VEYRA",
    "non_craft_sources_all_gated": false,
    "sources": [
+    {
+     "kind": "CRAFT_OUTPUT",
+     "from": "recipe:industrial_axe_geared",
+     "layer": "BOTH",
+     "qty": 1,
+     "probability": null,
+     "gates": [
+      "gate:knowledge_run_local",
+      "gate:wb_l2"
+     ],
+     "count": 1
+    },
     {
      "kind": "CRAFT_OUTPUT",
      "from": "recipe:industrial_axe",
@@ -22873,7 +22592,7 @@
      "qty": null,
      "probability": null,
      "gates": [],
-     "count": 1
+     "count": 2
     },
     {
      "kind": "REPAIR_INPUT",
@@ -22884,7 +22603,7 @@
      "gates": [
       "gate:wb_l1"
      ],
-     "count": 1
+     "count": 2
     },
     {
      "kind": "REPAIR_INPUT",
@@ -22895,7 +22614,7 @@
      "gates": [
       "gate:wb_l1"
      ],
-     "count": 1
+     "count": 2
     }
    ],
    "consumers": [
@@ -22923,7 +22642,8 @@
    ],
    "derived_sinks": [],
    "produced_by": [
-    "industrial_axe"
+    "industrial_axe",
+    "industrial_axe_geared"
    ],
    "consumed_by": [],
    "consumer_targets": [],
@@ -22951,7 +22671,7 @@
    },
    "recycled_from": [],
    "alt_routes": {
-    "live_recipes": 1,
+    "live_recipes": 2,
     "non_craft_source_kinds": 0
    },
    "raw_per_unit": {
@@ -25014,14 +24734,7 @@
     },
     {
      "kind": "BLUEPRINT_LEARN",
-     "to": "recipe:industrial_pick",
-     "layer": "BOTH",
-     "qty": 1,
-     "count": 1
-    },
-    {
-     "kind": "BLUEPRINT_LEARN",
-     "to": "recipe:industrial_pick_geared",
+     "to": "recipe:industrial_axe_geared",
      "layer": "BOTH",
      "qty": 1,
      "count": 1
@@ -25036,13 +24749,6 @@
     {
      "kind": "BLUEPRINT_LEARN",
      "to": "recipe:iron_ingot",
-     "layer": "BOTH",
-     "qty": 1,
-     "count": 1
-    },
-    {
-     "kind": "BLUEPRINT_LEARN",
-     "to": "recipe:iron_pick",
      "layer": "BOTH",
      "qty": 1,
      "count": 1
@@ -25280,13 +24986,6 @@
     },
     {
      "kind": "BLUEPRINT_LEARN",
-     "to": "recipe:stone_pick",
-     "layer": "BOTH",
-     "qty": 1,
-     "count": 1
-    },
-    {
-     "kind": "BLUEPRINT_LEARN",
      "to": "recipe:syringe",
      "layer": "BOTH",
      "qty": 1,
@@ -25346,7 +25045,7 @@
      "to": "sink:blueprint_consume_learn",
      "layer": "BOTH",
      "qty": 1,
-     "count": 77
+     "count": 74
     }
    ],
    "derived_sinks": [],
@@ -26467,9 +26166,9 @@
     },
     {
      "kind": "CRAFT_INPUT",
-     "to": "recipe:industrial_pick",
+     "to": "recipe:industrial_axe_geared",
      "layer": "BOTH",
-     "qty": 2,
+     "qty": 1,
      "count": 1
     },
     {
@@ -26547,14 +26246,7 @@
      "to": "item:industrial_axe",
      "layer": "BOTH",
      "qty": 1,
-     "count": 1
-    },
-    {
-     "kind": "REPAIR_INPUT",
-     "to": "item:industrial_pick",
-     "layer": "BOTH",
-     "qty": 1,
-     "count": 1
+     "count": 2
     },
     {
      "kind": "REPAIR_INPUT",
@@ -26580,8 +26272,8 @@
    "consumed_by": [
     "vehicle_frame",
     "motorbike_kit",
-    "industrial_pick",
     "industrial_axe",
+    "industrial_axe_geared",
     "metal_pipe",
     "iron_plate",
     "refined_iron_helmet",
@@ -26593,7 +26285,6 @@
    ],
    "consumer_targets": [
     "make:industrial_axe",
-    "make:industrial_pick",
     "make:iron_plate",
     "make:metal_pipe",
     "make:motorbike_kit",
@@ -26608,7 +26299,6 @@
    "maintenance_targets": [
     "REPAIR_INPUT:item:deploy_base_generator",
     "REPAIR_INPUT:item:industrial_axe",
-    "REPAIR_INPUT:item:industrial_pick",
     "REPAIR_INPUT:item:ronin_nodachi"
    ],
    "direct_use": [],
@@ -26793,13 +26483,6 @@
     },
     {
      "kind": "CRAFT_INPUT",
-     "to": "recipe:industrial_pick",
-     "layer": "BOTH",
-     "qty": 1,
-     "count": 1
-    },
-    {
-     "kind": "CRAFT_INPUT",
      "to": "recipe:vehicle_frame",
      "layer": "BOTH",
      "qty": 1,
@@ -26862,14 +26545,12 @@
    ],
    "consumed_by": [
     "vehicle_frame",
-    "industrial_pick",
     "industrial_axe",
     "deploy_oil_pump",
     "deploy_refinery"
    ],
    "consumer_targets": [
     "make:industrial_axe",
-    "make:industrial_pick",
     "make:vehicle_frame",
     "structure:oil_pump",
     "structure:refinery"
@@ -26986,6 +26667,13 @@
     },
     {
      "kind": "CRAFT_INPUT",
+     "to": "recipe:industrial_axe_geared",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    },
+    {
+     "kind": "CRAFT_INPUT",
      "to": "recipe:machete",
      "layer": "BOTH",
      "qty": 3,
@@ -27026,6 +26714,7 @@
    ],
    "consumed_by": [
     "industrial_axe",
+    "industrial_axe_geared",
     "reinforced_spear",
     "cleaver",
     "machete"
@@ -27236,7 +26925,7 @@
     },
     {
      "kind": "CRAFT_INPUT",
-     "to": "recipe:industrial_pick_geared",
+     "to": "recipe:industrial_axe_geared",
      "layer": "BOTH",
      "qty": 1,
      "count": 1
@@ -27340,7 +27029,7 @@
    ],
    "consumed_by": [
     "motorbike_kit",
-    "industrial_pick_geared",
+    "industrial_axe_geared",
     "steel_folding_ladder",
     "deploy_oil_pump",
     "deploy_farm_controller",
@@ -27348,7 +27037,7 @@
     "deploy_bear_trap"
    ],
    "consumer_targets": [
-    "make:industrial_pick",
+    "make:industrial_axe",
     "make:motorbike_kit",
     "make:steel_folding_ladder",
     "station:base_generator",
@@ -33021,53 +32710,6 @@
    }
   },
   {
-   "id": "industrial_pick",
-   "out": "industrial_pick",
-   "outs": [
-    [
-     "industrial_pick",
-     1
-    ]
-   ],
-   "ins": [
-    [
-     "iron_pick",
-     1
-    ],
-    [
-     "refined_iron_ingot",
-     2
-    ],
-    [
-     "metal_pipe",
-     1
-    ]
-   ],
-   "station": "workbench",
-   "stationLevel": 2,
-   "station_tier": "workbench_2",
-   "research_tier": 2,
-   "base": false,
-   "starter_known": false,
-   "family": null,
-   "alias": null,
-   "secs": 25,
-   "layer": "BOTH",
-   "craftable_shipping": true,
-   "craftable_veyra": true,
-   "depth": 4,
-   "bom": {
-    "distinct_items": 10,
-    "craft_steps": 7,
-    "raw": {
-     "hide": 1,
-     "iron_ore": 7.5,
-     "spares": 1,
-     "wood": 8
-    }
-   }
-  },
-  {
    "id": "industrial_axe",
    "out": "industrial_axe",
    "outs": [
@@ -33115,6 +32757,61 @@
      "iron_ore": 10.5,
      "spares": 2,
      "wood": 8
+    }
+   }
+  },
+  {
+   "id": "industrial_axe_geared",
+   "out": "industrial_axe",
+   "outs": [
+    [
+     "industrial_axe",
+     1
+    ]
+   ],
+   "ins": [
+    [
+     "iron_axe",
+     1
+    ],
+    [
+     "metal_blade",
+     1
+    ],
+    [
+     "refined_iron_ingot",
+     1
+    ],
+    [
+     "mechanical_gear",
+     1
+    ],
+    [
+     "spares",
+     2
+    ]
+   ],
+   "station": "workbench",
+   "stationLevel": 2,
+   "station_tier": "workbench_2",
+   "research_tier": 2,
+   "base": true,
+   "starter_known": true,
+   "family": null,
+   "alias": "Salvager Axe (geared)",
+   "secs": 25,
+   "layer": "BOTH",
+   "craftable_shipping": true,
+   "craftable_veyra": true,
+   "depth": 3,
+   "bom": {
+    "distinct_items": 11,
+    "craft_steps": 8,
+    "raw": {
+     "hide": 1,
+     "iron_ore": 9.5,
+     "spares": 6,
+     "wood": 4
     }
    }
   },
@@ -33326,53 +33023,6 @@
     "raw": {
      "iron_ore": 1.5,
      "spares": 1,
-     "wood": 2
-    }
-   }
-  },
-  {
-   "id": "industrial_pick_geared",
-   "out": "industrial_pick",
-   "outs": [
-    [
-     "industrial_pick",
-     1
-    ]
-   ],
-   "ins": [
-    [
-     "iron_pick",
-     1
-    ],
-    [
-     "mechanical_gear",
-     1
-    ],
-    [
-     "spares",
-     2
-    ]
-   ],
-   "station": "workbench",
-   "stationLevel": 2,
-   "station_tier": "workbench_2",
-   "research_tier": 2,
-   "base": true,
-   "starter_known": true,
-   "family": null,
-   "alias": "Salvager Pick (geared)",
-   "secs": 25,
-   "layer": "BOTH",
-   "craftable_shipping": true,
-   "craftable_veyra": true,
-   "depth": 3,
-   "bom": {
-    "distinct_items": 8,
-    "craft_steps": 5,
-    "raw": {
-     "hide": 1,
-     "iron_ore": 5,
-     "spares": 5,
      "wood": 2
     }
    }
@@ -34671,52 +34321,6 @@
    }
   },
   {
-   "id": "stone_pick",
-   "out": "stone_pick",
-   "outs": [
-    [
-     "stone_pick",
-     1
-    ]
-   ],
-   "ins": [
-    [
-     "wood",
-     3
-    ],
-    [
-     "stone",
-     4
-    ],
-    [
-     "rope",
-     1
-    ]
-   ],
-   "station": "hand",
-   "stationLevel": 1,
-   "station_tier": "hand",
-   "research_tier": 0,
-   "base": true,
-   "starter_known": true,
-   "family": null,
-   "alias": null,
-   "secs": 2,
-   "layer": "BOTH",
-   "craftable_shipping": true,
-   "craftable_veyra": true,
-   "depth": 2,
-   "bom": {
-    "distinct_items": 4,
-    "craft_steps": 2,
-    "raw": {
-     "fiber": 3,
-     "stone": 4,
-     "wood": 3
-    }
-   }
-  },
-  {
    "id": "wood_spear",
    "out": "wood_spear",
    "outs": [
@@ -35353,52 +34957,6 @@
    "outs": [
     [
      "iron_axe",
-     1
-    ]
-   ],
-   "ins": [
-    [
-     "iron_ingot",
-     3
-    ],
-    [
-     "wood",
-     2
-    ],
-    [
-     "leather",
-     1
-    ]
-   ],
-   "station": "workbench",
-   "stationLevel": 1,
-   "station_tier": "workbench_1",
-   "research_tier": 1,
-   "base": true,
-   "starter_known": true,
-   "family": null,
-   "alias": null,
-   "secs": 15,
-   "layer": "BOTH",
-   "craftable_shipping": true,
-   "craftable_veyra": true,
-   "depth": 2,
-   "bom": {
-    "distinct_items": 5,
-    "craft_steps": 3,
-    "raw": {
-     "hide": 1,
-     "iron_ore": 3,
-     "wood": 2
-    }
-   }
-  },
-  {
-   "id": "iron_pick",
-   "out": "iron_pick",
-   "outs": [
-    [
-     "iron_pick",
      1
     ]
    ],
@@ -37135,7 +36693,7 @@
    ],
    "parts_in": 0,
    "parts_out": 0,
-   "merged_parts_verdict": "PARTS_NEGATIVE"
+   "merged_parts_verdict": "SOURCE_ONLY"
   },
   {
    "item": "industrial_pick",
@@ -37154,9 +36712,9 @@
      1
     ]
    ],
-   "parts_in": 1,
+   "parts_in": 0,
    "parts_out": 0,
-   "merged_parts_verdict": "PARTS_NEGATIVE"
+   "merged_parts_verdict": "SOURCE_ONLY"
   },
   {
    "item": "industrial_axe",
@@ -39111,7 +38669,7 @@
    "li_consumers": "end item / none recorded",
    "soh_equivalent": "rich_iron_ore",
    "verdict": "HAVE_SAME_ROLE",
-   "why": "Same; SOH ties the yield to pick quality."
+   "why": "Same; SOH ties the yield to axe quality."
   },
   {
    "li_id": "rifle_body",

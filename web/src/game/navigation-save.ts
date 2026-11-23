@@ -21,7 +21,13 @@ type Failed = Checked & { blocked: Point[]; status: 'NO_PATH' | 'SEARCH_LIMIT'; 
 type Component = Checked & { access: string; points: Set<string>; blocked: Point[]; expanded: number };
 /** One route search stops after examining this many cells (`SEARCH_LIMIT`); a call may overshoot by its own 256.
  *  A search for an evacuation berth may go on to BERTH_SEARCH_LIMIT_CELLS (see the memory law in human-navigation.ts);
- *  the loader refuses a larger count. */
+ *  the loader refuses a larger count.
+ *
+ *  DECISION (Creator delegation on build 98ee24ac): 96,000 stays. Measured on seed 7606: 96,000 for every route made
+ *  the first hour 30-40 % slower; 400,000 let one search hold 200k-400k cells in memory and in the save, which is
+ *  already near the browser's 5 MB limit. KNOWN COST: a berth whose shortest road needs more than 96,000 cells
+ *  examined (the south berth is the known case) is reported SEARCH_LIMIT and those residents use another berth or
+ *  stay. A larger number is not the fix; a road-graph search between regions is, and that is not built. */
 export const SEARCH_LIMIT_CELLS = 48_000,
   BERTH_SEARCH_LIMIT_CELLS = 96_000;
 export const searches = new WeakMap<RunState, Map<string, Pending>>();

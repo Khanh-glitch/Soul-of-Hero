@@ -187,7 +187,9 @@ describe('MEC-01 P4: five-chain industrial benchmark (reproducible)', () => {
       expect(rows.v4.some((r:any)=>r.verdict==='OVER_RETURN'),c.id).toBe(false);
       if(rows.v3?.some((r:any)=>r.verdict==='OVER_RETURN'))overV3.push((c.recycler as any).source);
     }
-    expect(overV3.sort()).toEqual(['industrial_axe','iron_axe','iron_pick']);
+    // Recipe revision 7: an `iron_pick` row is read as the Iron Axe the pick became. The Salvager Axe left this list: its
+    // cheapest route is now the geared one, which holds more Parts than the v3 row pays back.
+    expect(overV3.sort()).toEqual(['iron_axe','iron_pick']);
     // MEC-01 R2 D: B05 eligibility, finite-vs-renewable stock, integer batch routes, ORIGINAL_UNKNOWN discipline.
     expect(report.b05Eligibility.rule).toBe(B05_REPEATABLE_RULE);
     expect(report.b05Eligibility.renewable).toEqual(['shipping.factory.exterior.industrial-toolbox','shipping.tp.bow-cache.standard-toolbox']);

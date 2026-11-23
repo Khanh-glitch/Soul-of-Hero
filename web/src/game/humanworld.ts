@@ -42,7 +42,7 @@ import {owned, coreCastBlock,coreCastCommit, carryLimit, invWeight, addItem, add
 import { rngNext, mulberry, hash2 } from './core';
 import { phaseOf, isRagnarok, runHours } from './engine';
 import {communityBarrel,drinkCommunityRain,NO_LOCAL_BANK} from './human-rainwater';
-import { isGuardPost, humanCanUseEntity, humanEntityTile, executeHumanWork, answerWaterAppeal, dispatchMedicalResponse, needsFollowup, planHumanOccupation, downedByThirst, type HumanWorkTask } from './human-jobs';
+import { isGuardPost, humanCanUseEntity, humanEntityTile, executeHumanWork, answerWaterAppeal, dispatchMedicalResponse, needsFollowup, planHumanOccupation, downedByThirst, WATER_REVIVE_HP, type HumanWorkTask } from './human-jobs';
 import { withHumanNavigationRead, humanNavigation } from './human-navigation';
 import { humanShelter, humanShelterContext, type HumanShelterContext } from './human-shelter';
 import {consolidatePantry} from './human-pantry';
@@ -614,12 +614,12 @@ function rosterFor(cls: SiteClass, rooms: number, rng: () => number): { occ: Occ
 function startingGear(occ: Occupation, profile: ProfileKey): { equip?: Partial<HumanEquipSlots>; pack?: [string, number][] } {
   const gear: Record<Occupation, { equip?: Partial<HumanEquipSlots>; pack?: [string, number][] }> = {
     salvager: { equip: { weapon: null }, pack: [['knife', 1], ['cloth', 2], ['spares', 2]] },
-    mechanic: { equip: { weapon: { uid: '', key: 'stone_pick', qty: 1, dur: 150 } as any }, pack: [['spares', 3], ['charcoal', 2]] },
+    mechanic: { equip: { weapon: { uid: '', key: 'stone_axe', qty: 1, dur: 150 } as any }, pack: [['spares', 3], ['charcoal', 2]] },
     cook: { pack: [['berries', 4], ['charcoal', 2]] },
     gardener: { pack: [['seed', 3], ['water_flask', 1]] },
     medic: { pack: [['herb', 4], ['bandage', 2]] },
     guard: { equip: { weapon: { uid: '', key: 'wood_club', qty: 1, dur: 100 } as any, body: { uid: '', key: 'leather_armor', qty: 1 } as any }, pack: [['arrow', 6]] },
-    engineer: { equip: { weapon: { uid: '', key: 'stone_pick', qty: 1, dur: 120 } as any }, pack: [['spares', 4], ['charcoal', 2]] },
+    engineer: { equip: { weapon: { uid: '', key: 'stone_axe', qty: 1, dur: 120 } as any }, pack: [['spares', 4], ['charcoal', 2]] },
     builder: { equip: { weapon: { uid: '', key: 'stone_axe', qty: 1, dur: 120 } as any }, pack: [['wood', 4], ['stone', 2]] },
   };
   void profile;
@@ -878,13 +878,13 @@ function canServe(s:Stack|null,kind:'food'|'water'):boolean {
 
 /** Eat/drink from carried or community stock (real item custody).
  *  Water is consumed by CHARGE (a flask holds N drinks), not by qty; an empty flask grants no thirst. */
-export function humanConsume(r: RunState, hw: HumanWorld, h: HumanRecord, kind: 'food' | 'water', now: number): boolean {
+export function humanConsume(r: RunState, hw: HumanWorld, h: HumanRecord, kind: 'food' | 'water', now: number, packOnly = false): boolean {
   if (h.state === 'DEAD' || h.state === 'DOWNED' || h.state === 'EVACUATED' || (kind === 'food' ? h.hunger : h.thirst) >= 100) return false;
   const containers: Container[] = [humanPack(r, h)];
   // Do not construct physical navigation for a stock that cannot satisfy this
   // need. This is a live custody read each call, not a stale failed-plan cache.
   const edible=(s:Stack|null)=>canServe(s,kind);
-  if(!containers[0].slots.some(edible)){
+  if(!packOnly && !containers[0].slots.some(edible)){
     const comm=h.community?hw.communities[h.community]:undefined;
     if(comm?.foodStores.some(id=>r.custody[id]?.slots.some(edible)))containers.push(...reachableHumanStores(r,hw,h));
   }
@@ -1523,7 +1523,7 @@ export function stepPlayerHumanAid(r:RunState,hw:HumanWorld,now:number):void {
   if(a.kind==='medical'&&['bandage','herb'].includes(s.key)&&(h.state==='DOWNED'||h.wounds.some(w=>!w.treated))){h.wounds.forEach(w=>{w.treated=true;w.bleeding=false;});h.hp=Math.min(h.maxHp,h.hp+30);h.state='IDLE';h.downedAt=undefined;useful=true;}
   if(a.kind==='water'&&d.waterContainer&&(s.charge??0)>0&&h.thirst<35&&(h.state!=='DOWNED'||downedByThirst(h))){
     // The collapse left a wound that never bled; with its cause answered it needs no bandage.
-    if(h.state==='DOWNED'){h.wounds.forEach(w=>{w.treated=true;});h.state='IDLE';h.downedAt=undefined;revived=true;}
+    if(h.state==='DOWNED'){h.wounds.forEach(w=>{w.treated=true;});h.hp=Math.min(h.maxHp,Math.max(h.hp,WATER_REVIVE_HP));h.state='IDLE';h.downedAt=undefined;revived=true;}
     h.thirst=Math.min(100,h.thirst+(d.food?.thirst??30));s.charge!--;useful=true;
   }
   if(a.kind==='food'&&d.food?.hunger&&h.hunger<35&&h.state!=='DOWNED'){h.hunger=Math.min(100,h.hunger+d.food.hunger);h.thirst=Math.min(100,h.thirst+(d.food.thirst??0));useful=true;}
@@ -3915,7 +3915,18 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number, coarse = fa
   }
   let navigation: ReturnType<typeof humanNavigation>|undefined;
   actorLoop: for (const h of actors) {
-    if (h.state === 'DEAD' || h.state === 'EVACUATED' || h.state === 'ON_VESSEL') continue;
+    if (h.state === 'DEAD' || h.state === 'EVACUATED') continue;
+    if (h.state === 'ON_VESSEL') {
+      // Creator delegation (ruling on build 98ee24ac): a passenger waiting at the quay eats and drinks from their own
+      // pack; before this they sat hungry until the vessel filled. Only the pack, and only while the vessel is still
+      // boarding: once it casts off the departure record owns the quantities aboard.
+      const trip = h.transit ? hw.evacuation[h.transit.tripId] : undefined;
+      if (trip?.phase === 'BOARDING' && !coreImmobilized(h, now)) {
+        if (h.hunger < 40) humanConsume(r, hw, h, 'food', now, true);
+        if (h.thirst < 40) humanConsume(r, hw, h, 'water', now, true);
+      }
+      continue;
+    }
     if(coreImmobilized(h,now))continue;
     // 1. Survival consume: eat when hungry, drink when thirsty.
     if (h.hunger < 40) humanConsume(r, hw, h, 'food', now);

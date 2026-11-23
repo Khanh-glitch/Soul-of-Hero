@@ -18,7 +18,7 @@ describe('connected economy',()=>{
   // item set v3: the authored cache row keeps its original id (digest-pinned) and is ISSUED as Parts; the wreck table itself is in live ids
   expect(SOURCES.wreck.bonus).toContainEqual(['mechanical_gear',0.08]);expect(SOURCES.wreck.bonus!.some(([k])=>k==='mechanical_parts')).toBe(false);
   expect(CREATURES.crab.drops).toContainEqual(['shell',1,1]);expect(RECIPES.shell_glass.ins).toEqual([['stone',2],['shell',2]]);expect(RECIPES.gas_mask.ins).toContainEqual(['glass',1]);
-  expect(RECIPES.industrial_pick.stationLevel).toBe(2);expect(ITEMS.industrial_pick.power!.ore!).toBeGreaterThan(ITEMS.iron_pick.power!.ore!);expect(ITEMS.industrial_axe.power!.wood!).toBeGreaterThan(ITEMS.iron_axe.power!.wood!);
+  expect(RECIPES.industrial_axe.stationLevel).toBe(2);expect(ITEMS.industrial_axe.power!.ore!).toBeGreaterThan(ITEMS.iron_axe.power!.ore!);expect(ITEMS.industrial_axe.power!.wood!).toBeGreaterThan(ITEMS.iron_axe.power!.wood!);
  });
  it('wrecks produce rare physical parts only while finite source stock is harvested',()=>{
   const g=fresh(),r=g.run!,w=getWorld(),i=w.sourceV3.findIndex(k=>k==='wreck');expect(i).toBeGreaterThanOrEqual(0);
@@ -39,14 +39,14 @@ describe('connected economy',()=>{
   expect(C(saved.run!,'inv').slots[0]).toMatchObject({uid:id,dur:ITEMS.stone_axe.dur});expect(countItem(saved.run!,'inv','wood')).toBe(wood0-1);expect(countItem(saved.run!,'inv','stone')).toBe(stone0-1);expect(act(saved,'maintainItem',{eid:bench.id,slot:0,uid:id,mode:'repair'},'broken-repair',T+1001)).toMatchObject({ok:false,dup:true});
  });
  it('level 2 and knowledge gate industrial jobs; reserve and cancel returns exact tool identity and durability',()=>{
-  const g=fresh(),r=g.run!,e=station(g,'workbench');give(g,'iron_pick');for(const [k,q] of RECIPES.industrial_pick.ins)if(k!=='iron_pick')give(g,k,q*2); /* two bills of the live recipe: one is cancelled, one is finished */
-  const pick=C(r,'inv').slots.find(s=>s?.key==='iron_pick')!;pick.dur=99;r.knowledge.recipes.push('industrial_pick');
-  expect(act(g,'craft',{eid:e.id,recipe:'industrial_pick'}).ok).toBe(false);e.station!.level=2;
-  r.player.action={kind:'swing',slot:C(r,'inv').slots.indexOf(pick),t:0,dur:300,angle:0};expect(act(g,'craft',{eid:e.id,recipe:'industrial_pick'}).ok).toBe(false);r.player.action=null;
-  expect(act(g,'craft',{eid:e.id,recipe:'industrial_pick'}).ok).toBe(true);const job=e.station!.queue[0];expect(job.reserved).toContainEqual(pick);
+  /* the pickaxes were folded into the axes: the Salvager Axe is the industrial tool job */ const g=fresh(),r=g.run!,e=station(g,'workbench');give(g,'iron_axe');for(const [k,q] of RECIPES.industrial_axe.ins)if(k!=='iron_axe')give(g,k,q*2); /* two bills of the live recipe: one is cancelled, one is finished */
+  const pick=C(r,'inv').slots.find(s=>s?.key==='iron_axe')!;pick.dur=99;r.knowledge.recipes.push('industrial_axe');
+  expect(act(g,'craft',{eid:e.id,recipe:'industrial_axe'}).ok).toBe(false);e.station!.level=2;
+  r.player.action={kind:'swing',slot:C(r,'inv').slots.indexOf(pick),t:0,dur:300,angle:0};expect(act(g,'craft',{eid:e.id,recipe:'industrial_axe'}).ok).toBe(false);r.player.action=null;
+  expect(act(g,'craft',{eid:e.id,recipe:'industrial_axe'}).ok).toBe(true);const job=e.station!.queue[0];expect(job.reserved).toContainEqual(pick);
   const saved=JSON.parse(JSON.parse(serializeSnapshot(g)).payload) as GameState;expect(validate(saved)).toBeTruthy();expect(act(saved,'cancelJob',{eid:e.id,jobId:job.id}).ok).toBe(true);
-  expect(C(saved.run!,'inv').slots.find(s=>s?.uid===pick.uid)).toMatchObject({key:'iron_pick',dur:99});for(const [k,q] of RECIPES.industrial_pick.ins)if(k!=='iron_pick')expect(countItem(saved.run!,'inv',k),k).toBe(q*2); /* cancel returned exactly what was reserved */
-  expect(act(saved,'craft',{eid:e.id,recipe:'industrial_pick'}).ok).toBe(true);stepStations(saved,25000,T+25000);expect(C(saved.run!,saved.run!.entities[e.id].station!.outC).slots.some(s=>s?.key==='industrial_pick')).toBe(true);
+  expect(C(saved.run!,'inv').slots.find(s=>s?.uid===pick.uid)).toMatchObject({key:'iron_axe',dur:99});for(const [k,q] of RECIPES.industrial_axe.ins)if(k!=='iron_axe')expect(countItem(saved.run!,'inv',k),k).toBe(q*2); /* cancel returned exactly what was reserved */
+  expect(act(saved,'craft',{eid:e.id,recipe:'industrial_axe'}).ok).toBe(true);stepStations(saved,25000,T+25000);expect(C(saved.run!,saved.run!.entities[e.id].station!.outC).slots.some(s=>s?.key==='industrial_axe')).toBe(true);
  });
  it('fuelled shell glass stalls without fuel, consumes inputs, settles offline once and enables mask',()=>{
   const g=fresh(),r=g.run!,e=station(g,'furnace');give(g,'shell',2);give(g,'stone',2);expect(act(g,'craft',{eid:e.id,recipe:'shell_glass'}).ok).toBe(true);

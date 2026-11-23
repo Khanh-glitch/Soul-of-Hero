@@ -92,8 +92,9 @@ describe('B01 B: intermediates have real producers and consumers',()=>{
     const pipeConsumers=Object.entries(RECIPES).filter(([,rc])=>rc.ins.some(([i])=>i==='metal_pipe')).map(([k])=>k).sort();
     // Item Ontology V2 P3 (rev 3): the piped BOM is now THE frame recipe; the alias id is retired.
     // Item set v3 (rev 5): Fasteners are retired, and the pipe is what took their place as the handle of the
-    // industrial tools and as the pump's riser. Five named sinks (two tools, the frame, the pump and the refinery).
-    expect(pipeConsumers).toEqual(['deploy_oil_pump','deploy_refinery','industrial_axe','industrial_pick','vehicle_frame']);
+    // industrial tools and as the pump's riser. Recipe revision 7 folded the Salvager Pick into the Salvager Axe, so the
+    // sinks are four: one tool, the frame, the pump and the refinery.
+    expect(pipeConsumers).toEqual(['deploy_oil_pump','deploy_refinery','industrial_axe','vehicle_frame']);
     expect(RECIPES.vehicle_frame_piped).toBeUndefined();
     expect(RECIPES.iron_plate.ins.some(([i])=>i==='metal_pipe')).toBe(false);
     // Recovery is a recycler route, not a craft consumer: one pipe -> one refined iron, no MP minted.
@@ -108,10 +109,12 @@ describe('B01 B: intermediates have real producers and consumers',()=>{
     // Final item set (rev 4): the Iron Sword and its blade refit were retired; the spear's blade alias carries the same pin.
     expect(RECIPES.iron_sword_blade).toBeUndefined();expect(RECIPES.iron_sword).toBeUndefined();
     // Recipe revision 6 (ITEM_CRAFTING_MASTER): the spear's blade alias dominated the researched bill and was folded into it.
-    // The alias pattern itself stays live on the Salvager Pick (a Parts-heavy route beside the refined-iron route).
+    // The alias pattern itself stays live on the Salvager Axe (a Parts-heavy route beside the refined-iron route; it was the
+    // Salvager Pick's until revision 7 folded the pickaxes into the axes).
     expect(RECIPES.reinforced_spear_blade).toBeUndefined();expect(RECIPES.reinforced_spear.base).toBe(true);
-    expect(RECIPES.industrial_pick_geared.out).toBe(RECIPES.industrial_pick.out);expect(RECIPES.industrial_pick_geared.alias).toBeTruthy();
-    expect(RECIPES.industrial_pick_geared.stationLevel).toBe(2);expect(RECIPES.vehicle_frame.stationLevel).toBe(2);
+    expect(RECIPES.industrial_pick_geared).toBeUndefined();expect(RECIPES.industrial_pick).toBeUndefined();
+    expect(RECIPES.industrial_axe_geared.out).toBe(RECIPES.industrial_axe.out);expect(RECIPES.industrial_axe_geared.alias).toBeTruthy();
+    expect(RECIPES.industrial_axe_geared.stationLevel).toBe(2);expect(RECIPES.vehicle_frame.stationLevel).toBe(2);
     expect(RECIPES.refined_iron_ingot.station).toBe('furnace');
   });
   it('a real station craft pays time and yields a physical metal blade into the output container',()=>{

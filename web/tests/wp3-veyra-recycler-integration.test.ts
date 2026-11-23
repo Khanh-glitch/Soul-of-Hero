@@ -218,7 +218,7 @@ function harvestSourceNaturally(
 }
 
 describe('WP3: End-to-End Veyra Natural-Source -> Foundry Recycler -> Floor -1 -> Save/Reload Integration Proof (item set v3)', () => {
-  it('knaps a Stone Pickaxe by hand, pries natural Veyra wrecks for Spare Parts and machine parts (zero item injection, zero Damaged Drives), recycles one machine part at po_slag, and survives mandatory Floor -1 reload', () => {
+  it('knaps a second Stone Axe by hand, pries natural Veyra wrecks for Spare Parts and machine parts (zero item injection, zero Damaged Drives), recycles one machine part at po_slag, and survives mandatory Floor -1 reload', () => {
     // 1. Start a fresh canonical Veyra05 world run (region 1 = Greywater; zero qaUsed, zero inspectAt, zero addItem)
     setActiveLayout('veyra05-world');
     const gs = newGame();
@@ -234,11 +234,12 @@ describe('WP3: End-to-End Veyra Natural-Source -> Foundry Recycler -> Floor -1 -
     const nowRef = { t: NOW + 1000 };
 
     // 2. Natural tool (Creator ruling 2026-11-23, follow Last Island): the run starts with a Stone Axe, which fells trees
-    //    and chips stone slowly. Gather wood, stone and fiber with it, twist rope and knap a Stone Pickaxe by hand — no item injection.
+    //    and breaks stone and ore (the pickaxes were folded into the axes). Gather wood, stone and fiber with it, twist rope
+    //    and knap a second Stone Axe by hand, the way a survivor replaces a worn one — no item injection.
     expect(C(r, 'inv').slots[0]?.key).toBe('stone_axe');
-    expect(ITEMS.stone_axe.power).toMatchObject({ wood: 3, stone: 1, ore: 1 });
+    expect(ITEMS.stone_axe.power).toMatchObject({ wood: 3, stone: 3, ore: 2 });
     const WOOD_SOURCES = ['oak', 'pine', 'snowpine', 'palm', 'willow'] as const;
-    const pickBill = new Map<string, number>(RECIPES.stone_pick.ins);
+    const pickBill = new Map<string, number>(RECIPES.stone_axe.ins);
     const ropeBill = new Map<string, number>(RECIPES.rope.ins);
     const gather = (keys: readonly string[], item: string, want: number) => {
       for (const src of findReachableSources(r, keys, nowRef.t)) {
@@ -255,18 +256,18 @@ describe('WP3: End-to-End Veyra Natural-Source -> Foundry Recycler -> Floor -1 -
       expect(rope.ok, (rope as any).reason).toBe(true);
       nowRef.t += 1100;
     }
-    const pick = dispatch(gs, { id: `pick-${nowRef.t}`, type: 'craft', recipe: 'stone_pick' }, nowRef.t);
+    const pick = dispatch(gs, { id: `pick-${nowRef.t}`, type: 'craft', recipe: 'stone_axe' }, nowRef.t);
     expect(pick.ok, (pick as any).reason).toBe(true);
     nowRef.t += 2100;
-    expect(countItem(r, 'inv', 'stone_pick')).toBe(1);
-    expect(ITEMS.stone_pick.power?.scrap ?? 0).toBeGreaterThan(0);
+    expect(countItem(r, 'inv', 'stone_axe')).toBe(2);   // the starting axe and the hand-made one
+    expect(ITEMS.stone_axe.power?.scrap ?? 0).toBeGreaterThan(0);
 
     // 3. Item set v3 / G1A: Veyra's salvage stands at the roadside (Relay Wrecks, Salvage Bales). Each unit pays Spare
     //    Parts directly and, on a bonus roll, a whole machine part. The Damaged Drive is retired, so the Recycler's
     //    natural input is one of those machine parts. Both sources answer only to their per-tool table (G1A_HARVEST).
     const SALVAGE_SOURCES = ['road_relay_wreck', 'road_salvage_bale'] as const;
     for (const k of SALVAGE_SOURCES) {
-      expect(SOURCES[k].harvestBy?.stone_pick ?? 0, `${k} answers to the Stone Pickaxe`).toBeGreaterThan(0);
+      expect(SOURCES[k].harvestBy?.stone_axe ?? 0, `${k} answers to the Stone Axe`).toBeGreaterThan(0);
       expect(SOURCES[k].harvestBy?.wood_club ?? 0, `${k} answers to the Wood Club (the melee line works the roadside)`).toBe(2);
     }
     const RECYCLABLE = ['mechanical_gear', 'metal_pipe', 'iron_plate'] as const;
@@ -276,7 +277,7 @@ describe('WP3: End-to-End Veyra Natural-Source -> Foundry Recycler -> Floor -1 -
     const harvestNearby = () => {
       for (const w of findReachableSources(r, SALVAGE_SOURCES, nowRef.t)) {
         if (enough()) break;
-        harvestSourceNaturally(gs, w.tx, w.ty, 'stone_pick', nowRef, ['spares', ...RECYCLABLE]);
+        harvestSourceNaturally(gs, w.tx, w.ty, 'stone_axe', nowRef, ['spares', ...RECYCLABLE]);
       }
     };
 
@@ -400,7 +401,7 @@ describe('WP3: End-to-End Veyra Natural-Source -> Foundry Recycler -> Floor -1 -
     // Recycling a machine part never mints Spare Parts (finite salvage; bible K4).
     expect(plan.outputs.some(([k]) => k === 'spares')).toBe(false);
     expect(countItem(r, 'inv', 'spares')).toBe(sparesBeforeRecycle);
-    const held = Object.fromEntries(['spares', 'stone_pick', ...RECYCLABLE, ...plan.outputs.map(([k]) => k)].map((k) => [k, countItem(r, 'inv', k)]));
+    const held = Object.fromEntries(['spares', 'stone_axe', ...RECYCLABLE, ...plan.outputs.map(([k]) => k)].map((k) => [k, countItem(r, 'inv', k)]));
 
     // Zero QA/inspect/cheat tampering across the whole natural loop
     expect(r.qaUsed).toBe(false);
@@ -448,7 +449,7 @@ describe('WP3: End-to-End Veyra Natural-Source -> Foundry Recycler -> Floor -1 -
     expect(hasAuthorizedRecycler(reloaded.run!)).toBe(true);
     expect(reloaded.run!.wreckEconomy).toBe('recycler-v1');
     expect(reloaded.run!.qaUsed).toBe(false);
-    // The hand-made pick, the natural spares, the remaining machine parts and the recycled output all survive the
+    // The hand-made axe, the natural spares, the remaining machine parts and the recycled output all survive the
     // Floor -1 cold reload, and the Recycler is left idle and empty.
     for (const [k, q] of Object.entries(held)) expect(countItem(reloaded.run!, 'inv', k), `reloaded ${k}`).toBe(q);
     expect(countItem(reloaded.run!, 'inv', 'damaged_drive')).toBe(0);

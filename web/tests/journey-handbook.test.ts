@@ -4,7 +4,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
 import { dispatchCarryingPack } from './helpers/build-kit';
-import { ITEMS } from '../src/game/catalog';
+import { ITEMS, STRUCTS } from '../src/game/catalog';
 import { TILE, WW, type GameState, type RunState } from '../src/game/core';
 import { addItem, blockGrid, C, countItem, dispatch, newGame, receipt } from '../src/game/engine';
 import {
@@ -63,11 +63,27 @@ describe('Survivor Handbook · definitions', () => {
     expect(keys.size).toBe(40);
   });
 
+  it('every bundle is a soft starter: a ready-made piece of a feature the chapter did not teach, with one line saying what it opens', () => {
+    // Creator ruling on build 98ee24ac: the player never has to make everything alone.
+    const keysOf = (id: string) => FIELDCRAFT_BY_ID[id].reward.map(([k]) => k);
+    // The run already starts (and every wake-up restarts) with a Stone Axe, so the first bundle does not repeat it; the pickaxe no longer exists.
+    expect(keysOf('landfall')).toEqual(['wood_club', 'deploy_claim', 'deploy_campfire', 'cooked_meat']);
+    expect(keysOf('shelter')).toEqual(['deploy_workbench', 'deploy_chest_small', 'deploy_bed_straw', 'torch']);
+    expect(keysOf('industry')).toEqual(['deploy_research', 'iron_ingot', 'charcoal', 'rope']);
+    expect(keysOf('knowledge')).toEqual(['deploy_garden', 'seed_sunroot', 'spares', 'electronic_parts']);
+    expect(keysOf('provisions')).toEqual(['lead_rope', 'deploy_feed_trough', 'trail_canteen', 'seed_wildberry']);
+    expect(keysOf('expedition')).toEqual(['cart_kit', 'trail_pack', 'bandage']);
+    // The first six each hand over something to place at once: a packed device or a kit, no crafting needed.
+    for (const l of FIELDCRAFT.slice(0, 6)) expect(l.reward.some(([k]) => k.startsWith('deploy_') || k.endsWith('_kit')), l.id).toBe(true);
+    // No bundle hands back the starting axe, and none holds a retired pickaxe.
+    for (const l of FIELDCRAFT) for (const [k] of l.reward) expect(['stone_axe', 'stone_pick', 'iron_pick', 'industrial_pick'], l.id).not.toContain(k);
+    // One line per chapter, in both languages, says what the bundle opens.
+    for (const l of FIELDCRAFT) { expect(l.opens.en.length, l.id).toBeGreaterThan(20); expect(l.opens.vi.length, l.id).toBeGreaterThan(20); expect(l.opens.en).not.toBe(l.opens.vi); }
+    // A placed bundle piece is a real structure the player may build with nothing else in hand.
+    for (const l of FIELDCRAFT.slice(0, 6)) for (const [k] of l.reward) if (k.startsWith('deploy_')) expect(STRUCTS[k.slice('deploy_'.length)]?.item, k).toBe(k);
+  });
+
   it('early bundles hand over the next chore; later bundles are the bigger ones', () => {
-    // Tier 1 (the first three chapters) gives the tools and stations the next chapter asks for.
-    expect(FIELDCRAFT_BY_ID.landfall.reward.map(([k]) => k)).toEqual(expect.arrayContaining(['stone_axe', 'stone_pick', 'deploy_claim']));
-    expect(FIELDCRAFT_BY_ID.shelter.reward.map(([k]) => k)).toEqual(expect.arrayContaining(['deploy_campfire', 'deploy_chest_small']));
-    expect(FIELDCRAFT_BY_ID.industry.reward.map(([k]) => k)).toContain('iron_ingot');
     expect(FIELDCRAFT.slice(0, 3).every(l => l.tier === 1)).toBe(true);
     expect(FIELDCRAFT.slice(3, 7).every(l => l.tier === 2)).toBe(true);
     expect(FIELDCRAFT.slice(7).every(l => l.tier === 3)).toBe(true);
@@ -274,7 +290,7 @@ describe('Survivor Handbook · Journey store, tracker and language', () => {
     expect(res.events.filter(e => e.kind === 'step')).toEqual([]);
     commit(r, 'harvest', 'oak@1,1 -3');
     res = ingestJourney(store, gs, tickNow()); store = res.store;
-    expect(res.events.some(e => e.kind === 'step' && e.title === 'Gather by hand')).toBe(true);
+    expect(res.events.some(e => e.kind === 'step' && e.title === 'Gather with your axe')).toBe(true);
     commit(r, 'craft.hand', 'rope'); commit(r, 'consume', 'berries');
     res = ingestJourney(store, gs, tickNow()); store = res.store;
     expect(lessonComplete(store, FIELDCRAFT_BY_ID.landfall)).toBe(true);
@@ -316,12 +332,12 @@ describe('Survivor Handbook · Journey store, tracker and language', () => {
     const store = ingestJourney(freshStore(), gs, tickNow()).store;
     setLang('vi');
     const v = resolveTrack(store, 1)!;
-    expect(v.title).toBe('Hái lượm bằng tay');
+    expect(v.title).toBe('Thu hoạch bằng rìu');
     expect(v.group).toBe('Đặt chân');
     expect(v.reward).toContain('Gói khởi đầu');
-    expect(v.reward).toContain('Stone Axe');
+    expect(v.reward).toContain('Wood Club');
     setLang('en');
-    expect(resolveTrack(store, 1)!.title).toBe('Gather by hand');
+    expect(resolveTrack(store, 1)!.title).toBe('Gather with your axe');
   });
 });
 

@@ -186,8 +186,8 @@ describe('P1 + P7 — display language (no id, recipe, source or price moved)', 
 });
 
 describe('G — migration ledger: exactly one revision bump, history stored', () => {
-  it('revision moved on to 6 (crafting master); the three rev-2 definitions are frozen verbatim; the live catalog validates', () => {
-    expect(RECIPE_REVISION).toBe(6);
+  it('revision moved on to 7 (6 = crafting master, 7 = pickaxes folded into the axes); the three rev-2 definitions are frozen verbatim; the live catalog validates', () => {
+    expect(RECIPE_REVISION).toBe(7);
     expect(CUT_OVER_REVISIONS[2]).toEqual(['vehicle_frame', 'vehicle_frame_piped', 'industrial_axe']);
     expect(Object.keys(LEGACY_RECIPES).filter((k) => k.endsWith('@2')).sort()).toEqual(['industrial_axe@2', 'vehicle_frame@2', 'vehicle_frame_piped@2']);
     expect(LEGACY_RECIPES['vehicle_frame@2'].ins).toEqual([['iron_ingot', 3], ['mechanical_parts', 2], ['spares', 2]]);
@@ -217,11 +217,11 @@ describe('G — migration ledger: exactly one revision bump, history stored', ()
     expect(recipeForJob('vehicle_frame_piped', 1)).toBe(LEGACY_RECIPES['vehicle_frame_piped@2']);
     expect(recipeForJob('vehicle_frame_piped', 3)).toBeNull();     // retired: not live
     expect(recipeForJob('industrial_axe', 2)).toBe(LEGACY_RECIPES['industrial_axe@2']);
-    expect(recipeForJob('industrial_axe', 3)).toBe(recipeForJob('industrial_axe', 4)); expect(recipeForJob('industrial_axe', 3)).not.toBe(RECIPES.industrial_axe); expect(recipeForJob('industrial_axe', 5)).toBe(RECIPES.industrial_axe); expect(recipeForJob('industrial_axe', 6)).toBe(RECIPES.industrial_axe);   // untouched by rev 6
+    expect(recipeForJob('industrial_axe', 3)).toBe(recipeForJob('industrial_axe', 4)); expect(recipeForJob('industrial_axe', 3)).not.toBe(RECIPES.industrial_axe); expect(recipeForJob('industrial_axe', 5)).toBe(RECIPES.industrial_axe); expect(recipeForJob('industrial_axe', 6)).toBe(RECIPES.industrial_axe); expect(recipeForJob('industrial_axe', 7)).toBe(RECIPES.industrial_axe);   // untouched by rev 6 and rev 7
     // Rev-1 behaviour is exactly what it was.
     expect(recipeForJob('metal_pipe', 1)!.qty).toBe(1); expect(recipeForJob('metal_pipe', 2)!.qty).toBe(2); expect(recipeForJob('metal_pipe', 3)!.qty).toBe(2);
     expect(recipeForJob('fuel_can', 1)!.out).toBe('fuel_can'); expect(recipeForJob('fuel_can', 2)).toBeNull(); expect(recipeForJob('fuel_can', 3)).toBeNull();
-    expect(recipeForJob('rope', 1)).toBe(RECIPES.rope); expect(recipeForJob('rope', 5)).toBe(RECIPES.rope); expect(recipeForJob('rope', 6)).toBe(RECIPES.rope); expect(recipeForJob('rope', 7)).toBeNull();   // a revision newer than this build fails closed
+    expect(recipeForJob('rope', 1)).toBe(RECIPES.rope); expect(recipeForJob('rope', 5)).toBe(RECIPES.rope); expect(recipeForJob('rope', 6)).toBe(RECIPES.rope); expect(recipeForJob('rope', 7)).toBe(RECIPES.rope); expect(recipeForJob('rope', 8)).toBeNull();   // a revision newer than this build fails closed
     expect(hasLegacyDefinition('vehicle_frame_piped')).toBe(true); expect(latestLegacyDefinition('vehicle_frame')).toBe(recipeForJob('vehicle_frame', 4)); // the newest frozen frame is now the rev-4 one
     // Item set v3 re-priced the two fluid machines in live ids (Machine Parts and Brick retired).
     for (const s of ['oil_pump', 'refinery']) for (const [k] of STRUCTS[s].cost) expect(isRetiredLive(k), s + ' <- ' + k).toBe(false);

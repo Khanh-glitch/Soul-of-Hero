@@ -81,12 +81,14 @@ export const ITEMS: Record<string, ItemDef> = {
   // resources
   wood: I({ name: 'Wood', cat: 'res', icon: 'log', c1: '#8a5a32', c2: '#c9935a', w: 1, max: 60, desc: 'Split timber. Fuel, tools, walls.', fuel: 20 }),
   // SOH_PROVISIONAL (K4 gỗ→ván): no Last Island plank figure exists in Atlas v1–v11; 2 wood -> 1 plank at a workbench.
-  // Its one consumer, the Plank Wall, was removed on 2026-11-23 (see RETIRED_STRUCTURES); the item and recipe wait for a ruling.
-  plank: I({ name: 'Plank', cat: 'res', icon: 'plank', c1: '#b98a52', c2: '#e0b878', w: 1, max: 60, desc: 'Sawn board. No building uses it at present.' }),
+  // Its one consumer, the Plank Wall, was removed on 2026-11-23 (see RETIRED_STRUCTURES), which left nothing that spent a Plank.
+  // Creator delegation on build 98ee24ac: a Plank is now fuel. It burns for exactly as long as the 2 Wood it is sawn from
+  // (2 x 20 s) at half their weight, so sawing packs fuel for hauling and a dropped or stored Plank is never dead weight.
+  plank: I({ name: 'Plank', cat: 'res', icon: 'plank', c1: '#b98a52', c2: '#e0b878', w: 1, max: 60, desc: 'Sawn board. Burns as long as the 2 Wood it was sawn from, at half the weight.', fuel: 40 }),
   stone: I({ name: 'Stone', cat: 'res', icon: 'stone', c1: '#7d8088', c2: '#b9bcc4', w: 1.2, max: 60, desc: 'Rough stone. Foundations, furnaces, tools.' }),
   fiber: I({ name: 'Plant Fiber', cat: 'res', icon: 'fiber', c1: '#5d8a3a', c2: '#a5d65e', w: 0.2, max: 80, desc: 'Grass and reed fiber. Rope, thatch, bandages.', fuel: 4 }),
   iron_ore: I({ name: 'Iron Ore', cat: 'res', icon: 'ore', c1: '#6b5a52', c2: '#d08a5a', w: 2, max: 40, desc: 'Smelt in a fueled furnace.' }),
-  // SOH_PROVISIONAL (R8C): high-grade ore from an iron vein, only with an iron-class pick. Smelts to two refined ingots with one coal.
+  // SOH_PROVISIONAL (R8C): high-grade ore from an iron vein, only with an iron-class axe (the picks were folded into the axes). Smelts to two refined ingots with one coal.
   rich_iron_ore: I({ name: 'Rich Iron Ore', cat: 'res', icon: 'rich_ore', c1: '#4f4560', c2: '#f0c040', w: 2, max: 40, desc: 'High-grade ore from an iron vein. One of these with two charcoal makes two refined ingots.' }),
   coal: I({ name: 'Coal', cat: 'res', icon: 'ore', c1: '#25252c', c2: '#55556a', w: 1, max: 40, desc:'Retired with the final item set (round 2). Row kept only so old saves and frozen recipes still parse; nothing issues or consumes it.' }),
   charcoal: I({ name: 'Charcoal', cat: 'res', icon: 'ore', c1: '#2b2420', c2: '#6e5a4c', w: 0.5, max: 60, desc: 'Fuel made from burnt wood.', fuel: 55 }),
@@ -162,12 +164,12 @@ export const ITEMS: Record<string, ItemDef> = {
   antirad: I({ name: 'Purge Tonic', cat: 'food', icon: 'flask', c1: '#4a7a1e', c2: '#c8f070', w: 0.3, max: 10, desc: 'Flushes radiation.', food: { rad: -45, thirst: 5 } }),
   // tools & weapons
   knife: I({ name: 'Survival Knife', cat: 'tool', icon: 'knife', c1: '#9aa4b0', c2: '#5a3a22', w: 0.5, max: 1, desc: 'Humble but honest. Cuts fiber and flesh; very slow on wood and stone.', repair: { station: 'workbench', cost: [['stone', 1], ['fiber', 1]] }, power: { wood: 1, stone: 1, plant: 3, scrap: 1 }, dmg: 9, reach: 20, arc: 1.3, swing: 300, dur: 300 }),
-  stone_axe: I({ name: 'Stone Axe', cat: 'tool', icon: 'axe', c1: '#8a8a90', c2: '#7a5a32', w: 1.4, max: 1, desc: 'The tool every survivor wakes with. Fells trees; chips stone and ore slowly. Clumsy weapon.', repair: { station: 'workbench', cost: [['stone', 1], ['wood', 1]] }, power: { wood: 3, stone: 1, ore: 1, plant: 1, scrap: 1 }, dmg: 11, reach: 22, arc: 1.5, swing: 420, dur: 180 }),
-  stone_pick: I({ name: 'Stone Pickaxe', cat: 'tool', icon: 'pick', c1: '#8a8a90', c2: '#7a5a32', w: 1.5, max: 1, desc: 'Breaks stone and ore. Pries scrap.', repair: { station: 'workbench', cost: [['stone', 1], ['wood', 1]] }, power: { stone: 3, ore: 2, scrap: 2 }, dmg: 10, reach: 22, arc: 1.2, swing: 450, dur: 180 }),
-  iron_axe: I({ name: 'Iron Axe', cat: 'tool', icon: 'axe', c1: '#c8d0dc', c2: '#5a3a22', w: 1.6, max: 1, desc: 'Bites deep into timber; works stone and ore at a steady pace.', repair: { station: 'workbench', cost: [['iron_ingot', 1], ['wood', 1]] }, power: { wood: 6, stone: 2, ore: 2, plant: 2, scrap: 2 }, dmg: 17, reach: 23, arc: 1.5, swing: 400, dur: 400 }),
-  iron_pick: I({ name: 'Iron Pickaxe', cat: 'tool', icon: 'pick', c1: '#c8d0dc', c2: '#5a3a22', w: 1.7, max: 1, desc: 'Shatters rock and veins.', repair: { station: 'workbench', cost: [['iron_ingot', 1], ['wood', 1]] }, power: { stone: 6, ore: 5, scrap: 4 }, dmg: 15, reach: 23, arc: 1.2, swing: 430, dur: 400 }),
-  industrial_pick: I({ name: 'Salvager Pick', cat: 'tool', icon: 'salvage_pick', c1: '#71c3c6', c2: '#a37945', w: 1.9, max: 1, desc: 'An improved pick: faster work on rock, ore and wrecks. Requires an improved bench.', power: { stone: 9, ore: 8, scrap: 7 }, dmg: 17, reach: 23, arc: 1.2, swing: 410, dur: 500, repair: { station: 'workbench', cost: [['refined_iron_ingot', 1], ['spares', 1]] } }),
-  industrial_axe: I({ name: 'Salvager Axe', cat: 'tool', icon: 'salvage_axe', c1: '#71c3c6', c2: '#a37945', w: 1.8, max: 1, desc: 'An improved axe: more work per strike on timber, stone and ore. Requires an improved bench.', power: { wood: 9, stone: 3, ore: 3, plant: 3, scrap: 3 }, dmg: 19, reach: 23, arc: 1.5, swing: 390, dur: 500, repair: { station: 'workbench', cost: [['refined_iron_ingot', 1], ['spares', 1]] } }),
+  stone_axe: I({ name: 'Stone Axe', cat: 'tool', icon: 'axe', c1: '#8a8a90', c2: '#7a5a32', w: 1.4, max: 1, desc: 'The tool every survivor wakes with. Fells trees, breaks stone and ore, pries scrap. Clumsy weapon.', repair: { station: 'workbench', cost: [['stone', 1], ['wood', 1]] }, power: { wood: 3, stone: 3, ore: 2, plant: 1, scrap: 2 }, dmg: 11, reach: 22, arc: 1.5, swing: 420, dur: 180 }),
+  stone_pick: I({ name: 'Stone Pickaxe', cat: 'tool', icon: 'pick', c1: '#8a8a90', c2: '#7a5a32', w: 1.5, max: 1, desc: 'Retired by Creator ruling (the axe took over the pickaxe\'s work): every Stone Pickaxe is now a Stone Axe. Row kept only so old saves and frozen recipes still parse.', repair: { station: 'workbench', cost: [['stone', 1], ['wood', 1]] }, power: { stone: 3, ore: 2, scrap: 2 }, dmg: 10, reach: 22, arc: 1.2, swing: 450, dur: 180 }),
+  iron_axe: I({ name: 'Iron Axe', cat: 'tool', icon: 'axe', c1: '#c8d0dc', c2: '#5a3a22', w: 1.6, max: 1, desc: 'Bites deep into timber; shatters rock and veins.', repair: { station: 'workbench', cost: [['iron_ingot', 1], ['wood', 1]] }, power: { wood: 6, stone: 6, ore: 5, plant: 2, scrap: 4 }, dmg: 17, reach: 23, arc: 1.5, swing: 400, dur: 400 }),
+  iron_pick: I({ name: 'Iron Pickaxe', cat: 'tool', icon: 'pick', c1: '#c8d0dc', c2: '#5a3a22', w: 1.7, max: 1, desc: 'Retired by Creator ruling (the axe took over the pickaxe\'s work): every Iron Pickaxe is now an Iron Axe. Row kept only so old saves and frozen recipes still parse.', repair: { station: 'workbench', cost: [['iron_ingot', 1], ['wood', 1]] }, power: { stone: 6, ore: 5, scrap: 4 }, dmg: 15, reach: 23, arc: 1.2, swing: 430, dur: 400 }),
+  industrial_pick: I({ name: 'Salvager Pick', cat: 'tool', icon: 'salvage_pick', c1: '#71c3c6', c2: '#a37945', w: 1.9, max: 1, desc: 'Retired by Creator ruling (the axe took over the pickaxe\'s work): every Salvager Pick is now a Salvager Axe. Row kept only so old saves and frozen recipes still parse.', power: { stone: 9, ore: 8, scrap: 7 }, dmg: 17, reach: 23, arc: 1.2, swing: 410, dur: 500, repair: { station: 'workbench', cost: [['refined_iron_ingot', 1], ['spares', 1]] } }),
+  industrial_axe: I({ name: 'Salvager Axe', cat: 'tool', icon: 'salvage_axe', c1: '#71c3c6', c2: '#a37945', w: 1.8, max: 1, desc: 'An improved axe: faster work on timber, rock, ore and wrecks. Requires an improved bench.', power: { wood: 9, stone: 9, ore: 8, plant: 3, scrap: 7 }, dmg: 19, reach: 23, arc: 1.5, swing: 390, dur: 500, repair: { station: 'workbench', cost: [['refined_iron_ingot', 1], ['spares', 1]] } }),
   wood_spear: I({ name: 'Fire-hardened Spear', cat: 'weapon', icon: 'spear', c1: '#c9935a', c2: '#e0e0e0', w: 1, max: 1, desc: 'Long reach, narrow thrust.', power: { plant: 1 }, dmg: 15, reach: 34, arc: 0.45, swing: 380, dur: 150 }),
   iron_sword: I({ name: 'Iron Sword', cat: 'weapon', icon: 'sword', c1: '#dfe6ee', c2: '#7a4a2a', w: 1.4, max: 1, desc: 'Retired with the final item set: every Iron Sword is now a Machete. Row kept only so old saves and frozen recipes still parse.', repair: { station: 'workbench', cost: [['iron_ingot', 1], ['wood', 1]] }, salvage: { station: 'workbench', yields: [['iron_ingot', 1]] }, power: { plant: 2 }, dmg: 24, reach: 26, arc: 1.7, swing: 330, dur: 350 }),
   bow: I({ name: 'Hunting Bow', cat: 'weapon', icon: 'bow', c1: '#8a5a32', c2: '#e0d8c0', w: 0.8, max: 1, desc: 'Fires arrows toward the cursor.', studyRecipe: 'bow', repair: { station: 'workbench', cost: [['wood', 1], ['fiber', 2]] }, dmg: 16, reach: 220, swing: 520, dur: 200, ranged: 'arrow' }),
@@ -244,8 +246,9 @@ export interface SourceDef { name: string; mat: Mat; hp: number; stock: number; 
   /** G1A: target-specific harvest damage per tool id. When present it REPLACES `power[mat]` for this source only, so global tool power and combat damage stay untouched. Unlisted tools fall back to min(1, power[mat]); bare hands do nothing. */
   harvestBy?: Record<string, number> }
 /** G1A: harvest damage against the three industrial salvage sources only (SOH_PROVISIONAL test tuning). */
-/* Creator ruling 2026-11-23 (follow Last Island): natural nodes belong to the axe line; the melee line (Wood Club, Cleaver, Machete) is what works the roadside. */
-export const G1A_HARVEST: Record<string, number> = { stone_axe: 1, stone_pick: 1, knife: 2, wood_club: 2, cleaver: 3, machete: 4, iron_pick: 1, industrial_pick: 1 };
+/* Creator ruling 2026-11-23 (follow Last Island): natural nodes belong to the axe line; the melee line (Wood Club, Cleaver, Machete) is what works the roadside.
+ * The pickaxes were later retired into the axes (Creator ruling on build 98ee24ac); an unlisted axe falls back to 1 like every unlisted tool. */
+export const G1A_HARVEST: Record<string, number> = { stone_axe: 1, knife: 2, wood_club: 2, cleaver: 3, machete: 4 };
 export const INDUSTRIAL_SALVAGE = ['road_salvage_bale', 'road_relay_wreck', 'road_fuel_rack'] as const;
 export const isIndustrialSalvage = (k: string | null | undefined): boolean => !!k && (INDUSTRIAL_SALVAGE as readonly string[]).includes(k);
 /** Any HP salvage source, legacy or G1A — for spawn/diagnostic "is there salvage nearby" checks. */
@@ -259,7 +262,7 @@ export const SOURCES: Record<string, SourceDef> = {
   willow: { name: 'Mire Willow', mat: 'wood', hp: 14, stock: 4, yields: [['wood', 1]], bonus: [['fiber', 0.4]], block: true, art: 'willow', tall: true },
   deadtree: { name: 'Charred Tree', mat: 'wood', hp: 8, stock: 3, yields: [['charcoal', 1]], block: true, art: 'dead', tall: true },
   rock: { name: 'Boulder', mat: 'stone', hp: 18, stock: 6, yields: [['stone', 1]], block: true, art: 'rock' },
-  // R8D: per stock unit taken by a player swing. Iron pick (ore power 5) 8%; salvager (ore 8) 12%; stone pick (2) none.
+  // R8D: per stock unit taken by a player swing. Iron Axe (ore power 5) 8%; Salvager Axe (ore 8) 12%; Stone Axe (2) none. (The axes took these numbers over from the pickaxes.)
   iron: { name: 'Iron Vein', mat: 'ore', hp: 24, stock: 5, yields: [['iron_ore', 1]], bonus: [['stone', 0.5]], qualityBonus: { capability: 'playerTool', power: 'ore', tiers: [{ minPower: 5, item: 'rich_iron_ore', chance: 0.08 }, { minPower: 8, item: 'rich_iron_ore', chance: 0.12 }] }, block: true, art: 'iron' },
   /* Item set v2 r2: the map kind `coalv` (placed, digest-pinned) is no longer a coal seam. It is a dark pyrite seam: iron ore with sulfur. */ coalv: { name: 'Pyrite Seam', mat: 'ore', hp: 20, stock: 5, yields: [['iron_ore', 1]], bonus: [['sulfur', 0.5]], block: true, art: 'coal' },
   crystal: { name: 'Frost Crystal', mat: 'ore', hp: 20, stock: 3, yields: [['crystal', 1]], block: true, art: 'crystal' },
@@ -494,9 +497,14 @@ export const RECIPES: Record<string, Recipe> = {
   // frozen in recipe-migration.ts so an older queued job or held blueprint still loads.
   // Fuel now comes from `refine_salvaged_oil` (furnace, learned by studying real oil) or
   // the Oil Refinery recipes. `ITEMS.fuel_can.studyRecipe` is removed with it.
-  industrial_pick: { out: 'industrial_pick', qty: 1, ins: [['iron_pick', 1], ['refined_iron_ingot', 2], ['metal_pipe', 1]], station: 'workbench', stationLevel: 2, secs: 25, tier: 2, rev: 5 },
   // Item Ontology V2 P4 (rev 3): one Machine Part becomes one Metal Blade. Rev 2 frozen in recipe-migration.ts.
   industrial_axe: { out: 'industrial_axe', qty: 1, ins: [['iron_axe', 1], ['metal_blade', 1], ['refined_iron_ingot', 2], ['metal_pipe', 1]], station: 'workbench', stationLevel: 2, secs: 25, tier: 2, rev: 5 },
+  // Recipe revision 7: the Salvager Pick's starter-known Parts route moves to the axe with the rest of the pickaxe's work,
+  // so a found Mechanical Gear still has a tool to go into (the Motorbike kit is its other consumer). SOH_PROVISIONAL bill:
+  // a Gear and 2 Parts stand in for the Pipe and ONE of the two Refined Iron; the Blade stays because an axe cuts. One Refined
+  // Iron has to stay: the recycler's v4 row pays a Salvager Axe in full condition one Refined Iron, and a route that held none
+  // would turn plain iron into refined metal (industrial-proof.ts).
+  industrial_axe_geared: { out: 'industrial_axe', qty: 1, alias: 'Salvager Axe (geared)', ins: [['iron_axe', 1], ['metal_blade', 1], ['refined_iron_ingot', 1], ['mechanical_gear', 1], ['spares', 2]], station: 'workbench', stationLevel: 2, secs: 25, base: true, tier: 2, rev: 7 },
   // rev 6: ONE spear formula. The old researched bill (2 Iron, 20 s) was strictly dominated by the starter-known alias
   // `reinforced_spear_blade` (1 Iron, 16 s); the alias is retired and its bill lives here, starter-known as it was.
   reinforced_spear: { out: 'reinforced_spear', qty: 1, ins: [['metal_blade', 1], ['iron_ingot', 1], ['wood', 2]], station: 'workbench', stationLevel: 2, secs: 16, base: true, tier: 2, rev: 6 },
@@ -508,7 +516,6 @@ export const RECIPES: Record<string, Recipe> = {
   metal_blade: { out: 'metal_blade', qty: 1, ins: [['iron_ingot', 3], ['spares', 1]], station: 'workbench', stationLevel: 2, secs: 16, base: true, tier: 2, rev: 6 },
   mechanical_gear: { out: 'mechanical_gear', qty: 1, ins: [['iron_ingot', 2], ['spares', 3]], station: 'workbench', stationLevel: 2, secs: 20, base: true, tier: 2, rev: 5 },
   iron_plate: { out: 'iron_plate', qty: 2, ins: [['refined_iron_ingot', 2], ['spares', 2]], station: 'workbench', stationLevel: 2, secs: 18, base: true, tier: 2, rev: 5 },
-  industrial_pick_geared: { out: 'industrial_pick', qty: 1, alias: 'Salvager Pick (geared)', ins: [['iron_pick', 1], ['mechanical_gear', 1], ['spares', 2]], station: 'workbench', stationLevel: 2, secs: 25, base: true, tier: 2 },
   // ===== ARENA 1 — item set v2 formulas. Provenance (LI original -> SOH value, reason, impact) for every row is in
   // `LI_RECIPE_LEDGER` (final-item-ledger.ts); nothing here claims to be a verbatim Last Island number unless that
   // ledger says LI_EXACT. =====
@@ -545,7 +552,6 @@ export const RECIPES: Record<string, Recipe> = {
   arrow_fletched: { out: 'arrow', qty: 8, alias: 'Arrow (fletched)', ins: [['wood', 1], ['stone', 1], ['feather', 1]], station: 'workbench', secs: 4, base: true, tier: 1 },
   torch: { out: 'torch', qty: 1, ins: [['wood', 1], ['fiber', 2]], station: null, secs: 1, base: true, tier: 0 },
   stone_axe: { out: 'stone_axe', qty: 1, ins: [['wood', 3], ['stone', 3], ['rope', 1]], station: null, secs: 2, base: true, tier: 0 },
-  stone_pick: { out: 'stone_pick', qty: 1, ins: [['wood', 3], ['stone', 4], ['rope', 1]], station: null, secs: 2, base: true, tier: 0 },
   wood_spear: { out: 'wood_spear', qty: 1, ins: [['wood', 4], ['rope', 1]], station: null, secs: 2, base: true, tier: 0 },
   bandage: { out: 'bandage', qty: 1, ins: [['fiber', 4]], station: null, secs: 1, base: true, tier: 0 },
   water_flask: { out: 'water_flask', qty: 1, ins: [['hide', 2], ['rope', 1]], station: null, secs: 2, base: true, tier: 0 },
@@ -564,7 +570,6 @@ export const RECIPES: Record<string, Recipe> = {
   bow: { out: 'bow', qty: 1, ins: [['wood', 5], ['rope', 3]], station: 'workbench', secs: 12, tier: 1 },
   plank: { out: 'plank', qty: 1, ins: [['wood', 2]], station: 'workbench', secs: 6, base: true, tier: 1 },
   iron_axe: { out: 'iron_axe', qty: 1, ins: [['iron_ingot', 3], ['wood', 2], ['leather', 1]], station: 'workbench', secs: 15, base: true, tier: 1 },
-  iron_pick: { out: 'iron_pick', qty: 1, ins: [['iron_ingot', 3], ['wood', 2], ['leather', 1]], station: 'workbench', secs: 15, base: true, tier: 1 },
   leather_armor: { out: 'leather_armor', qty: 1, ins: [['leather', 5], ['rope', 2]], station: 'workbench', secs: 15, tier: 1 },
   chitin_armor: { out: 'chitin_armor', qty: 1, ins: [['chitin', 6], ['leather', 2]], station: 'workbench', secs: 20, tier: 3 },
   fur_cloak: { out: 'fur_cloak', qty: 1, ins: [['fur', 4], ['rope', 2]], station: 'workbench', secs: 14, tier: 2 },
@@ -717,7 +722,7 @@ export const modulePending = (type: string) => MODULE_PENDING_STRUCTURES.include
 /** Item set v2 r2: retired with Salvaged Oil. Kept at 0 so historical audit modules still compile. */
 export const SALVAGED_OIL_WRECK_CHANCE = 0; // SOH_NEW_TUNED v1 per finite wreck stock unit
 /** R8D: the highest tier whose minPower the caller's tool reaches, if the source grants that capability. No tier -> no roll.
- *  Expected extra per 5-unit iron vein: 0.4 rich (iron pick, +24% iron-equivalent on the vein), 0.6 rich (salvager, +36%).
+ *  Expected extra per 5-unit iron vein: 0.4 rich (Iron Axe, +24% iron-equivalent on the vein), 0.6 rich (salvager, +36%).
  *  Last Island v5 D03: one observation (~2 rare per ~272 iron, scope unknown); SOH_PROVISIONAL, not copied. */
 export function qualityTierFor(src: SourceDef, power: Partial<Record<string, number>>, capability: ExtractionCapability): { item: string; chance: number } | null {
   const q = src.qualityBonus; if (!q || capability !== q.capability) return null;
@@ -730,7 +735,7 @@ export const VENDOR_SPARES: Record<string, {price:number; qty:number; stock:numb
   iron_ore:{price:3,qty:2,stock:5}, charcoal:{price:3,qty:3,stock:4}, glass:{price:4,qty:1,stock:3}, crude_petroleum:{price:5,qty:1,stock:4},
 };
 export const VENDOR_SECURED: Record<string, { price: number; stock: number }> = {
-  iron_pick: { price: 12, stock: 1 }, iron_axe: { price: 12, stock: 1 }, medkit: { price: 4, stock: 4 },
+  iron_axe: { price: 12, stock: 1 }, medkit: { price: 4, stock: 4 },
   cart_kit: { price: 20, stock: 1 }, leather_armor: { price: 10, stock: 1 }, water_flask: { price: 3, stock: 2 },
 };
 export const ACHIEVEMENTS: Record<string, { name: string; score: number }> = {

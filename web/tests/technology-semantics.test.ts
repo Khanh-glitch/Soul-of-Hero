@@ -7,6 +7,6 @@ describe('knowledge complexity is not station capability',()=>{
   for(const name of names){const r=RECIPES[name];expect(r.station).toBe('workbench');expect(requiredStationLevel(r)).toBe(1);expect(permitsDirectedResearch(r)).toBe(false);expect(r.base).not.toBe(true);expect(r.ins.length).toBeGreaterThan(0);expect(ITEMS[r.out]).toBeDefined();}
   for(const name of names.filter(k=>k.startsWith('core_')))expect(CORE_STUDY[name]).toBe(name);
   expect(ITEMS.beetle_horn.specimen).toBe('chitin_armor');expect(CREATURES.beetle.drops.some(([k])=>k==='beetle_horn')).toBe(true);
-  expect(RECIPES.industrial_pick.tier).toBe(2);expect(requiredStationLevel(RECIPES.industrial_pick)).toBe(2);expect(permitsDirectedResearch(RECIPES.industrial_pick)).toBe(true);
+  expect(RECIPES.industrial_axe.tier).toBe(2);expect(requiredStationLevel(RECIPES.industrial_axe)).toBe(2);expect(permitsDirectedResearch(RECIPES.industrial_axe)).toBe(true);   // the Salvager Pick was folded into this axe
  });
 });
