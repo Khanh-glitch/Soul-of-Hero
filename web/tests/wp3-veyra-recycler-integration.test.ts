@@ -233,7 +233,7 @@ describe('WP3: End-to-End Veyra Natural-Source -> Foundry Recycler -> Floor -1 -
 
     const nowRef = { t: NOW + 1000 };
 
-    // 2. Natural tool (Creator ruling 2026-11-24, follow Last Island): the run starts with a Stone Axe, which fells trees
+    // 2. Natural tool (Creator ruling 2026-11-23, follow Last Island): the run starts with a Stone Axe, which fells trees
     //    and chips stone slowly. Gather wood, stone and fiber with it, twist rope and knap a Stone Pickaxe by hand — no item injection.
     expect(C(r, 'inv').slots[0]?.key).toBe('stone_axe');
     expect(ITEMS.stone_axe.power).toMatchObject({ wood: 3, stone: 1, ore: 1 });

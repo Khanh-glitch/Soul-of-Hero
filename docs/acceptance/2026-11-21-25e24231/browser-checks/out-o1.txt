@@ -1,0 +1,10 @@
+## startKit ["1:stone_axex1/d180","2:water_flaskx1","3:berriesx3"]
+## harvested {"wood":{"source":"harvest oak@93,89 -1","toolAfter":"1:stone_axex1/d176","wood":4,"stone":0,"iron_ore":0}}
+## invAfterHarvest ["1:stone_axex1/d58","2:water_flaskx1","3:berriesx5","4:woodx60","5:fiberx1","6:woodx46","7:herbx1"]
+## dead {"dead":true,"inv":[],"last":["human.work h7r:harvest:road_fuel_rack:2","human.access.yield {\"actorId\":\"h1b\",\"for\":\"h15\",\"from\":[3168,1750],\"into\":{\"tx\":3167,\"ty\""]}
+## afterRise {"dead":false,"hp":60,"inv":["1:stone_axex1/d180"],"last":["human.store h7t:2","human.procurement.ration {\"workerId\":\"h7t\",\"uid\":\"s2s0\",\"from\":\"c2rt\",\"into\":\"c2s5\",\"qty\":1}","human.harvest.complete hj3nt:h7t:c2rt"]}
+## log ["You wash up near VEYRA · U=0.5. No one is coming to tell you what to do.","You died (starvation). Your belongings lie in a bag where you fell.","You wake with a Stone Axe in hand."]
+## respawnKitReceipts ["stone_axe:s3ol"]
+## checks {"kitOk":true,"wood":true,"stone":false,"riseOk":true}
+## errors {"errors":[],"failed":[],"bad":[]}
+## verdict "PASS"

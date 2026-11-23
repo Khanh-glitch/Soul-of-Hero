@@ -2214,7 +2214,7 @@ export function killPlayer(gs: GameState, now: number, cause: string) {
   receipt(r, now, 'death', `${cause}; bag=${bag?.id ?? 'none'}`);
   pushLog(r, now, bag ? `You died (${cause}). Your belongings lie in a bag where you fell.` : `You died (${cause}). You were carrying nothing.`, 'red');
 }
-/** Creator ruling 2026-11-24 (follow Last Island): every wake-up comes with one Stone Axe, so a survivor who lost or broke
+/** Creator ruling 2026-11-23 (follow Last Island): every wake-up comes with one Stone Axe, so a survivor who lost or broke
  *  every tool can always fell a tree again. Death has already moved the old gear to the ground bag, so this is the only
  *  tool in hand; a survivor who somehow still carries a working axe is not handed a second one. */
 export const STARTER_TOOL = 'stone_axe';

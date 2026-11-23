@@ -199,7 +199,7 @@ describe('VI — engine scenarios on the Veyra world (two spawns, real intents, 
     const gs = veyraRun('male', 4021), r = gs.run!, ww = getWindowWorld(r.layoutId!)!;
     expect(C(r, 'inv').slots.some(s => s && (ITEMS[s.key].creatorCore || ITEMS[s.key].core)), 'no Core in the start kit').toBe(false);
     for (const id of NEW_IDS) expect(inv(gs, id), 'start kit: ' + id).toBe(0);
-    expect(C(r, 'inv').slots[0]?.key, 'Creator ruling 2026-11-24: the start tool is the Stone Axe').toBe('stone_axe');
+    expect(C(r, 'inv').slots[0]?.key, 'Creator ruling 2026-11-23: the start tool is the Stone Axe').toBe('stone_axe');
     const tool = ITEMS[C(r,'inv').slots[0]!.key].power!; let seeds = 0, fiber = 0, hits = 0;
     const src = ww.floors.ground.sources;
     for (let i = 0; i < src.length && seeds < 1; i++) if (src[i] === 'grass') {

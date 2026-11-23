@@ -35,7 +35,7 @@ describe('connected economy',()=>{
   expect(s.dur).toBe(0);expect(C(r,'inv').slots[0]?.uid).toBe(id);const hp=m.hp;
   p.action=null;for(let k=6;k<=10;k++)tick(g,controls,50,T+k*50);expect(m.hp).toBe(hp);
   const saved=JSON.parse(JSON.parse(serializeSnapshot(g)).payload) as GameState;expect(validate(saved)).toBeTruthy();
-  const bench=station(saved,'workbench');/* Creator ruling 2026-11-24: slot 0 holds the starting Stone Axe, mended at the bench with 1 Stone + 1 Wood */expect(C(saved.run!,'inv').slots[0]?.key).toBe('stone_axe');give(saved,'wood',1);give(saved,'stone',1);const wood0=countItem(saved.run!,'inv','wood'),stone0=countItem(saved.run!,'inv','stone');expect(act(saved,'maintainItem',{eid:bench.id,slot:0,uid:id,mode:'repair'},'broken-repair',T+1000).ok).toBe(true);
+  const bench=station(saved,'workbench');/* Creator ruling 2026-11-23: slot 0 holds the starting Stone Axe, mended at the bench with 1 Stone + 1 Wood */expect(C(saved.run!,'inv').slots[0]?.key).toBe('stone_axe');give(saved,'wood',1);give(saved,'stone',1);const wood0=countItem(saved.run!,'inv','wood'),stone0=countItem(saved.run!,'inv','stone');expect(act(saved,'maintainItem',{eid:bench.id,slot:0,uid:id,mode:'repair'},'broken-repair',T+1000).ok).toBe(true);
   expect(C(saved.run!,'inv').slots[0]).toMatchObject({uid:id,dur:ITEMS.stone_axe.dur});expect(countItem(saved.run!,'inv','wood')).toBe(wood0-1);expect(countItem(saved.run!,'inv','stone')).toBe(stone0-1);expect(act(saved,'maintainItem',{eid:bench.id,slot:0,uid:id,mode:'repair'},'broken-repair',T+1001)).toMatchObject({ok:false,dup:true});
  });
  it('level 2 and knowledge gate industrial jobs; reserve and cancel returns exact tool identity and durability',()=>{

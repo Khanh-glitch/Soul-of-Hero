@@ -79,6 +79,14 @@ describe('ARENA 1 round 2 — New-Game routes on Veyra (engine bot, no grants)',
     const startInv = (C(b.r, 'inv').slots.filter(Boolean) as { key: string; qty: number }[]).map(s => `${s.key} x${s.qty}`);
     const startRecipes = b.r.knowledge.recipes.length;
     let stageName = 'start';
+    // Creator ruling 2026-11-23 (follow Last Island): trees, rock and ore belong to the axe line and the roadside to the melee
+    // line. Before that ruling the bot wore its axes out on salvage and, on the new timeline, was left at minute 26 with two
+    // broken Stone Axes and no wood — nothing to fell a tree with. So, like a player under the new rule, it carries a Wood
+    // Club for the roadside (12 wood by hand, 2 points a hit where the axe has 1), drops a broken one, and looks after its
+    // tools every few nodes instead of once per ground. Every route assertion is unchanged.
+    const club = () => { const inv = C(b.r, 'inv').slots; if (inv.some(x => x?.key === 'wood_club' && (x.dur ?? 0) > 20) || !b.working('stone_axe')) return;
+      for (let i = 0; i < inv.length; i++) if (inv[i]?.key === 'wood_club' && (inv[i]!.dur ?? 0) === 0) b.act('drop', { c: 'inv', slot: i });
+      if (b.inv('wood') < 12) b.gather('wood', 12, TREES, 8); if (b.inv('wood') >= 12) { b.craft('wood_club'); b.note('made a Wood Club for the roadside'); } };
     try {
       // ---- 1. find a seep. A player finds it by walking; the bot reads the run's own seep ledger (that is the only shortcut).
       stageName = 'reach a crude seep'; b.wait(200); ensureOilSeeps(b.r);
@@ -108,7 +116,8 @@ describe('ARENA 1 round 2 — New-Game routes on Veyra (engine bot, no grants)',
 
       // ---- 4. Parts: 33 are spent below (research table 6, Glass study 9, bench upgrade 4, Gear 3, two Pipe jobs 4, pump 2, refinery 5)
       stageName = 'Parts from roadside scrap and wrecks';
-      const PARTS = 33; if (!b.gather('spares', PARTS, SALVAGE, 40)) throw new BotStop(`only ${b.inv('spares')}/${PARTS} Parts within reach`);
+      const PARTS = 33; for (let k = 0; k < 12 && b.inv('spares') < PARTS; k++) { club(); const had = b.inv('spares'); b.gather('spares', PARTS, SALVAGE, 5); care(b, camp); if (b.inv('spares') === had) break; }
+      if (b.inv('spares') < PARTS) throw new BotStop(`only ${b.inv('spares')}/${PARTS} Parts within reach`);
       done(stageName, { parts: b.inv('spares'), alsoDropped: Object.fromEntries(['tin_can', 'electronic_parts', 'electric_resistor', 'mechanical_gear', 'metal_pipe', 'iron_plate', 'fuel_can', 'needle_tube'].map(k => [k, b.inv(k)]).filter(([, n]) => (n as number) > 0)) });
       const windfallFuel = b.inv('fuel_can'), windfallPipe = b.inv('metal_pipe'), windfallGear = b.inv('mechanical_gear');
       // G1A-R1: salvage now gives more by-product kinds per node (Relay Wreck components, rack Parts + Fuel), so the 24 slots run
@@ -198,11 +207,13 @@ describe('ARENA 1 round 2 — New-Game routes on Veyra (engine bot, no grants)',
       // G1A: a salvage node now holds 2-3 units where scrap held 4 and a wreck 8, so the ground near camp runs dry sooner.
       // For Parts the bot walks on, as a player would, to four further grounds a window-slide away from the spawn.
       const farGrounds: [number, number][] = [[90, 0], [-90, 0], [0, 90], [0, -90]].map(([dx, dy]) => [spawnG[0] + dx, spawnG[1] + dy] as [number, number]);
-      const need = (item: string, n: number, kinds: string[]) => { for (const g of (kinds === SALVAGE ? [...grounds, ...farGrounds] : grounds)) { if (b.inv(item) >= n) break; b.travel(g[0], g[1]); b.gather(item, n, kinds, 60); care(b, camp); } if (b.inv(item) < n) {
+      const need = (item: string, n: number, kinds: string[]) => { for (const g of (kinds === SALVAGE ? [...grounds, ...farGrounds] : grounds)) { if (b.inv(item) >= n) break; b.travel(g[0], g[1]);
+          if (kinds === SALVAGE) { for (let k = 0; k < 12 && b.inv(item) < n; k++) { club(); const had = b.inv(item); b.gather(item, n, kinds, 5); care(b, camp); if (b.inv(item) === had) break; } }
+          else { b.gather(item, n, kinds, 60); care(b, camp); } } if (b.inv(item) < n) {
           // census of the window the bot stands in: how many such nodes exist, still hold stock, and can be walked to
           const w = getWorld(); let all = 0, stocked = 0, walkable = 0;
           for (let i = 0; i < w.sourceV3.length; i++) if (kinds.includes(w.sourceV3[i] as string)) { all++; const s = sourceAt(b.r, i % WW, Math.floor(i / WW), b.now); if (s && s.stock > 0) { stocked++; if (b.path(i % WW, Math.floor(i / WW), true)) walkable++; } }
-          throw new BotStop(`only ${b.inv(item)}/${n} ${ITEMS[item].name} after searching ${grounds.length} areas; last window census of ${kinds.join('/')}: ${all} nodes, ${stocked} with stock, ${walkable} walkable; carried ${invWeight(b.r).toFixed(1)}/${carryLimit(b.r)} kg`);
+          throw new BotStop(`only ${b.inv(item)}/${n} ${ITEMS[item].name} after searching ${grounds.length} areas; last window census of ${kinds.join('/')}: ${all} nodes, ${stocked} with stock, ${walkable} walkable; carried ${invWeight(b.r).toFixed(1)}/${carryLimit(b.r)} kg; tools carried: ${C(b.r, 'inv').slots.filter(x => x && ITEMS[x.key].dur).map(x => `${x!.key} ${x!.dur}/${ITEMS[x!.key].dur}`).join(', ') || 'none'}; last notes: ${b.log.slice(-4).join(' | ')}`);
         } care(b, camp); };
 
       // The pack is 24 slots / 60 kg. A second hour of play needs storage: two Wood Chests (8 wood each) at camp.

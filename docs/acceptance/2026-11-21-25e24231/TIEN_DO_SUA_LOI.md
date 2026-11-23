@@ -1,6 +1,6 @@
 # Tiến độ sửa lỗi sau nghiệm thu `6d2dec8`
 
-Cập nhật gần nhất: mục cuối tệp ("Kiểm tra trên trình duyệt sau `b698d54a`"). Mã game cuối là `d00d7791`: 252 tệp đạt, 0 đỏ, endurance 15/15. Nhánh `arena/0f6091f9-soul-of-hero`, đã đẩy lên GitHub, PR #65 (nháp), Vercel đang chạy bản này. Các mục phía dưới ghi theo thứ tự thời gian; mục cũ không được viết lại, nên có chỗ nói "chưa làm" cho việc về sau đã làm.
+Cập nhật gần nhất: mục cuối tệp ("Rìu đá khởi đầu"). Mã game cuối là `ff678df9`: 252 tệp đạt, 0 đỏ, endurance 15/15. Nhánh `arena/0f6091f9-soul-of-hero`, đã đẩy lên GitHub, PR #65 (nháp), Vercel đang chạy bản này. Các mục phía dưới ghi theo thứ tự thời gian; mục cũ không được viết lại, nên có chỗ nói "chưa làm" cho việc về sau đã làm.
 
 ## Các commit
 
@@ -520,7 +520,7 @@ Vì sao kẹt, theo mã:
 
 **Chưa kiểm** các đường khác để có gỗ: nhặt dưới đất, đồ rơi từ thú, tháo công trình đã xây, đổi với cư dân (lần thử `i1` cho thấy đổi đồ chạy được, nhưng tôi chưa xem cư dân có gỗ để đổi không). Nên tôi chỉ khẳng định: **người chơi một mình, hết gỗ, gậy gãy, thì không tự chặt được cây nữa.** Sổ tay bước 1 lại viết "Swing LMB at a tree, boulder or bush", dễ hiểu là tay không cũng chặt được.
 
-Đây là việc cần Creator quyết (thứ năm, cùng bốn việc đã nêu): cho tay không chặt cây rất chậm, hay cho gậy gãy vẫn chặt được nhưng yếu, hay để nguyên.
+Đây là việc cần Creator quyết (thứ năm, cùng bốn việc đã nêu): cho tay không chặt cây rất chậm, hay cho gậy gãy vẫn chặt được nhưng yếu, hay để nguyên. **Creator đã quyết ngày 23/11, theo hướng khác: xem mục "Rìu đá khởi đầu" ở cuối tệp.**
 
 ### File lưu cũ có Plank Wall (`m1-retired-wall.mjs`)
 
@@ -575,3 +575,70 @@ Vì sao kẹt, theo mã:
 - Sổ tay chương 3–11 chơi tay.
 - Elder bơi; file lưu có `wall_brick`; "Step ashore"; đi bộ tới bến; dòng "Giving water…" tồn tại bao lâu.
 - Các đường khác để có gỗ khi gậy gãy.
+
+## Rìu đá khởi đầu (quyết định của Creator, 23/11) — mã game `ff678df9`
+
+### Creator quyết gì
+
+Làm theo Last Island:
+
+1. Ván mới bắt đầu với **Rìu đá**, không còn Gậy gỗ.
+2. **Mỗi lần gục rồi tỉnh dậy, người chơi được phát một Rìu đá.**
+3. Tài nguyên thiên nhiên (cây, đá, quặng) thuộc **nhánh rìu**.
+4. Gậy gỗ là **vũ khí**, và dùng để đập đồ ven đường; không chặt cây, không đập đá.
+
+Tài liệu Last Island trong repo (`web/ref/atlas/extracted/LI_MASTER_RESEARCH_REPORT_v5.md`, mục D03) ghi: ba cấp rìu Stone / Iron / Refined Iron lấy cả gỗ lẫn quặng. Tôi dựa vào đó cho điểm 3. Tôi không mở được trang gốc của Last Island từ máy này để đối chiếu thêm.
+
+### Đã đổi gì trong game
+
+| Món | Trước | Sau |
+|---|---|---|
+| Túi khởi đầu | Wood Club, Water Flask, 3 Berries | **Stone Axe**, Water Flask, 3 Berries |
+| Tỉnh dậy sau khi gục | Không được phát gì | **1 Stone Axe** (đồ cũ vẫn nằm trong túi rơi) |
+| Stone Axe | gỗ 3 | gỗ 3, **đá 1, quặng 1** |
+| Iron Axe | gỗ 6 | gỗ 6, **đá 2, quặng 2** |
+| Salvager Axe | gỗ 9 | gỗ 9, **đá 3, quặng 3** |
+| Wood Club | gỗ 1, đá 1, cây bụi 1 | cây bụi 1, **đồ ven đường 2**; không còn gỗ và đá |
+| Ba loại cuốc | không đổi | không đổi (vẫn nhanh hơn rìu cùng cấp với đá và quặng) |
+
+- Số là sức mỗi nhát. Với đồ ven đường (Salvage Bale, Relay Wreck, Fuel Rack) bảng riêng giờ là: rìu đá 1, cuốc 1, dao 2, **Gậy gỗ 2**, Cleaver 3, Machete 4.
+- Câu báo khi dùng sai công cụ với đá, quặng đổi thành "You need an axe or a pickaxe for this."
+- Màn hình chọn nhân vật, tệp `HUONG-DAN.txt` trong ZIP và các bảng thiết kế vật phẩm đã sửa theo.
+- **Cư dân cũng theo luật này**: thợ xây cầm Stone Axe, lính gác cầm Wood Club.
+
+**Tôi tự chọn, Creator chưa duyệt từng con số:** mức đá và quặng của ba rìu (1 / 2 / 3), mức 2 của Gậy gỗ với đồ ven đường, và việc giữ nguyên ba loại cuốc (Last Island không có cuốc).
+
+### Đã kiểm
+
+| Hạng mục | Kết quả |
+|---|---|
+| `typecheck`, `typecheck:tests`, `build` | Sạch |
+| Hồi quy 265 tệp | **252 đạt, 0 đỏ**, 13 tệp chỉ có bài tự chọn; 1.592 bài đạt |
+| Chạy bền 336 giờ, seed 7606, không người chơi | Cổng chiến dịch **15/15**; sơ tán 6, sống sót 32, chết 248 |
+| Trình duyệt, bản dựng thật (`o1-starter-axe.mjs`) | Đạt |
+
+- **Chạy bền:** lượt trước (`d00d7791`) là sơ tán 6, sống sót 40, chết 240. Hai lượt khác nhau ngay từ giờ đầu, vì cư dân cũng đổi công cụ. Số sống sót giảm 8; tôi không tách được bao nhiêu phần là do luật mới. 6 người rời đảo trên tàu tây: h2, h5v, h2l, h8, h4m, h7. File lưu lớn nhất 3,97 MB.
+- **Hồi quy:** lượt đầu có **1 tệp đỏ**, `arena1-round2-newgame-routes` (xem mục dưới). Tôi sửa con bot trong tệp đó rồi chạy lại riêng tệp: 4/4 đạt. Mã game không đổi giữa hai lần. 264 tệp còn lại là kết quả của lượt đầu.
+- **Trình duyệt:** ván mới có Stone Axe (độ bền 180) ở ô 1. Chặt một cây sồi ra gỗ. Để nhân vật chết đói (**dựng sẵn:** máu, đói, khát bị đặt về gần 0), bấm "Rise": túi chỉ có đúng một Stone Axe mới, độ bền 180, game ghi "You wake with a Stone Axe in hand." Không có lỗi trang. Kịch bản chạy hai lần: lần đầu rìu còn đập được một tảng đá ra 2 đá nhưng kịch bản báo trượt do chính nó kiểm sai chỗ; lần hai (kết quả được lưu) không gặp tảng đá nào.
+- Bài kiểm thử mới trong `soh.test.ts`: rìu khởi đầu lấy được gỗ, đá và quặng sắt; Gậy gỗ không lấy được gì từ cây, đá, quặng; mỗi lần tỉnh dậy có đúng một rìu mới và file lưu sau đó hợp lệ.
+
+- **Về mã được đo:** chạy bền và hồi quy chạy trên `ff678df9`. Commit sau đó sửa ngày ghi sai trong hai dòng chú thích của `catalog.ts` và `engine.ts`; bản dựng sau khi sửa **trùng từng byte** với bản dựng của `ff678df9` (216 tệp), nên tôi không chạy lại.
+
+### Điều luật mới CHƯA giải quyết: vẫn kẹt được, lối ra là chết
+
+Tệp đỏ ở lượt đầu chính là chuyện này. Một con bot chơi ván mới như người thật (không được cho đồ) đi tuyến dầu. Ở **phút 26** nó cầm **hai Rìu đá đều gãy** và không còn gỗ: không chặt được cây nào nữa, dù vùng nó đang đứng có 1.526 cây còn gỗ.
+
+- Vì sao gãy: bot dùng cả rìu để đập đồ ven đường (ghi chú có sẵn trong bài kiểm thử nói vậy), nên hai rìu mòn hết. Khi tôi cho bot dùng Gậy gỗ cho việc đó thì nó không kẹt nữa.
+- Theo luật mới, lối ra là **chết rồi tỉnh dậy với rìu mới**. Tôi không tìm thấy nút tự hồi sinh nào trong mã giao diện, nên người chơi phải chờ đói, khát hoặc bị thú giết.
+- Lối khác tôi biết: phần thưởng chương Landfall của sổ tay cho một Rìu đá (một lần); sửa rìu cần 1 đá + 1 gỗ (lại cần gỗ). **Chưa kiểm:** có lấy được gỗ bằng cách đổi đồ với cư dân hay từ thùng, rương ngoài đảo không.
+
+Cách tôi làm tệp đó xanh lại: cho bot chơi đúng luật mới, tức là **làm một Gậy gỗ để đập đồ ven đường** (12 gỗ, sức 2 so với rìu 1), vứt gậy gãy, và xem lại công cụ sau mỗi 5 món thay vì cuối mỗi vùng. Mọi điều kiện đạt của bài giữ nguyên. Đây là sửa cách chơi của bot, không sửa game. Tình huống kẹt vẫn có thật với người chơi nào để gãy hết rìu khi hết gỗ.
+
+**Cần Creator quyết:** chấp nhận như vậy (giống Last Island), hay thêm một lối ra không cần chết. Ví dụ: rìu gãy vẫn chặt được nhưng rất yếu; hoặc thêm nút "bỏ cuộc và tỉnh dậy ở chỗ an toàn".
+
+### Chưa kiểm
+
+- `web/scripts/npc-mere-playtest.mjs` có một dòng kiểm đồ khởi đầu; tôi đổi thành Stone Axe nhưng **chưa chạy** kịch bản này.
+- Trên trình duyệt chưa thử: Gậy gỗ đập đồ ven đường; rìu đập quặng; câu báo mới khi dùng sai công cụ. Ba việc này mới có bài kiểm thử tự động.
+- Các lượt trình duyệt ở mục trước (`j1`…`n1`) chạy trên `d00d7791`, chưa chạy lại trên mã mới. Riêng `j1` (kẹt với Gậy gỗ) không còn đúng với ván mới.
+- Sổ tay vẫn tặng thêm một Stone Axe ở chương Landfall; giờ thành rìu dự phòng. Chưa hỏi Creator có giữ không.

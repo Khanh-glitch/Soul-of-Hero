@@ -244,7 +244,7 @@ export interface SourceDef { name: string; mat: Mat; hp: number; stock: number; 
   /** G1A: target-specific harvest damage per tool id. When present it REPLACES `power[mat]` for this source only, so global tool power and combat damage stay untouched. Unlisted tools fall back to min(1, power[mat]); bare hands do nothing. */
   harvestBy?: Record<string, number> }
 /** G1A: harvest damage against the three industrial salvage sources only (SOH_PROVISIONAL test tuning). */
-/* Creator ruling 2026-11-24 (follow Last Island): natural nodes belong to the axe line; the melee line (Wood Club, Cleaver, Machete) is what works the roadside. */
+/* Creator ruling 2026-11-23 (follow Last Island): natural nodes belong to the axe line; the melee line (Wood Club, Cleaver, Machete) is what works the roadside. */
 export const G1A_HARVEST: Record<string, number> = { stone_axe: 1, stone_pick: 1, knife: 2, wood_club: 2, cleaver: 3, machete: 4, iron_pick: 1, industrial_pick: 1 };
 export const INDUSTRIAL_SALVAGE = ['road_salvage_bale', 'road_relay_wreck', 'road_fuel_rack'] as const;
 export const isIndustrialSalvage = (k: string | null | undefined): boolean => !!k && (INDUSTRIAL_SALVAGE as readonly string[]).includes(k);

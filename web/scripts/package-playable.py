@@ -46,8 +46,9 @@ Không cần npm, không cần mạng. Giữ cửa sổ máy chủ mở khi chơ
 
 New run → chọn nhân vật → Begin the 14 days. Di chuyển WASD hoặc phím mũi tên;
 chuột trái để hành động, E tương tác, I túi đồ, M bản đồ. Esc → Save & quit to title.
-Lượt mới cầm sẵn Wood Club (gậy gỗ) ở ô 1. Đứng sát cây hoặc tảng đá, đặt con trỏ
-vào mục tiêu rồi đánh để lấy gỗ hoặc đá. Động vật không lần theo dấu chân.
+Lượt mới cầm sẵn Stone Axe (rìu đá) ở ô 1. Đứng sát cây hoặc tảng đá, đặt con trỏ
+vào mục tiêu rồi đánh để lấy gỗ hoặc đá. Mỗi lần gục rồi tỉnh dậy bạn lại có một
+Stone Axe mới. Động vật không lần theo dấu chân.
 Khi gặp NPC, chọn việc muốn làm ở “What do you want to do?”. Trong Talk, chọn câu
 hỏi rồi nhấn Ask question. Hỏi về việc đi cùng không phải là mời gia nhập.
 

@@ -597,3 +597,17 @@ Thay đổi luật do agent tự quyết, chưa có Creator duyệt: giới hạ
 
 Đây chưa phải chữ ký cho 13 cổng: các lượt trình duyệt A–I, giao dịch, sơ tán thủ công và chơi tay sổ tay chương 3–11 vẫn chưa làm.
 
+### Rìu đá khởi đầu theo Last Island, và gói chơi được đóng lại (2026-11-23)
+
+Mã game `ff678df9726d7efadca05e3821424a2a99fa26c4` (nhánh `arena/0f6091f9-soul-of-hero`). `web/releases/Soul-of-Hero-Web.zip`: 64.362.208 byte, 220 tệp, SHA256 `20df92bc5770855d074948743ca283fa428e4f3d1f276c6a69d6b374dae7d94c`. Thư mục `game/` trùng từng tệp với `web/dist` của cùng commit. Gói trước (`846827f3…a9c8`, từ `d00d7791`) đã bị thay.
+
+Quyết định của Creator ngày 23/11, thay luật đồ khởi đầu của `373d999`: ván mới bắt đầu với Stone Axe; mỗi lần tỉnh dậy sau khi gục được phát một Stone Axe; cây, đá, quặng thuộc nhánh rìu (ba rìu có thêm sức với đá và quặng: 1 / 2 / 3); Wood Club là vũ khí và đập đồ ven đường (sức 2), không còn chặt cây hay đập đá. Ba loại cuốc giữ nguyên. Các con số do agent chọn, Creator chưa duyệt từng số.
+
+Trên cùng commit: hai lượt typecheck và build sạch; chạy bền 336 giờ seed 7606: cổng chiến dịch 15/15, sơ tán 6, sống sót 32, chết 248 (lượt trước 6 / 40 / 240; hai lượt khác nhau từ giờ đầu). Hồi quy 265 tệp: lượt đầu 251 đạt, **1 đỏ** (`arena1-round2-newgame-routes`: bot tuyến dầu ở phút 26 cầm hai Stone Axe gãy và không còn gỗ), 13 tệp chỉ có bài tự chọn. Sau khi sửa cách chơi của bot trong tệp đó (làm Wood Club để đập đồ ven đường; mã game không đổi) tệp đạt 4/4, tổng 252 đạt, 0 đỏ. Chi tiết: [`TIEN_DO_SUA_LOI.md`](../../../../docs/acceptance/2026-11-21-25e24231/TIEN_DO_SUA_LOI.md), mục cuối.
+
+Còn mở, cần Creator quyết: người chơi để gãy hết rìu khi hết gỗ vẫn kẹt cho tới khi chết và tỉnh dậy với rìu mới; game không có nút tự hồi sinh. Bốn việc mở ở mục trước vẫn còn nguyên.
+
+Commit chứa mục này còn sửa ngày ghi sai trong hai dòng chú thích của `src/game/catalog.ts` và `src/game/engine.ts`. Bản dựng sau khi sửa trùng từng byte với bản dựng của `ff678df9`, nên các lượt đo trên không chạy lại.
+
+Đây chưa phải chữ ký cho 13 cổng.
+

@@ -177,7 +177,7 @@ describe('C01/C05 harvesting & shared hit rules', () => {
     const aim=idle(tx*TILE+8,ty*TILE+8);tick(gs,{...aim,attackPressed:true},16,T0+1);for(let i=1;i<=24;i++)tick(gs,aim,16,T0+1+i*16);
     expect(sourceAt(r,tx,ty)?.hp).toBe(SOURCES.oak.hp-ITEMS.stone_axe.power!.wood!);expect(r.sources[ty*WW+tx+1].stock).toBe(0);setActiveLayout('shipping');
   });
-  // Creator ruling 2026-11-24 (follow Last Island): a run starts with a Stone Axe, and natural nodes belong to the axe line.
+  // Creator ruling 2026-11-23 (follow Last Island): a run starts with a Stone Axe, and natural nodes belong to the axe line.
   it.each([['rock','stone'],['oak','wood'],['iron','iron_ore']] as const)('the starting Stone Axe harvests finite %s', (source,item) => {
     const gs=fresh(),r=gs.run!,w=getWorld();r.creatures=[];const i=w.sourceV3.findIndex((key,j)=>key===source&&[[-1,0],[1,0],[0,-1],[0,1]].some(([dx,dy])=>!blockedAt(r,j%WW+dx,Math.floor(j/WW)+dy)));
     expect(i).toBeGreaterThanOrEqual(0);const tx=i%WW,ty=Math.floor(i/WW),offset=[[-1,0],[1,0],[0,-1],[0,1]].find(([dx,dy])=>!blockedAt(r,tx+dx,ty+dy))!;tp(gs,(tx+offset[0])*TILE+8,(ty+offset[1])*TILE+8);const aim=idle(tx*TILE+8,ty*TILE+8),stock=sourceAt(r,tx,ty)!.stock,initial=totalItems(gs,item);expect(C(r,'inv').slots[0]?.key).toBe('stone_axe');
