@@ -6,7 +6,7 @@ import { describe, expect, it } from 'vitest';
 import { newGame, startRun } from '../src/game/engine';
 import { setActiveLayout } from '../src/game/world';
 import { humanNavigation, type HumanWaypoint } from '../src/game/human-navigation';
-import { loadNavigation, saveNavigation, searches, SEARCH_LIMIT_CELLS } from '../src/game/navigation-save';
+import { loadNavigation, saveNavigation, searches, SEARCH_LIMIT_CELLS, BERTH_SEARCH_LIMIT_CELLS } from '../src/game/navigation-save';
 import { measureWorldWork } from '../src/game/world-work';
 import type { HumanRecord } from '../src/game/humanworld';
 import type { RunState } from '../src/game/core';
@@ -112,10 +112,10 @@ describe('planner memory law: long searches queue, queued turns help, nothing ne
 
 // The berths are far: at h288 of the campaign most residents who wanted to leave needed 49,000-85,000 cells of search
 // to find the west berth. STAGED scenes again — copies of real residents at their own doors on the day-one island.
-describe('planner memory law: a search may run to 96,000 cells, and the second lane holds still instead of being lost', () => {
-  const OLD_LIMIT = 48_000;
+describe('planner memory law: a berth search may run to 96,000 cells, and the second lane holds still instead of being lost', () => {
+  const OLD_LIMIT = SEARCH_LIMIT_CELLS;
 
-  it('a resident whose route needs more than the old 48,000-cell limit gets it, and the search survives a save on the way', () => {
+  it('a resident whose route to the berth needs more than 48,000 cells gets it, and the search survives a save on the way', () => {
     // The builder of Sapgrove: 1,380 steps from the west berth.
     const { r, target, crowd: [h] } = scene(1, 'h4w'), nav = humanNavigation(r);
     let path: HumanWaypoint[] | null = null, calls = 0, savedPast = 0;
@@ -132,8 +132,26 @@ describe('planner memory law: a search may run to 96,000 cells, and the second l
     expect(path!.length).toBeGreaterThan(1300);
     expect(savedPast).toBeGreaterThan(OLD_LIMIT + CALL);
     expect(h.routeSearch!.expanded).toBeGreaterThan(OLD_LIMIT + CALL);
-    expect(h.routeSearch!.expanded).toBeLessThan(SEARCH_LIMIT_CELLS);
+    expect(h.routeSearch!.expanded).toBeLessThan(BERTH_SEARCH_LIMIT_CELLS);
     expect(calls).toBe(Math.ceil(h.routeSearch!.expanded / CALL));                // the save in the middle cost no work
+  }, 600000);
+
+  it('only a berth search goes that far: the same walk to a tile beside the berth stops at 48,000, helped or not', () => {
+    for (const helpers of [0, 4]) {
+      const { r, hw, target, crowd: [h] } = scene(1, 'h4w'), nav = humanNavigation(r);
+      const beside: HumanWaypoint = { ...target, tx: target.tx + 2 };              // two tiles on: the same search, not a berth
+      // The helpers want the berth itself; all but one of them queue behind and spend their turns on the longest search.
+      const others: HumanRecord[] = [];
+      for (let i = 0; i < helpers; i++) { const o = { ...hw.people.h7, actorId: `b${i}`, routeSearch: undefined } as HumanRecord; hw.people[o.actorId] = o; others.push(o); }
+      let rounds = 0;
+      do { rounds++; tick(r); expect(nav.route(h, beside)).toBeNull(); for (const o of others) if (o.routeSearch?.status !== 'FOUND') nav.route(o, target); }
+      while (h.routeSearch!.status === 'PENDING_SEARCH' && rounds < 1000);
+      console.log('BESIDE', helpers, rounds, h.routeSearch);
+      expect(h.routeSearch!.status).toBe('SEARCH_LIMIT');
+      expect(h.routeSearch!.expanded).toBeGreaterThanOrEqual(SEARCH_LIMIT_CELLS);
+      expect(h.routeSearch!.expanded).toBeLessThanOrEqual(SEARCH_LIMIT_CELLS + CALL);   // helpers stop at the limit; his own call then examines its 256
+      if (helpers) expect(rounds).toBeLessThan(Math.ceil(SEARCH_LIMIT_CELLS / CALL) - 20);   // and it really was helped
+    }
   }, 600000);
 
   it('two searches that both run to the limit, with a queue behind: the cap holds and neither loses a cell', () => {
@@ -167,8 +185,15 @@ describe('planner memory law: a search may run to 96,000 cells, and the second l
       }
     }
     console.log('PAIR', { rounds, maxCells, maxPair, maxSecond, tickets, done: [...done] });
+    // No turn is wasted past 48,000 either: once the ten arrive, twelve residents put 256 cells a round into the two far
+    // searches (about 100,000 cells still to examine), then the ten are served two at a time as in the crowd scene.
+    let fair = ALONE + Math.ceil(2 * BERTH_SEARCH_LIMIT_CELLS / (12 * CALL)) + 4;
+    const soloCalls = Math.ceil(41_000 / CALL);                                   // the Greywater cook's search (40,652 cells)
+    for (let waiting = 10; waiting > 0; waiting -= 2) fair += Math.ceil(2 * soloCalls / waiting) + 2;
+    console.log('PAIR FAIR', fair);
+    expect(rounds).toBeLessThanOrEqual(fair);
     expect(done.get('q0')).toBe('SEARCH_LIMIT'); expect(done.get('q1')).toBe('SEARCH_LIMIT');
-    for (const who of ['q0', 'q1']) { expect(hw.people[who].routeSearch!.expanded).toBeGreaterThanOrEqual(SEARCH_LIMIT_CELLS); expect(held.get(who)).toBeGreaterThan(SEARCH_LIMIT_CELLS); }
+    for (const who of ['q0', 'q1']) { expect(hw.people[who].routeSearch!.expanded).toBeGreaterThanOrEqual(BERTH_SEARCH_LIMIT_CELLS); expect(held.get(who)).toBeGreaterThan(BERTH_SEARCH_LIMIT_CELLS); }
     expect(maxSecond).toBeGreaterThan(40_000);                                    // the second really was a long search held still
     expect(maxPair).toBeGreaterThan(140_000);                                     // and the first really ran on beside it
     for (const h of behind) expect([h.actorId, done.get(h.actorId)]).toEqual([h.actorId, 'FOUND']);   // the queue was served afterwards

@@ -1,4 +1,4 @@
-import {searches,failedSearches,componentFailures,SEARCH_LIMIT_CELLS} from './navigation-save';
+import {searches,failedSearches,componentFailures,SEARCH_LIMIT_CELLS,BERTH_SEARCH_LIMIT_CELLS} from './navigation-save';
 import {timedWorldWork} from './world-work';
 import {countWorldWork} from './world-work';
 /** Global physical navigation. Routes contain actual cardinal steps or authored stair edges.
@@ -32,10 +32,11 @@ type SearchNode={p:HumanWaypoint;g:number;score:number};
  *    its mind or died) and is dropped the next time anyone starts a search;
  *  - small searches always run; past SMALL_SEARCH_CELLS only the GROWING_SEARCHES most advanced live
  *    searches grow — they finish first, the rest queue. ("Live" = asked about in the last LIVE_SECONDS;
- *    a search nobody asks about holds no place.) One search stops at SEARCH_LIMIT_CELLS examined, about
- *    104,000 held. The second of the two holds still once the pair passes TWO_LANE_CELLS (so it holds
- *    at most half of that), keeping what it has, and goes on when the first ends: the first can run to
- *    its limit and the pair stays under 150,000 cells, so the cap never has to take the second's work;
+ *    a search nobody asks about holds no place.) One search stops at SEARCH_LIMIT_CELLS examined; one for
+ *    an evacuation berth at BERTH_SEARCH_LIMIT_CELLS, about 104,000 held. The second of the two holds
+ *    still once the pair passes TWO_LANE_CELLS (so it holds at most half of that), keeping what it has,
+ *    and goes on when the first ends: the first can run to its limit and the pair stays under 150,000
+ *    cells, so the cap never has to take the second's work;
  *  - a queued resident's planner turn is not thrown away: it is spent on the most advanced growing
  *    search (`help` below). The planner gives one turn a second to residents away from the player, so
  *    the work done per hour is the same as if every search grew at once — only the memory is bounded;
@@ -50,11 +51,15 @@ type SearchNode={p:HumanWaypoint;g:number;score:number};
  * dropped was arbitrary — often one at 20,000-40,000 cells, about to finish. Replayed from h288 of the
  * 336 h campaign (23 residents asking for a route to a berth): 225,000-313,000 cells of work thrown
  * away per hour and one resident setting out in four hours.
- * Why SEARCH_LIMIT_CELLS went from 48,000 to 96,000 (2026-11-23): the evacuation berths are farther
- * than 48,000 cells of search from most of Greywater. Measured at h288 of two campaigns: routes of
- * 927-1,333 steps to the west berth needed 48,990, 60,591, 62,082 and 84,835 cells, so only the six or
- * so residents living nearest could ever set out, the vessel waits for six passengers, and one death
- * among those six meant nobody left the island. HARD_CELL_CAP is unchanged, so the save is no larger.
+ * Why a berth search may go to 96,000 (2026-11-23): the evacuation berths are farther than 48,000 cells
+ * of search from most of Greywater. Measured at h288 of two campaigns: routes of 927-1,333 steps to the
+ * west berth needed 48,990, 60,591, 62,082 and 84,835 cells, so only the six or so residents living
+ * nearest could ever set out, the vessel waits for six passengers, and one death among those six meant
+ * nobody left the island. HARD_CELL_CAP is unchanged, so the save is no larger.
+ * Why ONLY a berth search: a search re-reads its whole boundary on every call, so one twice as long
+ * costs about four times as much. With 96,000 for every route the first hour of a run took 30 % longer
+ * to settle (a few work routes ran on to 96,000 and failed all the same); berth searches happen once,
+ * in the last two days.
  *  - a SEARCH_LIMIT record keeps only the nearest part of its boundary (it is "unconfirmed", not a proof). */
 const STALE_SECONDS=1800,LIVE_SECONDS=120,SMALL_SEARCH_CELLS=4096,GROWING_SEARCHES=2,TWO_LANE_CELLS=90_000,HARD_CELL_CAP=160_000,LIMIT_BOUNDARY_CELLS=256,FAILED_SEARCHES=256,COMPONENT_CELL_BUDGET=60_000;
 const searchActor=(id:string)=>id.split(':')[3];
@@ -149,10 +154,13 @@ export function humanNavigation(r:RunState,occupied=new Set<string>(),avoidCrowd
   }
   return true;
  };
+ // The boarding tiles of the evacuation service: a search for one of these may run to BERTH_SEARCH_LIMIT_CELLS.
+ const berths=new Set(Object.values(r.humanWorld?.evacuation??{}).map(t=>key({tx:t.siteGx,ty:t.siteGy,floor:0})));
  return {cell,free,legalEdge,enter,route(h:HumanRecord,target:HumanWaypoint,maxVisited=256):HumanWaypoint[]|null{
   const physical=readPhysical();
   const start={tx:h.gx,ty:h.gy,floor:h.floor},startKey=key(start);
   // Binary heap avoids repeated sorting of the search frontier. Every request has an explicit work bound.
+  const limit=berths.has(key(target))?BERTH_SEARCH_LIMIT_CELLS:SEARCH_LIMIT_CELLS;
   const searchKey=`${avoidCrowding}:${r.layoutId}:${r.sourceMap?.rules}:${h.actorId}:${h.community??''}:${!!h.following}:${startKey}>${key(target)}`;
   const status=(status:NonNullable<HumanRecord['routeSearch']>['status'],expanded:number)=>{h.routeSearch={status,target:key(target),expanded};};
   const access=`${r.layoutId}:${r.sourceMap?.rules}:${h.community??''}:${!!h.following}`;
@@ -217,7 +225,8 @@ export function humanNavigation(r:RunState,occupied=new Set<string>(),avoidCrowd
     if(!id||id.split(':')[0]!==String(avoidCrowding))continue;
     const who=r.humanWorld?.people[searchActor(id)];if(!who||who.state==='DEAD'||who.state==='EVACUATED')continue;
     const [floor,tx,ty]=id.slice(id.lastIndexOf('>')+1).split(/[:,]/).map(Number),to={tx,ty,floor},from=s.points.keys().next().value!;
-    while(budget>0&&s.heap.length&&s.expanded<SEARCH_LIMIT_CELLS){
+    const sLimit=berths.has(key(to))?BERTH_SEARCH_LIMIT_CELLS:SEARCH_LIMIT_CELLS;
+    while(budget>0&&s.heap.length&&s.expanded<sLimit){
      const top=s.heap[0],tk=key(top.p);
      if(top.g===s.costs.get(tk)&&(tk===from||free(top.p,who,true))&&atGoal(top.p,to))break;
      const n=heapPop(s.heap),k=tk;budget--;s.expanded++;countWorldWork('routeExpansions');
@@ -241,8 +250,8 @@ export function humanNavigation(r:RunState,occupied=new Set<string>(),avoidCrowd
    if(atGoal(n.p,target)){const result:HumanWaypoint[]=[];for(let q=k;q!==startKey;q=parent.get(q)!)result.push(points.get(q)!);pending.delete(searchKey);const path=result.reverse();if(!path.every(p=>free(p,h,true))){status('PENDING_SEARCH',state.expanded);h.lastWorkBlock='Route changed during planning; checking again.';return null;}status('FOUND',state.expanded);return path;}
    spread(state,h,target,n,k);
   }
-  if(heap.length&&state.expanded<SEARCH_LIMIT_CELLS)enforceCap(state);
-  if(!heap.length||state.expanded>=SEARCH_LIMIT_CELLS){
+  if(heap.length&&state.expanded<limit)enforceCap(state);
+  if(!heap.length||state.expanded>=limit){
    if(!heap.length){components.push({access,checked:physical,resources:resources(state.blocked.values()),points:new Set(points.keys()),blocked:[...state.blocked.values()],expanded:state.expanded});if(components.length>64)components.shift();for(let cells=components.reduce((n,c)=>n+c.points.size,0);cells>COMPONENT_CELL_BUDGET&&components.length>1;)cells-=components.shift()!.points.size;componentFailures.set(r,components);}
    const outcome=!heap.length?'NO_PATH':'SEARCH_LIMIT';status(outcome,state.expanded);const boundary=outcome==='SEARCH_LIMIT'?[...state.blocked.values()].slice(0,LIMIT_BOUNDARY_CELLS):[...state.blocked.values()];failed.set(searchKey,{checked:physical,resources:resources(boundary),blocked:boundary,status:outcome,expanded:state.expanded});if(failed.size>FAILED_SEARCHES)failed.delete(failed.keys().next().value!);pending.delete(searchKey);h.lastWorkBlock=!heap.length?'No legal path through the currently known geometry.':'Physical route search limit reached; destination remains unconfirmed.';}
   else {status('PENDING_SEARCH',state.expanded);h.lastWorkBlock=`Checking physical route (${state.expanded} cells examined; no travel claimed).`;}
