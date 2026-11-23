@@ -1,0 +1,8 @@
+## creaturesInWindow {"fox":2,"hare":6,"boar":1,"grouse":3,"deer":4,"vampire_1":1,"orc_2":1}
+## target {"id":"vy:roam:42:37","type":"vampire_1","hp":38,"x":2280,"y":2360,"d":989}
+## begin {"player":{"hp":100,"x":2216,"y":2360,"dead":false},"m":{"type":"vampire_1","hp":38,"state":"chase","x":2277.36,"y":2360,"d":61}}
+## timeline [[7,89,38,"recover"],[8,89.1,26,"chase"],[17,78.2,14,"attack"],[19,78.3,2,"chase"],[27,78.4,-10,"dead"]]
+## end {"c":{"player":{"hp":78.5,"x":2239,"y":2362,"dead":false},"m":{"type":"vampire_1","hp":-10,"state":"dead","x":2212.9805298308715,"y":2366.416513765559,"d":26}},"hits":4,"hurts":2,"clubAfter":"1:wood_clubx1/d115","receipts":["pickup clothx1"]}
+## combatReceipts ["creature.kill vampire_1:vy:roam:42:37"]
+## errors {"errors":[],"failed":[],"bad":[]}
+## verdict "PASS"

@@ -1,6 +1,6 @@
 # Tiến độ sửa lỗi sau nghiệm thu `6d2dec8`
 
-Cập nhật: 2026-11-22 (lần 7 — sổ tay tân thủ mới, lượt khoá SHA `0d9cc3b3`: 247 tệp đạt, 0 đỏ, endurance 15/15). Nhánh `arena/0f6091f9-soul-of-hero`. Chưa đẩy lên GitHub, chưa có PR, chưa phát hành.
+Cập nhật gần nhất: mục cuối tệp ("Kiểm tra trên trình duyệt sau `b698d54a`"). Mã game cuối là `d00d7791`: 252 tệp đạt, 0 đỏ, endurance 15/15. Nhánh `arena/0f6091f9-soul-of-hero`, đã đẩy lên GitHub, PR #65 (nháp), Vercel đang chạy bản này. Các mục phía dưới ghi theo thứ tự thời gian; mục cũ không được viết lại, nên có chỗ nói "chưa làm" cho việc về sau đã làm.
 
 ## Các commit
 
@@ -299,7 +299,7 @@ Ba chương đầu là "Gói khởi đầu": quà chính là món mà chương k
 ## Chưa làm
 
 - Ba tệp `audit-closure`, `review-r2-acceptance`, `economic-network-m2`: Creator đã loại khỏi điều kiện nghiệm thu (21/11). Chúng **chưa được kiểm chứng** trên mã cuối; phép đếm công thức tôi sửa trong `audit-closure` cũng chưa từng được chạy.
-- Một khả năng kẹt của người chơi chưa kiểm tra trong game thật: Gậy gỗ và rìu cùng hỏng khi trong túi không còn gỗ (bot đã gặp đúng tình huống này).
+- Một khả năng kẹt của người chơi: Gậy gỗ và rìu cùng hỏng khi trong túi không còn gỗ (bot đã gặp đúng tình huống này). **Về sau đã kiểm trong game và xác nhận là có thật**, xem mục cuối tệp.
 - Kiểm tra trên trình duyệt còn lại: cảnh A–I đầy đủ, giao dịch với NPC, sơ tán thủ công; Elder bơi qua biển chưa từng được nhìn thấy trên màn hình.
 - Chơi tay trên trình duyệt chương 3–11 của sổ tay.
 - Từ điển vật phẩm – quái – cây: Creator quyết định làm sau final.
@@ -466,7 +466,7 @@ Bốn lượt gần nhất (`eca8d96`, `0d9cc3b3`, `4ab22fac`, `6c4b8933`) cho c
 - Lượt 13 **trùng mã băm từng giờ với lượt 10 tới hết giờ 288**, khác từ giờ 289. Tức hai chỗ sửa không đổi gì trong 12 ngày đầu; chúng chỉ có tác dụng khi tàu mở.
 - Tàu tây đủ 6 người và rời bến trong giờ 290, cập bến trong giờ 294, đúng như lần chạy lại đã báo trước. Hành khách: h2l, h4w, h4u, h2, h7, h8. Ba người trong đó (h2l, h4w, h4u) là người mà giới hạn cũ không cho tìm ra đường.
 - 5 người được phòng thủ sống sót (h2c, h4h, h5h, h6p, h6s).
-- **9 người lên tàu, 6 người đi được.** 3 người còn lại lên một tàu khác trong giờ 289–291; tàu đó không bao giờ đủ 6 người, và cả ba gục trên tàu ở giờ 298 và giờ 300 rồi bị đưa lên bờ. Đây là vấn đề "người trên tàu không ăn uống khi chờ" nêu ở mục 5, chưa sửa.
+- **9 người lên tàu, 6 người đi được.** 3 người còn lại (h5f, h1h, h2f) lên tàu ở bến Hook trong giờ 289–291; tàu đó không bao giờ đủ 6 người, và cả ba gục trên tàu ở giờ 298 và giờ 300 rồi bị đưa lên bờ. Đây là vấn đề "người trên tàu không ăn uống khi chờ" nêu ở mục 5, chưa sửa.
 - **File lưu lớn nhất tăng 0,14 MB**, còn cách mức 5 MB của localStorage 0,73 MB. 5 giờ trong 336 giờ có file lưu trên 4,0 MB (lượt 10: 4 giờ).
 - Vẫn chỉ là **một** diễn biến của một seed. Điều khác trước: tàu tây nay có 6 người tìm được đường trong 2 giờ đầu ở cả hai diễn biến đã thử, thay vì cần đúng 6 người cụ thể.
 
@@ -486,3 +486,92 @@ Bốn lượt gần nhất (`eca8d96`, `0d9cc3b3`, `4ab22fac`, `6c4b8933`) cho c
 - Lần chạy đầu của kịch bản báo trượt vì chính kịch bản đòi khát ≥ 30, trong khi 0,6 giây sau khi uống khát đã là 29,999. Tôi sửa điều kiện của kịch bản (khát trong khoảng 29–30, bình còn 1 ngụm, lòng tin 55) rồi chạy lại. Game không đổi giữa hai lần.
 
 **Chưa làm trong đợt này:** các mục kiểm tra trên trình duyệt còn nợ từ trước vẫn còn nguyên (sổ tay chương 3–11, sơ tán thủ công, Elder bơi, cảnh A–I, đánh với thú biết đánh trả, trường hợp kẹt khi gậy và rìu cùng hỏng). Sương mù một lớp mới chỉ được xem qua ảnh chụp của công cụ đo.
+
+## Kiểm tra trên trình duyệt sau `b698d54a`
+
+Mã game không đổi (`d00d7791`). Đợt này chỉ thêm kết quả kiểm tra, kịch bản và ảnh ở `browser-checks/`.
+
+**Cách làm, áp dụng cho mọi dòng dưới đây:** trình duyệt không màn hình, 640×360, bản dựng phát hành ở cổng 4174. Kịch bản bấm phím và bấm nút thật của game, nhưng **mỗi kịch bản đều dựng sẵn một phần cảnh** (ghi rõ ở từng dòng). Đây không phải người chơi tay từ đầu đến cuối.
+
+| Việc | Kết quả | Phần dựng sẵn |
+|---|---|---|
+| Kẹt khi Gậy gỗ hỏng mà hết gỗ | **Có thật** | Độ bền gậy đặt về 1, gỗ trong túi bị xoá |
+| Mở file lưu cũ có Plank Wall | Đạt | Sửa chữ trong file lưu thành `wall_plank`, tính lại mã kiểm |
+| Xem cuộc sơ tán của cư dân | Đạt | File lưu giờ 288 của lượt 13, đồng hồ đẩy thêm 7 giờ |
+| Người chơi tự lên tàu và rời đảo | Đạt | Cùng file lưu; người chơi được bế tới bến tây; đồng hồ đẩy hai lần |
+| Đánh với thú biết đánh trả | Đạt | Người chơi được đặt cách con thú khoảng 4 ô |
+| Elder tấn công làng lúc Ragnarok | Đạt (2 trong 6 Elder) | File lưu giờ 312, đồng hồ đẩy 14,5 giờ, người chơi được bế tới cạnh Elder |
+| Elder bơi qua biển | **Không xem được** | Cách bế người chơi không dùng được giữa biển |
+
+### Kẹt khi Gậy gỗ hỏng (`j1-softlock.mjs`)
+
+- Ván mới cho: Wood Club (độ bền 120), Water Flask, 3 Berries.
+- Gậy còn tốt chém trúng cây liễu (game ghi biên nhận `harvest willow`); độ bền gậy 120 → 116.
+- Gậy gãy bằng một nhát chém thật. Nó vẫn nằm ở ô 1 với độ bền 0. Ghi chú trong game: "Craft a replacement [C] or repair it at your Workbench [E]".
+- Tay không chém 12 nhát vào cùng cây đó: game báo "Too slow with this — an axe would fell it." Không rơi gỗ.
+- Bảng chế tạo lúc đó chỉ có một nút "Craft", là Fruit Juice.
+- Gợi ý đầu ván vẫn ghi "Gather by hand 0/3".
+
+Vì sao kẹt, theo mã:
+
+- Gỗ chỉ đến từ năm loại cây. Không công thức nào làm ra gỗ.
+- Tay không chỉ có sức với cây bụi, không có sức với cây thân gỗ.
+- Wood Club cần 12 gỗ; sửa nó cần 3 gỗ và một Workbench. Rìu đá cần 3 gỗ.
+
+**Chưa kiểm** các đường khác để có gỗ: nhặt dưới đất, đồ rơi từ thú, tháo công trình đã xây, đổi với cư dân (lần thử `i1` cho thấy đổi đồ chạy được, nhưng tôi chưa xem cư dân có gỗ để đổi không). Nên tôi chỉ khẳng định: **người chơi một mình, hết gỗ, gậy gãy, thì không tự chặt được cây nữa.** Sổ tay bước 1 lại viết "Swing LMB at a tree, boulder or bush", dễ hiểu là tay không cũng chặt được.
+
+Đây là việc cần Creator quyết (thứ năm, cùng bốn việc đã nêu): cho tay không chặt cây rất chậm, hay cho gậy gãy vẫn chặt được nhưng yếu, hay để nguyên.
+
+### File lưu cũ có Plank Wall (`m1-retired-wall.mjs`)
+
+- Đặt một Wood Wall trong game, lưu, rồi sửa file lưu thành `wall_plank` với 240 máu.
+- Mở lại: có nút "Continue"; bức tường hiện ra là Wood Wall, máu 159,98 trên 160; không có lỗi trang.
+- **Chưa thử** `wall_brick` (Iron-braced Wall).
+
+### Xem cuộc sơ tán (`k1-evac-watch.mjs`)
+
+- File lưu giờ 288 của lượt 13, không sửa gì. Bấm "Continue" khi đồng hồ đã qua 7 giờ: game tính bù 165 giây rồi vào được.
+- Ở giờ 295: 6 người đã rời đảo (h2, h7, h8, h2l, h4u, h4w), đúng như lượt 13 chạy không trình duyệt. Tàu tây đã đi (rời bến giờ 289,7, tới nơi giờ 293,7). Tàu Hook còn chờ với h5f, h1h, h2f. Tàu nam trống.
+- Bảng "Return Chronicle" ghi 7,0 giờ vắng mặt, 24.709 sự kiện. Không có lỗi trang.
+
+### Người chơi tự rời đảo (`k2-evac-player.mjs`)
+
+1. "Continue" → "You have fallen" → "Rise": máu 60, đói 40, khát 40.
+2. Đứng cách cột hiệu bến tây một ô, bấm E → "Request a Seat…" → "Board the Vessel". Bảng ghi "Taking passengers · 1/6 aboard", "You hold a seat. Stay at the berth until departure. Arrival ends the run.", và có nút "Step ashore". Game lưu được.
+3. Quay lại sau 2,5 giờ: tàu đang trên biển, 6/6 người (người chơi, h2l, h4w, h4u, h2, h7). Màn hình: "Under way | Safe water in 2h 56m | Seat 1 · 6/6 aboard · Hull 96".
+4. Quay lại sau 4,5 giờ nữa: ván kết thúc. "Evacuated from the Island"; "Reached safe water: 5 · Survived on the island: 0 · Died: 233 · Fate unknown: 48"; hai thành tựu "Witness the End" và "Got Out"; nút "Continue to Title".
+5. Không có lỗi trang.
+
+Điều cần biết:
+
+- Người chơi lấy đúng chỗ mà h8 có trong lượt 13. h8 không đi được chuyến đó.
+- Trong lúc tàu trên biển, màn hình vẫn hiện "1 ALERTS" và "NEXT: Review the current alerts before heading out." Dòng này không hợp cảnh. Chưa sửa.
+- **Chưa thử:** đi bộ tới bến (kịch bản bế người chơi tới), nút "Step ashore", lên một tàu đã đầy.
+
+### Đánh với thú biết đánh trả (`l1-fight.mjs`)
+
+- Ván mới, con thú là `vampire_1` (38 máu). Người chơi đi tới và chém bằng Wood Club.
+- 4 nhát trúng, mỗi nhát 12 máu: 38 → 26 → 14 → 2 → chết. Con thú đánh trúng người chơi 2 lần: máu 100 → 89 → 78.
+- Có biên nhận `creature.kill`; rơi ra 1 Cloth và nhặt được. Độ bền gậy còn 115 trên 120. Không có lỗi trang.
+- Mới thử một loài, một trận. Hai lần chạy trước đó hỏng do kịch bản (chọn loài không có trong ván; không tới gần được slime), không phải do game.
+
+### Elder lúc Ragnarok (`n1-elder-sea.mjs`)
+
+- File lưu giờ 312 của lượt 13, mở ở giờ 326,5 (game tính bù 274–284 giây). Cả sáu Elder đã rời hang; Aion, Atlas, Typhon đang ở làng mục tiêu.
+- Bế người chơi tới cạnh **Aion** (ở Confluence) rồi "Rise": Aion chuyển từ đứng yên sang đuổi, rồi đánh; người chơi mất 17 máu (60 → 43) trong 3,5 giây. Thanh máu Elder hiện trên đầu màn hình: "Aion · The Unmoving Clock · AWAKENED · 680/680".
+- Làm lại với **Atlas** (ở Gull Net Camp): mất 19 máu (60 → 41) trong 3 giây; "Atlas · Bearer of the Sky-Weight · 820/820". Ảnh có một cư dân đang gác kho ngay cạnh.
+- Không có lỗi trang.
+- **Elder bơi qua biển: không xem được.** Ở giờ 318,5 Atlas đang ở giữa biển (game ghi "434 ô phải vượt, 406 ô là biển"). Khi kịch bản bế người chơi vào vùng chỉ có biển, game ném lỗi "No walkable terrain in this Veyra U=0.5 window". Lỗi này do cách bế của kịch bản gây ra. **Tôi không biết** người chơi thật có tự tới được vùng như thế không (bằng thuyền chẳng hạn); nếu tới được thì đó là lỗi của game. Chưa kiểm.
+
+### Hai câu trong tài liệu đã đối chiếu lại
+
+- "`npc-runtime-throughput` đạt ở 93 giây": số đo là 92.950 ms. Đúng.
+- "h2l tìm ra đường ở ô thứ 47.737": có trong `evac-tools/result-run9-state-long-searches-2h.txt`. Đúng.
+- Câu "3 người lên một tàu khác" ở trên đã sửa thành tên tàu: tàu ở bến Hook.
+
+### Vẫn còn nợ
+
+- Cảnh A–I của tháp điều khiển: B (tám nghề), C (chiêu mộ, đi theo, thả), D (mặc cả bị từ chối, đe doạ, cướp), F (rời game và quay lại bằng thời gian thật), I chưa làm. E, G, H mới có các mảnh nêu trên, đều có dựng sẵn.
+- Sổ tay chương 3–11 chơi tay.
+- Elder bơi; file lưu có `wall_brick`; "Step ashore"; đi bộ tới bến; dòng "Giving water…" tồn tại bao lâu.
+- Các đường khác để có gỗ khi gậy gãy.
