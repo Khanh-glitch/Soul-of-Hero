@@ -1,0 +1,2 @@
+{"case":"natural-cook-supply","openingDeficits":8,"supplied":[{"actor":"hm","recipe":"grilled_mushroom"}],"drop":{"at":1794729647643.8613,"jobId":"hj2u6","sourceId":"0:2738558","workerId":"hm","fromUid":"s2uf","intoUid":"s2uf","qty":1,"key":"mushroom"},"paidMeals":0}
+ ✓ tests/npc-natural-cook.test.ts > normal New Game has no opening meal inputs; only a physical delivery can close the supply deficit 60837ms

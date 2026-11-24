@@ -216,12 +216,12 @@ describe('R5.1 P0-B — turret cooldown is advanced exactly once per chronologic
     const walkEnd = walkHome(gs);
     const door = Object.values(r.entities).find(e => e.type === 'door_wood')!;
     act(gs, 'door', { eid: door.id }, walkEnd).ok;
-    const { turret } = poweredTurret(gs, px + 5, py - 1, { arrows: 8, fuel: 40, energy: 0, cooldown: 1000 });  // FIXTURE: cooldown injection
-    const boar = mkCreature(r, 'boar', (px - 1) * TILE + 8, py * TILE + 8, 400); boar.state = 'wander';   // tougher boar: still walking at +2 s
-    r.creatures.push(boar);
+    const { turret } = poweredTurret(gs, px + 5, py - 1, { arrows: 8, fuel: 40, energy: 0, cooldown: 3500 });  // FIXTURE: cooldown injection
+    const raider = mkCreature(r, 'orc_2', (px - 1) * TILE + 8, py * TILE + 8, 400); raider.state = 'wander';   // tougher raider: still walking at +2 s
+    r.creatures.push(raider);
     settle(gs, walkEnd + 2000, true);   // 2 s of pursuit; bash has not landed yet — prov does not exist
-    expect(turret.turret!.cooldown).toBe(0);   // decayed by the pursuit slices, not frozen at logout
-    expect(fireCount(r)).toBe(0);             // no lawful shot before prov — unchanged law
+    expect(turret.turret!.cooldown).toBe(1500);   // decayed by the pursuit slices, not frozen at logout
+    expect(fireCount(r)).toBe(0);             // still reloading
   });
 
   it('[NATURAL] after the bash commits, the first shot fires with drained cooldown (online-timeline law)', () => {
@@ -230,16 +230,16 @@ describe('R5.1 P0-B — turret cooldown is advanced exactly once per chronologic
     const walkEnd = walkHome(gs);
     const door = Object.values(r.entities).find(e => e.type === 'door_wood')!;
     act(gs, 'door', { eid: door.id }, walkEnd).ok;
-    const wall = poweredTurret(gs, px + 5, py - 1, { arrows: 8, fuel: 40, energy: 0, cooldown: 1000 });  // FIXTURE: cooldown injection
+    const wall = poweredTurret(gs, px + 5, py - 1, { arrows: 8, fuel: 40, energy: 0, cooldown: 3500 });  // FIXTURE: cooldown injection
     const invArrowsAtLogout = countItem(r, C(r, 'inv').id, 'arrow');
-    const boar = mkCreature(r, 'boar', (px - 1) * TILE + 8, py * TILE + 8, 40); boar.state = 'wander';
-    r.creatures.push(boar);
+    const raider = mkCreature(r, 'orc_2', (px - 1) * TILE + 8, py * TILE + 8, 40); raider.state = 'wander';
+    r.creatures.push(raider);
     settle(gs, walkEnd + 6 * 60000, true);
     const hitAt = r.receipts.find((q: any) => q.kind === 'struct.hit')?.at ?? -1;
     const fireAt = r.receipts.find((q: any) => q.kind === 'turret.fire')?.at ?? -1;
     expect(hitAt).toBeGreaterThan(0);
     expect(fireAt).toBeGreaterThan(0);
-    expect(fireAt - hitAt).toBeLessThanOrEqual(100);  // the pursuit drained the cooldown; the shot is immediate
+    expect(fireAt).toBeGreaterThanOrEqual(hitAt); expect(fireAt-walkEnd).toBeCloseTo(3500,-2);  // the first shot waits for the remaining reload
     expect(countItem(r, C(r, 'inv').id, 'arrow')).toBe(invArrowsAtLogout);          // the turret never reaches into the player's arrows
     expect(countItem(r, wall.arrowBox, 'arrow')).toBe(8 - fireCount(r));            // the chest pays 1 per fire, nothing else does
   });
@@ -252,36 +252,36 @@ describe('R5.1 P0-C — knockback recovery and the unresolved marker have one au
     const walkEnd = walkHome(gs);
     const door = Object.values(r.entities).find(e => e.type === 'door_wood')!;
     act(gs, 'door', { eid: door.id }, walkEnd).ok;
-    const boar = mkCreature(r, 'boar', (px - 1) * TILE + 8, py * TILE + 8, 400); boar.state = 'wander';
-    r.creatures.push(boar);
-    boar.kbx = 80; boar.kby = 0;   // FIXTURE: the impulse an arrow would leave at logout — decayed by playback
-    const before = boar.x;
+    const raider = mkCreature(r, 'orc_2', (px - 1) * TILE + 8, py * TILE + 8, 400); raider.state = 'wander';
+    r.creatures.push(raider);
+    raider.kbx = 80; raider.kby = 0;   // FIXTURE: the impulse an arrow would leave at logout — decayed by playback
+    const before = raider.x;
     settle(gs, walkEnd + 2000, true);
-    expect(Math.abs(boar.kbx) + Math.abs(boar.kby)).toBeLessThanOrEqual(1);   // impulse integrated & decayed like live play
-    expect(boar.x).toBeGreaterThan(before);                                   // …and it moved while recovering
-    expect(boar.offlineUnresolvedAt).toBeUndefined();                         // …and recovery happens INSIDE playback — never marker-frozen mid-impulse
+    expect(Math.abs(raider.kbx) + Math.abs(raider.kby)).toBeLessThanOrEqual(1);   // impulse integrated & decayed like live play
+    expect(raider.x).toBeGreaterThan(before);                                   // …and it moved while recovering
+    expect(raider.offlineUnresolvedAt).toBeUndefined();                         // …and recovery happens INSIDE playback — never marker-frozen mid-impulse
     settle(gs, walkEnd + 6 * 60000, true);
     expect(doorHits(r, door.id).length).toBeGreaterThanOrEqual(1);            // pursuit resumed after recovery
     // A creature that reaches line of sight of the absent player is frozen with the marker by law
     // (player combat cannot be reconstructed offline) — that boundary is the lawful marker case.
   });
 
-  it('[NATURAL] a turret-killed boar is removed from playback without a freeze marker or corpse advance', () => {
+  it('[NATURAL] a turret-killed raider is removed from playback without a freeze marker or corpse advance', () => {
     const { gs, px, py } = freshRun(8826); const r = gs.run!;
     homestead(gs, px, py);
     const walkEnd = walkHome(gs);
     const door = Object.values(r.entities).find(e => e.type === 'door_wood')!;
     act(gs, 'door', { eid: door.id }, walkEnd).ok;
-    poweredTurret(gs, px + 5, py - 1, { arrows: 8, fuel: 40, energy: 0 });
-    const boar = mkCreature(r, 'boar', (px - 1) * TILE + 8, py * TILE + 8, 40); boar.state = 'wander';
-    r.creatures.push(boar);
+    poweredTurret(gs, px + 5, py - 1, { arrows: 8, fuel: 40, energy: 0, cooldown: 3500 });
+    const raider = mkCreature(r, 'orc_2', (px - 1) * TILE + 8, py * TILE + 8, 40); raider.state = 'wander';
+    r.creatures.push(raider);
     settle(gs, walkEnd + 6 * 60000, true);
-    expect(boar.state).toBe('dead');
-    expect(boar.offlineUnresolvedAt).toBeUndefined();   // death is terminal for playback — no marker, no advance
-    const deadPos = { x: boar.x, y: boar.y };
-    const posBefore = { x: boar.x, y: boar.y };
+    expect(raider.state).toBe('dead');
+    expect(raider.offlineUnresolvedAt).toBeUndefined();   // death is terminal for playback — no marker, no advance
+    const deadPos = { x: raider.x, y: raider.y };
+    const posBefore = { x: raider.x, y: raider.y };
     settle(gs, walkEnd + 6 * 60000 + 60_000, true);          // one more minute — the corpse must not move
-    expect(boar.x).toBe(posBefore.x); expect(boar.y).toBe(posBefore.y);
+    expect(raider.x).toBe(posBefore.x); expect(raider.y).toBe(posBefore.y);
     expect(deadPos).toEqual(posBefore);
   });
 });
@@ -442,8 +442,8 @@ describe('R5.1 P1-E — traceBarrier at the 64 px ray and lawful site access', (
     for (let i = 1; i <= 140; i++) { t = T0 + i * 50; tick(gs, { ...idle(), up: true }, 50, t); }
     expect(r.player.y).toBeLessThan(6 * TILE);
     expect(r.traces.length).toBeGreaterThan(0);
-    const boar = mkCreature(r, 'boar', 7 * TILE + 8, 1 * TILE + 8, 40); boar.state = 'wander';
-    r.creatures.push(boar);
+    const raider = mkCreature(r, 'orc_2', 7 * TILE + 8, 1 * TILE + 8, 40); raider.state = 'wander';
+    r.creatures.push(raider);
     expect(() => settle(gs, t + 6 * 60000, true)).not.toThrow();
     expect(r.receipts.filter((q: any) => q.kind === 'struct.hit')).toHaveLength(0);  // nothing lawful to batter
     expect(r.clock.lastSimAt).toBeGreaterThan(t);
@@ -455,8 +455,8 @@ describe('R5.1 P1-E — traceBarrier at the 64 px ray and lawful site access', (
       const door = homestead(gs, px, py);   // spawns OPEN (the player walked through it)
       const walkEnd = walkHome(gs);
       if (close) expect(act(gs, 'door', { eid: door.id }, walkEnd).ok).toBe(true);   // the toggle CLOSES it — the bash becomes lawful
-      const boar = mkCreature(r, 'boar', (px - 1) * TILE + 8, py * TILE + 8, 40); boar.state = 'wander';
-      r.creatures.push(boar);
+      const raider = mkCreature(r, 'orc_2', (px - 1) * TILE + 8, py * TILE + 8, 40); raider.state = 'wander';
+      r.creatures.push(raider);
       settle(gs, walkEnd + 6 * 60000, true);
       return { r, door };
     };

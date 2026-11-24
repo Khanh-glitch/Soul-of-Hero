@@ -1,0 +1,10 @@
+## structsBefore []
+## tries [[-48,0,true]]
+## builtWall {"id":"e2tc","type":"wall_wood","hp":159.99814814814812,"maxHp":160,"tx":133,"ty":72}
+## savedByGame {"has":true,"type":"wall_wood","kb":787,"textHasId":true,"nEnt":2,"rev":5,"live":5,"lastSave":{"ok":true,"category":"ok","revision":5,"localStatus":"ok","idbStatus":"ok"}}
+## editedSave {"checksumWasValid":true,"was":{"type":"wall_wood","hp":159.99574074074067,"maxHp":160},"now":{"type":"wall_plank","hp":240,"maxHp":240},"idb":"written"}
+## continueOffered 1
+## wallAfterLoad {"id":"e2tc","type":"wall_wood","hp":159.98055555520827,"maxHp":160,"tx":133,"ty":72}
+## anyRetiredLeft 0
+## errors {"errors":[],"failed":[],"bad":[]}
+## verdict "PASS"

@@ -1,0 +1,315 @@
+{
+ "schema": "soh-arena1-round2-newgame-routes-v1",
+ "generated_by": "web/tests/arena1-round2-newgame-routes.test.ts (SOH_WRITE_ARENA1=1)",
+ "method": "ENGINE_BOT: real New Game on Veyra; movement and swings are tick() input, everything else is a dispatch() intent; no granted items, stations, recipes or positions; creatures untouched. NOT a browser play-through. Times are lower bounds (the bot knows the source map).",
+ "route_oil": {
+  "seed": 7,
+  "startingPack": [
+   "stone_axe x1",
+   "water_flask x1",
+   "berries x3"
+  ],
+  "startingRecipes": 73,
+  "stages": [
+   {
+    "stage": "reach a crude seep",
+    "status": "PROVEN",
+    "atMinute": 0.4,
+    "detail": {
+     "seepsInStartWindow": 5,
+     "walkedTiles": 77,
+     "seepStock": 60
+    }
+   },
+   {
+    "stage": "camp (campfire, stone tools, furnace)",
+    "status": "PROVEN",
+    "atMinute": 1.6,
+    "detail": {
+     "tools": [
+      "stone_pick",
+      "stone_axe"
+     ]
+    }
+   },
+   {
+    "stage": "iron ore -> 22 ingots",
+    "status": "PROVEN",
+    "atMinute": 8.1,
+    "detail": {
+     "ingots": 22
+    }
+   },
+   {
+    "stage": "Parts from roadside scrap and wrecks",
+    "status": "PROVEN",
+    "atMinute": 10.4,
+    "detail": {
+     "parts": 38,
+     "alsoDropped": {
+      "tin_can": 9,
+      "electronic_parts": 4,
+      "electric_resistor": 2,
+      "mechanical_gear": 1,
+      "fuel_can": 1
+     }
+    }
+   },
+   {
+    "stage": "research Glass",
+    "status": "PROVEN",
+    "atMinute": 12.3,
+    "detail": {
+     "cost": "9 Parts, 45 s"
+    }
+   },
+   {
+    "stage": "Glass, Charcoal, Refined Iron",
+    "status": "PROVEN",
+    "atMinute": 15.2,
+    "detail": {
+     "glass": 4,
+     "refined": 4
+    }
+   },
+   {
+    "stage": "Workbench level 2 beside the seep",
+    "status": "PROVEN",
+    "atMinute": 15.4,
+    "detail": {
+     "upgradeBill": [
+      [
+       "iron_ingot",
+       2
+      ],
+      [
+       "spares",
+       4
+      ]
+     ]
+    }
+   },
+   {
+    "stage": "craft Gear and Pipe",
+    "status": "PROVEN",
+    "atMinute": 16.4,
+    "detail": {
+     "gear": 1,
+     "pipe": 4
+    }
+   },
+   {
+    "stage": "Oil Pump placed on the seep",
+    "status": "PROVEN",
+    "atMinute": 16.4,
+    "detail": {
+     "refusedOffSeep": "This tile is not an oil site. Stand the Oil Pump on a crude seep: a dark, shining pool on open ground."
+    }
+   },
+   {
+    "stage": "pump Crude Petroleum",
+    "status": "PROVEN",
+    "atMinute": 17.7,
+    "detail": {
+     "crude": 6,
+     "seepStockLeft": 54,
+     "secondsEach": 12
+    }
+   },
+   {
+    "stage": "Refinery -> Fuel Canister",
+    "status": "PROVEN",
+    "atMinute": 18.5,
+    "detail": {
+     "fuelCans": 2,
+     "bill": [
+      [
+       "crude_petroleum",
+       3
+      ],
+      [
+       "glass",
+       1
+      ]
+     ]
+    }
+   }
+  ],
+  "extensions": [
+   {
+    "stage": "Electric Resistor from a wreck",
+    "status": "PROVEN",
+    "atMinute": 18.5,
+    "detail": {
+     "carried": 2
+    }
+   },
+   {
+    "stage": "Wooden Ladder: study, craft, lean on a cliff, cross on foot",
+    "status": "PROVEN",
+    "atMinute": 25.9,
+    "detail": {
+     "windowsSearched": [
+      {
+       "around": [
+        1881,
+        689
+       ],
+       "cliffTiles": 77,
+       "oneTileFaces": 16
+      }
+     ],
+     "cliffTilesInWindow": 77,
+     "oneTileFaces": 16,
+     "facesTried": 1,
+     "refusals": {},
+     "tilesFromCamp": 139,
+     "crossedFrom": [
+      1822,
+      767
+     ],
+     "over": [
+      1822,
+      768
+     ],
+     "crossedTo": [
+      1822,
+      769
+     ],
+     "farSideNeededADetourBefore": true
+    }
+   },
+   {
+    "stage": "Large Furnace: study, plates, craft, place, smelt",
+    "status": "PROVEN",
+    "atMinute": 40.5,
+    "detail": {
+     "smeltSeconds": 5,
+     "ordinaryFurnaceSeconds": 10,
+     "packBillKg": 59.2,
+     "carryLimitKg": 60,
+     "packKg": 30
+    }
+   },
+   {
+    "stage": "Iron Plate Pants: study, hunt hide, sew, wear",
+    "status": "PROVEN",
+    "atMinute": 60.1,
+    "detail": {
+     "worn": [
+      null,
+      null,
+      null,
+      "iron_plate_pants",
+      null
+     ]
+    }
+   }
+  ],
+  "end": {
+   "seed": 7,
+   "minutes": 60.1,
+   "ticks": 71913,
+   "hp": 86,
+   "hunger": 73,
+   "thirst": 57,
+   "drinks": 6,
+   "toolsRemade": 0,
+   "toolRepairs": 3,
+   "toolsCrafted": {
+    "deploy_campfire": 1,
+    "stone_pick": 1,
+    "stone_axe": 1,
+    "deploy_furnace": 1,
+    "wood_spear": 1,
+    "wood_club": 2,
+    "deploy_research": 1,
+    "deploy_workbench": 1,
+    "deploy_oil_pump": 1,
+    "deploy_refinery": 1,
+    "wooden_ladder": 1,
+    "deploy_chest_small": 2,
+    "large_furnace": 1
+   },
+   "toolsBroken": {
+    "stone_axe": 1
+   },
+   "toolWear": {
+    "stone_axe": {
+     "fight": 10,
+     "wood": 357,
+     "stone": 36,
+     "plant": 170,
+     "other": 1
+    },
+    "stone_pick": {
+     "stone": 54,
+     "ore": 124
+    },
+    "wood_spear": {
+     "fight": 33,
+     "scrap": 1,
+     "plant": 4,
+     "other": 5
+    },
+    "wood_club": {
+     "scrap": 94
+    }
+   },
+   "nodesStruckFromAnotherSide": 4,
+   "stacksStashed": 27,
+   "bandages": 2,
+   "hunts": 14,
+   "refuels": 0,
+   "fightSeconds": 20,
+   "shifts": 13,
+   "damageTaken": 310,
+   "failures": {
+    "snowpine: no working tool": 3,
+    "reed: no working tool": 4
+   },
+   "ate": {
+    "berries": 12,
+    "grilled_mushroom": 3
+   },
+   "kills": {
+    "vampire_1": 1,
+    "hare": 3,
+    "vampire_2": 2,
+    "grouse": 1,
+    "boar": 2,
+    "slime_1": 1,
+    "orc_3": 2,
+    "deer": 2
+   }
+  },
+  "swingsThatNeverConnected": {
+   "snowpine: no working tool": 3,
+   "reed: no working tool": 4
+  },
+  "notes": [
+   "[0.8m] placed Campfire",
+   "[1.6m] placed Furnace",
+   "[2.0m] gather wood: no reachable tree/pine/jungle/deadtree (have 0/4)",
+   "[3.3m] gather wood: no reachable tree/pine/jungle/deadtree (have 1/4)",
+   "[9.1m] made a Wood Club for the roadside",
+   "[11.1m] pack full: dropped 3 stack(s) of by-products",
+   "[11.6m] placed Research Table",
+   "[15.4m] placed Workbench",
+   "[18.1m] placed Oil Refinery",
+   "[26.4m] placed Wood Chest",
+   "[26.4m] placed Wood Chest",
+   "[37.6m] gather wood: no working tool carried for snowpine",
+   "[37.6m] gather fiber: no working tool carried for reed",
+   "[37.6m] gather fiber: no working tool carried for reed",
+   "[38.0m] gather wood: no working tool carried for snowpine",
+   "[38.0m] gather fiber: no working tool carried for reed",
+   "[38.0m] gather wood: no working tool carried for snowpine",
+   "[38.0m] gather fiber: no working tool carried for reed",
+   "[38.7m] placed Large Furnace",
+   "[40.8m] made a Wood Club for the roadside",
+   "[51.3m] gather berries: no reachable bush (have 0/8)",
+   "[55.3m] hunt of deer broken off at 43 hp"
+  ]
+ }
+}

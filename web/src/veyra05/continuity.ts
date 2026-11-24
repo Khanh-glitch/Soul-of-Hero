@@ -15,6 +15,7 @@
  */
 import { TILE, WW, WH, clamp, type GameState, type RunState } from '../game/core';
 import { getWorld, setActiveLayout } from '../game/world';
+import { syncOilSeeps } from '../game/oil-seeps';
 import { sourceDigest } from '../game/world-economy';
 import { mapDigest } from '../game/map-package';
 import { poiContractDigest } from '../game/poi-access';
@@ -109,7 +110,23 @@ export function shiftVeyraWindowBy(
     }
   }
 
-  // Clear local storey-specific caches before binding to the new window
+  // Archive non-ground storey sources & door states into global coordinates (K3: window shifts never refill underground/upper-floor sources)
+  if (r.veyraFloorState) {
+    const gf = (r.veyraGlobalFloorState ??= {});
+    for (const [lvStr, fs] of Object.entries(r.veyraFloorState)) {
+      const lv = Number(lvStr);
+      if (lv === 0 || !fs) continue;
+      const gEntry = (gf[lv] ??= { sources: {}, doors: {} });
+      for (const [kStr, st] of Object.entries(fs.sources || {})) {
+        const li = Number(kStr), lx = li % WW, ly = (li / WW) | 0;
+        gEntry.sources[globalIndex(ox + lx, oy + ly)] = st;
+      }
+      for (const [dKey, open] of Object.entries(fs.doors || {})) {
+        const [lx, ly] = dKey.split(',').map(Number);
+        if (Number.isFinite(lx) && Number.isFinite(ly)) gEntry.doors[globalIndex(ox + lx, oy + ly)] = !!open;
+      }
+    }
+  }
   delete r.veyraFloorState;
 
   // 2. Materialise/fetch new 200x200 window world (ensuring ground level is active)
@@ -123,12 +140,33 @@ export function shiftVeyraWindowBy(
     id: nw.economyMap.id,
     revision: nw.economyMap.revision,
     seed: nw.economyMap.seed,
-    rules: 3,
+    rules: r.sourceMap?.rules === 4 ? 4 : 3, // G1A: a window shift never changes the placement a run was created under
     digest: sourceDigest(nw.sourceV3),
     mapDigest: mapDigest(nw),
     ...(nw.veyra ? { veyra: nw.veyra } : {}),
   };
   r.poiAccessDigest = poiContractDigest(nw);
+  if (r.veyraGlobalFloorState) {
+    const projected: NonNullable<RunState['veyraFloorState']> = {};
+    for (const [lvStr, gEntry] of Object.entries(r.veyraGlobalFloorState)) {
+      const lv = Number(lvStr);
+      if (lv === 0 || !gEntry) continue;
+      const lSources: Record<number, any> = {};
+      const lDoors: Record<string, boolean> = {};
+      for (let ly = 0; ly < WH; ly++) {
+        for (let lx = 0; lx < WW; lx++) {
+          const gi = globalIndex(newOx + lx, newOy + ly);
+          const st = gEntry.sources[gi];
+          if (st) lSources[ly * WW + lx] = st;
+          if (gi in gEntry.doors) lDoors[`${lx},${ly}`] = gEntry.doors[gi];
+        }
+      }
+      if (Object.keys(lSources).length || Object.keys(lDoors).length) {
+        projected[lv] = { sources: lSources, doors: lDoors };
+      }
+    }
+    if (Object.keys(projected).length) r.veyraFloorState = projected;
+  }
   if (r.spawnChoice) {
     r.spawnChoice = {
       x: clamp(r.spawnChoice.x - dx, 1, WW - 2),
@@ -174,7 +212,8 @@ export function shiftVeyraWindowBy(
       if (ntx !== undefined) e.tx = ntx;
       if (nty !== undefined) e.ty = nty;
     } else {
-      offscreen[id] = {
+      // G1B world objects wait in their own table, so structure scans never walk them (see RunState.g1b.far)
+      (e.g1b && r.g1b ? r.g1b.far : offscreen)[id] = {
         ...e,
         x: ox * TILE + e.x,
         y: oy * TILE + e.y,
@@ -184,7 +223,7 @@ export function shiftVeyraWindowBy(
     }
   }
 
-  for (const [id, oe] of Object.entries(offscreen)) {
+  for (const table of r.g1b ? [offscreen, r.g1b.far] : [offscreen]) for (const [id, oe] of Object.entries(table)) {
     const lx = oe.x - newOx * TILE, ly = oe.y - newOy * TILE;
     const ltx = oe.tx !== undefined ? oe.tx - newOx : undefined;
     const lty = oe.ty !== undefined ? oe.ty - newOy : undefined;
@@ -198,7 +237,7 @@ export function shiftVeyraWindowBy(
         y: ly,
         ...(ltx !== undefined ? { tx: ltx, ty: lty } : {}),
       };
-      delete offscreen[id];
+      delete table[id];
     }
   }
   if (!Object.keys(offscreen).length) delete r.veyraOffscreenEntities;
@@ -254,6 +293,8 @@ export function shiftVeyraWindowBy(
   // 4b. VEYRA05: reinstall the active storey of the new window & archive/restore/seed global ecosystem actors
   syncFloor(gs, nww, nww.floors, markDirtyFn);
   syncVeyraEcosystemActors(r, nww, ox, oy, newOx, newOy);
+  // 4c. Item set v3: crude seeps follow the window (global ledger -> window-local `oilSources`)
+  syncOilSeeps(r, nww.floors.ground, newOx, newOy);
   // 5. Mark collision dirty & shift camera seamlessly
   markDirtyFn();
   for (const fn of shiftListeners) fn(dx, dy);

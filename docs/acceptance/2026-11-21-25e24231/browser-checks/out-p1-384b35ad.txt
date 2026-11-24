@@ -1,0 +1,15 @@
+## startKit ["1:stone_axex1/d180","2:water_flaskx1","3:berriesx3"]
+## chapters [{"i":1,"head":"Landfall | “An axe in hand, the island a","items":["Wood Club","Territory Cabinet","Campfire","4× Roast Meat"],"opens":"Opens: A club for fights and roadside salvage; a Territory Cabinet and a campfire to start a camp of your own. "},{"i":2,"head":"Hearth & Wall | “A roof is the first vic","items":["Workbench","Wood Chest","Straw Bed","2× Torch"],"opens":"Opens: A Workbench to place at once: repairs and the first real recipes. The bed is where you wake after a fall. "},{"i":3,"head":"Fire & Iron | “Stations do the waiting f","items":["Research Table","6× Iron Ingot","10× Charcoal","4× Rope"],"opens":"Opens: A Research Table to place at once: study what you find and learn recipes nobody hands you. "},{"i":4,"head":"Paper & Parts | “What you learn cannot b","items":["Garden Plot","4× Sunroot Seed","12× Parts","4× Electronic Parts"],"opens":"Opens: A Garden Plot and seeds: food you grow instead of chase. The Parts feed your next study. "},{"i":5,"head":"Field & Flock | “A full larder is a quie","items":["2× Taming Lead","Feed & Water Trough","Trail Canteen","3× Wild Berry Seed"],"opens":"Opens: Taming Leads and a Feed Trough: lead a boar, deer, hare or grouse into a pen and keep a flock. "},{"i":6,"head":"Beyond the Treeline | “The map is earned","items":["Hand Cart (packed)","Trail Pack","4× Bandage"],"opens":"Opens: A packed Hand Cart: place it, load it, pull it with F. Long hauls stop being a weight problem. "},{"i":7,"head":"Tooth & Steel | “Learn the tell, then an","items":["Hunting Bow","24× Arrow","2× Field Medkit"],"opens":"Opens: A Hunting Bow and arrows: fight from range and hunt what runs from you. "},{"i":8,"head":"Neighbours | “Everyone here is trying to","items":["3× Field Medkit","4× Canned Meat","2× Fruit Wine"],"opens":"Opens: Things other 
+## landfallFirstStep "Gather with your axe 0/3 | Swing LMB at a tree, boulder or bush. Your Stone Axe works all three."
+## panelsClosed {"book":false,"menu":false}
+## met ["pine"]
+## harvested {"wood":{"source":"harvest pine@128,91 -1","tool":"1:stone_axex1/d175","wood":4,"stone":0,"iron_ore":0}}
+## invAfterHarvest ["1:stone_axex1/d175","2:water_flaskx1","3:berriesx3","4:woodx4"]
+## giveUpButton 1
+## confirmText "You fall where you stand: everything you carry stays in a bag here. You wake at your bed, or on a safe shore, with a Stone Axe. The run goes on. "
+## afterNo {"noOk":true,"inv":4}
+## afterGiveUp {"dead":false,"hp":60.15999999999991,"moved":230,"inv":["1:stone_axex1/d180"],"giveup":["woke"],"kit":1,"bag":["berriesx3","stone_axex1/d175","water_flaskx1","woodx4"],"log":["You wake with a Stone Axe in hand.","You gave up and woke somewhere safe. Your bag lies where you stood."],"ended":null}
+## lastSave {"ok":true,"category":"ok","revision":12,"localStatus":"skipped","idbStatus":"ok"}
+## checks {"kitOk":true,"bookOk":true,"wood":true,"stone":false,"ore":false,"noOk":true,"giveOk":true}
+## errors {"errors":[],"failed":[],"bad":[]}
+## verdict "PASS"

@@ -1,0 +1,79 @@
+SOH ITEM ONTOLOGY V2 — LAST ISLAND 137-vs-86 HANDOFF
+14 November 2026
+
+Inputs:
+  Historical 137-ID source: LI_137_ITEM_HISTORICAL_ATLAS_AUDIT.csv (mounted conversation file)
+  86-ID source: web/ref/item-ontology-v2/li-crosswalk.csv at PR #61 / SHA 7b78a55444ee489b7870ea46c7ac095b5f70e4c0
+CSV SHA256: e4a1b066429d7afc8b9e91dc024ceed317058738e45163f02662d6315a4570c5
+Counts: 137 historical IDs; 86 crosswalk IDs; 84 shared exact IDs; 53 historical IDs absent from 86-crosswalk; 2 crosswalk IDs absent from historical 137.
+Historical evidence grades: 84 ATLAS_INDEXED, 45 EXTERNAL_CRAFT_OR_INPUT, 8 OFFICIAL_MODERN.
+Important: A missing exact ID is NOT necessarily a missing mechanic. Alias, version, evidence and mode require manual adjudication. Do not auto-add SOH items.
+
+CROSSWALK-ONLY ID (2): raw_iron_ore, refined_iron_ore
+Both are historical naming/version differences; validate against Atlas v2 and source before treating as absent.
+
+HISTORICAL 137 ID NOT PRESENT IN CROSSWALK 86 (53):
+
+[EXTERNAL_CRAFT_OR_INPUT] n=45
+ammo_556_base | Ammo 556 Base | combat | SOH=missing | https://www.9game.cn/daihaoyingxiong/3254982.html
+ammo_556_he_old | Ammo 556 He Old | combat | SOH=missing | https://www.9game.cn/daihaoyingxiong/3254982.html
+ammo_762_base | Ammo 762 Base | combat | SOH=missing | https://www.9game.cn/daihaoyingxiong/3254982.html
+ammo_762_he_old | Ammo 762 He Old | combat | SOH=missing | https://www.9game.cn/daihaoyingxiong/3254982.html
+ammo_8mm_handmade | Ammo 8Mm Handmade | combat | SOH=missing | https://www.9game.cn/daihaoyingxiong/3254982.html
+ammo_9mm_base | Ammo 9Mm Base | combat | SOH=missing | https://www.9game.cn/daihaoyingxiong/3254982.html
+animal_hide | Animal Hide | raw | SOH=analogy | https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json
+auto_rifle_turret | Auto Rifle Turret | defense | SOH=analogy | https://m.duote.com/tech/wmcq/135566.html
+auto_shotgun_turret | Auto Shotgun Turret | defense | SOH=missing | https://www.hiwifi.com/news/gaoshou/156918.html
+birthday_cake_2022 | Birthday Cake 2022 | access | SOH=missing | https://hero.yingxiong.com/info/2022/1109/13052.html
+blue_card | Blue Card | access | SOH=missing | https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json
+charcoal | Charcoal | metal | SOH=direct | https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json
+cream | Cream | food | SOH=missing | https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json
+egg | Egg | food | SOH=analogy | https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json
+egg_flour | Egg Flour | food | SOH=missing | https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json
+explosive_material | Explosive Material | combat | SOH=missing | https://www.biubiu001.com/wpzzwmcq/39025.html
+flamethrower | Flamethrower | access | SOH=missing | https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json
+flour | Flour | food | SOH=missing | https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json
+glider_legacy | Glider Legacy | armor | SOH=missing | https://www.9game.cn/news/5709048.html
+green_card | Green Card | access | SOH=analogy | https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json
+gunpowder_legacy | Gunpowder Legacy | combat | SOH=missing | https://www.9game.cn/daihaoyingxiong/3271154.html
+handmade_explosive_pack | Handmade Explosive Pack | defense | SOH=missing | https://www.biubiu001.com/wpzzwmcq/39025.html
+iron_folding_ladder | Iron Folding Ladder | building | SOH=missing | https://www.9game.cn/news/3334137.html
+iron_plate_boots | Iron Plate Boots | armor | SOH=missing | https://www.9game.cn/news/3459098.html
+iron_plate_chest | Iron Plate Chest | armor | SOH=analogy | https://www.9game.cn/news/3459098.html
+iron_plate_helmet | Iron Plate Helmet | armor | SOH=analogy | https://www.9game.cn/news/3459098.html
+iron_plate_pants | Iron Plate Pants | armor | SOH=missing | https://www.9game.cn/news/3459098.html
+large_furnace | Large Furnace | production | SOH=analogy | https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json
+low_quality_fuel_can | Low Quality Fuel Can | oil | SOH=analogy | https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json
+molotov_cocktail | Molotov Cocktail | defense | SOH=missing | https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json
+needle_thread | Needle Thread | metal | SOH=missing | https://www.9game.cn/news/3459098.html
+nettle | Nettle | food | SOH=analogy | https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json
+nettle_seed | Nettle Seed | food | SOH=missing | https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json
+old_military_mine | Old Military Mine | defense | SOH=missing | https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json
+purple_card | Purple Card | access | SOH=missing | https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json
+red_bean_paste | Red Bean Paste | food | SOH=missing | https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json
+refined_iron_boots | Refined Iron Boots | armor | SOH=missing | https://www.9game.cn/news/3342093.html
+refined_iron_chest | Refined Iron Chest | armor | SOH=analogy | https://www.9game.cn/news/3342093.html
+refined_iron_helmet | Refined Iron Helmet | armor | SOH=missing | https://www.9game.cn/news/3342093.html
+refined_iron_legs | Refined Iron Legs | armor | SOH=missing | https://www.9game.cn/news/3342093.html
+reunion_mooncake_lottery_pack | Reunion Mooncake Lottery Pack | access | SOH=missing | https://hero.yingxiong.com/info/2026/0922/15022.html
+rocket_turret | Rocket Turret | defense | SOH=missing | https://www.aspxhome.com/youxi/2022/399928.htm
+territory_cabinet | Territory Cabinet | building | SOH=analogy | https://www.9game.cn/daihaoyingxiong/3254056.html
+tracking_auto_turret | Tracking Auto Turret | defense | SOH=missing | https://www.aspxhome.com/youxi/2023/388310.htm
+wild_berry_seed | Wild Berry Seed | food | SOH=analogy | https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json
+
+[OFFICIAL_MODERN] n=8
+bizon_smg | Bizon SMG | combat | SOH=missing | https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json
+electric_resistor | POI Electrical Resistor | power | SOH=missing | https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json
+flamethrower_gas_ammo | Burning Gas | combat | SOH=missing | https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json
+inferno_chariot | Inferno Chariot | transport | SOH=missing | https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json
+inferno_chariot_blueprint | Inferno Chariot Blueprint | access | SOH=missing | https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json
+mountain_bicycle_blueprint | Mountain Bicycle Blueprint | transport | SOH=missing | https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json
+self_revive_defibrillator | Self-revive Defibrillator | medical | SOH=missing | https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json
+suicide_robot | Self-destruct Robot | defense | SOH=missing | https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json
+
+REQUIRED NEXT ACTIONS FOR AGENT:
+  1. Import the 137-item CSV into a reference-only research folder, never runtime item catalog.
+  2. Perform a row-wise match by exact ID, alias, function, edition/version/mode, and provenance grade.
+  3. Investigate useful omissions (e.g. charcoal, egg, animal_hide, large_furnace, electrical resistor) for gameplay role, not automatic addition.
+  4. Update LI crosswalk with explicit decision per source ID and leave unsupported figures UNKNOWN.
+  5. Preserve all SOH existing mechanics, item IDs and economy unless separately approved.

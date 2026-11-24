@@ -6,6 +6,7 @@
 // granted for the six_stones award path (the kill path is a single guarded award() call, engine.ts:814).
 // NOT claimed here: any backend/verified layer (C21 stays unbuilt; history labels remain LOCAL/UNVERIFIED),
 // or per-Elder kill-by-kill score granularity (the award fires once per run by key guard).
+import {dispatchCarryingPack} from './helpers/build-kit';
 import { describe, it, expect } from 'vitest';
 import { TILE, T, type GameState, type RunState } from '../src/game/core';
 import { uid } from '../src/game/core';
@@ -17,7 +18,7 @@ import { getWorld } from '../src/game/world';
 const T0 = Date.UTC(2026, 10, 8, 12);
 let serial = 0;
 const act = (g: GameState, type: string, p: object = {}, now = T0) =>
-  dispatch(g, { id: `n1x-${++serial}`, type, ...p }, now);
+  dispatchCarryingPack(g, { id: `n1x-${++serial}`, type, ...p }, now);
 
 function placeAtBuildablePatch(gs: GameState) {
   const r = gs.run!;

@@ -1,0 +1,55 @@
+{
+  "productionSha": "b7f78d606330b8cec6b7a1aa0b9cd9294987555a",
+  "scope": "Continue actual f8813f4 checkout; do not reset to historical751f80a. Relevant-source boundary proof and unchanged-hour acceptance; not WP1 completion.",
+  "before10s": {
+    "case": "natural-10s",
+    "result": [],
+    "counts": {
+      "sourceLookups": 28,
+      "sourceIndexReads": 17,
+      "worldSlices": 323,
+      "plannerActivations": 10,
+      "actorPlans": 25,
+      "regionCompilations": 11,
+      "renderCompilations": 0,
+      "routeExpansions": 3558,
+      "entityScans": 1633
+    },
+    "elapsedMs": 3813.651116,
+    "actors": 286
+  },
+  "after10s": {
+    "case": "natural-10s",
+    "result": [],
+    "counts": {
+      "sourceLookups": 28,
+      "sourceIndexReads": 17,
+      "worldSlices": 323,
+      "plannerActivations": 10,
+      "actorPlans": 25,
+      "regionCompilations": 11,
+      "renderCompilations": 0,
+      "routeExpansions": 3558,
+      "entityScans": 1633
+    },
+    "elapsedMs": 3965.2300349999996,
+    "actors": 286
+  },
+  "committedHour": {
+    "case": "natural-population-h1",
+    "elapsedMs": 82430.001398,
+    "actors": 286,
+    "needsAt": 1794733200000,
+    "states": {
+      "IDLE": 285,
+      "WORKING": 1
+    }
+  },
+  "watchdog": {
+    "seconds": 100,
+    "exit": 0,
+    "testTimeoutMs": 90000,
+    "unchangedTest": true
+  },
+  "interpretation": "No CPU improvement established relative to immediate predecessor: hour82.430s versus81.998s; bounded3.965s versus3.814s. Same bounded causal work counters. Semantic precision improvement: unrelated resource stock does not trigger physical proof rechecks; relevant boundary depletion reopens search."
+}

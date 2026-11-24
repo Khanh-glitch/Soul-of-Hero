@@ -1,0 +1,72 @@
+{
+  "seed": 7606,
+  "start": 1794729600000,
+  "plotId": "e2th",
+  "growthAtReload": 0.0022950330032532906,
+  "events": [
+    {
+      "id": "r120",
+      "at": 1794729629301.0022,
+      "kind": "human.garden.plant",
+      "detail": "{\"worker\":\"hn\",\"plot\":\"e2th\",\"crop\":\"crop\",\"job\":\"hj2uh\",\"inputs\":[{\"slot\":0,\"uid\":\"s1b7\",\"key\":\"seed_sunroot\",\"qty\":1,\"containerId\":\"c1b5\"}]}"
+    },
+    {
+      "id": "r130",
+      "at": 1794729630801.0022,
+      "kind": "human.garden.water",
+      "detail": "{\"worker\":\"hn\",\"plot\":\"e2th\",\"crop\":\"crop\",\"flask\":\"s1b8\",\"charge\":3,\"water\":1.5070988239498333}"
+    },
+    {
+      "id": "r3301",
+      "at": 1794730184915.2898,
+      "kind": "human.garden.harvest",
+      "detail": "{\"worker\":\"hn\",\"plot\":\"e2th\",\"crop\":\"crop\",\"job\":\"hj2uh\",\"outputs\":[[\"crop\",3],[\"seed_sunroot\",1]]}"
+    },
+    {
+      "id": "r4478",
+      "at": 1794730425501,
+      "kind": "human.garden.plant",
+      "detail": "{\"worker\":\"hq\",\"plot\":\"e2th\",\"crop\":\"crop\",\"job\":\"hj3lr\",\"inputs\":[{\"slot\":0,\"uid\":\"s1bl\",\"key\":\"seed_sunroot\",\"qty\":1,\"containerId\":\"c1bj\"}]}"
+    }
+  ],
+  "output": [
+    {
+      "at": 1794730200099.4548,
+      "jobId": "hj2uh",
+      "inputs": [
+        {
+          "slot": 0,
+          "uid": "s1b7",
+          "key": "seed_sunroot",
+          "qty": 1,
+          "containerId": "c1b5"
+        }
+      ],
+      "stationId": "e2th",
+      "workerId": "hn",
+      "fromUid": "s3ed",
+      "intoUid": "s3ed",
+      "qty": 3,
+      "key": "crop"
+    },
+    {
+      "at": 1794730200099.4548,
+      "jobId": "hj2uh",
+      "inputs": [
+        {
+          "slot": 0,
+          "uid": "s1b7",
+          "key": "seed_sunroot",
+          "qty": 1,
+          "containerId": "c1b5"
+        }
+      ],
+      "stationId": "e2th",
+      "workerId": "hn",
+      "fromUid": "s3ee",
+      "intoUid": "s3ee",
+      "qty": 1,
+      "key": "seed_sunroot"
+    }
+  ]
+}

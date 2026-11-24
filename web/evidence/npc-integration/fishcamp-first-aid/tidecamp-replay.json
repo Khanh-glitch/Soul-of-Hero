@@ -1,0 +1,67 @@
+{
+  "start": 1794949200000,
+  "builtAt": 1794949490926.625,
+  "treatment": {
+    "worker": "h6e",
+    "patient": "h6f",
+    "job": "hw2y4i",
+    "seen": {
+      "gx": 334,
+      "gy": 1068,
+      "floor": 0
+    },
+    "at": {
+      "gx": 334,
+      "gy": 1068,
+      "floor": 0
+    },
+    "hpBefore": 25,
+    "hpAfter": 55,
+    "inputs": [
+      {
+        "slot": 0,
+        "uid": "s2i5",
+        "key": "herb",
+        "qty": 1,
+        "containerId": "c2i3"
+      }
+    ]
+  },
+  "construction": {
+    "actor": "h6f",
+    "entity": "e2yav",
+    "kit": "s2yau",
+    "inputs": [
+      {
+        "slot": 0,
+        "uid": "s2ia",
+        "key": "wood",
+        "qty": 4,
+        "containerId": "c2i8"
+      },
+      {
+        "slot": 3,
+        "uid": "s2ya0",
+        "key": "wood",
+        "qty": 4,
+        "containerId": "c2i8"
+      },
+      {
+        "slot": 4,
+        "uid": "s2ya1",
+        "key": "fiber",
+        "qty": 3,
+        "containerId": "c2i8"
+      }
+    ],
+    "twistedRope": true
+  },
+  "firstObservedDrink": {
+    "id": "r325067",
+    "seq": 325067,
+    "at": 1794952655935.9817,
+    "kind": "human.barrel.drink",
+    "detail": "h6b:e2yav:1"
+  },
+  "remainingWater": 6.000000100378956
+}

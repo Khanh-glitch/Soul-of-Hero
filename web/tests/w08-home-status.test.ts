@@ -1,5 +1,6 @@
 // W08 home maintenance authority tests. Controlled fixtures: materials are injected
 // into real containers; time advances through the real settle() path.
+import {dispatchCarryingPack} from './helpers/build-kit';
 import {describe,it,expect} from 'vitest';
 import {TILE,T,WW,HOUR,BAL} from '../src/game/core';
 import {newGame,dispatch,addItem,countItem,markDirty,homeStatus,nearestHomeStructure,destroyStructure} from '../src/game/engine';
@@ -17,7 +18,7 @@ function setup(){
 }
 function buildAt(o:ReturnType<typeof setup>,type:string,dx:number,dy:number){
   const px=o.r.player.x,py=o.r.player.y;o.r.player.x=(o.x+dx)*TILE+8;o.r.player.y=(o.y+dy+2)*TILE+8;markDirty();
-  try{const res=dispatch(o.gs,{id:'hs'+ ++serial,type:'build',struct:type,tx:o.x+dx,ty:o.y+dy},o.r.clock.lastSimAt);if(!res.ok) throw new Error(`${type}: ${res.reason}`);return Object.values(o.r.entities).find(e=>e.kind==='struct'&&e.type===type&&e.tx===o.x+dx&&e.ty===o.y+dy)!;}
+  try{const res=dispatchCarryingPack(o.gs,{id:'hs'+ ++serial,type:'build',struct:type,tx:o.x+dx,ty:o.y+dy},o.r.clock.lastSimAt);if(!res.ok) throw new Error(`${type}: ${res.reason}`);return Object.values(o.r.entities).find(e=>e.kind==='struct'&&e.type===type&&e.tx===o.x+dx&&e.ty===o.y+dy)!;}
   finally{o.r.player.x=px;o.r.player.y=py;markDirty();}
 }
 function homeWithCabinet(){

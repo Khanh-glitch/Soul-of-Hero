@@ -1,0 +1,134 @@
+{
+  "errors": [],
+  "httpErrors": [],
+  "before": {
+    "player": [
+      {
+        "uid": "s2tl",
+        "key": "wood",
+        "qty": 10
+      },
+      {
+        "uid": "s2tm",
+        "key": "stone",
+        "qty": 2
+      },
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    "pack": [
+      {
+        "uid": "s2tn",
+        "key": "berries",
+        "qty": 4
+      },
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    "actor": "ha",
+    "receipts": []
+  },
+  "after": {
+    "player": [
+      {
+        "uid": "s2tl",
+        "key": "wood",
+        "qty": 1
+      },
+      {
+        "uid": "s2tm",
+        "key": "stone",
+        "qty": 1
+      },
+      {
+        "uid": "s2tn",
+        "key": "berries",
+        "qty": 4
+      },
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    "pack": [
+      {
+        "uid": "s2to",
+        "key": "stone",
+        "qty": 1
+      },
+      {
+        "uid": "s2tp",
+        "key": "wood",
+        "qty": 9
+      },
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    "actor": "ha",
+    "receipts": [
+      {
+        "id": "r3",
+        "seq": 3,
+        "at": 1795195584567,
+        "kind": "human.exchange",
+        "detail": "{\"actor\":\"ha\",\"lines\":[{\"from\":\"inv\",\"parent\":\"s2tm\",\"portion\":\"s2to\",\"to\":\"c184\",\"uid\":\"s2to\",\"qty\":1},{\"from\":\"inv\",\"parent\":\"s2tl\",\"portion\":\"s2tp\",\"to\":\"c184\",\"uid\":\"s2tp\",\"qty\":9},{\"from\":\"c184\",\"parent\":\"s2tn\",\"portion\":\"s2tn\",\"to\":\"inv\",\"uid\":\"s2tn\",\"qty\":4}]}"
+      }
+    ]
+  },
+  "contactLossReset": true,
+  "partialCargoRoundTrip": true
+}

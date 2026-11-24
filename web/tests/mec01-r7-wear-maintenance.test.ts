@@ -41,18 +41,16 @@ describe('MEC-01 R7 wear and maintenance', () => {
     expect(bike.vehicle!.fuel).toBe(0);
     expect(lost).toBeGreaterThan(40);   // measured 48 at wearPerPixel 0.008 (was 12 at 0.002)
     expect(lost).toBeLessThan(60);
-    // Repair needs both named parts; a missing Fastener refuses and changes nothing (negative control).
-    addItem(r,'inv','mechanical_parts',1);
+    // Item set v3: a repair costs exactly 3 Parts. One short refuses and changes nothing (negative control).
     const hpBefore=bike.hp!;
-    // Dismount next to the bike so the repair intent is legal
     expect(act(g,'vehicleExit',{eid:bike.id}).ok).toBe(true);
-    const mp0=countItem(r,'inv','mechanical_parts');
+    const inv=r.custody.inv;for(let k=0;k<inv.slots.length;k++)if(inv.slots[k]?.key==='spares')inv.slots[k]=null;   // FIXTURE: start from no Parts
+    addItem(r,'inv','spares',2);
     expect(act(g,'vehicleRepair',{eid:bike.id}).ok).toBe(false);
-    expect(bike.hp!).toBe(hpBefore);expect(countItem(r,'inv','mechanical_parts')).toBe(mp0);
-    addItem(r,'inv','fasteners',1);
+    expect(bike.hp!).toBe(hpBefore);expect(countItem(r,'inv','spares')).toBe(2);
+    addItem(r,'inv','spares',1);
     expect(act(g,'vehicleRepair',{eid:bike.id}).ok).toBe(true);
     expect(bike.hp!).toBeCloseTo(Math.min(200,hpBefore+50),1);
-    expect(countItem(r,'inv','mechanical_parts')).toBe(mp0-1);
-    expect(countItem(r,'inv','fasteners')).toBe(0);
+    expect(countItem(r,'inv','spares')).toBe(0);
   });
 });

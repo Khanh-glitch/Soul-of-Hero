@@ -1,0 +1,7 @@
+# Compiler CPU investigation — not a frame-time improvement claim
+
+Two fresh processes, same seed 7606, Greywater start, same first 60 s of production `settle`, 286 actors, V8 sampling profiler; one serial T9 worker also active. Raw top 80 samples and elapsed time in `before.json` (16c6194) and `after.json` (4bfea69). Self time is sampled and includes scheduling noise; line indices refer to transformed modules. The evidence does not isolate the cost of the instrumentation wrapper from work the optimizer placed in it.
+
+In the canonical terrain compiler the raw inner tile/POI values were looked up from GOLD a second time for every cell and again while spreading industrial flags. Reuse the already read values while retaining the **distinct** inner-vs-padded POI overlay rules. If there is no applicable POI there can be no yard-salvage placement; if there is no industrial source, the pre/post removal flood masks are identical. Skip these provably unnecessary passes; do not skip people, props, masks, decor, floor handling, or source gameplay. Query parity vs original compiler across five regions and two placement rules, offshore refusal and real harvesting cook all pass (3 selected cases). Test TypeScript passes.
+
+Actual profiled wall times **16.85 s before / 17.12 s after**. This pair shows **no demonstrated end-to-end latency improvement**. Not evidence of reaching the FPS gate; do not generalize into a percentage saved. In particular it does not replace the earlier browser frame measurements. Needs further profiling/replication on uncontended hardware.

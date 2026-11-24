@@ -1,0 +1,132 @@
+{
+  "scope": "25 integrated suites run during development; before final hazard/contact corrections. Not a final-SHA full regression.",
+  "passed": 152,
+  "failed": 0,
+  "files": [
+    {
+      "file": "tests/creator-core-foundation.test.ts",
+      "passed": 10,
+      "failed": 0
+    },
+    {
+      "file": "tests/earthmother-core.test.ts",
+      "passed": 2,
+      "failed": 0
+    },
+    {
+      "file": "tests/g1b-core-v2.test.ts",
+      "passed": 13,
+      "failed": 0
+    },
+    {
+      "file": "tests/mjolnir-core.test.ts",
+      "passed": 2,
+      "failed": 0
+    },
+    {
+      "file": "tests/npc-advanced-core.test.ts",
+      "passed": 21,
+      "failed": 0
+    },
+    {
+      "file": "tests/npc-art.test.ts",
+      "passed": 4,
+      "failed": 0
+    },
+    {
+      "file": "tests/npc-basket-trade.test.ts",
+      "passed": 5,
+      "failed": 0
+    },
+    {
+      "file": "tests/npc-causal-needs.test.ts",
+      "passed": 8,
+      "failed": 0
+    },
+    {
+      "file": "tests/npc-companion-missions.test.ts",
+      "passed": 3,
+      "failed": 0
+    },
+    {
+      "file": "tests/npc-dual-rescue-same-run.test.ts",
+      "passed": 1,
+      "failed": 0
+    },
+    {
+      "file": "tests/npc-elder-global-assault.test.ts",
+      "passed": 10,
+      "failed": 0
+    },
+    {
+      "file": "tests/npc-evac-physical-service.test.ts",
+      "passed": 8,
+      "failed": 0
+    },
+    {
+      "file": "tests/npc-forage-cross-window.test.ts",
+      "passed": 1,
+      "failed": 0
+    },
+    {
+      "file": "tests/npc-global-navigation.test.ts",
+      "passed": 11,
+      "failed": 0
+    },
+    {
+      "file": "tests/npc-harvest-transactions.test.ts",
+      "passed": 6,
+      "failed": 0
+    },
+    {
+      "file": "tests/npc-humanworld.test.ts",
+      "passed": 7,
+      "failed": 0
+    },
+    {
+      "file": "tests/npc-hunt-meat-chain.test.ts",
+      "passed": 1,
+      "failed": 0
+    },
+    {
+      "file": "tests/npc-medic-response.test.ts",
+      "passed": 3,
+      "failed": 0
+    },
+    {
+      "file": "tests/npc-offline-matrix.test.ts",
+      "passed": 8,
+      "failed": 0
+    },
+    {
+      "file": "tests/npc-paid-work.test.ts",
+      "passed": 5,
+      "failed": 0
+    },
+    {
+      "file": "tests/npc-projectile-flight.test.ts",
+      "passed": 11,
+      "failed": 0
+    },
+    {
+      "file": "tests/npc-shelter-incidents.test.ts",
+      "passed": 5,
+      "failed": 0
+    },
+    {
+      "file": "tests/npc-store-destroyed-replan.test.ts",
+      "passed": 3,
+      "failed": 0
+    },
+    {
+      "file": "tests/npc-vessel-cost-and-hull.test.ts",
+      "passed": 3,
+      "failed": 0
+    },
+    {
+      "file": "tests/npc-work-counters.test.ts",
+      "passed": 1,
+      "failed": 0
+    }
+  ]
+}

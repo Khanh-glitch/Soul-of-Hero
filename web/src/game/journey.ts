@@ -1,0 +1,932 @@
+// ============================================================================
+// JOURNEY — Fieldcraft (guidance), Daily Objectives (Waypoints) and the
+// Chronicle (achievements + journey-defining moments).
+//
+// Authority rules
+//  · Progress comes ONLY from committed engine receipts (r.receipts, monotonic
+//    seq) plus two observed, persisted state sets (r.poiSeen discoveries and
+//    the Creator Core UIDs in custody). Opening a panel never completes a step.
+//  · Each run has a cursor (last processed receipt seq). A receipt is ingested
+//    exactly once; completions carry stable ids (`daily:<date>:<obj>`,
+//    `fc:<lesson>:<step>`) held in claimed sets, so reload/replay cannot pay twice.
+//  · The store is flushed to storage only when the game save itself succeeds
+//    (see Game.tsx), so journey progress never runs ahead of the world it
+//    describes after a crash/rollback.
+//  · Nothing here grants items or currency by itself. Supplies are issued only by
+//    the engine intents `journeyRequisition` (Daily milestones) and `handbookClaim`
+//    (Survivor Handbook chapters, see handbook.ts), each verified against a
+//    run-authoritative ledger.
+// ============================================================================
+import { ACHIEVEMENTS, ALWAYS_KNOWN_RECIPES, ITEMS, RECIPES, SOURCES, STRUCTS, lookupElderDef } from './catalog';
+import {
+  BAL,
+  type DailyCapabilityDates,
+  type DailyLedger,
+  type DailyLedgerDay,
+  type DailyRerollRecord,
+  type GameState,
+  type RunState,
+} from './core';
+import type { Receipt } from './presentation-cues';
+import { POIS } from '../veyra05/reader';
+import {
+  FIELDCRAFT, OBS_POI, TIER_LABEL, TIER_MARKS, beginHandbookOffline, buildType, chapterView, endHandbookOffline, harvestUnits,
+  isNpcReceipt, lessonText, rewardLabel, stepText, syncHandbook,
+  type AnchorHint, type FieldLesson, type FieldStep,
+} from './handbook';
+import { getLang, T, type Lang } from './i18n';
+
+export type FeedbackLevel = 1 | 2 | 3 | 4 | 5;
+
+// ---------------------------------------------------------------------------
+// Receipt helpers
+// ---------------------------------------------------------------------------
+const srcOf = (rc: Receipt) => rc.detail.split('@')[0];
+const isMat = (rc: Receipt, mat: string) => rc.kind === 'harvest' && SOURCES[srcOf(rc)]?.mat === mat;
+/** Synthetic observation receipt (never written to the run) for a Creator Core newly in custody. */
+export const OBS_CORE = 'obs.core';
+
+// ---------------------------------------------------------------------------
+// FIELDCRAFT — the Survivor Handbook chapters live in handbook.ts (definitions,
+// rewards and the run-authoritative progress ledger). Re-exported here so the
+// Journey API stays in one place.
+// ---------------------------------------------------------------------------
+export { FIELDCRAFT, OBS_POI };
+export type { AnchorHint, FieldStep, FieldLesson };
+
+// ---------------------------------------------------------------------------
+// DAILY WAYPOINTS — optional, rotating, receipt-backed.
+// ---------------------------------------------------------------------------
+export type DailyCat = 'gather' | 'craft' | 'build' | 'explore' | 'survive' | 'hunt' | 'produce';
+export interface DailyDef {
+  id: string; cat: DailyCat; title: string; target: number; points: number; tier: 1 | 2 | 3;
+  icon: string; how: string;
+  count: (rc: Receipt, seen: Set<string>) => number;
+  gate?: (r: RunState) => boolean;
+  offlineOk?: boolean;
+  anchor?: AnchorHint;
+}
+const owns = (r: RunState, types: string[]) => Object.values(r.entities).some(e => e.kind === 'struct' && types.includes(e.type || '') && (!e.owner || e.owner === 'player'));
+const ownsAny = (r: RunState) => Object.values(r.entities).some(e => e.kind === 'struct' && (!e.owner || e.owner === 'player'));
+/** distinct-key counter: rebuilding the same tile / re-harvesting cannot inflate variety goals */
+const distinct = (seen: Set<string>, key: string) => { if (seen.has(key)) return 0; seen.add(key); return 1; };
+
+export const DAILY_POOL: DailyDef[] = [
+  { id: 'timber', cat: 'gather', title: 'Fell timber', target: 12, points: 10, tier: 1, icon: 'wood', how: 'Harvest wood from any tree.', anchor: { kind: 'source', mat: 'wood' }, count: rc => isMat(rc, 'wood') ? harvestUnits(rc) : 0 },
+  { id: 'quarry', cat: 'gather', title: 'Break stone & ore', target: 10, points: 15, tier: 2, icon: 'stone', how: 'Boulders, iron veins and coal seams.', anchor: { kind: 'source', mat: 'stone' }, count: rc => isMat(rc, 'stone') || isMat(rc, 'ore') ? harvestUnits(rc) : 0 },
+  { id: 'forage', cat: 'gather', title: 'Forage the wilds', target: 6, points: 10, tier: 1, icon: 'berries', how: 'Berry bushes and wild plants.', anchor: { kind: 'source', mat: 'plant' }, count: rc => isMat(rc, 'plant') ? harvestUnits(rc) : 0 },
+  { id: 'variety', cat: 'gather', title: 'Harvest 3 kinds of source', target: 3, points: 20, tier: 2, icon: 'fiber', how: 'Trees, stones, ores, plants — different species count.', count: (rc, s) => rc.kind === 'harvest' ? distinct(s, `src:${srcOf(rc)}`) : 0 },
+  { id: 'handcraft', cat: 'craft', title: 'Hand-craft 3 times', target: 3, points: 10, tier: 1, icon: 'rope', how: 'Survivor [C] — any recipe.', count: rc => rc.kind === 'craft.hand' ? 1 : 0 },
+  { id: 'recipes', cat: 'craft', title: 'Craft 2 different recipes', target: 2, points: 15, tier: 2, icon: 'blueprint', how: 'Variety, not volume.', count: (rc, s) => rc.kind === 'craft.hand' ? distinct(s, `rec:${rc.detail}`) : 0 },
+  { id: 'mend', cat: 'craft', title: 'Mend worn equipment', target: 1, points: 15, tier: 2, icon: 'mechanical_gear', how: 'Repair an item at a Workbench.', gate: r => r.knowledge.recipes.length > 0, count: rc => rc.kind === 'item.repair' || rc.kind === 'item.fieldRepair' ? 1 : 0 },
+  { id: 'raise', cat: 'build', title: 'Raise 5 structures', target: 5, points: 15, tier: 2, icon: 'st:wall_wood', how: 'Each must stand on a new tile.', count: (rc, s) => rc.kind === 'build' ? distinct(s, `tile:${rc.detail.split('@')[1]}`) : 0 },
+  { id: 'fortify', cat: 'build', title: 'Fortify 2 structures', target: 2, points: 20, tier: 2, icon: 'st:wall_stone', how: 'Upgrade [U] or repair [V] what you own.', gate: ownsAny, count: rc => ['structure.upgrade', 'structure.repair', 'structure.repair.plate', 'territory.repair.batch'].includes(rc.kind) ? 1 : 0 },
+  { id: 'chart', cat: 'explore', title: 'Discover a new place', target: 1, points: 25, tier: 3, icon: 'spares', how: 'Travel somewhere you have never been.', count: (rc, s) => (rc.kind === OBS_POI || rc.kind === 'poi.discover') ? distinct(s, `poi:${rc.detail}`) : 0 },
+  { id: 'scavenge', cat: 'explore', title: 'Search 2 loot sites', target: 2, points: 15, tier: 2, icon: 'scrap', how: 'Crates, caches and drops.', count: (rc, s) => rc.kind === 'intel.loot' || rc.kind === 'airdrop.open' ? distinct(s, `loot:${rc.detail.split(':')[0]}`) : 0 },
+  { id: 'hydrate', cat: 'survive', title: 'Eat or drink 4 times', target: 4, points: 10, tier: 1, icon: 'berries', how: 'Rivers, flasks, food.', anchor: { kind: 'water' }, count: rc => ['drink', 'drink.flask', 'consume', 'barrel.drink', 'rest.eat', 'rest.drink'].includes(rc.kind) ? 1 : 0 },
+  { id: 'rest', cat: 'survive', title: 'Rest through a stretch', target: 1, points: 15, tier: 2, icon: 'st:bed_straw', how: 'Sleep in your own bed.', gate: r => owns(r, ['bed_straw']), anchor: { kind: 'struct', types: ['bed_straw'] }, count: rc => rc.kind === 'rest.end' ? 1 : 0 },
+  { id: 'hunt2', cat: 'hunt', title: 'Defeat 2 creatures', target: 2, points: 20, tier: 2, icon: 'leather', how: 'Fight what threatens you.', count: rc => rc.kind === 'creature.kill' ? 1 : 0 },
+  { id: 'hunt5', cat: 'hunt', title: 'Defeat 5 creatures', target: 5, points: 35, tier: 3, icon: 'leather', how: 'A proper hunt. Mind your stamina.', gate: r => r.knowledge.recipes.length >= 2, count: rc => rc.kind === 'creature.kill' ? 1 : 0 },
+  { id: 'smelt', cat: 'produce', title: 'Finish 3 station jobs', target: 3, points: 20, tier: 2, icon: 'iron_ingot', how: 'Furnace, bench or recycler output.', gate: r => owns(r, ['furnace', 'workbench', 'campfire', 'recycler', 'refinery']), anchor: { kind: 'struct', types: ['furnace', 'workbench', 'campfire'] }, offlineOk: true, count: rc => rc.kind === 'job.done' || rc.kind === 'recycle.finish' ? 1 : 0 },
+  { id: 'knowledge', cat: 'produce', title: 'Gain new knowledge', target: 1, points: 30, tier: 3, icon: 'blueprint', how: 'Study a specimen or learn a blueprint.', gate: r => owns(r, ['research']), anchor: { kind: 'struct', types: ['research'] }, count: rc => rc.kind === 'learn.blueprint' || rc.kind === 'research.specimen' ? 1 : 0 },
+];
+export const DAILY_BY_ID = Object.fromEntries(DAILY_POOL.map(d => [d.id, d])) as Record<string, DailyDef>;
+export const CAT_LABEL: Record<DailyCat, string> = { gather: 'Gather', craft: 'Craft', build: 'Build', explore: 'Explore', survive: 'Endure', hunt: 'Hunt', produce: 'Produce' };
+const CAT_LABEL_VI: Record<DailyCat, string> = { gather: 'Hái lượm', craft: 'Chế tạo', build: 'Xây dựng', explore: 'Khám phá', survive: 'Sinh tồn', hunt: 'Săn bắn', produce: 'Sản xuất' };
+export const catLabel = (c: DailyCat, lang: Lang = getLang()) => (lang === 'vi' ? CAT_LABEL_VI[c] : CAT_LABEL[c]);
+/** Vietnamese presentation text for the Daily Waypoints (ids and rules are unchanged). */
+const DAILY_VI: Record<string, { title: string; how: string }> = {
+  timber: { title: 'Đốn gỗ', how: 'Thu gỗ từ bất kỳ cây nào.' },
+  quarry: { title: 'Phá đá và quặng', how: 'Tảng đá, mạch sắt và vỉa than.' },
+  forage: { title: 'Hái lượm nơi hoang dã', how: 'Bụi quả mọng và cây dại.' },
+  variety: { title: 'Thu hoạch 3 loại nguồn', how: 'Cây, đá, quặng, cây dại — khác loài mới tính.' },
+  handcraft: { title: 'Chế đồ bằng tay 3 lần', how: 'Survivor [C] — công thức nào cũng được.' },
+  recipes: { title: 'Chế 2 công thức khác nhau', how: 'Cần đa dạng, không cần số lượng.' },
+  mend: { title: 'Sửa trang bị đã mòn', how: 'Sửa một món ở Workbench.' },
+  raise: { title: 'Dựng 5 công trình', how: 'Mỗi cái phải đứng trên một ô mới.' },
+  fortify: { title: 'Gia cố 2 công trình', how: 'Nâng cấp [U] hoặc sửa [V] thứ bạn sở hữu.' },
+  chart: { title: 'Khám phá một địa điểm mới', how: 'Đi tới nơi bạn chưa từng đến.' },
+  scavenge: { title: 'Lục 2 điểm có đồ', how: 'Thùng, kho giấu và thùng tiếp tế.' },
+  hydrate: { title: 'Ăn hoặc uống 4 lần', how: 'Sông, bình nước, thức ăn.' },
+  rest: { title: 'Nghỉ một giấc', how: 'Ngủ trên giường của chính bạn.' },
+  hunt2: { title: 'Hạ 2 sinh vật', how: 'Đánh trả những gì đe dọa bạn.' },
+  hunt5: { title: 'Hạ 5 sinh vật', how: 'Một chuyến săn thực thụ. Để ý thể lực.' },
+  smelt: { title: 'Hoàn tất 3 việc ở trạm', how: 'Sản phẩm của lò, bàn chế hoặc máy tái chế.' },
+  knowledge: { title: 'Thu thêm tri thức', how: 'Nghiên cứu mẫu vật hoặc học một bản vẽ.' },
+};
+export const dailyText = (d: DailyDef, lang: Lang = getLang()) => (lang === 'vi' && DAILY_VI[d.id] ? DAILY_VI[d.id] : { title: d.title, how: d.how });
+
+/** Milestones: four objectives typically offer 55–95 points; Beacon needs most of a day, never all of it.
+ *  Each milestone awards +1 Wayfarer Mark AND an authoritative `journeyRequisition` bundle (run-local supplies only; Secured Cash requires physical Ragnarok Escrow). */
+export const DAILY_MILESTONES = [
+  { at: 25, id: 'ember', name: 'Ember', marks: 1, pending: null as null | string },
+  { at: 50, id: 'hearth', name: 'Hearth', marks: 1, pending: null as null | string },
+  { at: 75, id: 'beacon', name: 'Beacon', marks: 1, pending: null as null | string },
+] as const;
+
+export function milestoneRewardSpec(id: string): { points: number; securedCash: number; items: [string, number][] } | null {
+  const table = (BAL as any).journeyRequisitions as Record<string, { points: number; securedCash: number; items: [string, number][] }> | undefined;
+  return table && Object.prototype.hasOwnProperty.call(table, id) ? table[id] : null;
+}
+export function milestoneRewardLabel(id: string): string {
+  const sp = milestoneRewardSpec(id);
+  if (!sp) return '';
+  const items = sp.items.map(([k, q]) => `${q}× ${ITEMS[k]?.name ?? k}`).join(' · ');
+  return sp.securedCash > 0 ? `+${sp.securedCash} Secured Cash · ${items}` : items;
+}
+export function isMilestoneRequisitioned(gs: GameState, date: string, id: string): boolean {
+  const prefix = `req:${date}:${id}:`;
+  return gs.profile.profileReceipts.some(x => x.startsWith(prefix));
+}
+/** Wayfarer rank: a journey record built from Marks. It has no economic value by design. */
+export const WAYFARER_RANKS = [
+  { at: 0, name: 'Castaway' }, { at: 4, name: 'Forager' }, { at: 12, name: 'Pathfinder' }, { at: 30, name: 'Wayfarer' }, { at: 60, name: 'Warden of Veyra' },
+];
+export const rankFor = (marks: number) => { let i = 0; WAYFARER_RANKS.forEach((r, k) => { if (marks >= r.at) i = k; }); return { ...WAYFARER_RANKS[i], index: i, next: WAYFARER_RANKS[i + 1] ?? null }; };
+
+// ---------------------------------------------------------------------------
+// ACHIEVEMENT presentation metadata (extends, never duplicates, ACHIEVEMENTS)
+// ---------------------------------------------------------------------------
+export const ACH_META: Record<string, { level: FeedbackLevel; icon: string; hint: string; tale: string }> = {
+  first_home: { level: 3, icon: 'st:roof_thatch', hint: 'Enclose a space and roof it or bed it.', tale: 'Four walls, one roof. The wind stopped at the door.' },
+  first_ingot: { level: 3, icon: 'iron_ingot', hint: 'Smelt iron at a furnace.', tale: 'The first ingot cooled in the dark — and everything changed.' },
+  first_research: { level: 3, icon: 'blueprint', hint: 'Finish a Research Table job.', tale: 'A puzzle turned into a plan.' },
+  first_core: { level: 4, icon: 'core_dragon', hint: 'Spend a Creator Core charge.', tale: 'Old power answered your hand.' },
+  cart: { level: 3, icon: 'cart_kit', hint: 'Deploy a cart.', tale: 'Now the land could carry what your back could not.' },
+  recover_bag: { level: 3, icon: 'scrap', hint: 'Recover your fallen gear.', tale: 'Nothing was left behind.' },
+  vault: { level: 4, icon: 'rcash', hint: 'Open a sealed vault during Ragnarok.', tale: 'The vault breathed out a century of dust.' },
+  first_deposit: { level: 4, icon: 'rcash', hint: 'Secure coins in escrow.', tale: 'Something of this run will outlive it.' },
+  ragnarok: { level: 5, icon: 'coal', hint: 'Survive into the final 72 hours.', tale: 'The sky split. You were there to see it.' },
+  elder_1: { level: 5, icon: 'crystal', hint: 'Defeat an Elder.', tale: 'A legend fell, and you were still standing.' },
+  evacuated: { level: 5, icon: 'fuel_can', hint: 'Reach the Evacuation Beacon.', tale: 'You got out.' },
+  six_stones: { level: 5, icon: 'crystal', hint: 'Evacuate carrying all six Elder stones.', tale: 'The Crown of Six Stones. Few will believe you.' },
+};
+
+// ---------------------------------------------------------------------------
+// STORE
+// ---------------------------------------------------------------------------
+export interface DailyObjectiveState { id: string; progress: number; done: boolean; doneAt?: number; seen: string[] }
+export interface DailyState { date: string; runId?: string; objectives: DailyObjectiveState[]; points: number; milestones: string[]; rerolled: boolean; rerolledFrom?: string }
+export interface ChronicleEntry { id: string; at: number; level: FeedbackLevel; title: string; detail: string; icon?: string; runId: string; kind: 'achievement' | 'lesson' | 'daily' | 'discovery' | 'relic' | 'elder' | 'world' | 'capability'; away?: boolean; seen?: boolean }
+export type TrackRef = { type: 'lesson'; id: string } | { type: 'daily'; id: string } | null;
+/** `status` is the player's own choice (kept across runs); `steps` / `done` / `claimable` / `claimed` mirror the
+ *  run-authoritative handbook ledger of the run named by `JourneyStore.lessonRun`. */
+export interface LessonState { status: 'unseen' | 'seen' | 'dismissed'; steps: Record<string, number>; done: string[]; completedAt?: number; claimable?: boolean; claimed?: boolean }
+export interface JourneyStore {
+  v: 1; salt: string;
+  cursors: Record<string, number>;
+  poiSeen: Record<string, string[]>;
+  coreSeen: Record<string, string[]>;
+  lessons: Record<string, LessonState>;
+  /** run id whose handbook ledger `lessons` currently mirrors */
+  lessonRun?: string;
+  daily: DailyState | null;
+  history: { date: string; points: number; milestones: string[]; completed: number }[];
+  claimed: string[];
+  marks: number;
+  pendingRewards: { id: string; date: string; milestone: string; requirement: string }[];
+  chronicle: ChronicleEntry[];
+  tracked: TrackRef;
+  /** the player explicitly untracked; suggestions stay quiet until they choose again */
+  trackQuiet: boolean;
+}
+export interface JourneyEvent {
+  id: string; level: FeedbackLevel; kind: ChronicleEntry['kind'] | 'step' | 'progress' | 'milestone' | 'reward';
+  title: string; detail: string; icon?: string; away?: boolean;
+  /** world anchor (px) when the moment belongs to a place */
+  at?: { x: number; y: number };
+  ref?: TrackRef;
+}
+
+const KEY = 'soh.journey.v1';
+const qaMem = new WeakMap<GameState, JourneyStore>();
+export const freshStore = (): JourneyStore => ({ v: 1, salt: Math.random().toString(36).slice(2, 10), cursors: {}, poiSeen: {}, coreSeen: {}, lessons: {}, daily: null, history: [], claimed: [], marks: 0, pendingRewards: [], chronicle: [], tracked: null, trackQuiet: false });
+
+export function loadJourney(gs: GameState, qa: boolean): JourneyStore {
+  if (qa) { const m = qaMem.get(gs); if (m) return m; const s = freshStore(); qaMem.set(gs, s); return s; }
+  try {
+    const raw = JSON.parse(localStorage.getItem(KEY) || 'null');
+    if (!raw || raw.v !== 1 || typeof raw.salt !== 'string') return freshStore();
+    return { ...freshStore(), ...raw, claimed: Array.isArray(raw.claimed) ? raw.claimed : [], chronicle: Array.isArray(raw.chronicle) ? raw.chronicle : [] };
+  } catch { return freshStore(); }
+}
+/** Called only after a successful game save (or for QA, in memory). */
+export function flushJourney(gs: GameState, qa: boolean, s: JourneyStore) {
+  if (qa) { qaMem.set(gs, s); return; }
+  try { localStorage.setItem(KEY, JSON.stringify(s)); } catch { /* quota: next save retries */ }
+}
+
+export const dateKey = (t: number) => {
+  const d = new Date(t);
+  return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}-${String(d.getUTCDate()).padStart(2, '0')}`;
+};
+export function isValidDateKey(date: string): boolean {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return false;
+  const [y, m, d] = date.split('-').map(Number);
+  const dt = new Date(Date.UTC(y, m - 1, d));
+  return dt.getUTCFullYear() === y && dt.getUTCMonth() === m - 1 && dt.getUTCDate() === d;
+}
+export const dailySaltFor = (r: RunState | null) => (r ? `run:${r.id}:${r.seed}` : 'norun');
+function hash(s: string) { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
+function rng(seed: number) { let x = seed || 1; return () => { x ^= x << 13; x >>>= 0; x ^= x >>> 17; x ^= x << 5; x >>>= 0; return x / 4294967296; }; }
+
+export const MAX_DAILY_LEDGER_DAYS = 32;
+const MAX_DAILY_SEEN_KEYS = 40;
+const STATION_GATE_TYPES = ['furnace', 'workbench', 'campfire', 'recycler', 'refinery'];
+
+let offlineSettleDepth = 0;
+export function beginDailyOfflineSettle(): void { offlineSettleDepth++; beginHandbookOffline(); }
+export function endDailyOfflineSettle(): void { offlineSettleDepth = Math.max(0, offlineSettleDepth - 1); endHandbookOffline(); }
+
+function recordCapabilityInLedger(caps: DailyCapabilityDates, dKey: string, kind: string, detail: string) {
+  if (!isValidDateKey(dKey)) return;
+  if (kind === 'learn.blueprint' || kind === 'research.specimen') {
+    if (!caps.learnedKeys.includes(detail)) {
+      if (caps.learnedKeys.length < 2) caps.learnedKeys.push(detail);
+      if (!caps.recipe1Date) caps.recipe1Date = dKey;
+      if (caps.learnedKeys.length >= 2 && !caps.recipe2Date) caps.recipe2Date = dKey;
+    }
+  } else if (kind === 'build') {
+    const t = detail.split('@')[0];
+    if (!caps.anyStructDate) caps.anyStructDate = dKey;
+    if (t === 'bed_straw' && !caps.bedDate) caps.bedDate = dKey;
+    if (STATION_GATE_TYPES.includes(t) && !caps.stationDate) caps.stationDate = dKey;
+    if (t === 'research' && !caps.researchDate) caps.researchDate = dKey;
+  }
+}
+
+function bootstrapLegacyCapabilities(r: RunState, caps: DailyCapabilityDates) {
+  if (r.seq <= 0 || r.receipts.some(rc => rc.kind === 'run.start')) return;
+  const startDay = dateKey(r.startedAt);
+  const survivingLearns = new Set(
+    (r.receipts as Receipt[])
+      .filter(rc => rc.kind === 'learn.blueprint' || rc.kind === 'research.specimen')
+      .map(rc => rc.detail),
+  );
+  const priorLearned = r.knowledge.recipes.filter(
+    k => !RECIPES[k]?.base && !ALWAYS_KNOWN_RECIPES.includes(k) && !survivingLearns.has(k),
+  );
+  for (const k of priorLearned.slice(0, 2)) {
+    recordCapabilityInLedger(caps, startDay, 'learn.blueprint', k);
+  }
+  const survivingBuildCounts = new Map<string, number>();
+  for (const rc of r.receipts as Receipt[]) {
+    if (rc.kind !== 'build') continue;
+    const bt = rc.detail.split('@')[0];
+    survivingBuildCounts.set(bt, (survivingBuildCounts.get(bt) ?? 0) + 1);
+  }
+  const liveTypeCounts = new Map<string, number>();
+  for (const e of [...Object.values(r.entities), ...Object.values(r.veyraOffscreenEntities || {})]) {
+    if (e.kind === 'struct' && e.type && (!e.owner || e.owner === 'player')) {
+      liveTypeCounts.set(e.type, (liveTypeCounts.get(e.type) ?? 0) + 1);
+    }
+  }
+  for (const [t, n] of liveTypeCounts) {
+    if (n > (survivingBuildCounts.get(t) ?? 0)) {
+      recordCapabilityInLedger(caps, startDay, 'build', t);
+    }
+  }
+}
+
+function ensureDailyLedger(r: RunState): DailyLedger {
+  if (!r.dailyLedger || r.dailyLedger.v !== 1) {
+    const caps: DailyCapabilityDates = { learnedKeys: [] };
+    bootstrapLegacyCapabilities(r, caps);
+    r.dailyLedger = {
+      v: 1,
+      seed: r.seed,
+      lastSeq: 0,
+      capabilities: caps,
+      days: {},
+    };
+  } else if (r.dailyLedger.seed !== r.seed) {
+    r.dailyLedger.seed = r.seed;
+    r.dailyLedger.days = {};
+  }
+  return r.dailyLedger;
+}
+
+/** Day-invariant capability gate evaluated strictly as of 00:00 UTC of `date` from the durable ledger so `run.start` eviction or mid-day builds/research never mutate today's objective slate. */
+function dailyGateAtDayStart(def: DailyDef, r: RunState | null, date: string): boolean {
+  if (!def.gate) return true;
+  if (!r || !isValidDateKey(date)) return false;
+  if (date <= dateKey(r.startedAt)) return false;
+  const caps = ensureDailyLedger(r).capabilities;
+  if (def.id === 'mend') return !!caps.recipe1Date && caps.recipe1Date < date;
+  if (def.id === 'hunt5') return !!caps.recipe2Date && caps.recipe2Date < date;
+  if (def.id === 'fortify') return !!caps.anyStructDate && caps.anyStructDate < date;
+  if (def.id === 'rest') return !!caps.bedDate && caps.bedDate < date;
+  if (def.id === 'smelt') return !!caps.stationDate && caps.stationDate < date;
+  if (def.id === 'knowledge') return !!caps.researchDate && caps.researchDate < date;
+  return false;
+}
+
+function computeDailyBaseIds(date: string, salt: string, r: RunState | null, exclude: string[] = []): string[] {
+  const rand = rng(hash(`${date}|${salt}`));
+  const pool = DAILY_POOL.filter(d => !exclude.includes(d.id) && dailyGateAtDayStart(d, r, date));
+  const cats = [...new Set(pool.map(d => d.cat))].sort(() => rand() - 0.5);
+  const pick: DailyDef[] = [];
+  for (const c of cats) {
+    if (pick.length >= 4) break;
+    const opts = pool.filter(d => d.cat === c);
+    const needEasy = pick.length === 3 && !pick.some(p => p.tier === 1);
+    const needHard = pick.length === 3 && !pick.some(p => p.tier === 3);
+    const pref = opts.filter(o => needEasy ? o.tier === 1 : needHard ? o.tier === 3 : true);
+    const from = pref.length ? pref : opts;
+    pick.push(from[Math.floor(rand() * from.length)]);
+  }
+  return pick.map(p => p.id);
+}
+
+/** Four objectives from four different categories, capability-gated, with one easy and one demanding. */
+export function generateDaily(date: string, salt: string, r: RunState | null, exclude: string[] = []): string[] {
+  if (r && exclude.length === 0 && salt === dailySaltFor(r)) {
+    syncRunDailyLedger(r);
+    const pinned = r.dailyLedger?.seed === r.seed ? r.dailyLedger.days[date] : undefined;
+    if (pinned) return [...pinned.baseIds];
+  }
+  return computeDailyBaseIds(date, salt, r, exclude);
+}
+
+export function resolveRerollReplacement(date: string, salt: string, taken: string[], objId: string, r: RunState | null): DailyDef | null {
+  const cats = new Set(taken.map(id => DAILY_BY_ID[id]?.cat));
+  const rand = rng(hash(`${date}|${salt}|reroll`));
+  const opts = DAILY_POOL.filter(p => !taken.includes(p.id) && dailyGateAtDayStart(p, r, date) && (!cats.has(p.cat) || p.cat === DAILY_BY_ID[objId]?.cat));
+  if (!opts.length) return null;
+  return opts[Math.floor(rand() * opts.length)];
+}
+
+function recomputeLedgerDayTotals(day: DailyLedgerDay) {
+  let pts = 0;
+  for (const o of day.objectives) {
+    const def = DAILY_BY_ID[o.id];
+    if (!def) continue;
+    o.done = o.progress >= def.target;
+    if (o.done) pts += def.points;
+  }
+  day.points = pts;
+  day.milestones = DAILY_MILESTONES.filter(m => pts >= m.at).map(m => m.id);
+}
+
+function applyRerollCutoverToDay(r: RunState, day: DailyLedgerDay, rec: DailyRerollRecord) {
+  const salt = dailySaltFor(r);
+  if (!day.baseIds.includes(rec.from)) return;
+  if (resolveRerollReplacement(day.date, salt, day.baseIds, rec.from, r)?.id !== rec.to) return;
+  if (day.reroll && day.reroll.from === rec.from && day.reroll.to === rec.to && day.reroll.seq === rec.seq) return;
+  day.reroll = { ...rec };
+  day.objectives = day.baseIds.map(id => {
+    if (id === rec.from) return { id: rec.to, progress: 0, done: false, seen: [] };
+    const existing = day.objectives.find(o => o.id === id);
+    return existing ?? { id, progress: 0, done: false, seen: [] };
+  });
+  recomputeLedgerDayTotals(day);
+}
+
+function ensureDailyLedgerDay(r: RunState, date: string): DailyLedgerDay | null {
+  if (!isValidDateKey(date)) return null;
+  const minDay = dateKey(r.startedAt - Math.max(0, r.qaOffset));
+  if (date < minDay) return null;
+  const ledger = ensureDailyLedger(r);
+  let day = ledger.days[date];
+  if (!day) {
+    const salt = dailySaltFor(r);
+    const baseIds = computeDailyBaseIds(date, salt, r, []);
+    day = {
+      date,
+      baseIds,
+      objectives: baseIds.map(id => ({ id, progress: 0, done: false, seen: [] })),
+      points: 0,
+      milestones: [],
+    };
+    ledger.days[date] = day;
+    const keys = Object.keys(ledger.days);
+    if (keys.length > MAX_DAILY_LEDGER_DAYS) {
+      keys.sort();
+      while (keys.length > MAX_DAILY_LEDGER_DAYS) {
+        const oldest = keys.shift()!;
+        if (oldest !== date) delete ledger.days[oldest];
+      }
+    }
+  }
+  const committed = r.dailyRerolls?.[date];
+  if (committed && !day.reroll) applyRerollCutoverToDay(r, day, committed);
+  return day;
+}
+
+function foldOneReceiptIntoLedger(r: RunState, ledger: DailyLedger, rc: Receipt, offline: boolean) {
+  if (!rc || !Number.isFinite(rc.seq) || rc.seq <= ledger.lastSeq) return;
+  ledger.lastSeq = rc.seq;
+  if (!Number.isFinite(rc.at)) return;
+  // A resident's kill or job is not the player's waypoint progress.
+  if (isNpcReceipt()) return;
+  const dKey = dateKey(rc.at);
+  const day = ensureDailyLedgerDay(r, dKey);
+  if (dKey >= dateKey(r.startedAt)) {
+    recordCapabilityInLedger(ledger.capabilities, dKey, rc.kind, rc.detail);
+  }
+  if (!day) return;
+  let touched = false;
+  for (const o of day.objectives) {
+    if (o.done) continue;
+    if (day.reroll && o.id === day.reroll.to && rc.seq <= day.reroll.seq) continue;
+    const def = DAILY_BY_ID[o.id];
+    if (!def) continue;
+    if (offline && !def.offlineOk) continue;
+    const seen = new Set(o.seen);
+    const inc = def.count(rc, seen);
+    if (inc <= 0) continue;
+    o.progress = Math.min(def.target, o.progress + inc);
+    o.seen = [...seen].slice(0, MAX_DAILY_SEEN_KEYS);
+    if (o.progress >= def.target) {
+      o.done = true;
+      o.doneAt = rc.at;
+    }
+    touched = true;
+  }
+  if (touched) recomputeLedgerDayTotals(day);
+}
+
+/** Sync any unfolded surviving `r.receipts` into `r.dailyLedger` and optionally pin `ensureDate`. */
+export function syncRunDailyLedger(r: RunState, ensureDate?: string): DailyLedger {
+  const ledger = ensureDailyLedger(r);
+  for (const rc of r.receipts as Receipt[]) {
+    if (rc.seq > ledger.lastSeq) foldOneReceiptIntoLedger(r, ledger, rc, false);
+  }
+  if (ensureDate && isValidDateKey(ensureDate)) ensureDailyLedgerDay(r, ensureDate);
+  return ledger;
+}
+
+/** Called directly from `engine.ts:receipt()` BEFORE/AS the 250-receipt ring buffer evicts old entries. */
+export function recordDailyReceipt(r: RunState, rc: Receipt): void {
+  const ledger = ensureDailyLedger(r);
+  for (const prev of r.receipts as Receipt[]) {
+    if (prev.seq > ledger.lastSeq && prev.seq < rc.seq) {
+      foldOneReceiptIntoLedger(r, ledger, prev, false);
+    }
+  }
+  foldOneReceiptIntoLedger(r, ledger, rc, offlineSettleDepth > 0);
+}
+
+/** Commit an authoritative `journeyReroll` cutover onto `r.dailyLedger.days[date]`. */
+export function commitDailyLedgerReroll(r: RunState, date: string, rec: DailyRerollRecord): void {
+  syncRunDailyLedger(r, date);
+  const day = ensureDailyLedgerDay(r, date);
+  if (!day) return;
+  applyRerollCutoverToDay(r, day, rec);
+}
+
+/** Measure authoritative progress for a single daily objective on `date` from durable `r.dailyLedger` (falling back to surviving `r.receipts` only for custom non-active queries). */
+export function measureDailyObjectiveProgress(r: RunState, date: string, objId: string, afterSeq = 0): number {
+  const def = DAILY_BY_ID[objId];
+  if (!def || !isValidDateKey(date)) return 0;
+  syncRunDailyLedger(r, date);
+  const day = r.dailyLedger?.days[date];
+  if (day) {
+    const active = day.objectives.find(o => o.id === objId);
+    if (active && (afterSeq === 0 || (day.reroll && day.reroll.to === objId && afterSeq <= day.reroll.seq))) {
+      return active.progress;
+    }
+  }
+  const seen = new Set<string>();
+  let progress = 0;
+  for (const rc of r.receipts as Receipt[]) {
+    if (rc.seq <= afterSeq || dateKey(rc.at) !== date) continue;
+    const inc = def.count(rc, seen);
+    if (inc > 0) progress = Math.min(def.target, progress + inc);
+    if (progress >= def.target) break;
+  }
+  return progress;
+}
+
+/** Compute authoritative Daily Waypoint points from durable `r.dailyLedger` on `date`. */
+export function computeAuthoritativeDailyPoints(r: RunState, date: string): number {
+  if (!isValidDateKey(date)) return 0;
+  syncRunDailyLedger(r, date);
+  const day = r.dailyLedger?.days[date];
+  if (!day) return 0;
+  let points = 0;
+  for (const o of day.objectives) {
+    const def = DAILY_BY_ID[o.id];
+    if (def && o.done && o.progress >= def.target) points += def.points;
+  }
+  return points;
+}
+
+function newDay(date: string, _s: JourneyStore, r: RunState | null): DailyState {
+  if (r) syncRunDailyLedger(r, date);
+  const authDay = r?.dailyLedger?.days[date];
+  if (authDay) {
+    return {
+      date,
+      runId: r?.id,
+      objectives: authDay.objectives.map(o => ({ id: o.id, progress: 0, done: false, seen: [] })),
+      points: 0,
+      milestones: [],
+      rerolled: !!authDay.reroll,
+      ...(authDay.reroll ? { rerolledFrom: authDay.reroll.from } : {}),
+    };
+  }
+  const salt = dailySaltFor(r);
+  const baseIds = generateDaily(date, salt, r);
+  const committed = r?.dailyRerolls?.[date];
+  const validReroll = committed
+    && baseIds.includes(committed.from)
+    && resolveRerollReplacement(date, salt, baseIds, committed.from, r)?.id === committed.to
+    ? committed
+    : null;
+  const ids = validReroll ? baseIds.map(id => (id === validReroll.from ? validReroll.to : id)) : baseIds;
+  return {
+    date,
+    runId: r?.id,
+    objectives: ids.map(id => ({ id, progress: 0, done: false, seen: [] })),
+    points: 0,
+    milestones: [],
+    rerolled: !!validReroll,
+    ...(validReroll ? { rerolledFrom: validReroll.from } : {}),
+  };
+}
+
+/** Swap one untouched objective for another eligible one (once per day). */
+export function rerollDaily(s: JourneyStore, objId: string, r: RunState | null): JourneyStore {
+  const d = s.daily; if (!d || d.rerolled) return s;
+  const o = d.objectives.find(x => x.id === objId); if (!o || o.progress > 0 || o.done) return s;
+  const taken = d.objectives.map(x => x.id);
+  const next = resolveRerollReplacement(d.date, dailySaltFor(r), taken, objId, r);
+  if (!next) return s;
+  const tracked = s.tracked?.type === 'daily' && s.tracked.id === objId ? { type: 'daily' as const, id: next.id } : s.tracked;
+  return { ...s, tracked, daily: { ...d, rerolled: true, rerolledFrom: objId, objectives: d.objectives.map(x => x.id === objId ? { id: next.id, progress: 0, done: false, seen: [] } : x) } };
+}
+
+export const lessonState = (s: JourneyStore, id: string): LessonState => s.lessons[id] ?? { status: 'unseen', steps: {}, done: [] };
+export function currentStep(s: JourneyStore, lesson: FieldLesson) {
+  const ls = lessonState(s, lesson.id);
+  return lesson.steps.find(st => !ls.done.includes(st.id)) ?? null;
+}
+export const lessonComplete = (s: JourneyStore, l: FieldLesson) => l.steps.every(st => lessonState(s, l.id).done.includes(st.id));
+/** The bundle can be claimed now (needed steps done, not yet issued in this run). */
+export const lessonClaimable = (s: JourneyStore, l: FieldLesson) => !!lessonState(s, l.id).claimable && !lessonState(s, l.id).claimed;
+export const lessonClaimed = (s: JourneyStore, l: FieldLesson) => !!lessonState(s, l.id).claimed;
+
+// ---------------------------------------------------------------------------
+// INGEST — the only place journey progress moves.
+// ---------------------------------------------------------------------------
+export interface IngestResult { store: JourneyStore; events: JourneyEvent[]; changed: boolean }
+
+export function ingestJourney(prev: JourneyStore, gs: GameState, now: number): IngestResult {
+  const r = gs.run; if (!r) return { store: prev, events: [], changed: false };
+  let s = prev; let changed = false; const events: JourneyEvent[] = [];
+  const mut = () => { if (!changed) { s = { ...s, lessons: { ...s.lessons }, cursors: { ...s.cursors }, poiSeen: { ...s.poiSeen }, coreSeen: { ...s.coreSeen }, claimed: [...s.claimed], chronicle: [...s.chronicle], history: [...s.history], pendingRewards: [...s.pendingRewards] }; changed = true; } };
+  const today = dateKey(now);
+  syncRunDailyLedger(r, today);
+
+  // Day roll-over or run switch on the same day. A clock moved backwards freezes daily progress rather than regenerating.
+  if (!s.daily || today > s.daily.date || (today === s.daily.date && s.daily.runId !== r.id)) {
+    mut();
+    if (s.daily && today > s.daily.date) {
+      const prevAuth = s.daily.runId === r.id ? r.dailyLedger?.days[s.daily.date] : undefined;
+      const histPts = prevAuth ? prevAuth.points : s.daily.points;
+      const histMilestones = prevAuth ? [...prevAuth.milestones] : s.daily.milestones;
+      const histCompleted = prevAuth ? prevAuth.objectives.filter(o => o.done).length : s.daily.objectives.filter(o => o.done).length;
+      s.history = [{ date: s.daily.date, points: histPts, milestones: histMilestones, completed: histCompleted }, ...s.history].slice(0, 14);
+    }
+    s.daily = newDay(today, s, r);
+    if (s.tracked?.type === 'daily') s.tracked = null;
+  }
+  const dailyLive = s.daily!.date === today;
+  if (dailyLive && !s.daily!.rerolled && r.dailyRerolls?.[today]) {
+    const swapped = rerollDaily(s, r.dailyRerolls[today].from, r);
+    if (swapped !== s) {
+      mut();
+      s.daily = swapped.daily;
+      s.tracked = swapped.tracked;
+    }
+  }
+
+  // First sight of a run: fresh runs replay from the start; resumed runs begin at
+  // the current receipt (no retroactive daily credit), but Fieldcraft may learn
+  // from receipts still in the run log — those really happened.
+  let firstSight = false;
+  if (s.cursors[r.id] === undefined) {
+    mut(); firstSight = true;
+    const fresh = r.receipts.some(rc => rc.kind === 'run.start');
+    s.cursors[r.id] = fresh ? 0 : (r.receipts.at(-1)?.seq ?? 0);
+    s.poiSeen[r.id] = fresh ? [] : [...r.poiSeen];
+    // Cores already in custody at first sight (presets, loaded saves) are never discoveries.
+    s.coreSeen[r.id] = Object.values(r.custody).flatMap(c => c.slots).filter(x => x && ITEMS[x.key]?.creatorCore).map(x => x!.uid);
+  }
+
+  const cursor = s.cursors[r.id];
+  const batch: Receipt[] = (r.receipts as Receipt[]).filter(rc => rc.seq > cursor);
+  // observed state growth → synthetic, stable receipts
+  const knownPoi = new Set(s.poiSeen[r.id] ?? []);
+  for (const id of r.poiSeen) if (!knownPoi.has(id)) batch.push({ id: `poi:${id}`, seq: -1, at: now, kind: OBS_POI, detail: id });
+  const knownCore = new Set(s.coreSeen[r.id] ?? []);
+  const inv = r.custody['inv']?.slots ?? [];
+  for (const st of inv) if (st && ITEMS[st.key]?.creatorCore && !knownCore.has(st.uid)) batch.push({ id: `core:${st.uid}`, seq: -1, at: now, kind: OBS_CORE, detail: `${st.key}:${st.uid}` });
+
+  if (batch.length) {
+    mut();
+    for (const rc of batch) {
+      const away = now - rc.at > 5000;
+      if (rc.kind === OBS_POI) s.poiSeen[r.id] = [...(s.poiSeen[r.id] ?? []), rc.detail];
+      if (rc.kind === OBS_CORE) s.coreSeen[r.id] = [...(s.coreSeen[r.id] ?? []), rc.detail.split(':')[1]];
+      if (dailyLive && rc.kind !== OBS_POI && dateKey(rc.at) === today) applyDaily(rc, away);
+      chronicleFrom(rc, away);
+    }
+    const maxSeq = batch.reduce((m, rc) => Math.max(m, rc.seq), cursor);
+    s.cursors[r.id] = maxSeq;
+  }
+
+  reconcileHandbook();
+  if (dailyLive) reconcileDailyFromLedger();
+  void firstSight;
+  return { store: s, events, changed };
+
+  function reconcileDailyFromLedger() {
+    const authDay = r!.dailyLedger?.days[today];
+    if (!authDay || !s.daily) return;
+    const d = s.daily;
+    const wantRerolled = !!authDay.reroll;
+    const wantFrom = authDay.reroll?.from;
+    const objsMatch =
+      d.objectives.length === authDay.objectives.length &&
+      d.objectives.every((o, i) => {
+        const ao = authDay.objectives[i];
+        return (
+          o.id === ao.id &&
+          o.progress === ao.progress &&
+          o.done === ao.done &&
+          o.doneAt === ao.doneAt &&
+          o.seen.length === ao.seen.length &&
+          o.seen.every((v, k) => v === ao.seen[k])
+        );
+      });
+    const milestonesMatch =
+      d.milestones.length === authDay.milestones.length &&
+      d.milestones.every((m, i) => m === authDay.milestones[i]);
+    const missingClaimed =
+      authDay.objectives.some(ao => ao.done && !s.claimed.includes(`daily:${r!.id}:${today}:${ao.id}`)) ||
+      DAILY_MILESTONES.some(m => authDay.points >= m.at && !s.claimed.includes(`milestone:${today}:${m.id}`));
+
+    if (
+      d.rerolled === wantRerolled &&
+      d.rerolledFrom === wantFrom &&
+      d.points === authDay.points &&
+      objsMatch &&
+      milestonesMatch &&
+      !missingClaimed
+    ) return;
+
+    mut();
+    if (authDay.reroll && s.tracked?.type === 'daily' && s.tracked.id === authDay.reroll.from) {
+      s.tracked = { type: 'daily', id: authDay.reroll.to };
+    }
+    for (const ao of authDay.objectives) {
+      const cid = `daily:${r!.id}:${today}:${ao.id}`;
+      if (ao.done && !s.claimed.includes(cid)) s.claimed.push(cid);
+    }
+    for (const m of DAILY_MILESTONES) {
+      const mid = `milestone:${today}:${m.id}`;
+      if (authDay.points >= m.at && !s.claimed.includes(mid)) {
+        s.claimed.push(mid);
+        s.marks += m.marks;
+        if (m.pending) s.pendingRewards = [{ id: mid, date: today, milestone: m.name, requirement: m.pending }, ...s.pendingRewards].slice(0, 30);
+        const sp = milestoneRewardSpec(m.id);
+        const doneAt = authDay.objectives.reduce((mx, o) => Math.max(mx, o.doneAt ?? 0), 0) || now;
+        chron({ id: mid, at: doneAt, level: 3, title: `Daily ${m.name}`, detail: `${authDay.points} waypoint points on ${today}${sp ? ` · ${milestoneRewardLabel(m.id)}` : ''}`, icon: 'coal', runId: r!.id, kind: 'daily', away: true });
+      }
+    }
+    s.daily = {
+      date: today,
+      runId: r!.id,
+      objectives: authDay.objectives.map(ao => ({
+        id: ao.id,
+        progress: ao.progress,
+        done: ao.done,
+        ...(ao.doneAt !== undefined ? { doneAt: ao.doneAt } : {}),
+        seen: [...ao.seen],
+      })),
+      points: authDay.points,
+      milestones: [...authDay.milestones],
+      rerolled: wantRerolled,
+      ...(wantFrom ? { rerolledFrom: wantFrom } : {}),
+    };
+  }
+
+  function chron(e: ChronicleEntry) {
+    if (s.chronicle.some(c => c.id === e.id)) return false;
+    s.chronicle = [e, ...s.chronicle].slice(0, 160); return true;
+  }
+
+  /** Mirror the run-authoritative handbook ledger into the store and announce what changed.
+   *  The first time this profile sees a run (new device, resumed save) the state is adopted quietly. */
+  function reconcileHandbook() {
+    syncHandbook(r!);
+    const lang = getLang();
+    const silent = s.lessonRun !== r!.id;
+    for (const lesson of FIELDCRAFT) {
+      const v = chapterView(r, lesson);
+      const ls0 = lessonState(s, lesson.id);
+      const before: LessonState = silent ? { status: ls0.status, steps: {}, done: [] } : ls0;
+      const same = !silent
+        && before.done.length === v.done.length && v.done.every(id => before.done.includes(id))
+        && lesson.steps.every(st => (before.steps[st.id] ?? 0) === (v.steps[st.id] ?? 0))
+        && !!before.claimable === v.claimable && !!before.claimed === v.claimed;
+      if (same) continue;
+      const lt = lessonText(lesson, lang);
+      const wasComplete = lesson.steps.every(st => before.done.includes(st.id));
+      const ls: LessonState = { status: ls0.status, steps: { ...v.steps }, done: [...v.done], claimable: v.claimable, claimed: v.claimed, ...(v.complete ? { completedAt: before.completedAt ?? now } : {}) };
+      if (!silent) {
+        const quiet = ls0.status === 'dismissed';
+        for (const st of lesson.steps) {
+          const stx = stepText(st, lang); const cid = `fc:${r!.id}:${lesson.id}:${st.id}`;
+          if (v.done.includes(st.id) && !before.done.includes(st.id)) {
+            if (!quiet) events.push({ id: cid, level: 2, kind: 'step', title: stx.title, detail: v.complete ? T(`${lt.title} mastered`, `Hoàn thành chương ${lt.title}`, lang) : lt.title, icon: st.icon, ref: { type: 'lesson', id: lesson.id } });
+          } else if (!v.done.includes(st.id) && (v.steps[st.id] ?? 0) > (before.steps[st.id] ?? 0)) {
+            if (!quiet) events.push({ id: `${cid}:p${v.steps[st.id]}`, level: 1, kind: 'progress', title: stx.title, detail: `${v.steps[st.id]}/${st.target}`, icon: st.icon, ref: { type: 'lesson', id: lesson.id } });
+          }
+        }
+        if (v.claimable && !before.claimable && !v.claimed) {
+          events.push({ id: `hbready:${r!.id}:${lesson.id}`, level: 3, kind: 'reward', title: T(`${TIER_LABEL[lesson.tier].en} ready`, `${TIER_LABEL[lesson.tier].vi} đã sẵn sàng`, lang), detail: T(`${lt.title} · claim it in the Journey ledger [J]`, `${lt.title} · nhận trong sổ Journey [J]`, lang), icon: lesson.reward[0]?.[0] ?? lesson.icon, ref: { type: 'lesson', id: lesson.id } });
+        }
+        if (v.claimed && !before.claimed) {
+          events.push({ id: `hbclaim:${r!.id}:${lesson.id}`, level: (lesson.tier + 2) as FeedbackLevel, kind: 'reward', title: T(`${TIER_LABEL[lesson.tier].en} received`, `Đã nhận ${TIER_LABEL[lesson.tier].vi}`, lang), detail: rewardLabel(lesson), icon: lesson.reward[0]?.[0] ?? lesson.icon, ref: { type: 'lesson', id: lesson.id } });
+        }
+      }
+      // Mastery is recorded once per profile: a Chronicle line and Wayfarer Marks (no economic value).
+      if (v.complete && (silent || !wasComplete)) {
+        const mid = `hbmark:${lesson.id}`;
+        if (!s.claimed.includes(mid)) {
+          mut(); s.claimed.push(mid); s.marks += TIER_MARKS[lesson.tier];
+          chron({ id: `lesson:${lesson.id}`, at: now, level: 2, title: T(`${lt.title} mastered`, `Hoàn thành chương ${lt.title}`, lang), detail: lt.motto, icon: lesson.icon, runId: r!.id, kind: 'lesson', seen: silent || ls0.status === 'dismissed' });
+        }
+      }
+      mut();
+      s.lessons[lesson.id] = ls;
+    }
+    if (silent) { mut(); s.lessonRun = r!.id; }
+  }
+
+  function applyDaily(rc: Receipt, away: boolean) {
+    const d = s.daily!;
+    const committedReroll = r!.dailyRerolls?.[d.date];
+    let dd = d;
+    for (const o of d.objectives) {
+      if (o.done) continue;
+      if (committedReroll && o.id === committedReroll.to && rc.seq <= committedReroll.seq) continue;
+      const def = DAILY_BY_ID[o.id]; if (!def) continue;
+      if (away && !def.offlineOk) continue;
+      const seen = new Set(o.seen);
+      const inc = def.count(rc, seen); if (!inc) continue;
+      const progress = Math.min(def.target, o.progress + inc);
+      const cid = `daily:${r!.id}:${d.date}:${o.id}`;
+      const done = progress >= def.target && !s.claimed.includes(cid);
+      if (done) s.claimed.push(cid);
+      dd = { ...dd, objectives: dd.objectives.map(x => x.id === o.id ? { ...x, progress, done: x.done || done, doneAt: done ? rc.at : x.doneAt, seen: [...seen].slice(0, 40) } : x) };
+      if (done) {
+        dd = { ...dd, points: dd.points + def.points };
+        events.push({ id: cid, level: 2, kind: 'daily', title: def.title, detail: `+${def.points} pts`, icon: def.icon, away, ref: { type: 'daily', id: o.id } });
+        for (const m of DAILY_MILESTONES) {
+          const mid = `milestone:${d.date}:${m.id}`;
+          if (dd.points >= m.at && !s.claimed.includes(mid)) {
+            s.claimed.push(mid); dd = { ...dd, milestones: [...dd.milestones, m.id] };
+            s.marks += m.marks;
+            if (m.pending) s.pendingRewards = [{ id: mid, date: d.date, milestone: m.name, requirement: m.pending }, ...s.pendingRewards].slice(0, 30);
+            const sp = milestoneRewardSpec(m.id);
+            events.push({ id: mid, level: 3, kind: 'milestone', title: `${m.name} reached`, detail: `${dd.points} pts · +${m.marks} Mark${sp && sp.securedCash > 0 ? ` · +${sp.securedCash} Secured` : ''}`, icon: m.id === 'beacon' ? 'crystal' : m.id === 'hearth' ? 'st:campfire' : 'coal', away });
+            chron({ id: mid, at: rc.at, level: 3, title: `Daily ${m.name}`, detail: `${dd.points} waypoint points on ${d.date}${sp ? ` · ${milestoneRewardLabel(m.id)}` : ''}`, icon: 'coal', runId: r!.id, kind: 'daily', away });
+          }
+        }
+      } else {
+        events.push({ id: `${cid}:p${progress}`, level: 1, kind: 'progress', title: def.title, detail: `${progress}/${def.target}`, icon: def.icon, ref: { type: 'daily', id: o.id } });
+      }
+    }
+    s.daily = dd;
+  }
+
+  function chronicleFrom(rc: Receipt, away: boolean) {
+    if (rc.kind === 'achievement') {
+      const a = ACHIEVEMENTS[rc.detail]; const m = ACH_META[rc.detail]; if (!a || !m) return;
+      chron({ id: `ach:${r!.id}:${rc.detail}`, at: rc.at, level: m.level, title: a.name, detail: m.tale, icon: m.icon, runId: r!.id, kind: 'achievement', away });
+    } else if (rc.kind === 'elder.defeat') {
+      const e = lookupElderDef(rc.detail);
+      chron({ id: `elder:${r!.id}:${rc.id}`, at: rc.at, level: 5, title: `${e?.name ?? 'Elder'} defeated`, detail: e ? `${ITEMS[e.stone]?.name ?? 'Stone'} recovered from the dust` : '', icon: e?.stone, runId: r!.id, kind: 'elder', away });
+    } else if (rc.kind === OBS_POI) {
+      const veyraPoi = POIS.find(p => p.id === rc.detail);
+      chron({ id: `poi:${r!.id}:${rc.detail}`, at: rc.at, level: 1, title: 'Place discovered', detail: veyraPoi ? veyraPoi.name : rc.detail.replace(/[_-]/g, ' '), icon: 'spares', runId: r!.id, kind: 'discovery', seen: true });
+    } else if (rc.kind === OBS_CORE) {
+      const key = rc.detail.split(':')[0];
+      chron({ id: `core:${rc.detail.split(':')[1]}`, at: rc.at, level: 4, title: `${ITEMS[key]?.name ?? 'Creator Core'} recovered`, detail: 'All three reserves remain physical.', icon: key, runId: r!.id, kind: 'relic', away });
+    } else if (rc.kind === 'learn.blueprint') {
+      chron({ id: `learn:${r!.id}:${rc.detail}`, at: rc.at, level: 3, title: 'Recipe learned', detail: rc.detail.replace(/_/g, ' '), icon: 'blueprint', runId: r!.id, kind: 'capability', away, seen: true });
+    } else if (['station.upgrade', 'furnace.upgrade', 'power.upgrade', 'industrial.install', 'cart.upgrade'].includes(rc.kind)) {
+      chron({ id: `upg:${r!.id}:${rc.id}`, at: rc.at, level: 3, title: rc.kind === 'furnace.upgrade' ? 'Furnace lined' : rc.kind === 'power.upgrade' ? 'Generator reinforced' : rc.kind === 'cart.upgrade' ? 'Cart reinforced' : rc.kind === 'industrial.install' ? 'Power module fitted' : `Workbench level ${rc.detail.split(':')[1] ?? ''}`, detail: 'New capability unlocked', icon: rc.kind === 'furnace.upgrade' ? 'st:furnace' : 'st:workbench', runId: r!.id, kind: 'capability', away, seen: true });
+    } else if (rc.kind === 'build' && ['furnace', 'workbench', 'research', 'claim', 'campfire', 'recycler', 'refinery'].includes(buildType(rc))) {
+      const t = buildType(rc);
+      chron({ id: `firstbuild:${r!.id}:${t}`, at: rc.at, level: 3, title: `First ${STRUCTS[t]?.name ?? t}`, detail: 'A new station stands in your territory', icon: `st:${t}`, runId: r!.id, kind: 'capability', away, seen: true });
+    }
+  }
+}
+
+/** Ragnarok / evacuation are not receipts with achievements in every path; record the phase change itself. */
+export function recordWorldMoment(s: JourneyStore, runId: string, id: string, title: string, detail: string, at: number): JourneyStore {
+  const cid = `world:${runId}:${id}`;
+  if (s.chronicle.some(c => c.id === cid)) return s;
+  const entry: ChronicleEntry = { id: cid, at, level: 5, title, detail, runId, kind: 'world', icon: 'coal' };
+  return { ...s, chronicle: [entry, ...s.chronicle].slice(0, 160) };
+}
+
+export function markChronicleSeen(s: JourneyStore): JourneyStore {
+  if (!s.chronicle.some(c => !c.seen)) return s;
+  return { ...s, chronicle: s.chronicle.map(c => c.seen ? c : { ...c, seen: true }) };
+}
+
+// ---------------------------------------------------------------------------
+// TRACKING — resolve what the Waymark should show (explicit choice first).
+// ---------------------------------------------------------------------------
+export interface TrackView {
+  ref: Exclude<TrackRef, null>; suggested: boolean;
+  title: string; group: string; icon: string; how: string; why: string;
+  progress: number; target: number; done: boolean;
+  pips: { done: boolean; current: boolean }[];
+  anchor?: AnchorHint; focus?: FieldStep['focus']; points?: number;
+  /** Handbook chapters: the supply bundle this chapter issues, and whether it can be claimed now. */
+  reward?: string; claimable?: boolean;
+}
+/** What is around the player right now; only used to choose WHICH open chapter to suggest. */
+export interface TrackContext { nearSurvivor?: boolean; ragnarok?: boolean }
+
+/** The chapter the tracker offers when the player has not chosen one. Never a requirement: a waiting
+ *  reward comes first, then what the surroundings make relevant, then whatever is already under way. */
+export function suggestLesson(s: JourneyStore, ctx?: TrackContext): FieldLesson | null {
+  const live = FIELDCRAFT.filter(l => lessonState(s, l.id).status !== 'dismissed');
+  const ready = live.find(l => lessonClaimable(s, l));
+  if (ready) return ready;
+  const open = live.filter(l => !lessonComplete(s, l));
+  if (!open.length) return null;
+  if (ctx?.ragnarok) { const l = open.find(x => x.id === 'ragnarok'); if (l) return l; }
+  if (ctx?.nearSurvivor) { const l = open.find(x => x.id === 'residents'); if (l) return l; }
+  const started = open.find(l => { const ls = lessonState(s, l.id); return ls.done.length > 0 || Object.values(ls.steps).some(Boolean); });
+  return started ?? open[0];
+}
+
+export function resolveTrack(s: JourneyStore, _hrs: number, ctx?: TrackContext): TrackView | null {
+  const t = s.tracked; const lang = getLang();
+  if (t?.type === 'lesson') {
+    const l = FIELDCRAFT.find(x => x.id === t.id); if (!l) return null;
+    const step = currentStep(s, l); const ls = lessonState(s, l.id); const lt = lessonText(l, lang);
+    const reward = `${TIER_LABEL[l.tier][lang]}: ${rewardLabel(l)}`;
+    const pips = l.steps.map(st => ({ done: ls.done.includes(st.id), current: st.id === step?.id }));
+    if (lessonClaimable(s, l)) return { ref: t, suggested: false, title: T(`${TIER_LABEL[l.tier].en} ready`, `${TIER_LABEL[l.tier].vi} đã sẵn sàng`, lang), group: lt.title, icon: l.reward[0]?.[0] ?? l.icon, how: T('Open the Journey ledger [J] and claim it.', 'Mở sổ Journey [J] và nhận.', lang), why: rewardLabel(l), progress: 1, target: 1, done: true, pips, reward, claimable: true };
+    if (!step) return { ref: t, suggested: false, title: T(`${lt.title} mastered`, `Hoàn thành chương ${lt.title}`, lang), group: T('Fieldcraft', 'Sổ tay sinh tồn', lang), icon: l.icon, how: T('Choose another chapter in the Journey ledger [J].', 'Chọn chương khác trong sổ Journey [J].', lang), why: lt.motto, progress: 1, target: 1, done: true, pips };
+    const stx = stepText(step, lang);
+    return { ref: t, suggested: false, title: stx.title, group: lt.title, icon: step.icon, how: stx.how, why: stx.why, progress: ls.steps[step.id] ?? 0, target: step.target, done: false, anchor: step.anchor, focus: step.focus, pips, reward: ls.claimed ? undefined : reward };
+  }
+  if (t?.type === 'daily' && s.daily) {
+    const o = s.daily.objectives.find(x => x.id === t.id); const d = DAILY_BY_ID[t.id]; if (!o || !d) return null;
+    const focus: FieldStep['focus'] = d.cat === 'craft' ? ['craft'] : d.cat === 'build' ? ['build'] : d.cat === 'explore' ? ['explore'] : undefined;
+    const dt = dailyText(d, lang);
+    return { ref: t, suggested: false, title: dt.title, group: `${T('Waypoint', 'Mốc ngày', lang)} · ${catLabel(d.cat, lang)}`, icon: d.icon, how: dt.how, why: T(`${d.points} points toward today's milestones.`, `${d.points} điểm cho các mốc hôm nay.`, lang), progress: o.progress, target: d.target, done: o.done, anchor: d.anchor, focus, points: d.points,
+      pips: s.daily.objectives.map(x => ({ done: x.done, current: x.id === t.id })) };
+  }
+  // Suggestion: an offer, never a requirement, and never after an explicit untrack.
+  if (!t && !s.trackQuiet) {
+    const l = suggestLesson(s, ctx);
+    if (l) {
+      const v = resolveTrack({ ...s, tracked: { type: 'lesson', id: l.id } }, _hrs, ctx);
+      return v ? { ...v, suggested: true } : null;
+    }
+  }
+  return null;
+}
+
+/** Count consecutive active days with at least one completed Waypoint or Milestone (purely celebratory, never punitive). */
+export function streakDays(s: JourneyStore): number {
+  const days = [
+    ...(s.daily ? [{ date: s.daily.date, active: s.daily.points > 0 || s.daily.milestones.length > 0 }] : []),
+    ...s.history.map(h => ({ date: h.date, active: h.points > 0 || h.milestones.length > 0 || h.completed > 0 })),
+  ];
+  let streak = 0;
+  let prevMs: number | null = null;
+  for (const row of days) {
+    if (!row.active) {
+      if (streak === 0 && prevMs === null) { prevMs = Date.parse(row.date + 'T00:00:00Z'); continue; }
+      break;
+    }
+    const ms = Date.parse(row.date + 'T00:00:00Z');
+    if (!Number.isFinite(ms)) break;
+    if (prevMs !== null && Math.round((prevMs - ms) / 86400000) > 1) break;
+    streak++;
+    prevMs = ms;
+  }
+  return streak;
+}
+
+export type QuickJumpTarget = 'craft' | 'build' | 'map';
+export function jumpTargetFor(focus?: FieldStep['focus']): { target: QuickJumpTarget; label: string } | null {
+  if (!focus?.length) return null;
+  if (focus.includes('craft')) return { target: 'craft', label: T('Craft [C]', 'Chế đồ [C]') };
+  if (focus.includes('build')) return { target: 'build', label: T('Build [B]', 'Xây [B]') };
+  if (focus.includes('explore')) return { target: 'map', label: T('Chart [M]', 'Bản đồ [M]') };
+  return null;
+}

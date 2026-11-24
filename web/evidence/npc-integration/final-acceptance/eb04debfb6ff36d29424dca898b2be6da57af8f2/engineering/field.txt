@@ -1,0 +1,1 @@
+{"seed":1802831566,"player":[917,875],"nearest":{"actorId":"h4d","gx":1101,"gy":724,"floor":0,"community":"com:po_typhon","state":"IDLE","occupation":"salvager","packId":"c23m"},"elapsed":20131}

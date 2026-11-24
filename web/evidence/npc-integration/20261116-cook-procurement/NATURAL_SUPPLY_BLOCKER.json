@@ -1,0 +1,912 @@
+{
+  "productionSha": "e62c66cf2e327fa21295f3a55e400d58495104b1",
+  "status": "BLOCKED: no natural paid Cook queue/pickup/delivery/consumer chain demonstrated",
+  "scope": "Seed7606,286actors,normal New Game,180s real settle; no injected inputs/stations/intents, no actor removal. Source catchment audit is bounded to current known24tile discovery and does not prove global absence.",
+  "unchangedHour": {
+    "case": "natural-population-h1",
+    "elapsedMs": 81998.495749,
+    "actors": 286,
+    "needsAt": 1794733200000,
+    "states": {
+      "IDLE": 285,
+      "WORKING": 1
+    }
+  },
+  "boundedRun": {
+    "counts": {
+      "sourceLookups": 508,
+      "sourceIndexReads": 200,
+      "worldSlices": 3998,
+      "plannerActivations": 180,
+      "actorPlans": 442,
+      "regionCompilations": 112,
+      "renderCompilations": 0,
+      "routeExpansions": 37602,
+      "entityScans": 20706
+    },
+    "elapsedMs": 28188.554736000002
+  },
+  "naturalPaidReceipts": [],
+  "recipeAndCatchmentAudit": [
+    {
+      "actor": "h1",
+      "wanted": [
+        "meat",
+        "mushroom"
+      ],
+      "recipes": [
+        {
+          "recipe": "dried_meat",
+          "missing": [
+            {
+              "key": "meat",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        },
+        {
+          "recipe": "grilled_mushroom",
+          "missing": [
+            {
+              "key": "mushroom",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        },
+        {
+          "recipe": "mushroom_soup",
+          "missing": [
+            {
+              "key": "mushroom",
+              "need": 5,
+              "have": 0
+            },
+            {
+              "key": "tin_can",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        },
+        {
+          "recipe": "canned_meat",
+          "missing": [
+            {
+              "key": "meat",
+              "need": 3,
+              "have": 0
+            },
+            {
+              "key": "tin_can",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        },
+        {
+          "recipe": "fruit_wine",
+          "missing": [
+            {
+              "key": "tin_can",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        },
+        {
+          "recipe": "jam",
+          "missing": [
+            {
+              "key": "cloth",
+              "need": 1,
+              "have": 0
+            },
+            {
+              "key": "tin_can",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        },
+        {
+          "recipe": "cooked_meat",
+          "missing": [
+            {
+              "key": "meat",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        },
+        {
+          "recipe": "stew",
+          "missing": [
+            {
+              "key": "crop",
+              "need": 2,
+              "have": 0
+            },
+            {
+              "key": "meat",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        }
+      ],
+      "candidateCount": 0
+    },
+    {
+      "actor": "h7",
+      "wanted": [
+        "meat",
+        "mushroom"
+      ],
+      "recipes": [
+        {
+          "recipe": "dried_meat",
+          "missing": [
+            {
+              "key": "meat",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        },
+        {
+          "recipe": "grilled_mushroom",
+          "missing": [
+            {
+              "key": "mushroom",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        },
+        {
+          "recipe": "mushroom_soup",
+          "missing": [
+            {
+              "key": "mushroom",
+              "need": 5,
+              "have": 0
+            },
+            {
+              "key": "tin_can",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        },
+        {
+          "recipe": "canned_meat",
+          "missing": [
+            {
+              "key": "meat",
+              "need": 3,
+              "have": 0
+            },
+            {
+              "key": "tin_can",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        },
+        {
+          "recipe": "fruit_wine",
+          "missing": [
+            {
+              "key": "tin_can",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        },
+        {
+          "recipe": "jam",
+          "missing": [
+            {
+              "key": "cloth",
+              "need": 1,
+              "have": 0
+            },
+            {
+              "key": "tin_can",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        },
+        {
+          "recipe": "cooked_meat",
+          "missing": [
+            {
+              "key": "meat",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        },
+        {
+          "recipe": "stew",
+          "missing": [
+            {
+              "key": "crop",
+              "need": 2,
+              "have": 0
+            },
+            {
+              "key": "meat",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        }
+      ],
+      "candidateCount": 0
+    },
+    {
+      "actor": "hl",
+      "wanted": [
+        "meat",
+        "mushroom"
+      ],
+      "recipes": [
+        {
+          "recipe": "dried_meat",
+          "missing": [
+            {
+              "key": "meat",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        },
+        {
+          "recipe": "grilled_mushroom",
+          "missing": [
+            {
+              "key": "mushroom",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        },
+        {
+          "recipe": "mushroom_soup",
+          "missing": [
+            {
+              "key": "mushroom",
+              "need": 5,
+              "have": 0
+            },
+            {
+              "key": "tin_can",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        },
+        {
+          "recipe": "canned_meat",
+          "missing": [
+            {
+              "key": "meat",
+              "need": 3,
+              "have": 0
+            },
+            {
+              "key": "tin_can",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        },
+        {
+          "recipe": "fruit_wine",
+          "missing": [
+            {
+              "key": "tin_can",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        },
+        {
+          "recipe": "jam",
+          "missing": [
+            {
+              "key": "cloth",
+              "need": 1,
+              "have": 0
+            },
+            {
+              "key": "tin_can",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        },
+        {
+          "recipe": "cooked_meat",
+          "missing": [
+            {
+              "key": "meat",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        },
+        {
+          "recipe": "stew",
+          "missing": [
+            {
+              "key": "crop",
+              "need": 2,
+              "have": 0
+            },
+            {
+              "key": "meat",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        }
+      ],
+      "candidateCount": 0
+    },
+    {
+      "actor": "hm",
+      "wanted": [
+        "meat",
+        "mushroom"
+      ],
+      "recipes": [
+        {
+          "recipe": "dried_meat",
+          "missing": [
+            {
+              "key": "meat",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        },
+        {
+          "recipe": "grilled_mushroom",
+          "missing": [
+            {
+              "key": "mushroom",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        },
+        {
+          "recipe": "mushroom_soup",
+          "missing": [
+            {
+              "key": "mushroom",
+              "need": 5,
+              "have": 0
+            },
+            {
+              "key": "tin_can",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        },
+        {
+          "recipe": "canned_meat",
+          "missing": [
+            {
+              "key": "meat",
+              "need": 3,
+              "have": 0
+            },
+            {
+              "key": "tin_can",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        },
+        {
+          "recipe": "fruit_wine",
+          "missing": [
+            {
+              "key": "tin_can",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        },
+        {
+          "recipe": "jam",
+          "missing": [
+            {
+              "key": "cloth",
+              "need": 1,
+              "have": 0
+            },
+            {
+              "key": "tin_can",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        },
+        {
+          "recipe": "cooked_meat",
+          "missing": [
+            {
+              "key": "meat",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        },
+        {
+          "recipe": "stew",
+          "missing": [
+            {
+              "key": "crop",
+              "need": 2,
+              "have": 0
+            },
+            {
+              "key": "meat",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        }
+      ],
+      "candidateCount": 0
+    },
+    {
+      "actor": "hu",
+      "wanted": [
+        "meat",
+        "mushroom"
+      ],
+      "recipes": [
+        {
+          "recipe": "dried_meat",
+          "missing": [
+            {
+              "key": "meat",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        },
+        {
+          "recipe": "grilled_mushroom",
+          "missing": [
+            {
+              "key": "mushroom",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        },
+        {
+          "recipe": "mushroom_soup",
+          "missing": [
+            {
+              "key": "mushroom",
+              "need": 5,
+              "have": 0
+            },
+            {
+              "key": "tin_can",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        },
+        {
+          "recipe": "canned_meat",
+          "missing": [
+            {
+              "key": "meat",
+              "need": 3,
+              "have": 0
+            },
+            {
+              "key": "tin_can",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        },
+        {
+          "recipe": "fruit_wine",
+          "missing": [
+            {
+              "key": "tin_can",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        },
+        {
+          "recipe": "jam",
+          "missing": [
+            {
+              "key": "cloth",
+              "need": 1,
+              "have": 0
+            },
+            {
+              "key": "tin_can",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        },
+        {
+          "recipe": "cooked_meat",
+          "missing": [
+            {
+              "key": "meat",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        },
+        {
+          "recipe": "stew",
+          "missing": [
+            {
+              "key": "crop",
+              "need": 2,
+              "have": 0
+            },
+            {
+              "key": "meat",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        }
+      ],
+      "candidateCount": 0
+    },
+    {
+      "actor": "hv",
+      "wanted": [
+        "meat",
+        "mushroom"
+      ],
+      "recipes": [
+        {
+          "recipe": "dried_meat",
+          "missing": [
+            {
+              "key": "meat",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        },
+        {
+          "recipe": "grilled_mushroom",
+          "missing": [
+            {
+              "key": "mushroom",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        },
+        {
+          "recipe": "mushroom_soup",
+          "missing": [
+            {
+              "key": "mushroom",
+              "need": 5,
+              "have": 0
+            },
+            {
+              "key": "tin_can",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        },
+        {
+          "recipe": "canned_meat",
+          "missing": [
+            {
+              "key": "meat",
+              "need": 3,
+              "have": 0
+            },
+            {
+              "key": "tin_can",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        },
+        {
+          "recipe": "fruit_wine",
+          "missing": [
+            {
+              "key": "tin_can",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        },
+        {
+          "recipe": "jam",
+          "missing": [
+            {
+              "key": "cloth",
+              "need": 1,
+              "have": 0
+            },
+            {
+              "key": "tin_can",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        },
+        {
+          "recipe": "cooked_meat",
+          "missing": [
+            {
+              "key": "meat",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        },
+        {
+          "recipe": "stew",
+          "missing": [
+            {
+              "key": "crop",
+              "need": 2,
+              "have": 0
+            },
+            {
+              "key": "meat",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        }
+      ],
+      "candidateCount": 0
+    },
+    {
+      "actor": "h13",
+      "wanted": [
+        "meat",
+        "mushroom"
+      ],
+      "recipes": [
+        {
+          "recipe": "dried_meat",
+          "missing": [
+            {
+              "key": "meat",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        },
+        {
+          "recipe": "grilled_mushroom",
+          "missing": [
+            {
+              "key": "mushroom",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        },
+        {
+          "recipe": "mushroom_soup",
+          "missing": [
+            {
+              "key": "mushroom",
+              "need": 5,
+              "have": 0
+            },
+            {
+              "key": "tin_can",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        },
+        {
+          "recipe": "canned_meat",
+          "missing": [
+            {
+              "key": "meat",
+              "need": 3,
+              "have": 0
+            },
+            {
+              "key": "tin_can",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        },
+        {
+          "recipe": "fruit_wine",
+          "missing": [
+            {
+              "key": "tin_can",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        },
+        {
+          "recipe": "jam",
+          "missing": [
+            {
+              "key": "cloth",
+              "need": 1,
+              "have": 0
+            },
+            {
+              "key": "tin_can",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        },
+        {
+          "recipe": "cooked_meat",
+          "missing": [
+            {
+              "key": "meat",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        },
+        {
+          "recipe": "stew",
+          "missing": [
+            {
+              "key": "crop",
+              "need": 2,
+              "have": 0
+            },
+            {
+              "key": "meat",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        }
+      ],
+      "candidateCount": 0
+    },
+    {
+      "actor": "h1a",
+      "wanted": [
+        "meat",
+        "mushroom"
+      ],
+      "recipes": [
+        {
+          "recipe": "dried_meat",
+          "missing": [
+            {
+              "key": "meat",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        },
+        {
+          "recipe": "grilled_mushroom",
+          "missing": [
+            {
+              "key": "mushroom",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        },
+        {
+          "recipe": "mushroom_soup",
+          "missing": [
+            {
+              "key": "mushroom",
+              "need": 5,
+              "have": 0
+            },
+            {
+              "key": "tin_can",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        },
+        {
+          "recipe": "canned_meat",
+          "missing": [
+            {
+              "key": "meat",
+              "need": 3,
+              "have": 0
+            },
+            {
+              "key": "tin_can",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        },
+        {
+          "recipe": "fruit_wine",
+          "missing": [
+            {
+              "key": "tin_can",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        },
+        {
+          "recipe": "jam",
+          "missing": [
+            {
+              "key": "cloth",
+              "need": 1,
+              "have": 0
+            },
+            {
+              "key": "tin_can",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        },
+        {
+          "recipe": "cooked_meat",
+          "missing": [
+            {
+              "key": "meat",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        },
+        {
+          "recipe": "stew",
+          "missing": [
+            {
+              "key": "crop",
+              "need": 2,
+              "have": 0
+            },
+            {
+              "key": "meat",
+              "need": 1,
+              "have": 0
+            }
+          ]
+        }
+      ],
+      "candidateCount": 0
+    }
+  ]
+}

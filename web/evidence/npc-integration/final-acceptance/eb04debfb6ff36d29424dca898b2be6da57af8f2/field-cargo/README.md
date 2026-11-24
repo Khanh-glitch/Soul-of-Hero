@@ -1,0 +1,2 @@
+# Pilot (incomplete) — không dùng làm bằng chứng giao hàng
+Ordinary production New Game + Save & quit. Save gốc và ảnh native trước khi đóng; profile thật mở lại sau 111385ms wall time. `02-return.png` là màn Return Chronicle (699 sự kiện, hiển thị một workshop grilled_mushroom). Nút thật là **Enter the Island**, không phải Continue. Driver cũ không thoát được màn này để lưu snapshot sau; không suy ra giao đúng UID từ thông báo. Lần chạy sửa driver có thư mục riêng, không ghép ảnh hoặc seed.

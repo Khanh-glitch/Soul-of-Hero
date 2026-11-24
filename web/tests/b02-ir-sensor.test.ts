@@ -1,4 +1,5 @@
 // B02-P1-A infrared sensor (ir-v1). Mechanics and negative proofs; no bot play, no offline enemy kills.
+import {dispatchCarryingPack} from './helpers/build-kit';
 import {describe,it,expect} from 'vitest';
 import {TILE,WW,T,type Entity} from '../src/game/core';
 import {STRUCTS} from '../src/game/catalog';
@@ -11,8 +12,8 @@ function setup(){const g=newGame();expect(dispatch(g,{id:'ir-start'+ ++n,type:'s
   for(let yy=y-6;yy<=y+6;yy++)for(let xx=x-6;xx<=x+8;xx++){const i=yy*WW+xx;r.terrain[i]={t:T.GRASS};if(getWorld().sourceV3[i])r.sources[i]={stock:0,hp:0};}
   markDirty();
   const pos=(tx:number,ty:number)=>{r.player.x=tx*TILE+8;r.player.y=ty*TILE+8;markDirty();};
-  const act=(type:string,args:object={},now=T0)=>dispatch(g,{id:'ir-'+ ++n,type,...args},now);
-  const build=(type:string,tx:number,ty:number,px=tx,py=ty+1)=>{pos(px,py);for(const [k,q] of STRUCTS[type].cost)addItem(r,'inv',k,q);const res=act('build',{struct:type,tx,ty});expect(res.ok,`${type}: ${(res as any).reason}`).toBe(true);return Object.values(r.entities).find(e=>e.kind==='struct'&&e.tx===tx&&e.ty===ty&&e.type===type)!;};
+  const act=(type:string,args:object={},now=T0)=>dispatchCarryingPack(g,{id:'ir-'+ ++n,type,...args},now);
+  const build=(type:string,tx:number,ty:number,px=tx,py=ty+1)=>{pos(px,py);for(const [k,q] of STRUCTS[type].cost)addItem(r,'inv',k,q);if(type==='door_powered'){for(const [k,q] of STRUCTS.door_wood.cost)addItem(r,'inv',k,q);expect(act('build',{struct:'door_wood',tx,ty}).ok,'host door').toBe(true);}const res=act('build',{struct:type,tx,ty});expect(res.ok,`${type}: ${(res as any).reason}`).toBe(true);return Object.values(r.entities).find(e=>e.kind==='struct'&&e.tx===tx&&e.ty===ty&&e.type===type)!;};
   return {g,r,x,y,pos,act,build};}
 /** generator (fuelled, capacity 2 like a reinforced generator) -> cable -> sensor -> door */
 function rig(on=true){const o=setup(),{x,y,build,act,pos,r}=o;const gen=build('base_generator',x,y),cable=build('power_cable',x+1,y),sensor=build('ir_sensor',x+2,y),door=build('door_powered',x+3,y,x+4,y);
@@ -20,11 +21,12 @@ function rig(on=true){const o=setup(),{x,y,build,act,pos,r}=o;const gen=build('b
   if(on){pos(x+2,y+1);expect(act('irSensorToggle',{eid:sensor.id}).ok).toBe(true);}
   return {...o,gen,cable,sensor,door};}
 describe('B02-P1-A infrared sensor: physical, paid, wired, bounded',()=>{
-  it('costs real parts (mechanical gear, iron, fasteners), is owned, and build is refused without the parts',()=>{
-    const o=setup();o.pos(o.x,o.y+1);expect(o.act('build',{struct:'ir_sensor',tx:o.x+2,ty:o.y}).ok).toBe(false);
-    expect(STRUCTS.ir_sensor.cost).toEqual([['mechanical_gear',1],['iron_ingot',1],['fasteners',2]]);
+  it('costs real parts (iron, electronic parts, spares) packed as a device, is owned, and build is refused without the parts',()=>{
+    const o=setup();o.pos(o.x,o.y+1);expect(dispatch(o.g,{id:'ir-nopack',type:'build',struct:'ir_sensor',tx:o.x+2,ty:o.y},T0).ok).toBe(false);
+    expect(STRUCTS.ir_sensor.cost).toEqual([['iron_ingot',1],['electronic_parts',2],['spares',1]]);   // item set v3 (84eb406): gear and fasteners retired
+    expect(STRUCTS.ir_sensor.item).toBe('deploy_ir_sensor');
     const s=o.build('ir_sensor',o.x+2,o.y);expect(s.irSensor).toEqual({version:'ir-v1',enabled:false});expect(s.hp).toBe(STRUCTS.ir_sensor.hp);
-    expect(countItem(o.r,'inv','mechanical_gear')).toBe(0);
+    expect(countItem(o.r,'inv','deploy_ir_sensor')).toBe(0);   // the pack is what the build spends
   });
   it('sensor off: no conduction even with a visible player; toggling on conducts and feeds the door',()=>{
     const o=rig(false),{r,x,y,sensor,door,act,pos}=o;

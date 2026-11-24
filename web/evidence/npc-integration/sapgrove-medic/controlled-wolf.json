@@ -1,0 +1,26 @@
+{
+  "worker": "h8",
+  "patient": "h9",
+  "job": "hw2ts",
+  "seen": {
+    "gx": 1605,
+    "gy": 1183,
+    "floor": 0
+  },
+  "at": {
+    "gx": 1605,
+    "gy": 1183,
+    "floor": 0
+  },
+  "hpBefore": 1,
+  "hpAfter": 31,
+  "inputs": [
+    {
+      "slot": 1,
+      "uid": "s17x",
+      "key": "bandage",
+      "qty": 1,
+      "containerId": "c17u"
+    }
+  ]
+}

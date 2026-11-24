@@ -1,0 +1,872 @@
+{
+  "scope": "Normal keys and UI; driver navigation reads a copy of live Game props. No clock acceleration or game-state writes.",
+  "steps": [
+    {
+      "at": 1797950760950,
+      "player": [
+        2497,
+        750
+      ],
+      "actor": "h1h",
+      "role": "guard",
+      "gx": 2514,
+      "gy": 736,
+      "route": 29,
+      "layout": "veyra05-at-2368-704",
+      "localPixels": [
+        2072,
+        744
+      ],
+      "firstLeg": 1
+    },
+    {
+      "at": 1797950770507,
+      "player": [
+        2512,
+        750
+      ],
+      "actor": "h1f",
+      "role": "salvager",
+      "gx": 2497,
+      "gy": 753,
+      "route": 16,
+      "layout": "veyra05-at-2368-704",
+      "localPixels": [
+        2313.560000000002,
+        744
+      ],
+      "firstLeg": -1
+    },
+    {
+      "at": 1797950777530,
+      "player": [
+        2497,
+        750
+      ],
+      "actor": "h1h",
+      "role": "guard",
+      "gx": 2476,
+      "gy": 731,
+      "route": 38,
+      "layout": "veyra05-at-2368-704",
+      "localPixels": [
+        2064.08,
+        744
+      ],
+      "firstLeg": -1
+    },
+    {
+      "at": 1797950785262,
+      "player": [
+        2485,
+        750
+      ],
+      "actor": "h1h",
+      "role": "guard",
+      "gx": 2490,
+      "gy": 731,
+      "route": 22,
+      "layout": "veyra05-at-2368-704",
+      "localPixels": [
+        1873.7840000000006,
+        744
+      ],
+      "firstLeg": 1
+    },
+    {
+      "at": 1797950787846,
+      "player": [
+        2486,
+        750
+      ],
+      "actor": "h1h",
+      "role": "guard",
+      "gx": 2501,
+      "gy": 731,
+      "route": 32,
+      "layout": "veyra05-at-2368-704",
+      "localPixels": [
+        1902.8000000000002,
+        744
+      ],
+      "firstLeg": 1
+    },
+    {
+      "at": 1797950794972,
+      "player": [
+        2499,
+        750
+      ],
+      "actor": "h1h",
+      "role": "guard",
+      "gx": 2516,
+      "gy": 730,
+      "route": 35,
+      "layout": "veyra05-at-2368-704",
+      "localPixels": [
+        2108.1440000000002,
+        744
+      ],
+      "firstLeg": 1
+    },
+    {
+      "at": 1797950801850,
+      "player": [
+        2513,
+        750
+      ],
+      "actor": "h1h",
+      "role": "guard",
+      "gx": 2516,
+      "gy": 730,
+      "route": 21,
+      "layout": "veyra05-at-2368-704",
+      "localPixels": [
+        2330.912000000002,
+        744
+      ],
+      "firstLeg": -200
+    },
+    {
+      "at": 1797950803007,
+      "player": [
+        2513,
+        749
+      ],
+      "actor": "h1h",
+      "role": "guard",
+      "gx": 2516,
+      "gy": 730,
+      "route": 20,
+      "layout": "veyra05-at-2368-704",
+      "localPixels": [
+        2330.912000000002,
+        730.6080000000002
+      ],
+      "firstLeg": 1
+    },
+    {
+      "at": 1797950804513,
+      "player": [
+        2515,
+        749
+      ],
+      "actor": "h1h",
+      "role": "guard",
+      "gx": 2510,
+      "gy": 730,
+      "route": 22,
+      "layout": "veyra05-at-2368-704",
+      "localPixels": [
+        2353.232000000002,
+        730.6080000000002
+      ],
+      "firstLeg": -1
+    },
+    {
+      "at": 1797950806937,
+      "player": [
+        2511,
+        749
+      ],
+      "actor": "h1h",
+      "role": "guard",
+      "gx": 2499,
+      "gy": 730,
+      "route": 29,
+      "layout": "veyra05-at-2368-704",
+      "localPixels": [
+        2303.912000000002,
+        730.6080000000002
+      ],
+      "firstLeg": -1
+    },
+    {
+      "at": 1797950812700,
+      "player": [
+        2500,
+        749
+      ],
+      "actor": "h1h",
+      "role": "guard",
+      "gx": 2478,
+      "gy": 730,
+      "route": 39,
+      "layout": "veyra05-at-2368-704",
+      "localPixels": [
+        2121.7520000000004,
+        730.6080000000002
+      ],
+      "firstLeg": -1
+    },
+    {
+      "at": 1797950817065,
+      "player": [
+        2493,
+        749
+      ],
+      "actor": "h1h",
+      "role": "guard",
+      "gx": 2477,
+      "gy": 730,
+      "route": 33,
+      "layout": "veyra05-at-2368-704",
+      "localPixels": [
+        2010.8719999999994,
+        730.6080000000002
+      ],
+      "firstLeg": -200
+    },
+    {
+      "at": 1797950818236,
+      "player": [
+        2493,
+        748
+      ],
+      "actor": "h1h",
+      "role": "guard",
+      "gx": 2477,
+      "gy": 730,
+      "route": 32,
+      "layout": "veyra05-at-2368-704",
+      "localPixels": [
+        2010.8719999999994,
+        706.848
+      ],
+      "firstLeg": -1
+    },
+    {
+      "at": 1797950825081,
+      "player": [
+        2485,
+        748
+      ],
+      "actor": "h1h",
+      "role": "guard",
+      "gx": 2477,
+      "gy": 730,
+      "route": 24,
+      "layout": "veyra05-at-2368-704",
+      "localPixels": [
+        1873.7840000000006,
+        706.848
+      ],
+      "firstLeg": -1
+    },
+    {
+      "at": 1797950828551,
+      "player": [
+        2483,
+        748
+      ],
+      "actor": "h1h",
+      "role": "guard",
+      "gx": 2487,
+      "gy": 730,
+      "route": 20,
+      "layout": "veyra05-at-2368-704",
+      "localPixels": [
+        1844.768000000001,
+        706.848
+      ],
+      "firstLeg": 1
+    },
+    {
+      "at": 1797950830528,
+      "player": [
+        2484,
+        748
+      ],
+      "actor": "h1h",
+      "role": "guard",
+      "gx": 2496,
+      "gy": 730,
+      "route": 28,
+      "layout": "veyra05-at-2368-704",
+      "localPixels": [
+        1871.5520000000006,
+        706.848
+      ],
+      "firstLeg": 1
+    },
+    {
+      "at": 1797950835941,
+      "player": [
+        2491,
+        748
+      ],
+      "actor": "h1h",
+      "role": "guard",
+      "gx": 2516,
+      "gy": 730,
+      "route": 41,
+      "layout": "veyra05-at-2368-704",
+      "localPixels": [
+        1976.4559999999992,
+        706.848
+      ],
+      "firstLeg": 1
+    },
+    {
+      "at": 1797950843541,
+      "player": [
+        2508,
+        748
+      ],
+      "actor": "h1h",
+      "role": "guard",
+      "gx": 2516,
+      "gy": 730,
+      "route": 24,
+      "layout": "veyra05-at-2368-704",
+      "localPixels": [
+        2250.7040000000015,
+        706.848
+      ],
+      "firstLeg": 1
+    },
+    {
+      "at": 1797950847289,
+      "player": [
+        2508,
+        748
+      ],
+      "actor": "h1h",
+      "role": "guard",
+      "gx": 2511,
+      "gy": 730,
+      "route": 19,
+      "layout": "veyra05-at-2368-704",
+      "localPixels": [
+        2250.7040000000015,
+        706.848
+      ],
+      "firstLeg": 1
+    },
+    {
+      "at": 1797950848720,
+      "player": [
+        2508,
+        748
+      ],
+      "actor": "h1h",
+      "role": "guard",
+      "gx": 2505,
+      "gy": 730,
+      "route": 19,
+      "layout": "veyra05-at-2368-704",
+      "localPixels": [
+        2250.7040000000015,
+        706.848
+      ],
+      "firstLeg": -1
+    },
+    {
+      "at": 1797950850752,
+      "player": [
+        2507,
+        748
+      ],
+      "actor": "h1h",
+      "role": "guard",
+      "gx": 2496,
+      "gy": 730,
+      "route": 27,
+      "layout": "veyra05-at-2368-704",
+      "localPixels": [
+        2226.9440000000013,
+        706.848
+      ],
+      "firstLeg": -1
+    },
+    {
+      "at": 1797950855931,
+      "player": [
+        2495,
+        748
+      ],
+      "actor": "h1h",
+      "role": "guard",
+      "gx": 2477,
+      "gy": 730,
+      "route": 34,
+      "layout": "veyra05-at-2368-704",
+      "localPixels": [
+        2032.9039999999995,
+        706.848
+      ],
+      "firstLeg": -1
+    },
+    {
+      "at": 1797950863771,
+      "player": [
+        2483,
+        748
+      ],
+      "actor": "h1h",
+      "role": "guard",
+      "gx": 2477,
+      "gy": 730,
+      "route": 22,
+      "layout": "veyra05-at-2368-704",
+      "localPixels": [
+        1849.7360000000008,
+        706.848
+      ],
+      "firstLeg": -1
+    },
+    {
+      "at": 1797950866525,
+      "player": [
+        2483,
+        748
+      ],
+      "actor": "h1h",
+      "role": "guard",
+      "gx": 2478,
+      "gy": 730,
+      "route": 21,
+      "layout": "veyra05-at-2368-704",
+      "localPixels": [
+        1845.2720000000008,
+        706.848
+      ],
+      "firstLeg": -1
+    },
+    {
+      "at": 1797950868780,
+      "player": [
+        2483,
+        748
+      ],
+      "actor": "h1h",
+      "role": "guard",
+      "gx": 2488,
+      "gy": 730,
+      "route": 21,
+      "layout": "veyra05-at-2368-704",
+      "localPixels": [
+        1845.2720000000008,
+        706.848
+      ],
+      "firstLeg": 1
+    },
+    {
+      "at": 1797950871237,
+      "player": [
+        2485,
+        748
+      ],
+      "actor": "h1h",
+      "role": "guard",
+      "gx": 2499,
+      "gy": 730,
+      "route": 30,
+      "layout": "veyra05-at-2368-704",
+      "localPixels": [
+        1883.2160000000003,
+        706.848
+      ],
+      "firstLeg": 1
+    },
+    {
+      "at": 1797950877855,
+      "player": [
+        2493,
+        748
+      ],
+      "actor": "h1h",
+      "role": "guard",
+      "gx": 2516,
+      "gy": 730,
+      "route": 39,
+      "layout": "veyra05-at-2368-704",
+      "localPixels": [
+        2013.6079999999993,
+        706.848
+      ],
+      "firstLeg": 1
+    },
+    {
+      "at": 1797950885613,
+      "player": [
+        2508,
+        748
+      ],
+      "actor": "h1h",
+      "role": "guard",
+      "gx": 2516,
+      "gy": 730,
+      "route": 24,
+      "layout": "veyra05-at-2368-704",
+      "localPixels": [
+        2251.2080000000014,
+        706.848
+      ],
+      "firstLeg": 1
+    },
+    {
+      "at": 1797950889474,
+      "player": [
+        2508,
+        748
+      ],
+      "actor": "h1h",
+      "role": "guard",
+      "gx": 2502,
+      "gy": 730,
+      "route": 22,
+      "layout": "veyra05-at-2368-704",
+      "localPixels": [
+        2251.2080000000014,
+        706.848
+      ],
+      "firstLeg": -1
+    },
+    {
+      "at": 1797950892517,
+      "player": [
+        2503,
+        748
+      ],
+      "actor": "h1h",
+      "role": "guard",
+      "gx": 2488,
+      "gy": 730,
+      "route": 31,
+      "layout": "veyra05-at-2368-704",
+      "localPixels": [
+        2175.9680000000008,
+        706.848
+      ],
+      "firstLeg": -1
+    },
+    {
+      "at": 1797950899459,
+      "player": [
+        2490,
+        748
+      ],
+      "actor": "h1h",
+      "role": "guard",
+      "gx": 2477,
+      "gy": 730,
+      "route": 29,
+      "layout": "veyra05-at-2368-704",
+      "localPixels": [
+        1964.0719999999992,
+        706.848
+      ],
+      "firstLeg": -1
+    },
+    {
+      "at": 1797950905174,
+      "player": [
+        2484,
+        748
+      ],
+      "actor": "h1h",
+      "role": "guard",
+      "gx": 2477,
+      "gy": 730,
+      "route": 23,
+      "layout": "veyra05-at-2368-704",
+      "localPixels": [
+        1863.6320000000005,
+        706.848
+      ],
+      "firstLeg": -1
+    },
+    {
+      "at": 1797950908394,
+      "player": [
+        2483,
+        748
+      ],
+      "actor": "h1h",
+      "role": "guard",
+      "gx": 2487,
+      "gy": 730,
+      "route": 20,
+      "layout": "veyra05-at-2368-704",
+      "localPixels": [
+        1845.7760000000007,
+        706.848
+      ],
+      "firstLeg": 1
+    },
+    {
+      "at": 1797950910349,
+      "player": [
+        2485,
+        748
+      ],
+      "actor": "h1h",
+      "role": "guard",
+      "gx": 2495,
+      "gy": 730,
+      "route": 26,
+      "layout": "veyra05-at-2368-704",
+      "localPixels": [
+        1872.5600000000004,
+        706.848
+      ],
+      "firstLeg": 1
+    },
+    {
+      "at": 1797950915221,
+      "player": [
+        2489,
+        748
+      ],
+      "actor": "h1h",
+      "role": "guard",
+      "gx": 2516,
+      "gy": 730,
+      "route": 43,
+      "layout": "veyra05-at-2368-704",
+      "localPixels": [
+        1937.2879999999996,
+        706.848
+      ],
+      "firstLeg": 1
+    },
+    {
+      "at": 1797950922765,
+      "player": [
+        2502,
+        748
+      ],
+      "actor": "h1h",
+      "role": "guard",
+      "gx": 2516,
+      "gy": 730,
+      "route": 30,
+      "layout": "veyra05-at-2368-704",
+      "localPixels": [
+        2150.4800000000005,
+        706.848
+      ],
+      "firstLeg": 1
+    },
+    {
+      "at": 1797950929420,
+      "player": [
+        2508,
+        748
+      ],
+      "actor": "h1h",
+      "role": "guard",
+      "gx": 2502,
+      "gy": 730,
+      "route": 22,
+      "layout": "veyra05-at-2368-704",
+      "localPixels": [
+        2249.4800000000014,
+        706.848
+      ],
+      "firstLeg": -1
+    },
+    {
+      "at": 1797950932712,
+      "player": [
+        2503,
+        748
+      ],
+      "actor": "h1h",
+      "role": "guard",
+      "gx": 2487,
+      "gy": 730,
+      "route": 32,
+      "layout": "veyra05-at-2368-704",
+      "localPixels": [
+        2174.2400000000007,
+        706.848
+      ],
+      "firstLeg": -1
+    },
+    {
+      "at": 1797950940136,
+      "player": [
+        2489,
+        748
+      ],
+      "actor": "h1h",
+      "role": "guard",
+      "gx": 2477,
+      "gy": 730,
+      "route": 28,
+      "layout": "veyra05-at-2368-704",
+      "localPixels": [
+        1951.1839999999993,
+        706.848
+      ],
+      "firstLeg": -1
+    },
+    {
+      "at": 1797950945281,
+      "player": [
+        2483,
+        748
+      ],
+      "actor": "h1h",
+      "role": "guard",
+      "gx": 2477,
+      "gy": 730,
+      "route": 22,
+      "layout": "veyra05-at-2368-704",
+      "localPixels": [
+        1852.9760000000006,
+        706.848
+      ],
+      "firstLeg": -1
+    },
+    {
+      "at": 1797950947718,
+      "player": [
+        2483,
+        748
+      ],
+      "actor": "h1h",
+      "role": "guard",
+      "gx": 2484,
+      "gy": 730,
+      "route": 18,
+      "layout": "veyra05-at-2368-704",
+      "localPixels": [
+        1844.0480000000007,
+        706.848
+      ],
+      "firstLeg": 1
+    },
+    {
+      "at": 1797950949454,
+      "player": [
+        2483,
+        748
+      ],
+      "actor": "h1h",
+      "role": "guard",
+      "gx": 2491,
+      "gy": 730,
+      "route": 24,
+      "layout": "veyra05-at-2368-704",
+      "localPixels": [
+        1852.9760000000006,
+        706.848
+      ],
+      "firstLeg": 1
+    },
+    {
+      "at": 1797950953528,
+      "player": [
+        2487,
+        748
+      ],
+      "actor": "h1f",
+      "role": "salvager",
+      "gx": 2476,
+      "gy": 730,
+      "route": 27,
+      "layout": "veyra05-at-2368-704",
+      "localPixels": [
+        1911.0079999999998,
+        706.848
+      ],
+      "firstLeg": -1
+    },
+    {
+      "at": 1797950958698,
+      "player": [
+        2483,
+        748
+      ],
+      "actor": "h1f",
+      "role": "salvager",
+      "gx": 2476,
+      "gy": 730,
+      "route": 23,
+      "layout": "veyra05-at-2368-704",
+      "localPixels": [
+        1844.0480000000007,
+        706.848
+      ],
+      "firstLeg": -1
+    },
+    {
+      "at": 1797950962626,
+      "player": [
+        2483,
+        748
+      ],
+      "actor": "h1f",
+      "role": "salvager",
+      "gx": 2476,
+      "gy": 730,
+      "route": 23,
+      "layout": "veyra05-at-2368-704",
+      "localPixels": [
+        1844.0480000000007,
+        706.848
+      ],
+      "firstLeg": -1
+    }
+  ],
+  "errors": [],
+  "httpErrors": [],
+  "talk": [],
+  "landings": [
+    {
+      "seed": 7542,
+      "run": "run_5ti_mxytglan",
+      "nearestTiles": 12.806248474865697
+    }
+  ],
+  "startClock": 1797950760143,
+  "seed": 7542,
+  "run": "run_5ti_mxytglan",
+  "beforeContact": {
+    "at": 1797950962626,
+    "player": [
+      {
+        "uid": "s1",
+        "key": "wood_club",
+        "qty": 1,
+        "dur": 120
+      },
+      {
+        "uid": "s2",
+        "key": "water_flask",
+        "qty": 1,
+        "charge": 2
+      },
+      {
+        "uid": "s3",
+        "key": "berries",
+        "qty": 3
+      },
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ]
+  },
+  "block": "step budget without conversation"
+}

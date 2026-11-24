@@ -1,0 +1,16 @@
+# Campagne navigateur — état PARTIAL
+Build production (source `091cf99`), Chromium 140, 640×360 DPR 1. `scripts/npc-browser-continuation.mjs` ouvre New run par clic, marche D, M → Mark my spot, ferme, Save & quit, ferme Chromium, relance le même profil après 7 s et Continue. Aucune écriture de save ni déplacement via QA. Deux captures; `run.json`: même run, 286 corps, +17 435 ms entre snapshots. `continue-snapshot.json.gz` est le snapshot **sorti du jeu** avant fermeture, pas une fixture construite. Ce trajet n'est pas la campagne A–I réussie.
+
+Reprise: seed 1797071542, layout `veyra05-at-1152-640`, position globale au premier quit `(1274,785)`, F0. Conserver la date logique de la capture pour une reprise longue; ne pas interpréter une expiration à h336 comme un nouveau départ. Sur un nouveau run relever à nouveau IDs/UIDs avant chaque action. Pour chaque case noter horloge avant/après et garder les deux captures à taille native plus les receipts de la sauvegarde.
+
+|Cas|Trajet et preuve encore requise au-delà de ce smoke|
+|---|---|
+|A|Rejoindre Greywater à pied; carte/portes, suivre `h2` et noter source, moins un stock, UID entrant dans le store `com:po_greywater`. Ne pas inférer de la présence des sprites.|
+|B|Greywater: `h2` salvager, `h4` mechanic, `h8` cook, `h6` gardener, `h5` medic, `h1` guard, `h7` builder. Engineer `hb` à Academy. Noter au moins une mutation professionnelle par acteur, sans ordonner le travail, et un blocage avec raison. Prendre le `human.production.pay`, pickup, lineage, ou `human.treat` correspondant.|
+|C|Parler à un résident, inspecter besoin et politique; offrir `s3` berries seulement si besoin réel, noter quantité/trust. Montrer consentement ou refus, puis Follow/Hold/Home sur route et étage réels; garder packId avant/après.|
+|D|Montrer deux lignes offertes/contrepartie négociée, UID de chaque côté; tenter une offre impossible, photographier soldes inchangés. Menace avec témoin, incident, mémoire et réponse; test derrière obstacle.|
+|E|Guard `h1`, capturer engagement, arme/usure ou flèche, vol et impact. Victime DOWNED, traitement avec UID ou corps réel; reload → zéro second impact. Pas de combat simulé hors caméra présenté comme image.|
+|F|Quit/relaunch même profil démontré **seulement** au point d'arrivée initial. Reste sortir d'une communauté active pendant un job (`hj2tb`, `h7`, source `0:4737668` dans le snapshot), changer fenêtre/étage, revenir au même pack `c175`, prouver livraison exactement une fois.|
+|G|h312 via accélération déclarée: Surtur, Typhon, Aion, Atlas, Argus, Anubis; une approche + contact/quota de cibles réelles, des gardes et un trajet bloqué. Capturer reçus `elder.assault.launch`, `elder.contact`, corps et dégâts; pas de pré-réveil injecté.|
+|H|Bercements autorisés: west `(684,1150)` hold `c2qw`, south `(2356,2170)` `c2rn`, hook `(2784,738)` `c2se`. h288 marche/boarding→provision→départ→arrivée, joueur resté sur l'île. Poursuivre jusqu'à h336, montrer défendus + évacués dans **ce même run**, morts/non résolus, lancement run 2 et wipe K8. Tester aussi branche solo distincte.|
+|I|Marche/carte/marqueur sans quête démontrés. Encore: décliner recrutement, traverser porte, transporter puis renoncer au cargo, densité maximale HUD/prompts; avis du créateur séparé.|

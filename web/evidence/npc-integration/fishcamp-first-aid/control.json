@@ -1,0 +1,12 @@
+{
+  "sha": "62c9dae4d9a5f01f2ae440aef60c882849c50b69",
+  "seed": 7606,
+  "run": "run_5va_mwhjny80",
+  "start": 1794816000000,
+  "at": 1794816060000,
+  "patient": "h5v",
+  "state": "DOWNED",
+  "hp": 1,
+  "reason": "No available community responder with medicine.",
+  "medical": []
+}

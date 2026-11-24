@@ -1,0 +1,100 @@
+{
+  "scope": "normal control, read-only saved-map pathfinding aid",
+  "steps": [
+    {
+      "at": 1795155122574,
+      "player": [
+        2046,
+        939
+      ],
+      "actor": "h2u",
+      "role": "mechanic",
+      "gx": 2069,
+      "gy": 937,
+      "route": 24,
+      "layout": "veyra05-at-1984-896",
+      "localPixels": [
+        1000,
+        696
+      ],
+      "firstLeg": 1
+    },
+    {
+      "at": 1795155138974,
+      "player": [
+        2050,
+        939
+      ],
+      "actor": "h2s",
+      "role": "salvager",
+      "gx": 2061,
+      "gy": 917,
+      "route": 31,
+      "layout": "veyra05-at-1984-896",
+      "localPixels": [
+        1060.768,
+        696
+      ],
+      "firstLeg": 1
+    },
+    {
+      "at": 1795155150783,
+      "player": [
+        2053,
+        939
+      ],
+      "actor": "h2s",
+      "role": "salvager",
+      "gx": 2061,
+      "gy": 917,
+      "route": 28,
+      "layout": "veyra05-at-1984-896",
+      "localPixels": [
+        1104.3999999999992,
+        696
+      ],
+      "firstLeg": 1
+    },
+    {
+      "at": 1795155163805,
+      "player": [
+        2054,
+        939
+      ],
+      "actor": "h2s",
+      "role": "salvager",
+      "gx": 2061,
+      "gy": 917,
+      "route": 27,
+      "layout": "veyra05-at-1984-896",
+      "localPixels": [
+        1133.1999999999985,
+        696
+      ],
+      "firstLeg": 1
+    }
+  ],
+  "errors": [],
+  "httpErrors": [],
+  "talk": [],
+  "landings": [
+    {
+      "seed": 1772329749,
+      "run": "run_tb76dx_mwokzq24",
+      "nearestTiles": 94.72592042308167
+    },
+    {
+      "seed": 1772257213,
+      "run": "run_tb5mf1_mwokzx1g",
+      "nearestTiles": 146.76852523616907
+    },
+    {
+      "seed": 1772246326,
+      "run": "run_tb5e0m_mwol04nj",
+      "nearestTiles": 14.317821063276352
+    }
+  ],
+  "seed": 1772246326,
+  "run": "run_tb5e0m_mwol04nj",
+  "failure": "Error: locator.isVisible: Target page, context or browser has been closed\nCall log:\n    - checking visibility of getByRole('combobox', { name: 'Nearby survivors' })\n"
+}

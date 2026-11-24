@@ -1,8 +1,7 @@
-// MEC-01 P3: Foundry Gear -> Workbench L2 -> Motor Drive (geared), through real intents.
-// NATURAL: moves out of the authored Foundry exterior cache (real move intent, cache reach measured by lootSiteAccess),
-//   real build / upgradeStation / craft (paid queue) / output collection, with save/reload checkpoints.
-// FIXTURE (labelled): the player is placed beside the cache, and later beside the bench (position only); wood 14, stone 4 and
-//   iron ingot 2 are granted (no natural gather/smelt is walked here). The gear, fasteners, spares and parts are NOT granted.
+// Foundry exterior gear is still a physical input, but the geared drive recipe is
+// retired. Cover its explicit refusal and the live L2 geared axe transaction.
+// FIXTURE: player positions, bench materials, iron axe, its Blade and Refined Iron, and spares. Never grant
+// the cache gear in the successful chain. All transfers/upgrades/jobs are paid intents.
 import {describe,it,expect} from 'vitest';
 import {type GameState,type RunState,TILE} from '../src/game/core';
 import {RECIPES} from '../src/game/catalog';
@@ -15,7 +14,7 @@ const START=Date.UTC(2026,10,5);
 let n=0;
 const copy=(g:GameState)=>selectSnapshots([serializeSnapshot(g),null]).gs!;
 function start(){setActiveLayout('shipping_fresh');const g=newGame();expect(dispatch(g,{id:'p3-start-'+(++n),type:'startRun',character:'female',seed:101},START).ok).toBe(true);g.run!.creatures=[];markDirty();return g;}
-const cacheOf=(r:RunState)=>Object.values(r.entities).find(e=>e.kind==='loot'&&e.poi==='factory'&&e.c&&r.custody[e.c]?.slots.some(s=>s?.key==='iron_sword'))!;
+const cacheOf=(r:RunState)=>Object.values(r.entities).find(e=>e.kind==='loot'&&e.poi==='factory'&&e.c&&r.custody[e.c]?.slots.some(s=>s?.key==='machete'))!;
 function place(r:RunState,tx:number,ty:number){r.player.x=tx*TILE+8;r.player.y=ty*TILE+8;markDirty();}
 /** Legal workbench tile nearest a centre. buildReason has a reach rule, so the player is placed beside each candidate first (FIXTURE position). */
 function legalTileNear(g:GameState,cx:number,cy:number):[number,number]{
@@ -24,81 +23,38 @@ function legalTileNear(g:GameState,cx:number,cy:number):[number,number]{
   throw new Error('no legal workbench tile');
 }
 
-describe('MEC-01 P3: Foundry Gear -> Workbench L2 -> Motor Drive (geared)', () => {
-  it('the authored cache is physically reachable from spawn, the contract is valid, and the gear comes from it at cycle 0', () => {
-    const g=start();const r=g.run!;
-    expect(validLootSourceContract(r.lootEcology!.sourceContract)).toBe(true);
-    const spec=getWorld('shipping_fresh').statics.find(s=>s.kind==='loot'&&s.poi==='factory'&&s.loot?.some(([k])=>k==='iron_sword'))!;
-    expect(lootSiteAccess(r,spec)).toBe('open');
-    expect(r.custody[cacheOf(r).c!].slots.some(s=>s?.key==='mechanical_gear')).toBe(true);
-  });
-
-  it('full natural-intent chain with save/reload at each step', () => {
-    const g=start();const r=g.run!;const c=cacheOf(r);
-    const spawnTx=Math.floor(r.player.x/TILE), spawnTy=Math.floor(r.player.y/TILE);
-    // FIXTURE position: beside the cache (reach is measured above).
-    place(r,c.tx!+1,c.ty!);
-    // NATURAL: take the parts from the cache with real move intents.
-    for (const k of ['mechanical_gear','mechanical_parts','fasteners','spares']) {
-      const fs=r.custody[c.c!].slots.findIndex(s=>s?.key===k);expect(fs,k).toBeGreaterThanOrEqual(0);
-      expect(dispatch(g,{id:'p3-mv-'+(++n),type:'move',from:c.c,fs,to:'inv'} as any,START+5).ok,k).toBe(true);
-    }
-    expect(countItem(r,'inv','mechanical_gear')).toBe(1);expect(countItem(r,'inv','mechanical_parts')).toBe(2);
-    // FIXTURE materials: wood, stone and iron for the bench and one drive input.
-    addItem(r,'inv','wood',14);addItem(r,'inv','stone',4);addItem(r,'inv','iron_ingot',2);
-    // FIXTURE position: stand beside a legal tile near spawn (the Foundry floor is not buildable).
-    const [bx,by]=legalTileNear(g,spawnTx,spawnTy);place(r,bx-1,by);
-    // REAL: build the workbench, then upgrade it to L2 (2 mechanical parts + 1 iron ingot).
-    expect(dispatch(g,{id:'p3-build-'+(++n),type:'build',struct:'workbench',tx:bx,ty:by},START+10).ok).toBe(true);
-    const bench=Object.values(r.entities).find(e=>e.kind==='struct'&&e.type==='workbench')!;
-    expect(bench.station!.level ?? 1).toBe(1);
-    expect(dispatch(g,{id:'p3-up-'+(++n),type:'upgradeStation',eid:bench.id},START+11).ok).toBe(true);
-    expect(bench.station!.level).toBe(2);
-    expect(countItem(r,'inv','mechanical_parts')).toBe(0);expect(countItem(r,'inv','iron_ingot')).toBe(1);
-    // Save before consumption.
-    const s1=copy(g);expect(s1.run!.entities[bench.id].station!.level).toBe(2);expect(countItem(s1.run!,'inv','mechanical_gear')).toBe(1);
-    // REAL: craft the geared drive (paid queue).
-    const fast0=countItem(r,'inv','fasteners'),spares0=countItem(r,'inv','spares');
-    expect(dispatch(g,{id:'p3-craft-'+(++n),type:'craft',eid:bench.id,recipe:'vehicle_drive_geared'},START+12).ok).toBe(true);
-    expect(countItem(r,'inv','mechanical_gear')).toBe(0);expect(countItem(r,'inv','iron_ingot')).toBe(0);
-    expect(countItem(r,'inv','fasteners')).toBe(fast0-2);expect(countItem(r,'inv','spares')).toBe(spares0-2);
-    expect(bench.station!.queue[0].recipe).toBe('vehicle_drive_geared');
-    // Save while queued.
-    const s2=copy(g);expect(s2.run!.entities[bench.id].station!.queue[0].recipe).toBe('vehicle_drive_geared');
-    // Time passes at the real rate; the drive lands in the bench output.
-    stepStations(g,RECIPES.vehicle_drive_geared.secs*1000+1000,START+13000);
-    const outC=bench.station!.outC!;expect(countItem(r,outC,'vehicle_drive')).toBe(1);
-    // REAL: collect the drive from the bench output into the pack (same UID).
-    const fs=r.custody[outC].slots.findIndex(s=>s?.key==='vehicle_drive');const uid=r.custody[outC].slots[fs]!.uid;
-    expect(dispatch(g,{id:'p3-collect-'+(++n),type:'move',from:outC,fs,to:'inv'} as any,START+14000).ok).toBe(true);
-    expect(r.custody.inv.slots.some(s=>s?.key==='vehicle_drive'&&s.uid===uid)).toBe(true);
-    // Save after the output is carried: drive present, gear and iron stay consumed.
-    const s3=copy(g);expect(countItem(s3.run!,'inv','vehicle_drive')).toBe(1);expect(countItem(s3.run!,'inv','mechanical_gear')).toBe(0);
-  });
-
-  it('refused without the gear: no drive is made from nothing; refused craft consumes nothing', () => {
-    const g=start();const r=g.run!;
-    const spawnTx=Math.floor(r.player.x/TILE), spawnTy=Math.floor(r.player.y/TILE);
-    addItem(r,'inv','wood',14);addItem(r,'inv','stone',4);addItem(r,'inv','iron_ingot',3);addItem(r,'inv','mechanical_parts',2);addItem(r,'inv','fasteners',4);addItem(r,'inv','spares',4);
-    const [bx,by]=legalTileNear(g,spawnTx,spawnTy);place(r,bx-1,by);
-    dispatch(g,{id:'p3n-build',type:'build',struct:'workbench',tx:bx,ty:by},START+10);
-    const bench=Object.values(r.entities).find(e=>e.kind==='struct'&&e.type==='workbench')!;
-    dispatch(g,{id:'p3n-up',type:'upgradeStation',eid:bench.id},START+11);
-    const res=dispatch(g,{id:'p3n-craft',type:'craft',eid:bench.id,recipe:'vehicle_drive_geared'},START+12);
-    expect(res.ok).toBe(false);expect(JSON.stringify(res)).toMatch(/Mechanical Gear 0\/1/);
-    expect(countItem(r,'inv','iron_ingot')).toBe(2);expect(countItem(r,'inv','fasteners')).toBe(4);
-  });
-
-  it('refused below Level 2 (honest refusal) even with every input carried', () => {
-    const g=start();const r=g.run!;
-    const spawnTx=Math.floor(r.player.x/TILE), spawnTy=Math.floor(r.player.y/TILE);
-    addItem(r,'inv','mechanical_gear',1);addItem(r,'inv','iron_ingot',1);addItem(r,'inv','fasteners',2);addItem(r,'inv','spares',2);
-    addItem(r,'inv','wood',14);addItem(r,'inv','stone',4);
-    const [bx,by]=legalTileNear(g,spawnTx,spawnTy);place(r,bx-1,by);
-    dispatch(g,{id:'p3l1-build',type:'build',struct:'workbench',tx:bx,ty:by},START+10);
-    const bench=Object.values(r.entities).find(e=>e.kind==='struct'&&e.type==='workbench')!;
-    const res=dispatch(g,{id:'p3l1-craft',type:'craft',eid:bench.id,recipe:'vehicle_drive_geared'},START+12);
-    expect(res.ok).toBe(false);expect(JSON.stringify(res)).toMatch(/level 2/);
-    expect(countItem(r,'inv','mechanical_gear')).toBe(1);
-  });
+const act=(g:GameState,type:string,args:Record<string,unknown>)=>dispatch(g,{id:`p3-${++n}`,type,...args},START+n);
+function benchAtSpawn(g:GameState,tx:number,ty:number,upgrade:boolean){
+  const r=g.run!;for(const [key,qty] of [['wood',14],['stone',4],['iron_ingot',2],['spares',6],['iron_axe',1],['metal_blade',1],['refined_iron_ingot',1]] as const)expect(addItem(r,'inv',key,qty)).toBe(0);
+  expect(act(g,'craft',{recipe:'deploy_workbench'}).ok).toBe(true);
+  const [x,y]=legalTileNear(g,tx,ty);expect(act(g,'build',{struct:'workbench',tx:x,ty:y}).ok).toBe(true);
+  const bench=Object.values(r.entities).find(e=>e.kind==='struct'&&e.type==='workbench'&&e.tx===x&&e.ty===y)!;
+  if(upgrade)expect(act(g,'upgradeStation',{eid:bench.id}).ok).toBe(true);
+  return bench;
+}
+describe('Foundry cache gear and the paid L2 chain after drive retirement',()=>{
+ it('keeps the exterior gear foot-accessible under its registered source contract',()=>{
+  const r=start().run!;expect(validLootSourceContract(r.lootEcology!.sourceContract)).toBe(true);
+  const spec=getWorld().statics.find(s=>s.kind==='loot'&&s.poi==='factory'&&s.loot?.some(([k])=>k==='iron_sword'))!;
+  expect(lootSiteAccess(r,spec)).toBe('open');expect(countItem(r,cacheOf(r).c!,'mechanical_gear')).toBe(1);
+ });
+ it('takes the authored gear, refuses retired work, queues a real tool, and retrieves the same output UID after restart',()=>{
+  let g=start();const r=g.run!,cx=Math.floor(r.player.x/TILE),cy=Math.floor(r.player.y/TILE),cache=cacheOf(r),fs=r.custody[cache.c!].slots.findIndex(s=>s?.key==='mechanical_gear');
+  place(r,cache.tx!+1,cache.ty!);expect(act(g,'move',{from:cache.c,fs,to:'inv'}).ok).toBe(true);expect(countItem(r,cache.c!,'mechanical_gear')).toBe(0);
+  const b=benchAtSpawn(g,cx,cy,true),out=b.station!.outC!;g=copy(g);
+  expect(act(g,'craft',{eid:b.id,recipe:'vehicle_drive_geared'})).toMatchObject({ok:false,reason:expect.stringContaining('Retired')});
+  expect(countItem(g.run!,'inv','mechanical_gear')).toBe(1);expect(act(g,'craft',{eid:b.id,recipe:'industrial_axe_geared'}).ok).toBe(true);
+  g=copy(g);expect(g.run!.entities[b.id].station!.queue[0].recipe).toBe('industrial_axe_geared');
+  for(const key of ['mechanical_gear','iron_axe','metal_blade','refined_iron_ingot','spares'])expect(countItem(g.run!,'inv',key)).toBe(0);
+  stepStations(g,RECIPES.industrial_axe_geared.secs*1000+1000,START+60000);g=copy(g);
+  const slot=g.run!.custody[out].slots.findIndex(s=>s?.key==='industrial_axe');expect(slot).toBeGreaterThanOrEqual(0);
+  const uid=g.run!.custody[out].slots[slot]!.uid;expect(dispatch(g,{id:`collect-${++n}`,type:'move',from:out,fs:slot,to:'inv'},START+61000).ok).toBe(true);
+  g=copy(g);expect(g.run!.custody.inv.slots.some(s=>s?.uid===uid&&s.key==='industrial_axe')).toBe(true);expect(countItem(g.run!,out,'industrial_axe')).toBe(0);
+ });
+ it.each([true,false])('does not charge a refused geared tool (level two: %s)',upgrade=>{
+  const g=start(),r=g.run!,b=benchAtSpawn(g,Math.floor(r.player.x/TILE),Math.floor(r.player.y/TILE),upgrade);
+  if(!upgrade)addItem(r,'inv','mechanical_gear',1);
+  const stock=structuredClone(r.custody.inv.slots);expect(act(g,'craft',{eid:b.id,recipe:'industrial_axe_geared'})).toMatchObject({ok:false,reason:expect.stringMatching(upgrade?/Gear 0\/1/i:/level 2/i)});
+  expect(r.custody.inv.slots).toEqual(stock);expect(b.station!.queue).toEqual([]);
+ });
 });

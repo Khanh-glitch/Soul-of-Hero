@@ -1,0 +1,66 @@
+{
+  "browser": "140.0.7339.0",
+  "errors": [],
+  "views": {
+    "title": {
+      "text": "SOUL OF HERO\nfourteen days · one island · the end of the world\nNew run\nFull-Gear QA Sandbox [F9]\nProfile & history\nCreator Inspector · 81 POIs\nSecured Ragnarok cash: 0 · Runs: 0\nOffline · single-player · saves locally in this browser (LOCAL/UNVERIFIED)",
+      "size": [
+        640,
+        360
+      ]
+    },
+    "choice": {
+      "text": "CHOOSE YOUR ADVENTURER\nAdventurer ♀\nSurvival knife, a half-full flask, a few berries. No Core, no map, no orders.\nAdventurer ♂\nSurvival knife, a half-full flask, a few berries. No Core, no map, no orders.\nWorld\nVEYRA · Unified World\nClassic Island (R12)\nVEYRA · Unified World · 4000×2800 tiles (1 tile = 0.5 AU) · 81 POIs, livestock husbandry, 4 side bosses & 6 Primordials.\nStarting location\nRandom safe region\nSeeded random landing across source-verified mainland cells. No fixed four-region quota or starter shelter; offshore starts await proven sea transport.\nBack\nBegin the 14 days",
+      "size": [
+        640,
+        360
+      ]
+    },
+    "landing": {
+      "text": "100\n100\n85\n85\n100\nVEYRA · U=0.5\nforest\nAU 796,491 · F0\n07:17\nDay 1 / 14\nCALM\nCLEAR\nnext FOG\nsecured 0\nJourney [J]\nNotes [N]\nSFX\n☰\nSUGGESTED · LANDFALL\nGather by hand0/3\n❖\n×\nOak\nYou wash up near VEYRA · U=0.5. No one is coming to tell you what to do.\n1\n2\n2⚡\n3\n3\n4\n5\n6\n7\n8\nSurvival Knife\ndmg 9 · tool · 100%\nI\n3/24",
+      "size": [
+        640,
+        360
+      ]
+    },
+    "inventory": {
+      "text": "100\n100\n85\n85\n100\nVEYRA · U=0.5\nforest\n07:24\nDay 1 / 14\nCALM\nCLEAR\nnext FOG\nsecured 0\nJourney [J]\nNotes [N]\nSFX\n☰\nSURVIVOR\ndrag\nmove\nEnter\npick/place\nEsc\ncancel\n1-8\nhotbar\n✕\nEsc\n◀\nNorth\n▶\n-0%\n+0\n0\n0\n1\n/60\nINVENTORY\n3/24\nSort Pack\nQUICKBAR · 1–8\nPROTECTED\n1\n2\n2⚡\n3\n3\n4\n5\n6\n7\n8\nBACKPACK · 0/16\nLMB\npick · place\nRMB\nuse\n⇧\nquick move\nAll\nTools\nGear\nFood & Med\nMaterials\nCores\nStations\nDevices\nwork now\n73 · 41 undiscovered\n2\n8\n12\n4\n2\n2\n2\n2\n2\n2\n3\n8\n2\n2\n6\n◆ Work now\n▤ Can queue · waits\n× Missing requirement\nFruit Juice\nPressed berries. Mostly a drink.\n3\n/3\n▶\n×1\nBy hand\n⏱ 2s\nCraft\n◆ Make now\nCraft from your pack",
+      "size": [
+        640,
+        360
+      ]
+    },
+    "recipes": {
+      "text": "100\n100\n85\n85\n100\nVEYRA · U=0.5\nforest\n07:26\nDay 1 / 14\nCALM\nCLEAR\nnext FOG\nsecured 0\nJourney [J]\nNotes [N]\nSFX\n☰\nSURVIVOR\ndrag\nmove\nEnter\npick/place\nEsc\ncancel\n1-8\nhotbar\n✕\nEsc\n◀\nNorth\n▶\n-0%\n+0\n0\n0\n1\n/60\nINVENTORY\n3/24\nSort Pack\nQUICKBAR · 1–8\nPROTECTED\n1\n2\n2⚡\n3\n3\n4\n5\n6\n7\n8\nBACKPACK · 0/16\nLMB\npick · place\nRMB\nuse\n⇧\nquick move\nAll\nTools\nGear\nFood & Med\nMaterials\nCores\nStations\nDevices\nwork now\n73 · 41 undiscovered\n2\n8\n12\n4\n2\n2\n2\n2\n2\n2\n3\n8\n2\n2\n6\n◆ Work now\n▤ Can queue · waits\n× Missing requirement\nFruit Juice\nPressed berries. Mostly a drink.\n3\n/3\n▶\n×1\nBy hand\n⏱ 2s\nCraft\n◆ Make now\nCraft from your pack",
+      "size": [
+        640,
+        360
+      ]
+    },
+    "build": {
+      "text": "100\n100\n85\n85\n100\nVEYRA · U=0.5\nforest\nAU 796,491 · F0\n07:31\nDay 1 / 14\nCALM\nCLEAR\nnext FOG\nsecured 0\nJourney [J]\nNotes [N]\nSFX\n☰\nSUGGESTED · LANDFALL\nGather by hand0/3\n❖\n×\nOak\nFoundation 4\nWall 8\nRoof 3\nWooden pieces only · upgrade at Cabinet\nWood Wall\n0/5\nClear the Bitterleaf first\n1\n2\n3\n4\n5\n6\n7\n8\nU\n⬆\nV\n⚒\nX\n✂\nBexit",
+      "size": [
+        640,
+        360
+      ]
+    },
+    "map": {
+      "text": "100\n100\n85\n85\n100\nVEYRA · U=0.5\nforest\n07:34\nDay 1 / 14\nCALM\nCLEAR\nnext FOG\nsecured 0\nJourney [J]\nNotes [N]\nSFX\n☰\nFIELD CHART\nVEYRA · U=0.5 · AU 796,491 · F1 · 4% charted · 0.0h\n✕\nCont\n1×\n2×\n4×\nFit\nYou\nAU 796,491\nN↑\n+ Leave note\nMark my spot\n◆\nYou\n◎\nSite\n■\nCab\n✕\nBag\n0/18\nVEYRA · U=0.5\nVEYRA · U=0.5 · Forest · (119,149) · Here\n+ Pin\nAll\nSites 0\nNotes 0\nIntel 0\nOffscreen markers: 68 (shown on Cont view)\nBegin exploring. The chart records only the terrain you have actually visited.",
+      "size": [
+        640,
+        360
+      ]
+    }
+  },
+  "run": {
+    "seed": 1773725284,
+    "layout": "veyra05-at-1472-832",
+    "spawn": {
+      "x": 119,
+      "y": 149,
+      "contract": "seeded-geographic-v1"
+    },
+    "clock": 1795154747357,
+    "people": 286
+  }
+}

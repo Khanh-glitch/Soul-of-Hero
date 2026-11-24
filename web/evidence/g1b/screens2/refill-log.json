@@ -1,0 +1,126 @@
+[
+ {
+  "shot": "refill-1-first-open-cycle0.png",
+  "source": "veyra.g1b:po_greywater:supply_low:02",
+  "entity": {
+   "eid": "ea",
+   "live": true,
+   "floor": 0,
+   "state": "opened",
+   "cycle": 0,
+   "stock": [
+    "woodx2",
+    "iron_ingotx2",
+    "iron_orex1"
+   ]
+  },
+  "saveValid": true
+ },
+ {
+  "shot": "refill-2-emptied-timer-running.png",
+  "entity": {
+   "eid": "ea",
+   "live": true,
+   "floor": 0,
+   "state": "empty",
+   "cycle": 0,
+   "refillAt": 1794879058655,
+   "stock": []
+  },
+  "prompt": {
+   "kind": "g1b:chest",
+   "label": "Low Supply Crate · empty · restocks in 24h 00m",
+   "eid": "ea"
+  },
+  "hoursUntilRefill": 23.999497777777776,
+  "receipts": [
+   "move iron_orex1 c9->inv",
+   "g1b.empty veyra.g1b:po_greywater:supply_low:02:cycle0:refill=1794879058655"
+  ],
+  "saveValid": true
+ },
+ {
+  "qa": "refillAt shortened to now + 6 s (contract value: 24 h)"
+ },
+ {
+  "shot": "refill-3-player-far-away-chest-offscreen.png",
+  "entity": {
+   "eid": "ea",
+   "live": false,
+   "floor": 0,
+   "state": "empty",
+   "cycle": 0,
+   "refillAt": 1794792667560,
+   "stock": []
+  },
+  "playerOrigin": [
+   1920,
+   1139
+  ],
+  "saveValid": true
+ },
+ {
+  "whileOffscreenAfterTimer": {
+   "eid": "ea",
+   "live": false,
+   "floor": 0,
+   "state": "closed",
+   "cycle": 1,
+   "stock": []
+  },
+  "receipts": [
+   "move iron_orex1 c9->inv",
+   "g1b.empty veyra.g1b:po_greywater:supply_low:02:cycle0:refill=1794879058655",
+   "g1b.refill veyra.g1b:po_greywater:supply_low:02:cycle1"
+  ]
+ },
+ {
+  "shot": "refill-4-back-chest-closed-again-cycle1.png",
+  "entity": {
+   "eid": "ea",
+   "live": true,
+   "floor": 0,
+   "state": "closed",
+   "cycle": 1,
+   "stock": []
+  },
+  "prompt": {
+   "kind": "g1b:chest",
+   "label": "Open Low Supply Crate",
+   "eid": "ea"
+  },
+  "offscreenState": {
+   "eid": "ea",
+   "live": false,
+   "floor": 0,
+   "state": "closed",
+   "cycle": 1,
+   "stock": []
+  },
+  "saveValid": true
+ },
+ {
+  "shot": "refill-5-second-open-new-roll-cycle1.png",
+  "entity": {
+   "eid": "ea",
+   "live": true,
+   "floor": 0,
+   "state": "opened",
+   "cycle": 1,
+   "stock": [
+    "sparesx5",
+    "iron_ingotx1"
+   ]
+  },
+  "receipts": [
+   "g1b.refill veyra.g1b:po_greywater:supply_low:02:cycle1",
+   "g1b.roll veyra.g1b:po_greywater:supply_low:02:g1b-approved-v1:cycle1:seed4156731271:slot0:sparesx5:sy7",
+   "g1b.roll veyra.g1b:po_greywater:supply_low:02:g1b-approved-v1:cycle1:seed4156731271:slot1:iron_ingotx1:sy8",
+   "g1b.open veyra.g1b:po_greywater:supply_low:02:cycle1"
+  ],
+  "saveValid": true
+ },
+ {
+  "pageErrors": []
+ }
+]

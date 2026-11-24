@@ -1,0 +1,17 @@
+{
+  "history": {
+    "runId": "run_5va_mwhjny80",
+    "ending": "expired",
+    "outcomes": {
+      "total": 286,
+      "evacuated": 3,
+      "survived": 279,
+      "dead": 2,
+      "unresolved": 2
+    },
+    "schema": "human-history-v1"
+  },
+  "nextRun": "run_5vb_mx1jtwbt",
+  "newDepartures": 0,
+  "newAssignedOutcomes": 0
+}

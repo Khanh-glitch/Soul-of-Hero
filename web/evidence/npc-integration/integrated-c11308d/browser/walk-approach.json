@@ -1,0 +1,551 @@
+{
+  "scope": "normal control, read-only saved-map pathfinding aid",
+  "steps": [
+    {
+      "at": 1795148500107,
+      "player": [
+        1824,
+        1304
+      ],
+      "actor": "h4g",
+      "role": "guard",
+      "gx": 1834,
+      "gy": 1310,
+      "route": 14
+    },
+    {
+      "at": 1795148511225,
+      "player": [
+        1827,
+        1304
+      ],
+      "actor": "h4g",
+      "role": "guard",
+      "gx": 1835,
+      "gy": 1310,
+      "route": 12
+    },
+    {
+      "at": 1795148519286,
+      "player": [
+        1829,
+        1304
+      ],
+      "actor": "h4g",
+      "role": "guard",
+      "gx": 1843,
+      "gy": 1319,
+      "route": 27
+    },
+    {
+      "at": 1795148527465,
+      "player": [
+        1834,
+        1304
+      ],
+      "actor": "h4g",
+      "role": "guard",
+      "gx": 1841,
+      "gy": 1319,
+      "route": 20
+    },
+    {
+      "at": 1795148534139,
+      "player": [
+        1835,
+        1304
+      ],
+      "actor": "h4g",
+      "role": "guard",
+      "gx": 1833,
+      "gy": 1311,
+      "route": 7
+    },
+    {
+      "at": 1795148539693,
+      "player": [
+        1835,
+        1304
+      ],
+      "actor": "h4g",
+      "role": "guard",
+      "gx": 1833,
+      "gy": 1311,
+      "route": 7
+    },
+    {
+      "at": 1795148545878,
+      "player": [
+        1835,
+        1304
+      ],
+      "actor": "h4g",
+      "role": "guard",
+      "gx": 1842,
+      "gy": 1315,
+      "route": 16
+    },
+    {
+      "at": 1795148552893,
+      "player": [
+        1836,
+        1304
+      ],
+      "actor": "h4g",
+      "role": "guard",
+      "gx": 1843,
+      "gy": 1319,
+      "route": 20
+    },
+    {
+      "at": 1795148559309,
+      "player": [
+        1837,
+        1304
+      ],
+      "actor": "h4g",
+      "role": "guard",
+      "gx": 1841,
+      "gy": 1319,
+      "route": 17
+    },
+    {
+      "at": 1795148566487,
+      "player": [
+        1838,
+        1304
+      ],
+      "actor": "h4g",
+      "role": "guard",
+      "gx": 1833,
+      "gy": 1311,
+      "route": 10
+    },
+    {
+      "at": 1795148572365,
+      "player": [
+        1837,
+        1304
+      ],
+      "actor": "h4g",
+      "role": "guard",
+      "gx": 1833,
+      "gy": 1311,
+      "route": 9
+    },
+    {
+      "at": 1795148577747,
+      "player": [
+        1836,
+        1304
+      ],
+      "actor": "h4g",
+      "role": "guard",
+      "gx": 1842,
+      "gy": 1315,
+      "route": 15
+    },
+    {
+      "at": 1795148582307,
+      "player": [
+        1836,
+        1304
+      ],
+      "actor": "h4g",
+      "role": "guard",
+      "gx": 1843,
+      "gy": 1319,
+      "route": 20
+    },
+    {
+      "at": 1795148588314,
+      "player": [
+        1838,
+        1304
+      ],
+      "actor": "h4g",
+      "role": "guard",
+      "gx": 1843,
+      "gy": 1319,
+      "route": 18
+    },
+    {
+      "at": 1795148593712,
+      "player": [
+        1838,
+        1304
+      ],
+      "actor": "h4g",
+      "role": "guard",
+      "gx": 1836,
+      "gy": 1313,
+      "route": 9
+    },
+    {
+      "at": 1795148599091,
+      "player": [
+        1838,
+        1304
+      ],
+      "actor": "h4g",
+      "role": "guard",
+      "gx": 1833,
+      "gy": 1311,
+      "route": 10
+    },
+    {
+      "at": 1795148605807,
+      "player": [
+        1836,
+        1304
+      ],
+      "actor": "h4g",
+      "role": "guard",
+      "gx": 1833,
+      "gy": 1311,
+      "route": 8
+    },
+    {
+      "at": 1795148610898,
+      "player": [
+        1835,
+        1304
+      ],
+      "actor": "h4g",
+      "role": "guard",
+      "gx": 1843,
+      "gy": 1319,
+      "route": 21
+    },
+    {
+      "at": 1795148617722,
+      "player": [
+        1837,
+        1304
+      ],
+      "actor": "h4g",
+      "role": "guard",
+      "gx": 1843,
+      "gy": 1319,
+      "route": 19
+    },
+    {
+      "at": 1795148623737,
+      "player": [
+        1837,
+        1304
+      ],
+      "actor": "h4g",
+      "role": "guard",
+      "gx": 1840,
+      "gy": 1318,
+      "route": 15
+    },
+    {
+      "at": 1795148629374,
+      "player": [
+        1838,
+        1304
+      ],
+      "actor": "h4g",
+      "role": "guard",
+      "gx": 1833,
+      "gy": 1311,
+      "route": 10
+    },
+    {
+      "at": 1795148636352,
+      "player": [
+        1837,
+        1304
+      ],
+      "actor": "h4g",
+      "role": "guard",
+      "gx": 1833,
+      "gy": 1311,
+      "route": 9
+    },
+    {
+      "at": 1795148642450,
+      "player": [
+        1836,
+        1304
+      ],
+      "actor": "h4g",
+      "role": "guard",
+      "gx": 1843,
+      "gy": 1317,
+      "route": 18
+    },
+    {
+      "at": 1795148648300,
+      "player": [
+        1837,
+        1304
+      ],
+      "actor": "h4g",
+      "role": "guard",
+      "gx": 1843,
+      "gy": 1319,
+      "route": 19
+    },
+    {
+      "at": 1795148653119,
+      "player": [
+        1838,
+        1304
+      ],
+      "actor": "h4g",
+      "role": "guard",
+      "gx": 1843,
+      "gy": 1319,
+      "route": 18
+    },
+    {
+      "at": 1795148658196,
+      "player": [
+        1839,
+        1304
+      ],
+      "actor": "h4g",
+      "role": "guard",
+      "gx": 1836,
+      "gy": 1311,
+      "route": 8
+    },
+    {
+      "at": 1795148663467,
+      "player": [
+        1838,
+        1304
+      ],
+      "actor": "h4g",
+      "role": "guard",
+      "gx": 1833,
+      "gy": 1311,
+      "route": 10
+    },
+    {
+      "at": 1795148669028,
+      "player": [
+        1836,
+        1304
+      ],
+      "actor": "h4g",
+      "role": "guard",
+      "gx": 1833,
+      "gy": 1311,
+      "route": 8
+    },
+    {
+      "at": 1795148674336,
+      "player": [
+        1835,
+        1304
+      ],
+      "actor": "h4g",
+      "role": "guard",
+      "gx": 1843,
+      "gy": 1316,
+      "route": 18
+    },
+    {
+      "at": 1795148680807,
+      "player": [
+        1836,
+        1304
+      ],
+      "actor": "h4g",
+      "role": "guard",
+      "gx": 1843,
+      "gy": 1319,
+      "route": 20
+    },
+    {
+      "at": 1795148686858,
+      "player": [
+        1837,
+        1304
+      ],
+      "actor": "h4g",
+      "role": "guard",
+      "gx": 1843,
+      "gy": 1319,
+      "route": 19
+    },
+    {
+      "at": 1795148692426,
+      "player": [
+        1838,
+        1304
+      ],
+      "actor": "h4g",
+      "role": "guard",
+      "gx": 1833,
+      "gy": 1311,
+      "route": 10
+    },
+    {
+      "at": 1795148697928,
+      "player": [
+        1836,
+        1304
+      ],
+      "actor": "h4g",
+      "role": "guard",
+      "gx": 1833,
+      "gy": 1311,
+      "route": 8
+    },
+    {
+      "at": 1795148703970,
+      "player": [
+        1836,
+        1304
+      ],
+      "actor": "h4g",
+      "role": "guard",
+      "gx": 1837,
+      "gy": 1312,
+      "route": 8
+    },
+    {
+      "at": 1795148709372,
+      "player": [
+        1837,
+        1304
+      ],
+      "actor": "h4g",
+      "role": "guard",
+      "gx": 1843,
+      "gy": 1319,
+      "route": 19
+    },
+    {
+      "at": 1795148714237,
+      "player": [
+        1838,
+        1304
+      ],
+      "actor": "h4g",
+      "role": "guard",
+      "gx": 1843,
+      "gy": 1319,
+      "route": 18
+    },
+    {
+      "at": 1795148719587,
+      "player": [
+        1838,
+        1304
+      ],
+      "actor": "h4g",
+      "role": "guard",
+      "gx": 1841,
+      "gy": 1318,
+      "route": 15
+    },
+    {
+      "at": 1795148724711,
+      "player": [
+        1838,
+        1304
+      ],
+      "actor": "h4g",
+      "role": "guard",
+      "gx": 1833,
+      "gy": 1311,
+      "route": 10
+    },
+    {
+      "at": 1795148729948,
+      "player": [
+        1837,
+        1304
+      ],
+      "actor": "h4g",
+      "role": "guard",
+      "gx": 1833,
+      "gy": 1311,
+      "route": 9
+    },
+    {
+      "at": 1795148736339,
+      "player": [
+        1835,
+        1304
+      ],
+      "actor": "h4g",
+      "role": "guard",
+      "gx": 1838,
+      "gy": 1312,
+      "route": 9
+    },
+    {
+      "at": 1795148743419,
+      "player": [
+        1836,
+        1304
+      ],
+      "actor": "h4g",
+      "role": "guard",
+      "gx": 1843,
+      "gy": 1319,
+      "route": 20
+    },
+    {
+      "at": 1795148748950,
+      "player": [
+        1837,
+        1304
+      ],
+      "actor": "h4g",
+      "role": "guard",
+      "gx": 1843,
+      "gy": 1319,
+      "route": 19
+    },
+    {
+      "at": 1795148755270,
+      "player": [
+        1838,
+        1304
+      ],
+      "actor": "h4g",
+      "role": "guard",
+      "gx": 1833,
+      "gy": 1311,
+      "route": 10
+    },
+    {
+      "at": 1795148761525,
+      "player": [
+        1837,
+        1304
+      ],
+      "actor": "h4g",
+      "role": "guard",
+      "gx": 1833,
+      "gy": 1311,
+      "route": 9
+    },
+    {
+      "at": 1795148768069,
+      "player": [
+        1836,
+        1304
+      ],
+      "actor": "h4g",
+      "role": "guard",
+      "gx": 1837,
+      "gy": 1312,
+      "route": 8
+    }
+  ],
+  "errors": [],
+  "httpErrors": [],
+  "talk": [],
+  "seed": 1762089424,
+  "run": "run_t53owg_mwoh26w9",
+  "block": "step budget without conversation"
+}

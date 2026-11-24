@@ -5,6 +5,7 @@ import { describe, it, expect } from 'vitest';
 import { TILE, type Entity, type GameState } from '../src/game/core';
 import { addItem, C, countItem, dispatch, markDirty, mkContainer, newGame } from '../src/game/engine';
 import { settle, syncWorld } from '../src/game/sim';
+import { RECIPES } from '../src/game/catalog';
 import { serializeSnapshot, selectSnapshots } from '../src/game/persist';
 
 const T0 = Date.UTC(2026, 0, 1);
@@ -22,14 +23,14 @@ function fundedRefinery(wood = 3) {
   const r = g.run!; r.creatures = [];
   const bench = station(g, 'workbench', 2), ref = station(g, 'refinery');
   addItem(r, ref.station!.fuelC, 'wood', wood);
-  addItem(r, 'inv', 'salvaged_oil', 6); addItem(r, 'inv', 'glass', 1);
+  for (const [k, q] of RECIPES.refinery_fuel_batch.ins) addItem(r, 'inv', k, q);   // item set v3: 5 Crude Petroleum + 1 Glass -> 2 Fuel Canisters (single product)
   markDirty();
-  expect(act(g, 'craft', { recipe: 'refinery_industrial', eid: ref.id }, T0).ok).toBe(true);
+  expect(act(g, 'craft', { recipe: 'refinery_fuel_batch', eid: ref.id }, T0).ok).toBe(true);
   return { g, r, ref, bench };
 }
 const project = (g: GameState, id: string) => {
   const r = g.run!, e = r.entities[id];
-  return { fuel: countItem(r, e.station!.fuelC, 'wood'), burn: Math.round(e.station!.burn), job: e.station!.queue.map(j => Math.round(j.left)), out: { canister: countItem(r, e.station!.outC, 'fuel_can'), lube: countItem(r, e.station!.outC, 'lubricant') }, jobDone: r.receipts.filter(x => x.kind === 'job.done').map(x => x.detail), oilLeft: countItem(r, 'inv', 'salvaged_oil') };
+  return { fuel: countItem(r, e.station!.fuelC, 'wood'), burn: Math.round(e.station!.burn), job: e.station!.queue.map(j => Math.round(j.left)), out: { canister: countItem(r, e.station!.outC, 'fuel_can'), lube: countItem(r, e.station!.outC, 'lubricant') }, jobDone: r.receipts.filter(x => x.kind === 'job.done').map(x => x.detail), oilLeft: countItem(r, 'inv', 'crude_petroleum') };
 };
 
 describe('W07-R refinery chronology: online steps equal one offline settlement', () => {
@@ -42,11 +43,11 @@ describe('W07-R refinery chronology: online steps equal one offline settlement',
     settle(offline, T, true);
     expect(project(offline, ref.id)).toEqual(project(online, ref.id));
     const p = project(online, ref.id);
-    expect(p.jobDone).toHaveLength(1); expect(p.out.canister).toBe(2); expect(p.out.lube).toBe(1);
+    expect(p.jobDone).toHaveLength(1); expect(p.out.canister).toBe(2); expect(p.out.lube).toBe(0);   // Lubricant is retired: the batch has one product
     expect(p.oilLeft).toBe(0); expect(p.job).toEqual([]);
   });
   it('fuel runs out mid-job: the job pauses at the same boundary online and offline, and resumes only with new fuel', () => {
-    const { g, ref, r } = fundedRefinery(1);   // 1 wood = 20 s of burn; the batch needs 26 s
+    const { g, ref, r } = fundedRefinery(1);   // 1 wood = 20 s of burn; the batch needs 22 s
     const snap = serializeSnapshot(g);
     const online = selectSnapshots([snap, null]).gs!, offline = selectSnapshots([snap, null]).gs!;
     const T = T0 + 40000;

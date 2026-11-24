@@ -1,0 +1,64 @@
+{
+  "setup": {
+    "result": {
+      "ok": true,
+      "receipt": "r3",
+      "msg": "Guard Delta joined you."
+    },
+    "run": "run_c29kl_mwjhrgo5",
+    "actorId": "h8",
+    "name": "Guard Delta",
+    "trustBefore": 50,
+    "trustUsed": 55,
+    "initial": [
+      1603,
+      1167
+    ],
+    "player": [
+      1608,
+      1608
+    ],
+    "sourceFloor": 0
+  },
+  "followingWhilePlayerMoves": {
+    "player": [
+      1608,
+      1659.4800000000005
+    ],
+    "actor": {
+      "position": [
+        1603,
+        1170
+      ],
+      "state": "IDLE",
+      "motion": null,
+      "route": 0,
+      "following": true
+    }
+  },
+  "afterPlayerStops": {
+    "player": [
+      1608,
+      1659.4800000000005
+    ],
+    "playerGlobal": [
+      1603.5,
+      1171.7175
+    ],
+    "actor": {
+      "id": "h8",
+      "position": [
+        1603,
+        1170
+      ],
+      "state": "IDLE",
+      "motion": null,
+      "route": 0,
+      "following": true,
+      "blockReason": null
+    },
+    "taxicab": 1.2174999999999727
+  },
+  "playerInput": "S held 1.1s then released",
+  "note": "QA scenario seeded the eligible companion trust to 55 to exercise the real recruit intent; NPC route/movement and stop state ran through live simulation."
+}

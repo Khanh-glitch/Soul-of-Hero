@@ -1,0 +1,72 @@
+{
+  "seed": 7606,
+  "site": "po_ironmine",
+  "worker": "hf",
+  "reloaded": "hw2tx",
+  "fetched": [
+    {
+      "workerId": "hf",
+      "orderId": "hw2tx",
+      "containerId": "c18q",
+      "into": "c19h",
+      "inputs": [
+        {
+          "uid": "s18z",
+          "key": "stone",
+          "qty": 1
+        }
+      ],
+      "received": [
+        {
+          "uid": "s2uq",
+          "key": "stone",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "workerId": "hf",
+      "orderId": "hw2tx",
+      "containerId": "c18q",
+      "into": "c19h",
+      "inputs": [
+        {
+          "uid": "s18y",
+          "key": "wood",
+          "qty": 1
+        }
+      ],
+      "received": [
+        {
+          "uid": "s2ur",
+          "key": "wood",
+          "qty": 1
+        }
+      ]
+    }
+  ],
+  "repair": {
+    "worker": "hf",
+    "job": "hw2tx",
+    "station": "e198",
+    "item": "s19g",
+    "before": 150,
+    "after": 180,
+    "inputs": [
+      {
+        "slot": 2,
+        "uid": "s2uq",
+        "key": "stone",
+        "qty": 1,
+        "containerId": "c19h"
+      },
+      {
+        "slot": 3,
+        "uid": "s2ur",
+        "key": "wood",
+        "qty": 1,
+        "containerId": "c19h"
+      }
+    ]
+  }
+}

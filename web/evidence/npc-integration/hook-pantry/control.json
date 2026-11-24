@@ -1,0 +1,28 @@
+{
+  "source": "62c9dae4d9a5f01f2ae440aef60c882849c50b69",
+  "seed": 7606,
+  "run": "run_5va_mwhjny80",
+  "startedAt": 1794729600000,
+  "observedAt": 1794816000000,
+  "rows": [
+    {
+      "at": 1794776787701.3035,
+      "jobId": "jah5",
+      "recipe": "grilled_mushroom",
+      "inputs": [
+        {
+          "uid": "s2uo",
+          "key": "mushroom",
+          "qty": 1,
+          "containerId": "c1b1"
+        }
+      ],
+      "stationId": "e1ad",
+      "workerId": "hm",
+      "fromUid": "saha",
+      "intoUid": "saha",
+      "qty": 1,
+      "key": "grilled_mushroom"
+    }
+  ]
+}

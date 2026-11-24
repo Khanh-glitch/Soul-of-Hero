@@ -1,0 +1,173 @@
+{
+  "scope": "normal control, read-only saved-map pathfinding aid",
+  "steps": [
+    {
+      "at": 1795151264587,
+      "player": [
+        869,
+        920
+      ],
+      "actor": "h1x",
+      "role": "guard",
+      "gx": 695,
+      "gy": 1121,
+      "route": 210,
+      "layout": "veyra05-at-832-896",
+      "localPixels": [
+        600,
+        392
+      ],
+      "firstLeg": -1
+    },
+    {
+      "at": 1795151279028,
+      "player": [
+        865,
+        920
+      ],
+      "actor": "h1x",
+      "role": "guard",
+      "gx": 695,
+      "gy": 1121,
+      "route": 206,
+      "layout": "veyra05-at-832-896",
+      "localPixels": [
+        528.5760000000009,
+        392
+      ],
+      "firstLeg": -1
+    },
+    {
+      "at": 1795151289840,
+      "player": [
+        860,
+        920
+      ],
+      "actor": "h1x",
+      "role": "guard",
+      "gx": 695,
+      "gy": 1121,
+      "route": 201,
+      "layout": "veyra05-at-832-896",
+      "localPixels": [
+        461.6160000000005,
+        392
+      ],
+      "firstLeg": -1
+    },
+    {
+      "at": 1795151298628,
+      "player": [
+        858,
+        920
+      ],
+      "actor": "h1x",
+      "role": "guard",
+      "gx": 695,
+      "gy": 1121,
+      "route": 199,
+      "layout": "veyra05-at-832-896",
+      "localPixels": [
+        428.1360000000001,
+        392
+      ],
+      "firstLeg": -1
+    },
+    {
+      "at": 1795151306387,
+      "player": [
+        856,
+        920
+      ],
+      "actor": "h1x",
+      "role": "guard",
+      "gx": 695,
+      "gy": 1121,
+      "route": 197,
+      "layout": "veyra05-at-832-896",
+      "localPixels": [
+        392.42399999999964,
+        392
+      ],
+      "firstLeg": -1
+    },
+    {
+      "at": 1795151314562,
+      "player": [
+        855,
+        920
+      ],
+      "actor": "h1x",
+      "role": "guard",
+      "gx": 695,
+      "gy": 1121,
+      "route": 260,
+      "layout": "veyra05-at-768-896",
+      "localPixels": [
+        1405.2639999999997,
+        392
+      ],
+      "firstLeg": -1
+    },
+    {
+      "at": 1795151322353,
+      "player": [
+        854,
+        920
+      ],
+      "actor": "h1x",
+      "role": "guard",
+      "gx": 695,
+      "gy": 1121,
+      "route": 259,
+      "layout": "veyra05-at-768-896",
+      "localPixels": [
+        1385.176,
+        392
+      ],
+      "firstLeg": -1
+    },
+    {
+      "at": 1795151327099,
+      "player": [
+        853,
+        920
+      ],
+      "actor": "h1x",
+      "role": "guard",
+      "gx": 695,
+      "gy": 1121,
+      "route": 258,
+      "layout": "veyra05-at-768-896",
+      "localPixels": [
+        1371.784,
+        392
+      ],
+      "firstLeg": -1
+    },
+    {
+      "at": 1795151332075,
+      "player": [
+        853,
+        920
+      ],
+      "actor": "h1x",
+      "role": "guard",
+      "gx": 695,
+      "gy": 1121,
+      "route": 258,
+      "layout": "veyra05-at-768-896",
+      "localPixels": [
+        1367.3200000000002,
+        392
+      ],
+      "firstLeg": -1
+    }
+  ],
+  "errors": [],
+  "httpErrors": [],
+  "talk": [],
+  "seed": 1768759823,
+  "run": "run_t92ntb_mwoipigm",
+  "failure": "Error: page.evaluate: Target page, context or browser has been closed"
+}

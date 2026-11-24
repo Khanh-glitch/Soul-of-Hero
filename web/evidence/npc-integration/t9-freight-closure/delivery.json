@@ -1,0 +1,169 @@
+{
+  "note": "REAL: same crate UID cargo -> real route on real shipping_fresh geometry -> real chest, per mode. TWO route classes: near (depot in the [118..152]x[112..128] window) and far (whole map, >=45 tiles from the factory, the SAME cell for all three modes, pre-checked for walk+cart+bike reachability). Timing is SIM_FIXTURE_MEASUREMENT (tick 50ms, scripted held keys), not human input. Creatures not cleared; weather/exposure recorded. Kit/fuel/cart granted as labelled fixtures (see test header).",
+  "seed": 4242,
+  "source": "factory exterior industrial-toolbox (authorized loot-source-v2)",
+  "destination": "depot chest_large built by the player (real build action) at a buildable non-protected cell; class-consistent per table",
+  "rows": [
+    {
+      "mode": "walk",
+      "routeClass": "near",
+      "depot": {
+        "x": 119,
+        "y": 127
+      },
+      "totalQty": 24,
+      "totalKg": 10.4,
+      "pathPx": 811,
+      "ticks": 222,
+      "seconds": 11.1,
+      "fuelUsed": 0,
+      "wearHp": 0,
+      "carryBeforeKg": 10.4,
+      "creaturesInHaulBox": 13,
+      "damageTaken": 0,
+      "hungerDelta": 0.44,
+      "thirstDelta": 0.67,
+      "routeSecondsModel": 11.27,
+      "startKitKg": 1.4,
+      "deliveredCount": 10
+    },
+    {
+      "mode": "cart",
+      "routeClass": "near",
+      "depot": {
+        "x": 119,
+        "y": 127
+      },
+      "totalQty": 24,
+      "totalKg": 10.4,
+      "pathPx": 881,
+      "ticks": 274,
+      "seconds": 13.7,
+      "fuelUsed": 0,
+      "wearHp": 0,
+      "cartWeightBefore": 10.4,
+      "creaturesInHaulBox": 13,
+      "damageTaken": 0,
+      "hungerDelta": 0.55,
+      "thirstDelta": 0.82,
+      "routeSecondsModel": 8.99,
+      "startKitKg": 1.4,
+      "deliveredCount": 10
+    },
+    {
+      "mode": "bike",
+      "routeClass": "near",
+      "depot": {
+        "x": 119,
+        "y": 127
+      },
+      "totalQty": 24,
+      "totalKg": 10.4,
+      "pathPx": 1136,
+      "ticks": 731,
+      "seconds": 11.7,
+      "fuelUsed": 61.97,
+      "wearHp": 9.92,
+      "odometerPx": 1163.8,
+      "creaturesInHaulBox": 13,
+      "damageTaken": 0,
+      "hungerDelta": 0.47,
+      "thirstDelta": 0.7,
+      "routeSecondsModel": 2.91,
+      "startKitKg": 1.4,
+      "exitReceipt": "r112",
+      "deliveredCount": 10
+    }
+  ],
+  "farRows": [
+    {
+      "mode": "walk",
+      "routeClass": "far",
+      "depot": {
+        "x": 104,
+        "y": 122
+      },
+      "totalQty": 24,
+      "totalKg": 10.4,
+      "pathPx": 1013,
+      "ticks": 253,
+      "seconds": 12.65,
+      "fuelUsed": 0,
+      "wearHp": 0,
+      "carryBeforeKg": 10.4,
+      "creaturesInHaulBox": 12,
+      "damageTaken": 0,
+      "hungerDelta": 0.51,
+      "thirstDelta": 0.76,
+      "routeSecondsModel": 14.06,
+      "startKitKg": 1.4,
+      "deliveredCount": 10
+    },
+    {
+      "mode": "cart",
+      "routeClass": "far",
+      "depot": {
+        "x": 104,
+        "y": 122
+      },
+      "totalQty": 24,
+      "totalKg": 10.4,
+      "pathPx": 1120,
+      "ticks": 269,
+      "seconds": 13.45,
+      "fuelUsed": 0,
+      "wearHp": 0,
+      "cartWeightBefore": 10.4,
+      "creaturesInHaulBox": 12,
+      "damageTaken": 0,
+      "hungerDelta": 0.54,
+      "thirstDelta": 0.81,
+      "routeSecondsModel": 11.43,
+      "startKitKg": 1.4,
+      "deliveredCount": 10
+    },
+    {
+      "mode": "bike",
+      "routeClass": "far",
+      "depot": {
+        "x": 104,
+        "y": 122
+      },
+      "totalQty": 24,
+      "totalKg": 10.4,
+      "pathPx": 1232,
+      "ticks": 558,
+      "seconds": 8.93,
+      "fuelUsed": 68.95,
+      "wearHp": 11.03,
+      "odometerPx": 1294.9,
+      "creaturesInHaulBox": 12,
+      "damageTaken": 0,
+      "hungerDelta": 0.36,
+      "thirstDelta": 0.54,
+      "routeSecondsModel": 3.16,
+      "startKitKg": 1.4,
+      "exitReceipt": "r113",
+      "deliveredCount": 10
+    }
+  ],
+  "verdict": {
+    "near": {
+      "walkSeconds": 11.1,
+      "cartSeconds": 13.7,
+      "bikeSeconds": 11.7,
+      "bikeFuel": 61.97,
+      "bikeWearHp": 9.92,
+      "footRational": true
+    },
+    "far": {
+      "walkSeconds": 12.65,
+      "cartSeconds": 13.45,
+      "bikeSeconds": 8.93,
+      "bikeFuel": 68.95,
+      "bikeWearHp": 11.03,
+      "bikeFasterThanFoot": true,
+      "bikeFasterThanCart": true
+    }
+  }
+}

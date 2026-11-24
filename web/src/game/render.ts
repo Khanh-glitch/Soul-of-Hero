@@ -3,18 +3,22 @@ import * as comp from './compositor';
 // Canvas 2D renderer — draws authoritative state + observed effects. Never mutates game state.
 import { BAL, TILE, WW, WH, VIEW_W, VIEW_H, T, hash2, clamp, type GameState, type RunState, type Creature, type Entity } from './core';
 import { STRUCTS, ELDERS, PRIMORDIAL_ELDERS, lookupElderDef, CREATURES, ITEMS } from './catalog';
-import { hasCreatureAtlas, preloadCreatureAtlases, drawCreatureAtlasSprite } from './creature-sprites';
+import { hasCreatureAtlas, preloadCreatureAtlases, drawCreatureAtlasSprite, creatureHeadTopY } from './creature-sprites';
+import { drawNpcSprite, drawNpcShadow, preloadNpcArt, resolveNpcClip } from './npc-art';
+import { watchCue, drawWatchCue } from './watch-cue';
+import { humanWorldPosition } from './humanworld';
 import { isCreatureRenderedByPrimordialRig, renderPrimordialOverlay } from './primordials/host-bridge';
 import { getFrame as getPrimordialRasterFrame, frameRGBA } from './primordials/art/sprites';
+import { drawFogDots } from './fog-layer';
 import { getWorld, getActiveLayout, SRC_KEYS, fbm } from './world';
 import { isVeyra05Layout } from '../veyra05/scenes';
 import { activeFloor, onActiveFloor } from '../veyra05/floors';
 import { observeVeyraDecor } from '../veyra05/decor-client';
 import { drawArchitecturalBuilding } from '../veyra05/building-art';
-import { onVeyraWindowShift } from '../veyra05/continuity';
+import { onVeyraWindowShift, windowOrigin } from '../veyra05/continuity';
 import * as life from '../veyra05/living/life';
 import { oakArt, pineArt, palmArt, willowArt, rockArt, bushArt, type TreeArt } from '../veyra05/living/flora';
-import { effTile, sourceAt, darkness, weatherAt, isRagnarok, entsAt, buildReason, C, roofRoom, clearPhysicalLine, irSensorVisual } from './engine';
+import { effTile, sourceAt, darkness, weatherAt, isRagnarok, entsAt, buildReason, C, roofRoom, clearPhysicalLine, irSensorVisual,workLightPowered } from './engine';
 import { airdropView } from './airdrop';
 import { lootSpriteKey } from './loot-ecology';
 import { vehicleView, vehicleVisualKey, refineryStateKey, pumpStateKey } from './industrial-art';
@@ -27,7 +31,15 @@ function lootFamilySprite(r: RunState, e: Entity): string | null {
   const key = lootSpriteKey(site); lootFamilyCache.set(e, key); return key;
 }
 import { FX, PROJ, HAZ, activeStack } from './sim';
+import * as vfxDirector from './vfx/director';
+import { drawG1bChest } from './g1b-art';
+import * as vfxStage from './vfx/stage';
 import { getArt, pixelText, mk, type Sprite } from './art';
+import { atlasIconCell } from './item-atlas';
+import { HERO_FRAMES } from './hero-art';
+import { drawAdventurer, drawAdventurerEquipment } from './avatar-presentation';
+import { gradeWorld, bloomAt, shakeScale, flashScale } from '../visual/direction';
+import { invWeight, carryLimit } from './engine';
 
 const CH = 16; const chunkCache = new Map<number, HTMLCanvasElement>();
 let creatureAtlasesBooted = false;
@@ -52,13 +64,16 @@ function getPrimordialStandbySprite(key: string, awake: boolean, dead: boolean, 
     return null;
   }
 }
-let terrSig = ''; let terrSigT = 0; let lastRunId = '';
+let terrSig = ''; let terrSigT = 0; let lastRunId = ''; let lastActiveFloor = 0;
 // ---------- terrain palette ----------
 type RGB = [number, number, number];
 const H = (c: string): RGB => { const n = parseInt(c.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; };
 const PAL: Record<number, RGB[]> = {
-  [T.GRASS]: ['#4f8a3a', '#5a9a42', '#3f7a32', '#76b24e', '#e8d870'].map(H), [T.MEADOW]: ['#7aa84a', '#86b452', '#6a983e', '#a2cc6a', '#c08ad8'].map(H),
-  [T.FOREST]: ['#3a6e30', '#33662a', '#24501e', '#4c863a', '#6a5a2a'].map(H), [T.SAND]: ['#dcc68e', '#e4d098', '#c4aa74', '#f2e4b4', '#f0e0d0'].map(H),
+  // VISUAL ARENA: terrain chroma pulled down ~18% and shifted cooler so the
+  // ground stops reading as a flat green carpet and warm lamp / Core light has
+  // somewhere to land. Hue families are unchanged — this is the same island.
+  [T.GRASS]: ['#4a7440', '#547e46', '#3a6033', '#6b9450', '#d8c878'].map(H), [T.MEADOW]: ['#6d9450', '#789c58', '#5c8244', '#93b46e', '#b886c8'].map(H),
+  [T.FOREST]: ['#2f5a34', '#2a5030', '#1b3d22', '#3d6b3c', '#5a4a2a'].map(H), [T.SAND]: ['#d4c094', '#ddc9a0', '#bda67c', '#e8dcb8', '#e6d8cc'].map(H),
   [T.SNOW]: ['#e6eef6', '#dce6f0', '#b8c8dc', '#ffffff', '#a8c0e0'].map(H), [T.HILL]: ['#8a7a62', '#94846a', '#6e604c', '#a8987c', '#5e5446'].map(H),
   [T.CLIFF]: ['#6e6a66', '#7a7672', '#4e4a48', '#9a9690', '#3a3634'].map(H), [T.MARSH]: ['#4a6a3e', '#42603a', '#2e4a2a', '#6a8a4e', '#4a3e2a'].map(H),
   [T.ASH]: ['#4a4044', '#423a3e', '#2e2a2c', '#5e5458', '#c0501e'].map(H), [T.TOXIC]: ['#6a7038', '#5e6634', '#464c28', '#8a9040', '#a8b840'].map(H),
@@ -126,7 +141,8 @@ function renderChunk(r: RunState, cx: number, cy: number) {
 }
 function getChunk(r: RunState, cx: number, cy: number) { const k = cy * 100 + cx; let c = chunkCache.get(k); if (!c) { c = renderChunk(r, cx, cy); chunkCache.set(k, c); } return c; }
 function syncTerrain(r: RunState, now: number) {
-  if (r.id !== lastRunId) { chunkCache.clear(); lastRunId = r.id; terrSig = ''; }
+  const fl = activeFloor(r);
+  if (r.id !== lastRunId || fl !== lastActiveFloor) { chunkCache.clear(); lastRunId = r.id; lastActiveFloor = fl; terrSig = ''; vfxDirector.reset(); }
   if (now - terrSigT < 300) return; terrSigT = now;
   const sig = Object.keys(r.terrain).map(k => k + ':' + r.terrain[+k].t).join(',');
   if (sig === terrSig) return; const old = new Set(terrSig.split(',')), nw = new Set(sig.split(','));
@@ -134,7 +150,7 @@ function syncTerrain(r: RunState, now: number) {
     for (const [dx, dy] of [[0, 0], [1, 0], [-1, 0], [0, 1], [0, -1]]) chunkCache.delete((((ty + dy) / CH) | 0) * 100 + (((tx + dx) / CH) | 0)); }
   terrSig = sig;
 }
-export function resetRenderCaches() { life.resetLife(); chunkCache.clear(); lastRunId = ''; mapCanvas = null; }
+export function resetRenderCaches() { life.resetLife(); chunkCache.clear(); lastRunId = ''; mapCanvas = null; vfxDirector.reset(); }
 
 // ---------- particles ----------
 interface Part { x: number; y: number; vx: number; vy: number; life: number; max: number; col: string; s: number; g: number; kind?: string; text?: string; a?: number; reach?: number; arc?: number; x1?: number; y1?: number; key?: string; z?: number }
@@ -144,19 +160,24 @@ const add = (p: Partial<Part>) => { if (PARTS.length < 900) PARTS.push({ x: 0, y
 const burst = (x: number, y: number, n: number, cols: string[], sp = 60, g = 120, life = 450, s = 1) => { for (let i = 0; i < n; i++) { const a = Math.random() * Math.PI * 2, v = sp * (0.3 + Math.random()); add({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - sp * 0.5, col: cols[i % cols.length], max: life * (0.6 + Math.random() * 0.6), g, s }); } };
 /** R8D: gold flecks for a rare ore strike, distinct from ordinary ore dust. */
 const RICH_CHIP = ['#f0c040', '#fff3b0', '#4f4560'];
+// G1A hit feedback per archetype: bale = steel shards + strap flecks, relay = board/wire sparks, fuel rack = rust + can paint.
+const G1A_CHIP: Record<string, string[]> = { road_salvage_bale: ['#c4cad2', '#b8862e', '#6b6f76'], road_relay_wreck: ['#9be07a', '#e8c040', '#9be0ff', '#d04a3a'], road_fuel_rack: ['#b8845a', '#c8a030', '#5d6a3a'] };
+const G1A_FELL: Record<string, string[]> = { road_salvage_bale: ['#a3a9b1', '#565a61', '#b8862e'], road_relay_wreck: ['#566270', '#2f8a55', '#e0c040'], road_fuel_rack: ['#8a5a3a', '#c8a030', '#4a6a86'] };
 const MATC: Record<string, string[]> = { wood: ['#c9935a', '#8a5a32', '#e0b070', '#6aa84a'], stone: ['#b9bcc4', '#7d8088', '#ffffff'], ore: ['#d08a5a', '#7d8088', '#ffe0a0'], plant: ['#8ac25a', '#5a9a3c', '#e05a7a'], scrap: ['#c0a07a', '#ffd070', '#6f7378', '#ffffff'] };
 const SURFC: Record<number, string[]> = { [T.SNOW]: ['#ffffff', '#c8d8e8'], [T.SAND]: ['#e8d8a0', '#c4aa74'], [T.MARSH]: ['#4a3e2a', '#3a5a5a'], [T.SHALLOW]: ['#a0d0ff', '#ffffff'], [T.RIVER]: ['#a0d0ff', '#ffffff'], [T.ASH]: ['#6a5a5a', '#3a3236'], [T.ROAD]: ['#b89470', '#9a7a58'] };
 export let shake = 0; export let flash = 0; export const banners: { text: string; sub: string; t: number }[] = [];
-if (import.meta.hot) comp.unregisterVfxClient('pixelfx');
+if (import.meta.hot) { comp.unregisterVfxClient('pixelfx'); comp.unregisterVfxClient('soh-stage'); }
 comp.registerVfxClient({id:'pixelfx',depthItems:g=>pfx.depthItems(g),drawAuras:(g,c)=>pfx.drawAuras(g,c),drawWarpPass:(g,c,n)=>pfx.drawWarpPass(g,c,n),drawScreen:g=>pfx.drawScreen(g),drawPostNight:(g,c,d)=>pfx.drawPostNight(g,c,d)});
+comp.registerVfxClient({id:'soh-stage',depthItems:g=>vfxStage.depthItems(g),drawAuras:(g,c)=>vfxStage.drawOver(g,c),drawScreen:g=>vfxStage.drawScreen(g),drawPostNight:(g,c,d)=>vfxStage.drawPostNight(g,c,d)});
+vfxStage.onKick((s,f)=>{shake=Math.max(shake,s);flash=Math.max(flash,f);});
 
 export function consumeFX(onFx: (e: any) => void) {
   while (FX.length) {
     const e = FX.shift(); onFx(e);
     switch (e.type) {
       case 'slash': ARCS.push({ x: e.x, y: e.y, a: e.a, reach: e.reach, arc: e.arc, life: 0, max: 150, key: e.key } as Part); break;
-      case 'chip': burst(e.x, e.y - 6, e.depleted ? 14 : 7, e.rich ? RICH_CHIP : (MATC[e.mat] || MATC.wood), 55, 160, 500); shakeT.set(Math.floor(e.x / 16) + Math.floor(e.y / 16) * WW, 160); break;
-      case 'fell': burst(e.x, e.y - 14, 16, ['#6aa84a', '#3f7a32', '#c9935a'], 70, 60, 900); break;
+      case 'chip': if (G1A_CHIP[e.key]) burst(e.x, e.y - 8, e.depleted ? 8 : 4, G1A_CHIP[e.key], 70, 120, 420); burst(e.x, e.y - 6, e.depleted ? 14 : 7, e.rich ? RICH_CHIP : (MATC[e.mat] || MATC.wood), 55, 160, 500); shakeT.set(Math.floor(e.x / 16) + Math.floor(e.y / 16) * WW, 160); break;
+      case 'fell': burst(e.x, e.y - 14, 16, G1A_FELL[e.key] || ['#6aa84a', '#3f7a32', '#c9935a'], 70, 60, 900); break;
       case 'clank': burst(e.x, e.y - 6, e.soft ? 2 : 5, ['#ffffff', '#ffe070'], 80, 200, 220); break;
       case 'turretshot': burst(e.x, e.y - 4, 7, ['#fff6b5', '#ffc653', '#ffffff'], 50, 100, 350); break;
       case 'mhit': burst(e.x, e.y - 6, e.big ? 12 : 8, ['#ffffff', '#ff5a4a', '#a01e1e'], 90, 220, 380); TEXTS.push({ x: e.x, y: e.y - 14, vx: 0, vy: -28, life: 0, max: 700, col: '#ffffff', text: String(e.n) } as Part); break;
@@ -165,14 +186,14 @@ export function consumeFX(onFx: (e: any) => void) {
       case 'pickup': TEXTS.push({ x: e.x, y: e.y - 20, vx: 0, vy: -20, life: 0, max: 900, col: '#ffe27a', text: '+' + e.q, key: e.key } as Part); break;
       case 'step': { const c = SURFC[e.t]; if (c) burst(e.x, e.y, 2, c, 14, 20, 300); break; }
       case 'roll': burst(e.x, e.y + 6, 6, ['#c8b890', '#a89870'], 30, 20, 350); break;
-      case 'boom': burst(e.x, e.y, e.small ? 14 : 34, ['#fff0a0', '#ffb040', '#ff6a1e', '#5a4a4a'], e.small ? 60 : 110, 40, 700, 2); ARCS.push({ x: e.x, y: e.y, life: 0, max: 300, kind: 'ring', reach: e.small ? 18 : 30 } as Part); break;
+      case 'boom': burst(e.x, e.y, e.small ? 14 : 34, ['#fff0a0', '#ffb040', '#ff6a1e', '#5a4a4a'], e.small ? 60 : 110, 40, 700, 2); break;
       case 'bolt': ARCS.push({ x: e.x0, y: e.y0, x1: e.x1, y1: e.y1, life: 0, max: 180, kind: 'bolt' } as Part); flash = Math.max(flash, 0.15); break;
       case 'lightning': ARCS.push({ x: e.x, y: e.y - 300, x1: e.x, y1: e.y, life: 0, max: 260, kind: 'bolt' } as Part); flash = 0.7; shake = Math.max(shake, 3); break;
       case 'ignite': burst(e.x, e.y - 12, 10, ['#ffb040', '#ff6a1e', '#fff0a0'], 30, -40, 700); break;
       case 'steam': burst(e.x, e.y - 10, 8, ['#e0e8f0', '#b0b8c0'], 20, -30, 900, 2); break;
       case 'scorch': burst(e.x, e.y, 4, ['#3a302a', '#8a3a1e'], 20, -10, 500); break;
       case 'spiritHit': burst(e.x,e.y-5,6,['#d79aff','#fff2ff'],25,10,260); break;
-      case 'spiritDepart': case 'spiritArrive': burst(e.x,e.y-6,24,['#bd7bff','#f5e2ff','#69328c'],42,-15,750,2);ARCS.push({x:e.x,y:e.y,life:0,max:650,kind:'spiritRing',reach:24} as Part);break;
+      case 'spiritDepart': case 'spiritArrive': burst(e.x,e.y-6,24,['#bd7bff','#f5e2ff','#69328c'],42,-15,750,2);break;
       case 'cast': burst(e.x, e.y, 16, e.core === 'fire' ? ['#ffb040', '#fff0a0'] : e.core === 'frost' ? ['#c8f0ff', '#ffffff'] : e.core === 'storm' ? ['#c0e0ff', '#ffffff'] : e.core === 'spirit' ? ['#bd7bff','#f4dfff'] : ['#e0c080', '#7a5a32'], 70, 0, 400); break;
       case 'fizzle': burst(e.x, e.y - 8, 8, ['#8a8a9a', '#c0c0d0'], 30, -20, 500); break;
       case 'dodge': burst(e.x, e.y - 6, 5, ['#ffffff', '#c0e0ff'], 40, 0, 250); break;
@@ -217,19 +238,21 @@ export function getMapCanvas(run?: RunState) {
   g.putImageData(img, 0, 0); return mapCanvas;
 }
 
-export interface RenderOpts { buildType: string | null; reclaim: boolean; mouseX: number; mouseY: number; target: { x: number; y: number } | null; time: number }
+export interface RenderOpts { buildType: string | null; reclaim: boolean; mouseX: number; mouseY: number; target: { x: number; y: number } | null; time: number; working?: boolean }
 // ---------- main draw ----------
 export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dtMs: number, o: RenderOpts) {
   const r = gs.run!; const A = getArt(); const w = getWorld(); const p = r.player; const time = o.time;
   observeVeyraDecor(gs);
+  updateActorTransition(r, time);
   syncTerrain(r, now);
   // camera
   const tx0 = clamp(p.x - VIEW_W / 2, 0, WW * TILE - VIEW_W), ty0 = clamp(p.y - VIEW_H / 2 - 6, 0, WH * TILE - VIEW_H);
   if (!cam.init) { cam.x = tx0; cam.y = ty0; cam.init = true; } cam.x += (tx0 - cam.x) * Math.min(1, dtMs / 90); cam.y += (ty0 - cam.y) * Math.min(1, dtMs / 90);
-  shake = Math.max(0, shake - dtMs * 0.02); const sx = shake > 0.3 ? Math.round((Math.random() - 0.5) * shake) : 0, sy = shake > 0.3 ? Math.round((Math.random() - 0.5) * shake) : 0;
+  shake = Math.max(0, shake - dtMs * 0.02); const shk = shake * shakeScale();
+  const sx = shk > 0.3 ? Math.round((Math.random() - 0.5) * shk) : 0, sy = shk > 0.3 ? Math.round((Math.random() - 0.5) * shk) : 0;
   const cx = Math.round(cam.x) + sx, cy = Math.round(cam.y) + sy;
   g.save(); g.translate(-cx, -cy);
-  if (!creatureAtlasesBooted && typeof Image !== 'undefined') { creatureAtlasesBooted = true; preloadCreatureAtlases(); }
+  if (!creatureAtlasesBooted && typeof Image !== 'undefined') { creatureAtlasesBooted = true; preloadCreatureAtlases(); preloadNpcArt(); }
   life.setRun(r); life.beginFrame(r, now, time, cx, cy, dtMs); upgradeLivingArt(A);
   // terrain chunks
   const c0 = Math.floor(cx / (CH * TILE)), c1 = Math.floor((cx + VIEW_W) / (CH * TILE)), r0 = Math.floor(cy / (CH * TILE)), r1 = Math.floor((cy + VIEW_H) / (CH * TILE));
@@ -262,29 +285,70 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
     if (e.type === 'garden' && e.garden?.coldFrame) { g.strokeStyle='#c5e5df';g.lineWidth=1;g.strokeRect(e.x-7.5,e.y-7.5,15,13);g.fillStyle='rgba(156,211,203,.24)';g.fillRect(e.x-7,e.y-7,14,12); }
     if (e.type === 'spikes') g.drawImage(A.st.spikes, e.x - 8, e.y - 8);
   }
-  pfx.syncHazards(HAZ,p);pfx.syncProjFx(PROJ,now);
+  // Item set v3: crude seeps — a dark pool with a slow sheen, drawn on the ground under any pump.
+  if (activeFloor(r) === 0) for (const s of Object.values(r.oilSources ?? {})) {
+    const sx = s.tx * 16 + 8, sy = s.ty * 16 + 8; if (sx < cx - 16 || sx > cx + VIEW_W + 16 || sy < cy - 16 || sy > cy + VIEW_H + 16) continue;
+    g.fillStyle = s.stock > 0 ? '#14110f' : '#3a342c'; g.beginPath(); g.ellipse(sx, sy + 1, 7, 5, 0, 0, Math.PI * 2); g.fill();
+    g.fillStyle = s.stock > 0 ? '#2a2420' : '#4a443a'; g.beginPath(); g.ellipse(sx - 1, sy, 5, 3, 0, 0, Math.PI * 2); g.fill();
+    if (s.stock > 0) { const k = Math.floor(time / 500) % 4; g.fillStyle = ['#6a5a8a', '#4a7a8a', '#8a7a4a', '#4a7a8a'][k]; g.fillRect(sx - 3 + k, sy - 1, 2, 1); g.fillRect(sx + 1 - k, sy + 2, 1, 1); }
+  }
+  vfxDirector.sync(gs,now,HAZ,PROJ);pfx.syncHazards(HAZ.filter(h=>!vfxDirector.ownsHaz(h)),p);
   // hazard telegraphs (ground)
-  for (const h of HAZ) drawHaz(g, h, time);
+  for (const h of HAZ) if (!vfxDirector.ownsHaz(h) || (h.owner !== 'player' && h.t < h.tell)) drawHaz(g, h, time);
+  vfxStage.drawFloor(g);
   // A short source-local impact pulse, not a global creature-location marker.
   for(const s of r.worldStimuli||[])if(now>=s.at&&now<s.expiresAt&&Math.hypot(s.x-p.x,s.y-p.y)<s.range&&clearPhysicalLine(r,p,s,true,true)){const age=(now-s.at)/(s.expiresAt-s.at);g.save();g.strokeStyle=`rgba(255,218,148,${(1-age)*0.8})`;g.lineWidth=1;g.beginPath();g.arc(s.x,s.y,6+age*16,0,Math.PI*2);g.stroke();g.restore();}
   // y-sorted drawables
   const list: { y: number; f: () => void }[] = [];
+  let watch:ReturnType<typeof watchCue>;
   for (let ty = vy0; ty <= vy1 + 1 && ty < WH; ty++) for (let tx = vx0; tx <= vx1; tx++) {
     const s = sourceAt(r, tx, ty, now); if (!s) continue; if (life.undergroundHides(r, tx * 16 + 8, ty * 16 + 8)) continue; if (s.stock <= 0 && entsAt(r, tx, ty).length) continue; list.push({ y: ty * 16 + 14, f: () => drawSource(g, r, s, tx, ty, time, p) });
   }
   for (const e of ents) { if (e.x < cx - 40 || e.x > cx + VIEW_W + 40 || e.y < cy - 20 || e.y > cy + VIEW_H + 60) continue; if (e.kind === 'struct' && ['floor', 'roof'].includes(STRUCTS[e.type!].layer)) continue; if (e.type === 'garden' || e.type === 'spikes') continue; list.push({ y: e.y + (e.kind === 'drop' ? -2 : 6), f: () => drawEntity(g, r, e, time, now) }); }
   for(const q of r.natureTrees||[]){const x=q.tx*TILE,y=q.ty*TILE;if(!life.undergroundHides(r,x+8,y+8)&&x>=cx-32&&x<cx+VIEW_W+32&&y>=cy-32&&y<cy+VIEW_H+32)list.push({y:y+14,f:()=>{const ta=LIVING_TREES.oak[(q.tx+q.ty)%LIVING_TREES.oak.length];life.drawLivingTree(g,ta,x+8,y+16,q.tx*7+q.ty,1,false);}});}
   for (const m of r.creatures) { if (((m as any).floor ?? 0) !== activeFloor(r)) continue; if (life.undergroundHides(r, m.x, m.y)) continue; if (m.x < cx - 40 || m.x > cx + VIEW_W + 40 || m.y < cy - 40 || m.y > cy + VIEW_H + 60) continue; list.push({ y: m.y + 4, f: () => drawCreature(g, r, m, time, now) }); }
+  // Humans — projected from the authoritative HumanWorld ledger, drawn once per actor.
+  if (r.humanWorld) {
+    const [ox, oy] = isVeyra05Layout(r.layoutId || '') ? windowOrigin(r) : [0, 0];
+    for (const h of Object.values(r.humanWorld.people)) {
+      if (h.state === 'EVACUATED') continue;
+      if (h.floor !== activeFloor(r)) continue;
+      const pos = humanWorldPosition(h, now);
+      const wx = (pos.gx - ox) * TILE, wy = (pos.gy - oy) * TILE;
+      if (wx < cx - 40 || wx > cx + VIEW_W + 40 || wy < cy - 40 || wy > cy + VIEW_H + 60) continue;
+      if (life.undergroundHides(r, wx, wy)) continue;
+      const cue=watchCue(r,h,{x:wx,y:wy},now);
+      if(cue && (!watch || cue.priority>watch.priority || cue.priority===watch.priority && Math.hypot(wx-p.x,wy-p.y)<Math.hypot(watch.body.x-p.x,watch.body.y-p.y)))watch=cue;
+      const moving = h.state === 'MOVING' || (h.intent?.route?.length ?? 0) > 0;
+      list.push({ y: wy + 4, f: () => { drawNpcShadow(g, wx, wy + 2, 6, 3, 0.32); drawNpcSprite(g, h, wx, wy, now / 1000, moving);
+        if((h.iceUntil??0)>now){g.save();g.globalAlpha=.7;g.drawImage(A.st.icepillar,Math.round(wx)-8,Math.round(wy)-16);g.restore();}
+        if(h.spiritStep && h.spiritStep.arriveAt>now)pixCircle(g,Math.round(wx),Math.round(wy)-6,8,'#bc97ed',2);
+      } });
+    }
+  }
+  // Evacuation vessels: a real hull at the authored berth while it is actually there. A vessel
+  // at sea is NOT drawn on the island (it is offshore), so the picture cannot lie about transit.
+  if (r.humanWorld) {
+    const [vox, voy] = isVeyra05Layout(r.layoutId || '') ? windowOrigin(r) : [0, 0];
+    for (const trip of Object.values(r.humanWorld.evacuation)) {
+      if (trip.phase !== 'BOARDING') continue; // BERTHED is the pilot's return leg, not an open dock
+      const wx = (trip.siteGx - vox) * TILE, wy = (trip.siteGy - voy) * TILE;
+      if (wx < cx - 60 || wx > cx + VIEW_W + 60 || wy < cy - 60 || wy > cy + VIEW_H + 60) continue;
+      if (life.undergroundHides(r, wx, wy)) continue;
+      const aboard = (trip.manifest ?? []).length;
+      list.push({ y: wy + 8, f: () => drawEvacVessel(g, wx, wy, time, aboard, trip.capacity) });
+    }
+  }
   // While mounted the rider is composited onto the bike sprite (vehicle case); skip the standalone player to avoid a double draw.
-  if(!r.spiritTransit && r.player.vehicle == null)list.push({ y: p.y + 4, f: () => drawPlayer(g, gs, time) });
-  const dragon=r.dragonDive;if(dragon?.phase && dragon.dragonX!==undefined && dragon.dragonY!==undefined) list.push({y:dragon.dragonY+4,f:()=>{const x=dragon.dragonX!,y=dragon.dragonY!;g.save();g.translate(x,y);g.fillStyle='#70241e';g.beginPath();g.moveTo(-19,-12);g.lineTo(-7,-22);g.lineTo(0,-14);g.lineTo(10,-21);g.lineTo(18,-10);g.lineTo(7,-12);g.lineTo(3,-3);g.lineTo(-5,-3);g.lineTo(-9,-11);g.closePath();g.fill();g.fillStyle='#ff8c2b';g.fillRect(-7,-14,14,6);g.fillStyle='#ffe6a0';g.fillRect(3,-13,2,2);g.restore();}});
+  if(!r.spiritTransit && r.player.vehicle == null)list.push({ y: p.y + 4, f: () => drawPlayer(g, gs, time, o.working) });
+  const dragon=r.dragonDive;if(!vfxDirector.ownsDragon() && dragon?.phase && dragon.dragonX!==undefined && dragon.dragonY!==undefined) list.push({y:dragon.dragonY+4,f:()=>{const x=dragon.dragonX!,y=dragon.dragonY!;g.save();g.translate(x,y);g.fillStyle='#70241e';g.beginPath();g.moveTo(-19,-12);g.lineTo(-7,-22);g.lineTo(0,-14);g.lineTo(10,-21);g.lineTo(18,-10);g.lineTo(7,-12);g.lineTo(3,-3);g.lineTo(-5,-3);g.lineTo(-9,-11);g.closePath();g.fill();g.fillStyle='#ff8c2b';g.fillRect(-7,-14,14,6);g.fillStyle='#ffe6a0';g.fillRect(3,-13,2,2);g.restore();}});
   for(const item of comp.depthItems(g))list.push(item);
   // POI terrain walls need y-sorting vs player? They are flat tiles; fine.
   list.sort((a, b) => a.y - b.y); for (const d of list) d.f();
   // temporary terrain sprites (ice pillars, root cages)
   for (const k in r.terrain) { const m: any = r.terrain[+k]; if (!m.until || m.t !== T.PWALL) continue; const i = +k; const X = (i % WW) * 16, Y = ((i / WW) | 0) * 16; if (X < cx - 20 || X > cx + VIEW_W || Y < cy - 30 || Y > cy + VIEW_H) continue; g.drawImage(m.by === 'grove' ? A.st.rootwall : A.st.icepillar, X, Y - 8); }
   // projectiles
-  for (const pr of PROJ) { if (pr.delay && pr.delay > 0) continue; const visual=pr.kind==='spirit_ray'?'arcane/arcane-orb':pr.kind==='fireball'?'fire/fireball':pr.kind==='fire_tornado'?'fire/fire-tornado':pr.kind==='elsa_shard'?'ice/ice-lance':null; if(!visual || !pfx.ready(visual))drawProj(g, pr, time); }
+  for (const pr of PROJ) { if (pr.delay && pr.delay > 0) continue; const visual=pr.kind==='spirit_ray'?'arcane/arcane-orb':pr.kind==='fireball'?'fire/fireball':pr.kind==='fire_tornado'?'fire/fire-tornado':pr.kind==='elsa_shard'?'ice/ice-lance':null; void visual; if(!vfxDirector.ownsProj(pr))drawProj(g, pr, time); }
   // roofs — existing game geometry with VEYRA's already authored 2.5D painter.
   const room = roofRoom(r, p.x, p.y);
   const isCanonicalVeyra = !!r.layoutId && isVeyra05Layout(r.layoutId);
@@ -321,7 +385,9 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
   drawWeather(g, r, now, time, cx, cy);
   drawLight(g, r, now, time, cx, cy, ents);
   comp.drawPostNight(g,{x:cx,y:cy},Math.min(0.85,darkness(r,now)+(weatherAt(r,now)==='storm'?0.15:0)));
-  if (flash > 0) { g.fillStyle = `rgba(255,255,255,${flash})`; g.fillRect(0, 0, VIEW_W, VIEW_H); flash = Math.max(0, flash - dtMs / 400); }
+  if (flash > 0) { g.fillStyle = `rgba(255,255,255,${flash * flashScale()})`; g.fillRect(0, 0, VIEW_W, VIEW_H); flash = Math.max(0, flash - dtMs / 400); }
+  gradeWorld(g, VIEW_W, VIEW_H, Math.min(1, darkness(r, now)));
+  if(watch){g.save();g.translate(-cx,-cy);drawWatchCue(g,watch);g.restore();}
   if (p.hp < 30 && !p.dead) { const a = (1 - p.hp / 30) * (0.25 + Math.sin(time / 200) * 0.08); g.fillStyle = `rgba(160,0,0,${a})`; g.fillRect(0, 0, VIEW_W, 6); g.fillRect(0, VIEW_H - 6, VIEW_W, 6); g.fillRect(0, 0, 6, VIEW_H); g.fillRect(VIEW_W - 6, 0, 6, VIEW_H); }
 }
 
@@ -345,6 +411,13 @@ function drawSource(g: CanvasRenderingContext2D, r: RunState, s: NonNullable<Ret
   if (art === 'bush') spr = depleted ? A.src.bush_empty[v % 2] : A.src.bush[v % 2];
   else if (['grass', 'reed', 'herb', 'mush'].includes(art)) { if (depleted) { g.drawImage(A.src.picked[0], X, Y); return; } const arr = A.src[art]; spr = arr[v % arr.length];
     const sway = Math.round(Math.sin(time / 600 + tx * 0.8 + ty * 0.3) * 1); g.drawImage(spr, 0, 0, 16, 9, X + sway + jx, Y - 2, 16, 9); g.drawImage(spr, 0, 9, 16, 7, X + jx, Y + 7, 16, 7); return; }
+  else if (art === 'salvage_bale' || art === 'relay_wreck' || art === 'fuel_rack') {
+    // G1A industrial salvage: intact / half-broken / depleted debris, anchored bottom-centre so the sprite stays on its tile.
+    const stage = depleted ? 2 : s.hp <= s.def.hp / 2 ? 1 : 0; spr = A.src[art][stage];
+    shadow(g, X + 8, Y + 14, depleted ? 4 : art === 'salvage_bale' ? 8 : 6);
+    g.drawImage(spr, X + 8 - (spr.width >> 1) + jx, Y + 16 - spr.height);
+    if (art === 'relay_wreck' && !depleted && hash2(tx, ty, Math.floor(time / 140)) < 0.04) add({ x: X + 9, y: Y + 4, vx: (Math.random() - 0.5) * 30, vy: -20, col: '#9be0ff', max: 220, s: 1 } as any);
+    return; }
   else if (art === 'scrap') { if (depleted) return; spr = A.src.scrap[v % 2]; }
   else if (art === 'wreck') { spr = A.src.wreck[v % 2]; shadow(g, X + 8, Y + 13, 13); if (depleted) g.globalAlpha = 0.7; g.drawImage(spr, X + 8 - 16 + jx, Y + 14 - 20); g.globalAlpha = 1; return; }
   else { if (depleted) { g.drawImage(A.src.rubble[0], X, Y); return; } const arr = A.src[art] || A.src.rock; spr = arr[v % arr.length]; if (art === 'sulfur' && Math.random() < 0.05) add({ x: X + 8, y: Y + 4, vx: 0, vy: -12, col: '#e8e0a0', max: 1200, s: 1, g: -4 }); if (art === 'crystal' && hash2(tx, ty, Math.floor(time / 500)) > 0.9) add({ x: X + 4 + Math.random() * 8, y: Y + 4 + Math.random() * 6, vx: 0, vy: 0, col: '#ffffff', max: 300, s: 1, g: 0 }); }
@@ -354,18 +427,69 @@ function drawSource(g: CanvasRenderingContext2D, r: RunState, s: NonNullable<Ret
 function drawEntity(g: CanvasRenderingContext2D, r: RunState, e: Entity, time: number, now: number) {
   const A = getArt(); const X = Math.round(e.x), Y = Math.round(e.y);
   switch (e.kind) {
-    case 'drop': { const s = C(r, e.c!)?.slots[0]; if (!s) return; const bob = Math.round(Math.sin(time / 250 + e.x) * 1.5); shadow(g, X, Y + 4, 4); const ic = A.icon[s.key]; g.drawImage(ic, X - 6, Y - 9 + bob, 12, 12); if (s.key === 'rcash' || ITEMS[s.key].cat === 'core' || ITEMS[s.key].cat === 'stone') if (hash2(Math.floor(time / 120), X, Y) > 0.7) { g.fillStyle = '#ffffff'; g.fillRect(X - 5 + (hash2(X, Y, Math.floor(time / 120)) * 10 | 0), Y - 8 + bob, 1, 1); } return; }
+    case 'drop': { const s = C(r, e.c!)?.slots[0]; if (!s) return; const bob = Math.round(Math.sin(time / 250 + e.x) * 1.5); shadow(g, X, Y + 4, 4); const cell = atlasIconCell(s.key); const ic = cell ?? A.icon[s.key]; g.imageSmoothingEnabled = false; g.drawImage(ic, X - 6, Y - 9 + bob, 12, 12); g.imageSmoothingEnabled = true; if (s.key === 'rcash' || ITEMS[s.key].cat === 'core' || ITEMS[s.key].cat === 'stone') if (hash2(Math.floor(time / 120), X, Y) > 0.7) { g.fillStyle = '#ffffff'; g.fillRect(X - 5 + (hash2(X, Y, Math.floor(time / 120)) * 10 | 0), Y - 8 + bob, 1, 1); } return; }
     case 'bag': { shadow(g, X, Y + 5, 5); g.drawImage(e.parcel ? A.st.parcel : A.st.bag, X - 8, Y - 10); const a = 0.5 + Math.sin(time / 300) * 0.3; g.fillStyle = `rgba(255,226,122,${a})`; g.fillRect(X, Y - 18 - Math.round(Math.sin(time / 300) * 2), 1, 4); g.fillRect(X - 1, Y - 15 - Math.round(Math.sin(time / 300) * 2), 3, 1); return; }
     case 'cart': { shadow(g, X, Y + 6, 11); g.drawImage(A.st.cart, X - 14, Y - 14); if (C(r, e.c!).slots.some(Boolean)) g.drawImage(A.st.cargo, X - 14, Y - 16); if (r.player.pulling === e.id) { g.fillStyle = '#c8a060'; const p = r.player; const n = 8; for (let i = 0; i <= n; i++) { const t = i / n; g.fillRect(Math.round(X + 12 + (p.x - X - 12) * t), Math.round(Y - 4 + (p.y - Y + 2) * t + Math.sin(t * Math.PI) * 2), 1, 1); } } return; }
     case 'vehicle': {
-      // B05: real facing sprite (side mirrored for left, head-on for up/down), lamp/tank state from fuel and HP, strapped crate when loaded, fuel gauge.
+      // The vehicle is machine art only. Rider identity, body, hair, armor and
+      // equipment are composed from the live Adventurer renderer below.
       const v = e.vehicle; const { view, mirror } = vehicleView(v?.angle || 0); const variant = vehicleVisualKey(v?.fuel ?? 0, e.hp ?? 0); const rider = r.player.vehicle === e.id;
-      const spr = A.st[`vehicle_${view}_${variant}${rider ? '_rider' : ''}`]; const half = view === 'side' ? [-12, -8] : [-6, -11];
+      const spr = A.st[`vehicle_${view}_${variant}`]; const half = view === 'side' ? [-12, -8] : [-6, -11];
+      const st = vehViz.get(e.id) || { x: e.x, y: e.y, odo: v?.odometer ?? 0, angle: v?.angle ?? 0, speed: 0 };
+      const disp = Math.hypot(e.x - st.x, e.y - st.y);
+      const rolling = disp > 0.15 || (v?.odometer ?? 0) > st.odo + 0.05;
+      const accel = disp - st.speed;
+      const dAng = Math.atan2(Math.sin((v?.angle ?? 0) - st.angle), Math.cos((v?.angle ?? 0) - st.angle));
+      st.x = e.x; st.y = e.y; st.odo = v?.odometer ?? st.odo; st.angle = v?.angle ?? st.angle; st.speed = disp;
+      vehViz.set(e.id, st);
+
+      const idleHum = variant === 'ok' && rider ? Math.round(Math.sin(time / 45)) : 0;
+      const pitchY = rolling ? (accel > 0.18 ? -1 : accel < -0.18 ? 1 : 0) : 0;
+      const bankX = rolling && Math.abs(dAng) > 0.04 ? (dAng > 0 ? 1 : -1) : 0;
+
+      if (variant === 'ok' && rider) {
+        const ang = v?.angle || 0;
+        g.save(); g.globalCompositeOperation = 'lighter'; g.fillStyle = 'rgba(255,226,138,0.14)';
+        g.beginPath(); g.moveTo(X + Math.cos(ang) * 8, Y + Math.sin(ang) * 6);
+        g.arc(X + Math.cos(ang) * 36, Y + Math.sin(ang) * 30, 18, ang - 0.55, ang + 0.55);
+        g.closePath(); g.fill(); g.restore();
+      }
+
       shadow(g, X, Y + (view === 'side' ? 5 : 8), view === 'side' ? 10 : 7);
-      g.save(); g.translate(X, Y); if (mirror) g.scale(-1, 1);
+      g.save(); g.translate(X + bankX, Y + pitchY + (rolling ? 0 : idleHum)); if (mirror) g.scale(-1, 1);
       g.drawImage(spr, half[0], half[1]);
+      if (view === 'side' && rolling) {
+        const ph = Math.floor((v?.odometer ?? 0) / 3) % 2;
+        g.fillStyle = '#e8f0f8';
+        for (const wx of [-7, 7]) {
+          if (ph === 0) { g.fillRect(wx, 2, 1, 3); } else { g.fillRect(wx - 1, 3, 3, 1); }
+        }
+      }
       if (C(r, e.c!).slots.some(Boolean)) { const at = view === 'side' ? [-10, -7] : view === 'front' ? [-3, -11] : [-3, 4]; g.drawImage(A.st.vehicle_crate, at[0], at[1]); }
       g.restore();
+
+      const trans = actorVisual.transition?.vehicleId === e.id ? actorVisual.transition : null;
+      const elapsed = trans ? Math.max(0, Math.min(1, (time - trans.start) / trans.duration)) : 1;
+      const eased = elapsed * elapsed * (3 - 2 * elapsed);
+      if (rider || (trans && trans.kind === 'dismount')) {
+        const ax = trans ? trans.fromX + (trans.toX - trans.fromX) * eased + bankX : X + bankX;
+        const ay = trans ? trans.fromY + (trans.toY - trans.fromY) * eased + pitchY + (rolling ? 0 : idleHum) : Y + 1 + pitchY + (rolling ? 0 : idleHum);
+        const pose = trans
+          ? trans.kind === 'mount'
+            ? (elapsed < 0.42 ? 'vault' : 'ride')
+            : (elapsed < 0.62 ? 'ride' : elapsed < 0.9 ? 'vault' : 'idle')
+          : 'ride';
+        const frame = Math.floor(time / (rolling ? 115 : 330) + (v?.odometer ?? 0) / 6) % (HERO_FRAMES.ride || 1);
+        drawAdventurer(g, r, ax, ay, r.player.dir, pose, frame);
+      }
+
+      if (rolling && variant === 'ok') {
+        const ang = v?.angle || 0;
+        if (Math.random() < 0.45) add({ x: X - Math.cos(ang) * 10, y: Y - Math.sin(ang) * 8 - 2, vx: -Math.cos(ang) * 12 + (Math.random() - 0.5) * 6, vy: -8, col: '#9aa5b0', max: 420, s: 1, g: -6 });
+        const surfT = effTile(r, Math.floor(e.x / 16), Math.floor(e.y / 16));
+        const dust = SURFC[surfT] || ['#b89470', '#8a7a62'];
+        if (Math.random() < 0.55) add({ x: X - Math.cos(ang) * 8, y: Y + 4, vx: -Math.cos(ang) * 16 + (Math.random() - 0.5) * 10, vy: -6, col: dust[0], max: 320, s: 1, g: 24 });
+      }
       // fuel gauge: tank fraction as a 12-px bar above the bike (pixel-snapped; no text)
       const frac = Math.max(0, Math.min(1, (v?.fuel ?? 0) / BAL.motorbike.tank)); const by = Y + half[1] - 3;
       g.fillStyle = '#140c14'; g.fillRect(X - 6, by, 12, 2);
@@ -386,7 +510,18 @@ function drawEntity(g: CanvasRenderingContext2D, r: RunState, e: Entity, time: n
       for(let k=0;k<3;k++){g.fillStyle=k<stacks?'#f0d060':'#3a2a2a';g.fillRect(X-5+k*4,Y+3,2,2);}
       g.fillStyle=lampCol;g.fillRect(X+5,Y-16,3,3);g.fillStyle='#120c18';g.fillRect(X+5,Y-16,3,1);
       return; }
-    case 'loot': { const empty = !C(r, e.c!).slots.some(Boolean); const fam = lootFamilySprite(r, e); shadow(g, X, Y + 5, 7); g.drawImage(fam ? A.st[fam] : (empty ? A.st.loot_open : A.st.loot), X - 8, Y - 10); return; }
+    case 'loot': {
+      if (e.g1b) {
+        const gb = e.g1b; shadow(g, X, Y + 5, gb.kind === 'chest' ? 11 : 7);
+        if (gb.kind === 'chest') { if (!drawG1bChest(g, gb.sid, gb.state, X, Y + 6, time)) g.drawImage(gb.state === 'closed' ? A.st.loot : A.st.loot_open, X - 8, Y - 10); return; }
+        if (gb.kind === 'gen') { const run = (gb.poweredUntil ?? 0) > now; g.drawImage(A.st.gen, X - 8 + (run ? Math.round(Math.sin(time / 40)) : 0), Y - 10); g.fillStyle = run ? '#7aff6a' : '#ff5a3a'; g.fillRect(X + 4, Y - 8, 2, 2); return; }
+        // access-card case: a small lock-box whose stripe is the colour of the card it holds; dark when taken
+        const col = gb.sid.endsWith('green') ? '#5fd67a' : gb.sid.endsWith('blue') ? '#5aa8ff' : '#b47aff';
+        g.fillStyle = '#17131d'; g.fillRect(X - 6, Y - 9, 12, 13); g.fillStyle = '#5b6470'; g.fillRect(X - 5, Y - 8, 10, 11); g.fillStyle = '#8a95a1'; g.fillRect(X - 5, Y - 8, 10, 1);
+        g.fillStyle = gb.state === 'empty' ? '#2a2630' : col; g.fillRect(X - 4, Y - 5, 8, 3); g.fillStyle = '#17131d'; g.fillRect(X - 1, Y, 2, 2);
+        return;
+      }
+      const empty = !C(r, e.c!).slots.some(Boolean); const fam = lootFamilySprite(r, e); shadow(g, X, Y + 5, 7); g.drawImage(fam ? A.st[fam] : (empty ? A.st.loot_open : A.st.loot), X - 8, Y - 10); return; }
     case 'cash': { const rag = isRagnarok(r, now); shadow(g, X, Y + 5, 7); g.drawImage(e.minted && !C(r, e.c!).slots.some(Boolean) ? A.st.cash_open : A.st.cash, X - 8, Y - 10); if (rag && !e.minted) { const a = 0.4 + Math.sin(time / 200) * 0.3; g.fillStyle = `rgba(255,208,64,${a})`; g.fillRect(X - 7, Y - 12, 14, 1); if (Math.random() < 0.2) add({ x: X - 6 + Math.random() * 12, y: Y - 8, vx: 0, vy: -16, col: '#ffe27a', max: 700, s: 1, g: -4 }); } return; }
     case 'vendor': { shadow(g, X, Y + 6, 5); const bob = Math.floor(time / 600) % 2; g.drawImage(A.st.vendor, X - 8, Y - 18 + bob); return; }
     case 'recycler': {
@@ -427,13 +562,24 @@ function drawEntity(g: CanvasRenderingContext2D, r: RunState, e: Entity, time: n
       if (e.type === 'ir_sensor') spr = A.st['ir_sensor_' + (({ off: 'off', unpowered: 'unpowered', ready: 'ready', detect: 'detect', blocked: 'blocked' } as const)[irSensorVisual(r, e)])];
       if (e.type!.startsWith('door') && e.type!=='door_powered' && e.open) spr = A.st[e.type + '_open'];
       if (e.type === 'furnace' && e.station && e.station.burn > 0 && e.station.queue.length) spr = A.st.furnace_lit;
+      if (e.type === 'large_furnace' && e.station && e.station.burn > 0 && e.station.queue.length) spr = A.st.large_furnace_lit;
+      if (e.ladder) {
+        // Item set v3: rails and rungs across every cliff tile the ladder covers, along its direction.
+        const steel = e.type === 'ladder_steel', rail = steel ? '#71c3c6' : '#7a5a32', rung = steel ? '#e4f4f4' : '#c9a064';
+        const [dx, dy] = e.ladder.dir, L = e.ladder.len * 16;
+        if (dx) { const x0 = dx > 0 ? X - 8 : X + 8 - L; g.fillStyle = rail; g.fillRect(x0, Y - 4, L, 2); g.fillRect(x0, Y + 2, L, 2); g.fillStyle = rung; for (let k = 2; k < L; k += 4) g.fillRect(x0 + k, Y - 2, 1, 4); }
+        else { const y0 = dy > 0 ? Y - 8 : Y + 8 - L; g.fillStyle = rail; g.fillRect(X - 4, y0, 2, L); g.fillRect(X + 2, y0, 2, L); g.fillStyle = rung; for (let k = 2; k < L; k += 4) g.fillRect(X - 2, y0 + k, 4, 1); }
+        if (steel) { g.fillStyle = '#2c4a52'; g.fillRect(X - 1, Y - 1, 2, 2); }
+        return;
+      }
       if (!spr) return; if (d.layer !== 'wall') shadow(g, X, Y + 5, 7);
       g.drawImage(spr, X - spr.width / 2, Y + 8 - spr.height);
       if(e.electricDoor){g.fillStyle='#e2bf52';g.fillRect(X+3,Y-7,3,3);}
       if (e.basePower) { g.fillStyle=e.basePower.enabled && e.basePower.energy>0 ? '#9cf26b' : '#d96758'; g.fillRect(X+3,Y-5,2,2); }
       if (e.turret) { const a=e.turret.angle; g.strokeStyle=e.turret.cooldown>750?'#ffe36a':e.turret.enabled?'#e2d4a0':'#746d5f'; g.lineWidth=2; g.beginPath(); g.moveTo(X,Y-4); g.lineTo(Math.round(X+Math.cos(a)*8),Math.round(Y-4+Math.sin(a)*8)); g.stroke(); if(e.turret.tracking){ g.fillStyle='#ffd76a'; g.fillRect(X+6,Y-15,2,5); g.fillRect(X+6,Y-9,2,2); } }
       if (e.type === 'campfire' && e.station && e.station.burn > 0) drawFlame(g, X, Y - 1, time, 1);
-      if (e.type === 'torch_post') drawFlame(g, X, Y - 12, time, 0.6);
+      if(e.workLight){g.fillStyle=workLightPowered(r,e)?'#fff2b4':'#4e5254';g.fillRect(X-3,Y-13,6,3);}
+      else if (e.type === 'torch_post') drawFlame(g, X, Y - 12, time, 0.6);
       if (e.type === 'escrow' && Math.random() < 0.06) add({ x: X - 6 + Math.random() * 12, y: Y - 6, vx: 0, vy: -10, col: '#c8a0ff', max: 900, s: 1, g: -2 });
       if (e.station && e.station.queue.length) { const j = e.station.queue[0]; const f = 1 - j.left / j.total; g.fillStyle = '#140c14'; g.fillRect(X - 7, Y - 16, 14, 3); g.fillStyle = (e.station.burn > 0 || d.station === 'workbench' || d.station === 'research') ? '#7aff6a' : '#ff7a3a'; g.fillRect(X - 6, Y - 15, Math.round(12 * f), 1); }
       if (e.station && C(r, e.station.outC)?.slots.some(Boolean) && Math.floor(time / 400) % 2) { g.fillStyle = '#ffe27a'; g.fillRect(X + 5, Y - 14, 2, 2); }
@@ -471,12 +617,18 @@ function drawCreature(g: CanvasRenderingContext2D, r: RunState, m: Creature, tim
     const d = ELDERS[m.elder.key]; const set = A.elder[m.elder.key]; if (!d || !set) return; const aw = m.elder.awake;
     if (m.state === 'dead') { if (m.t < 1500) { g.globalAlpha = 1 - m.t / 1500; g.drawImage(set.lidle[0], X - 24, Y - 40); g.globalAlpha = 1; } return; }
     if (m.elder.submerged) { for (let i = 0; i < 3; i++) pixCircle(g, X, Y, 6 + ((time / 60 + i * 8) % 22), 'rgba(200,220,240,0.6)', 2); return; }
+    if (m.state !== 'sleep') {
+      const pulse = 20 + Math.round(Math.sin(time / 280) * 2);
+      pixCircle(g, X, Y + 4, pulse, aw ? d.color : 'rgba(255,255,255,0.28)', aw ? 2 : 3);
+      if (aw) pixCircle(g, X, Y + 4, pulse + 5, 'rgba(255,255,255,0.18)', 4);
+    }
     let spr = m.state === 'sleep' ? set.sleep[0] : m.state === 'tell' ? set[(aw ? 'a' : 'l') + 'tell'][0] : set[(aw ? 'a' : 'l') + 'idle'][Math.floor(time / 380) % 2];
     shadow(g, X, Y + 6, d.r + 4); const jx = m.state === 'tell' ? Math.round(Math.sin(time / 30)) : 0;
     const flip = Math.cos(m.angle) < 0; g.save(); if (flip) { g.translate(X * 2, 0); g.scale(-1, 1); }
     g.drawImage(m.flash > 0 ? white(spr) : spr, X - 24 + jx, Y - 40); g.restore();
-    if (aw && Math.random() < 0.4) add({ x: X + (Math.random() - 0.5) * 36, y: Y - Math.random() * 30, vx: 0, vy: -14, col: d.color, max: 800, s: 1, g: -6 });
-    if (m.atk?.vuln > 0) { pixCircle(g, X, Y - 16, 22 + Math.sin(time / 80) * 2, '#ffe070', 2); }
+    if (aw && Math.random() < 0.45) add({ x: X + (Math.random() - 0.5) * 36, y: Y - Math.random() * 30, vx: 0, vy: -14, col: d.color, max: 800, s: 1, g: -6 });
+    if (m.state === 'tell') { pixCircle(g, X, Y - 14, 18 + Math.round(Math.sin(time / 45) * 3), '#ff5a3a', 2); }
+    if (m.atk?.vuln > 0) { pixCircle(g, X, Y - 16, 22 + Math.sin(time / 80) * 2, '#ffe070', 1); pixelText(g, '2X', X - 4, Y - 48, '#ffe27a'); }
     if ((m.rootedUntil||0)>now) g.drawImage(A.st.rootwall,X-8,Y-7);
     if ((m.frozenUntil||0)>now) {g.save();g.globalAlpha=0.7;g.drawImage(A.st.icepillar,X-8,Y-18);g.restore();}
     if (m.state === 'sleep') { const z = Math.floor(time / 700) % 3; g.fillStyle = '#c0d0ff'; g.fillRect(X + 10 + z * 3, Y - 40 - z * 4, 3, 1); g.fillRect(X + 12 + z * 3, Y - 39 - z * 4, 1, 1); g.fillRect(X + 10 + z * 3, Y - 38 - z * 4, 3, 1); }
@@ -484,28 +636,27 @@ function drawCreature(g: CanvasRenderingContext2D, r: RunState, m: Creature, tim
   }
   const d = CREATURES[m.type]; if (!d) return;
   if (hasCreatureAtlas(m.type) && (!A.cre[m.type] || (r.layoutId && isVeyra05Layout(r.layoutId)))) {
-    shadow(g, X, Y + 3, Math.max(4, Math.round(d.r * (m.husbandry?.stage === 'juvenile' ? 0.65 : 0.9))));
     const jx = m.state === 'tell' ? Math.round(Math.sin(time / 25)) : 0;
     const drawn = drawCreatureAtlasSprite(g, m, X + jx, Y, r.clock.simMs / 1000);
     if (!drawn) {
-      // Streaming fallback on very first network frame before PNG decodes
+      shadow(g, X, Y + 4, Math.max(4, Math.round(d.r * (m.husbandry?.stage === 'juvenile' ? 0.65 : 0.9))));
       g.fillStyle = (d as any).color || '#8a7a6a';
       g.beginPath(); g.arc(X, Y - 6, d.r, 0, Math.PI * 2); g.fill();
     }
+    const headTop = Y - creatureHeadTopY(m);
     if ((m.rootedUntil||0)>now) g.drawImage(A.st.rootwall, X - 8, Y - 7);
     if ((m.frozenUntil||0)>now) { g.save(); g.globalAlpha = 0.7; g.drawImage(A.st.icepillar, X - 8, Y - 14); g.restore(); }
-    if (m.knows?.kind === 'stimulus' && m.state !== 'dead' && clearPhysicalLine(r, r.player, m, true, true)) pixelText(g, '?', X - 2, Y - 25, '#ffe59a');
+    if (m.knows?.kind === 'stimulus' && m.state !== 'dead' && clearPhysicalLine(r, r.player, m, true, true)) pixelText(g, '?', X - 2, headTop - 13, '#ffe59a');
     if (m.state === 'tell' && (d.style === 'charge' || d.style === 'sideboss_maid' || d.style === 'sideboss_ronin')) pixLine(g, X, Y, X + Math.cos(m.angle) * 68, Y + Math.sin(m.angle) * 68, 'rgba(255,90,60,0.4)');
     if (m.atk?.vuln > 0 && m.state !== 'dead') pixCircle(g, X, Y - 10, 15 + Math.sin(time / 80) * 1.5, '#ffe070', 2);
     if (m.husbandry?.tamed && m.state !== 'dead') {
-      // Subtle tamed collar pip (green when penned/fed, cyan when following, red when hungry/thirsty)
       const col = (m.husbandry.hunger <= 10 || m.husbandry.hydration <= 10) ? '#ff5a4a' : m.husbandry.following ? '#66e0ff' : m.husbandry.penned ? '#8cff7a' : '#ffd25a';
-      g.fillStyle = '#140c14'; g.fillRect(X - 2, Y - 19, 5, 3);
-      g.fillStyle = col; g.fillRect(X - 1, Y - 18, 3, 1);
+      g.fillStyle = '#140c14'; g.fillRect(X - 2, headTop - 4, 5, 3);
+      g.fillStyle = col; g.fillRect(X - 1, headTop - 3, 3, 1);
     }
     if (m.hp < m.maxHp && m.state !== 'dead' && !m.sideBoss) {
-      g.fillStyle = '#140c14'; g.fillRect(X - 7, Y - 22, 14, 3);
-      g.fillStyle = '#e04a3a'; g.fillRect(X - 6, Y - 21, Math.max(0, Math.round(12 * m.hp / m.maxHp)), 1);
+      g.fillStyle = '#140c14'; g.fillRect(X - 7, headTop - 8, 14, 3);
+      g.fillStyle = '#e04a3a'; g.fillRect(X - 6, headTop - 7, Math.max(0, Math.round(12 * m.hp / m.maxHp)), 1);
     }
     return;
   }
@@ -528,26 +679,96 @@ function drawCreature(g: CanvasRenderingContext2D, r: RunState, m: Creature, tim
   if (m.state === 'tell' && d.style === 'charge') pixLine(g, X, Y, X + Math.cos(m.angle) * 60, Y + Math.sin(m.angle) * 60, 'rgba(255,90,60,0.35)');
   if (m.hp < m.maxHp && m.state !== 'dead') { g.fillStyle = '#140c14'; g.fillRect(X - 7, Y - 18, 14, 3); g.fillStyle = '#e04a3a'; g.fillRect(X - 6, Y - 17, Math.max(0, Math.round(12 * m.hp / m.maxHp)), 1); }
 }
-function drawPlayer(g: CanvasRenderingContext2D, gs: GameState, time: number) {
+// VISUAL ARENA: gait is driven by DISTANCE TRAVELLED, not wall time, so the boots
+// stop skating. Purely presentational — it reads p.vx/p.vy and never writes them.
+const gait = { dist: 0, x: 0, y: 0, dir: 0, turn: 0, id: '' };
+const vehViz = new Map<string, { x: number; y: number; odo: number; angle: number; speed: number }>();
+interface ActorTransition { vehicleId: string; kind: 'mount' | 'dismount'; fromX: number; fromY: number; toX: number; toY: number; start: number; duration: number }
+const actorVisual: { runId: string; vehicleId: string | null; x: number; y: number; transition: ActorTransition | null } = { runId: '', vehicleId: null, x: 0, y: 0, transition: null };
+
+function updateActorTransition(r: RunState, time: number) {
+  const p = r.player;
+  if (actorVisual.runId !== r.id) {
+    actorVisual.runId = r.id; actorVisual.vehicleId = p.vehicle ?? null;
+    actorVisual.x = p.x; actorVisual.y = p.y; actorVisual.transition = null; vehViz.clear();
+    return;
+  }
+  const current = p.vehicle ?? null;
+  if (current !== actorVisual.vehicleId) {
+    const vehicleId = current ?? actorVisual.vehicleId;
+    if (vehicleId) actorVisual.transition = {
+      vehicleId, kind: current ? 'mount' : 'dismount',
+      fromX: actorVisual.x, fromY: actorVisual.y + (current ? 0 : 1),
+      toX: p.x, toY: p.y + (current ? 1 : 0), start: time, duration: 360,
+    };
+    actorVisual.vehicleId = current;
+  }
+  actorVisual.x = p.x; actorVisual.y = p.y;
+  if (actorVisual.transition && time - actorVisual.transition.start >= actorVisual.transition.duration) actorVisual.transition = null;
+}
+
+function drawPlayer(g: CanvasRenderingContext2D, gs: GameState, time: number, working = false) {
   const r = gs.run!; const p = r.player; const A = getArt(); const set = A.hero[r.character]; const X = Math.round(p.x), Y = Math.round(p.y);
+  if (gait.id !== r.id) { gait.id = r.id; gait.dist = 0; gait.x = p.x; gait.y = p.y; gait.dir = p.dir; gait.turn = 0; }
   shadow(g, X, Y + 5, 5);
   if (p.dead) { g.drawImage(set.dead[0], X - 8, Y - 18); return; }
-  const act = p.action; let spr: Sprite; const moving = Math.hypot(p.vx, p.vy) > 4;
-  if (act?.kind === 'roll') spr = set.roll[Math.floor(act.t / 65) % 4];
-  else if (act?.kind === 'hurt') spr = set['hit' + p.dir][0];
-  else if (act?.kind === 'swing') spr = act.t < (act.contact || 0) ? set['wind' + p.dir][0] : set['hit' + p.dir][0];
-  else if (act?.kind === 'cast') spr = set['wind' + p.dir][0];
-  else if (moving) spr = set['walk' + p.dir][Math.floor(time / 120) % 4]; else spr = set['idle' + p.dir][Math.floor(time / 600) % 2];
+  const act = p.action; let spr: Sprite; const speed = Math.hypot(p.vx, p.vy); const moving = speed > 4;
+  const step = Math.hypot(p.x - gait.x, p.y - gait.y);
+  if (step < 40) gait.dist += step; gait.x = p.x; gait.y = p.y;
+  if (gait.dir !== p.dir) { gait.dir = p.dir; gait.turn = 80; }
+  if (gait.turn > 0) gait.turn -= 16;
+  const laden = invWeight(r) > carryLimit(r);
+  const pulling = !!p.pulling;
+  const cycle = HERO_FRAMES.walk, pxPerFrame = pulling ? 4.0 : laden ? 4.2 : 5.0;
+  const walkFrame = Math.floor(gait.dist / pxPerFrame) % cycle;
+  const locoKey = pulling ? 'pull' : laden ? 'laden' : 'walk';
+  const locomotion = () => set[locoKey + p.dir][gait.turn > 0 ? 2 : walkFrame];
+  let pose: string = moving ? locoKey : 'idle';
+  if (act?.kind === 'roll') { spr = set.roll[Math.min(HERO_FRAMES.roll - 1, Math.floor((act.t / Math.max(1, act.dur)) * HERO_FRAMES.roll))]; pose = 'roll'; }
+  else if (act?.kind === 'hurt') { spr = set['hit' + p.dir][0]; pose = 'hit'; }
+  else if (act?.kind === 'swing') {
+    const c = act.contact || 1;
+    if (act.t < c) { spr = set['wind' + p.dir][act.t < c * 0.5 ? 0 : 1]; pose = 'wind'; }
+    else if (act.t < c + 70) { spr = set['strike' + p.dir][0]; pose = 'strike'; }
+    else if (act.t < c + 150) { spr = set['strike' + p.dir][1]; pose = 'strike'; }
+    else { spr = set['recover' + p.dir][0]; pose = 'recover'; }
+  }
+  else if (act?.kind === 'cast') { spr = set['cast' + p.dir][act.t < (act.contact || 1) ? 0 : 1]; pose = 'cast'; }
+  else if (moving) spr = locomotion();
+  else if (working) { spr = set['work' + p.dir][Math.floor(time / 280) % 2]; pose = 'work'; }
+  else if (pulling) { spr = set['pull' + p.dir][0]; pose = 'pull'; }
+  else spr = set['idle' + p.dir][Math.floor(time / 900) % HERO_FRAMES.idle];
+  void pose;
   const blink = p.invuln > 0 && act?.kind !== 'roll' && Math.floor(time / 70) % 2 === 0;
-  const s = activeStack(r); const icon = s && (ITEMS[s.key].dmg || ITEMS[s.key].core || ITEMS[s.key].creatorCore || ITEMS[s.key].ranged) ? A.icon[s.key] : null;
+  const s = activeStack(r); const icon = s && (ITEMS[s.key].dmg || ITEMS[s.key].core || ITEMS[s.key].creatorCore || ITEMS[s.key].ranged) ? (atlasIconCell(s.key) ?? A.icon[s.key]) : null;
   const drawWeapon = () => { if (!icon || act?.kind === 'roll') return; let ang = p.aim; const d = ITEMS[s!.key];
     if (act?.kind === 'swing' && !d.ranged) { const arc = d.arc || 1.2; const t = act.t / act.dur; const k = act.t < (act.contact || 0) ? -0.5 - 0.15 * (act.t / (act.contact || 1)) : -0.5 + Math.min(1, (act.t - (act.contact || 0)) / 80); ang = p.aim + arc * k * (Math.cos(p.aim) >= 0 ? 1 : -1); void t; }
-    const hx = X + Math.cos(ang) * 5, hy = Y - 6 + Math.sin(ang) * 4; g.save(); g.translate(Math.round(hx), Math.round(hy)); g.rotate(ang + Math.PI / 4); if (d.core || d.creatorCore) g.rotate(-ang - Math.PI / 4); g.drawImage(icon, (d.core||d.creatorCore) ? -6 : -3, (d.core||d.creatorCore) ? -6 : -12, (d.core||d.creatorCore) ? 12 : 14, (d.core||d.creatorCore) ? 12 : 14); g.restore(); };
+    const hx = X + Math.cos(ang) * 5, hy = Y - 6 + Math.sin(ang) * 4; g.save(); g.translate(Math.round(hx), Math.round(hy)); g.rotate(ang + Math.PI / 4); if (d.core || d.creatorCore) g.rotate(-ang - Math.PI / 4); g.imageSmoothingEnabled = false; g.drawImage(icon, (d.core||d.creatorCore) ? -6 : -3, (d.core||d.creatorCore) ? -6 : -12, (d.core||d.creatorCore) ? 12 : 14, (d.core||d.creatorCore) ? 12 : 14); g.imageSmoothingEnabled = true; g.restore(); };
   if (p.dir === 3) drawWeapon();
   g.drawImage(blink ? white(spr) : spr, X - 8, Y - 19);
+  drawAdventurerEquipment(g, r, X, Y, p.dir);
   if (p.dir !== 3) drawWeapon();
-  if (act?.kind === 'cast') { const f = Math.min(1, act.t / (act.contact || 1)); const d=ITEMS[s?.key || '']; const core = d?.core || (d?.essence==='water'?'frost':d?.essence==='nature'?(d.creatorCore==='mjolnir'?'storm':'earth'):d?.essence==='spirit'?'spirit':'fire'); const col = core === 'spirit' ? '#cf8fff' : core === 'fire' ? '#ffb040' : core === 'frost' ? '#c8f0ff' : core === 'storm' ? '#a0c8ff' : '#e0c080'; pixCircle(g, X, Y - 6, 18 * (1 - f) + 4, col, 2); for (let i = 0; i < 3; i++) { const a = time / 100 + i * 2.1; add({ x: X + Math.cos(a) * 14, y: Y - 6 + Math.sin(a) * 14, vx: -Math.cos(a) * 40, vy: -Math.sin(a) * 40, col, max: 300, s: 1, g: 0 }); } }
-  if ((p.iceUntil||0)>Date.now()) {g.save();g.globalAlpha=0.7;g.drawImage(A.st.icepillar,X-8,Y-16);g.restore();}
+  if (act?.kind === 'cast') {
+    const f = Math.min(1, act.t / (act.contact || 1));
+    const d = ITEMS[s?.key || ''];
+    const cc = d?.creatorCore;
+    const core = cc || d?.core || 'fire';
+    const PAL_CAST: Record<string, [string, string]> = {
+      blast: ['#ff8a3a', '#ffe27a'], meteor: ['#ff5a2a', '#fff0a0'], dragon: ['#e03a28', '#ffb84a'],
+      elsa: ['#7fd8ff', '#ffffff'], earthmother: ['#7ae06a', '#d8ffa8'], mjolnir: ['#9fc4e0', '#ffffff'],
+      demon: ['#c87aff', '#f6dcff'], fire: ['#ffb040', '#fff0a0'], frost: ['#c8f0ff', '#ffffff'],
+      storm: ['#a0c8ff', '#ffffff'], earth: ['#e0c080', '#a8e070'],
+    };
+    const [c1, c2] = PAL_CAST[core] || ['#ffb040', '#ffffff'];
+    const rad = Math.round(18 * (1 - f) + 4);
+    pixCircle(g, X, Y - 6, rad, c1, 2);
+    if (cc === 'dragon' || cc === 'meteor') pixCircle(g, X, Y - 6, rad + 4, c2, 3);
+    if (cc === 'elsa') { for (let k = 0; k < 6; k++) { const a = k * Math.PI / 3 + time / 400; pixLine(g, X, Y - 6, X + Math.cos(a) * (rad + 3), Y - 6 + Math.sin(a) * (rad + 3), c2); } }
+    if (cc === 'mjolnir') { const a = p.aim; pixLine(g, X, Y - 6, X + Math.cos(a) * (rad + 6), Y - 6 + Math.sin(a) * (rad + 6), c2); }
+    if (cc === 'demon') { pixCircle(g, X + Math.cos(p.aim) * 6, Y - 6 + Math.sin(p.aim) * 6, 5, c2, 1); }
+    for (let i = 0; i < 4; i++) { const a = time / 90 + i * 1.57; add({ x: X + Math.cos(a) * 14, y: Y - 6 + Math.sin(a) * 14, vx: -Math.cos(a) * 42, vy: -Math.sin(a) * 42, col: i % 2 ? c1 : c2, max: 280, s: 1, g: 0 }); }
+  }
+  if (!vfxDirector.ownsDragon() && (p.iceUntil||0)>Date.now()) {g.save();g.globalAlpha=0.7;g.drawImage(A.st.icepillar,X-8,Y-16);g.restore();}
   if (s?.key === 'torch') drawFlame(g, X + Math.cos(p.aim) * 7, Y - 12 + Math.sin(p.aim) * 4, time, 0.5);
 }
 function drawProj(g: CanvasRenderingContext2D, pr: any, time: number) {
@@ -600,6 +821,22 @@ function drawFx(g: CanvasRenderingContext2D, dtMs: number, time: number) {
   for (let i = TEXTS.length - 1; i >= 0; i--) { const t = TEXTS[i]; t.life += dtMs; if (t.life >= t.max) { TEXTS.splice(i, 1); continue; } t.y += t.vy * dt; t.vy *= 0.94; const X = Math.round(t.x), Y = Math.round(t.y);
     if (t.key) { const ic = getArt().icon[t.key]; if (ic) g.drawImage(ic, X - 12, Y - 3, 8, 8); pixelText(g, t.text!, X - 2, Y, t.col); } else pixelText(g, t.text!, X - t.text!.length * 2, Y, t.col); }
 }
+// ---------- evacuation vessels ----------
+/** A berthed evacuation hull. Purely a projection of the trip record: the berth tile, the
+ *  current phase and the real seat count. It never mutates state and is not an authority. */
+function drawEvacVessel(g: CanvasRenderingContext2D, X: number, Y: number, time: number, aboard: number, capacity: number) {
+  const bob = Math.round(Math.sin(time / 420));
+  g.fillStyle = 'rgba(0,0,0,.28)'; g.fillRect(X - 17, Y + 5, 34, 3);
+  g.fillStyle = '#2a1d16'; g.fillRect(X - 16, Y + 2 + bob, 32, 3);
+  g.fillStyle = '#3a2a20'; g.fillRect(X - 15, Y - 4 + bob, 30, 7);
+  g.fillStyle = '#6b4a2e'; g.fillRect(X - 13, Y - 7 + bob, 26, 4);
+  g.fillStyle = '#8a6a44'; g.fillRect(X - 11, Y - 8 + bob, 22, 2);
+  g.fillStyle = '#4a3524'; g.fillRect(X - 1, Y - 21 + bob, 2, 13);
+  for (let i = 0; i < aboard && i < capacity; i++) { g.fillStyle = i % 2 ? '#cfd6e6' : '#a8b3c8'; g.fillRect(X - 12 + i * 4, Y - 11 + bob, 2, 3); }
+  const lamp = aboard >= capacity ? '#e8c060' : '#7fd8ff';
+  g.fillStyle = lamp; g.fillRect(X - 4, Y - 24 + bob, 8, 3);
+  if (Math.floor(time / 600) % 2) { g.fillStyle = 'rgba(232,192,96,.55)'; g.fillRect(X - 2, Y - 23 + bob, 4, 1); }
+}
 // ---------- weather ----------
 const rain: { x: number; y: number; s: number }[] = Array.from({ length: 220 }, () => ({ x: Math.random() * VIEW_W, y: Math.random() * VIEW_H, s: 0.6 + Math.random() * 0.6 }));
 function drawWeather(g: CanvasRenderingContext2D, r: RunState, now: number, time: number, cx: number, cy: number) {
@@ -610,7 +847,7 @@ function drawWeather(g: CanvasRenderingContext2D, r: RunState, now: number, time
   if (w === 'rain' || w === 'storm') { const n = w === 'storm' ? 220 : 130; g.fillStyle = 'rgba(180,200,240,0.55)'; const wind = w === 'storm' ? 3 : 1;
     for (let i = 0; i < n; i++) { const d = rain[i]; d.y += 7 * d.s; d.x += wind * d.s; if (d.y > VIEW_H) { d.y = -6; d.x = Math.random() * VIEW_W; if (Math.random() < 0.5) { g.fillRect(Math.round(d.x), VIEW_H - 2 - Math.random() * VIEW_H | 0, 2, 1); } } if (d.x > VIEW_W) d.x -= VIEW_W; g.fillRect(Math.round(d.x), Math.round(d.y), 1, 4); if (wind > 1) g.fillRect(Math.round(d.x) + 1, Math.round(d.y) + 2, 1, 2); }
     for (let i = 0; i < 12; i++) { g.fillStyle = 'rgba(200,220,255,0.5)'; g.fillRect(hash2(i, Math.floor(time / 100), 1) * VIEW_W | 0, hash2(i, Math.floor(time / 100), 2) * VIEW_H | 0, 2, 1); } }
-  if (w === 'fog') { g.fillStyle = 'rgba(200,205,215,0.16)'; g.fillRect(0, 0, VIEW_W, VIEW_H); g.fillStyle = 'rgba(225,230,238,0.22)'; const ox = Math.floor(time / 70 + cx * 0.5), oy = Math.floor(cy * 0.5); for (let y = 0; y < VIEW_H; y += 2) for (let x = (y >> 1) % 2 * 2; x < VIEW_W; x += 4) { const v = fbm((x + ox) / 90, (y + oy) / 60, 41, 2); if (v > 0.55) g.fillRect(x, y, 2, 2); } }
+  if (w === 'fog') { g.fillStyle = 'rgba(200,205,215,0.16)'; g.fillRect(0, 0, VIEW_W, VIEW_H); drawFogDots(g, Math.floor(time / 70 + cx * 0.5), Math.floor(cy * 0.5)); }
   if (cold) { g.fillStyle = 'rgba(255,255,255,0.85)'; for (let i = 0; i < 90; i++) { const X = (hash2(i, 1, 1) * VIEW_W + time / 30 * (0.5 + hash2(i, 2, 2)) + Math.sin(time / 700 + i) * 6 - cx * 0.2) % VIEW_W, Y = (hash2(i, 3, 3) * VIEW_H + time / 25 * (0.6 + hash2(i, 4, 4))) % VIEW_H; g.fillRect((X + VIEW_W) % VIEW_W | 0, Y | 0, i % 7 ? 1 : 2, 1); } }
   if (ash) { g.fillStyle = isRagnarok(r, now) ? 'rgba(255,140,80,0.7)' : 'rgba(120,110,110,0.7)'; for (let i = 0; i < 40; i++) { const X = (hash2(i, 5, 1) * VIEW_W - time / 50 * (0.5 + hash2(i, 6, 2))) % VIEW_W, Y = (hash2(i, 7, 3) * VIEW_H + time / 60) % VIEW_H; g.fillRect((X + VIEW_W) % VIEW_W | 0, Y | 0, 1, 1); } }
   if (zone === 7) { g.fillStyle = 'rgba(140,170,40,0.08)'; g.fillRect(0, 0, VIEW_W, VIEW_H); }
@@ -627,7 +864,8 @@ function drawLight(g: CanvasRenderingContext2D, r: RunState, now: number, time: 
   lights.push([p.x, p.y - 6, 34, '']);
   if (activeStack(r)?.key === 'torch') lights.push([p.x, p.y - 8, 78 + Math.sin(time / 90) * 3, '#ffb040']);
   for (const e of ents) { if (e.x < cx - 100 || e.x > cx + VIEW_W + 100 || e.y < cy - 100 || e.y > cy + VIEW_H + 100) continue;
-    if (e.kind === 'struct') { const d = STRUCTS[e.type!]; if (d.light && (e.type === 'torch_post' || (e.station && e.station.burn > 0 && (e.type === 'campfire' || e.station.queue.length)))) lights.push([e.x, e.y - 4, d.light + Math.sin(time / 110 + e.x) * 3, '#ff9a3a']); }
+    if (e.kind === 'struct') { const d = STRUCTS[e.type!]; if (d.light && ((e.type === 'torch_post' && (!e.workLight || workLightPowered(r,e))) || (e.station && e.station.burn > 0 && (e.type === 'campfire' || e.station.queue.length)))) lights.push([e.x, e.y - 4, d.light + Math.sin(time / 110 + e.x) * 3, '#ff9a3a']); }
+    if (e.kind === 'vehicle' && e.vehicle && (e.vehicle.fuel ?? 0) > 0 && (e.hp ?? 0) > 0 && r.player.vehicle === e.id) { const a = e.vehicle.angle || 0; lights.push([e.x + Math.cos(a) * 18, e.y + Math.sin(a) * 14, 52, '#ffe89a']); lights.push([e.x + Math.cos(a) * 40, e.y + Math.sin(a) * 32, 34, '#ffd070']); }
     if (e.kind === 'evac') lights.push([e.x, e.y - 30, 40, '#ff5a3a']); if (e.kind === 'vendor') lights.push([e.x, e.y - 10, 50, '#ffd070']); if (e.kind === 'cash' && rag && !e.minted) lights.push([e.x, e.y, 30, '#ffd040']); if (e.kind === 'bag') lights.push([e.x, e.y, 20, '#ffe27a']); }
   for (const pr of PROJ) if (pr.kind === 'fireball' || pr.kind === 'bolt') lights.push([pr.x, pr.y, pr.kind === 'fireball' ? 50 : 18, '#ff7a2a']);
   for (const k in r.sources) { const st: any = r.sources[+k]; if (st.fire && st.fire > r.clock.simMs) { const i = +k; lights.push([(i % WW) * 16 + 8, ((i / WW) | 0) * 16, 60, '#ff7a2a']); } }
@@ -636,7 +874,15 @@ function drawLight(g: CanvasRenderingContext2D, r: RunState, now: number, time: 
   for (const lt of life.sceneLights) lights.push(lt);
   for (const [x, y, rad] of lights) { const X = x - cx, Y = y - cy; const poly = rad > 20 ? life.lightPolygon(r, x, y, rad) : null; l.save(); if (poly) life.clipTo(l, poly, cx, cy); for (let k = 0; k < 4; k++) { l.fillStyle = `rgba(0,0,0,${0.32 + k * 0.17})`; l.beginPath(); l.arc(Math.round(X), Math.round(Y), Math.round(rad * (1 - k * 0.2)), 0, Math.PI * 2); l.fill(); } l.restore(); }
   g.drawImage(lightCv, 0, 0);
-  g.globalCompositeOperation = 'lighter'; for (const [x, y, rad, col] of lights) { if (!col) continue; g.save(); if (rad > 20) life.clipTo(g, life.lightPolygon(r, x, y, rad), cx, cy); g.fillStyle = col; g.globalAlpha = 0.07 * dark * 1.5; g.beginPath(); g.arc(Math.round(x - cx), Math.round(y - cy), rad * 0.7, 0, Math.PI * 2); g.fill(); g.restore(); } g.globalAlpha = 1; g.globalCompositeOperation = 'source-over';
+  g.globalCompositeOperation = 'lighter';
+  for (const [x, y, rad, col] of lights) {
+    if (!col) continue;
+    g.save();
+    if (rad > 20) life.clipTo(g, life.lightPolygon(r, x, y, rad), cx, cy);
+    bloomAt(g, x - cx, y - cy, rad * 0.7, col, dark * 1.5);
+    g.restore();
+  }
+  g.globalAlpha = 1; g.globalCompositeOperation = 'source-over';
 }
 
 // ---------- VEYRA living art (redrawn flora & rocks; see src/veyra05/living) ----------

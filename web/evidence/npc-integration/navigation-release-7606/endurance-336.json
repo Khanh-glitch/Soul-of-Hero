@@ -1,0 +1,158 @@
+{
+  "source": "eb968ca812a05d72be84fac887c471715ceb6241",
+  "release": "1e532606406da25af001f1d25373c18e3bb3606a",
+  "seed": 7606,
+  "runId": "run_5va_mwhjny80",
+  "actors": 286,
+  "from": "Production continued-h24.save (verified against warm terminal game state). Hourly production settle; serialize, checksum-select, and validate each checkpoint. Fresh process resumes the h72 checkpoint for the remainder. All original IDs retained; same-timestamp calls must not replay.",
+  "firstHourlySampleWithAllDead": 38,
+  "completedCheckpoints": 312,
+  "selected": [
+    {
+      "hour": 25,
+      "states": {
+        "IDLE": 84,
+        "DEAD": 199,
+        "WORKING": 3
+      },
+      "playerDead": true,
+      "snapshotBytes": 2370248,
+      "digest": "01023330705c774b10b50711af218e6664f48f0abb80beef5456d00f17600b45"
+    },
+    {
+      "hour": 28,
+      "states": {
+        "DEAD": 250,
+        "IDLE": 34,
+        "WORKING": 1,
+        "MOVING": 1
+      },
+      "playerDead": true,
+      "snapshotBytes": 2397184,
+      "digest": "da7cd72904c10b33fa94984be0d3a8d7688c1a7468a0d810b19fa240fbb9ba45"
+    },
+    {
+      "hour": 30,
+      "states": {
+        "DEAD": 265,
+        "IDLE": 21
+      },
+      "playerDead": true,
+      "snapshotBytes": 2415416,
+      "digest": "603e83eac3903a43d8eb8398ce22108b00847a591c32ea22ab7bed131abe51d8"
+    },
+    {
+      "hour": 32,
+      "states": {
+        "DEAD": 271,
+        "IDLE": 15
+      },
+      "playerDead": true,
+      "snapshotBytes": 2440024,
+      "digest": "1b87a84fa5d518723294e5f454c6995a75e6398c55afd0aa55b9cf5f56ff50ca"
+    },
+    {
+      "hour": 36,
+      "states": {
+        "DEAD": 282,
+        "IDLE": 4
+      },
+      "playerDead": true,
+      "snapshotBytes": 2439961,
+      "digest": "5c24be79e42770c8c330e36b1400775090c114a505639d9003366cf4ecc0976c"
+    },
+    {
+      "hour": 37,
+      "states": {
+        "DEAD": 283,
+        "IDLE": 3
+      },
+      "playerDead": true,
+      "snapshotBytes": 2440460,
+      "digest": "e97694986266c49ffe5af9ea5b6bf434e192180f8d083480019db8b2dab2a7e4"
+    },
+    {
+      "hour": 38,
+      "states": {
+        "DEAD": 286
+      },
+      "playerDead": true,
+      "snapshotBytes": 2441309,
+      "digest": "04c0390feab596472bfd3759b928ecc1641e9f66935740d87b3109de028108f3"
+    },
+    {
+      "hour": 48,
+      "states": {
+        "DEAD": 286
+      },
+      "playerDead": true,
+      "snapshotBytes": 2441697,
+      "digest": "e6f63f221a611f40b8e46270af8817606966e433abf21f420ebb7633f251aa62"
+    },
+    {
+      "hour": 72,
+      "states": {
+        "DEAD": 286
+      },
+      "playerDead": true,
+      "snapshotBytes": 2442096,
+      "digest": "a09162d1398577f487a1cdd170be0971235a7950e44f766d48f806de14384693"
+    },
+    {
+      "hour": 120,
+      "states": {
+        "DEAD": 286
+      },
+      "playerDead": true,
+      "snapshotBytes": 2442879,
+      "digest": "132684a36edcc1e83174abdf9a957b48fffb2b4150bb150a9283d0fe4f71bd5c"
+    },
+    {
+      "hour": 240,
+      "states": {
+        "DEAD": 286
+      },
+      "playerDead": true,
+      "snapshotBytes": 2444165,
+      "digest": "654db68f9c2e1689ab0c35be4ca902c0770a4939aab4f40398449118269eadd8"
+    },
+    {
+      "hour": 312,
+      "states": {
+        "DEAD": 286
+      },
+      "playerDead": true,
+      "snapshotBytes": 2449251,
+      "digest": "8bdbd6434eadd1999bf4d183aa55279df2848954f8e0c263ef1760535c230238"
+    },
+    {
+      "hour": 336,
+      "states": {
+        "DEAD": 286
+      },
+      "playerDead": true,
+      "snapshotBytes": 718,
+      "digest": "65329461f1459ca4c2d5d22b5ac7abd5cda4bf30d9252eba98257cd8da2dd72d"
+    }
+  ],
+  "settleSeconds": {
+    "h24To72": 153.74,
+    "h72To336": 41.61
+  },
+  "history": {
+    "runId": "run_5va_mwhjny80",
+    "character": "female",
+    "startedAt": 1794729600000,
+    "endedAt": 1795939200000,
+    "ending": "expired",
+    "score": 0,
+    "stones": 0,
+    "deposited": 0,
+    "achievements": [],
+    "qa": false,
+    "verified": "LOCAL/UNVERIFIED"
+  },
+  "finalReceipts": {
+    "human.finalize": 1
+  }
+}

@@ -1,0 +1,106 @@
+{
+  "scope": "Normal keys and UI; driver navigation reads a copy of live Game props. No clock acceleration or game-state writes.",
+  "steps": [
+    {
+      "at": 1797950760894,
+      "player": [
+        2497,
+        750
+      ],
+      "actor": "h1f",
+      "role": "salvager",
+      "gx": 2503,
+      "gy": 741,
+      "route": 13,
+      "layout": "veyra05-at-2368-704",
+      "localPixels": [
+        2072,
+        744
+      ],
+      "firstLeg": 1
+    }
+  ],
+  "errors": [],
+  "httpErrors": [],
+  "talk": [],
+  "landings": [
+    {
+      "seed": 7542,
+      "run": "run_5ti_mxytglan",
+      "nearestTiles": 12.806248474865697
+    }
+  ],
+  "startClock": 1797950760143,
+  "seed": 7542,
+  "run": "run_5ti_mxytglan",
+  "beforeContact": {
+    "actor": "h1f",
+    "at": 1797950765514,
+    "player": [
+      {
+        "uid": "s1",
+        "key": "wood_club",
+        "qty": 1,
+        "dur": 120
+      },
+      {
+        "uid": "s2",
+        "key": "water_flask",
+        "qty": 1,
+        "charge": 2
+      },
+      {
+        "uid": "s3",
+        "key": "berries",
+        "qty": 3
+      },
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    "pack": [
+      null,
+      {
+        "uid": "s1ge",
+        "key": "cloth",
+        "qty": 2
+      },
+      {
+        "uid": "s1gf",
+        "key": "spares",
+        "qty": 2
+      },
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    "trust": 50
+  },
+  "contact": "SALVAGER COASTAL · SALVAGER\n✕\npo_mere · idle\nTrust 50 · 90/90 HP\nWhat do you want to do?\nTalk\nOffer help\nTrade items\nMake a demand\n\nAsk a question. This does not give an order or exchange items.\n\nQuestion \nWhat are you doing?\nWhat do you need?\nWhat is this place?\nWhat can you trade?\nWould you travel with me?\nAsk question",
+  "barter": true,
+  "failure": "TimeoutError: locator.click: Timeout 60000ms exceeded.\nCall log:\n  - waiting for getByTestId('human-panel').getByRole('button', { name: /^Your offer: add one (?!.*club)/i }).first()\n    - locator resolved to <button class=\"btn sm\" aria-label=\"Your offer: add one Water Flask\">+</button>\n  - attempting click action\n    - waiting for element to be visible, enabled and stable\n  - element was detached from the DOM, retrying\n"
+}

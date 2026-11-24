@@ -1,0 +1,2988 @@
+{
+  "seed": 7606,
+  "parity": {
+    "passed": false,
+    "firstDifferentHour": 9
+  },
+  "condition": {
+    "h1": {
+      "active": 264,
+      "activeLowNeed": 0,
+      "activeNotLow": 264,
+      "down": 22,
+      "dead": 0,
+      "deadZeroHungerOnly": 0,
+      "deadZeroThirstOnly": 0,
+      "deadBothZero": 0
+    },
+    "h8": {
+      "active": 259,
+      "activeLowNeed": 37,
+      "activeNotLow": 222,
+      "down": 27,
+      "dead": 0,
+      "deadZeroHungerOnly": 0,
+      "deadZeroThirstOnly": 0,
+      "deadBothZero": 0
+    },
+    "h24": {
+      "active": 85,
+      "activeLowNeed": 63,
+      "activeNotLow": 22,
+      "down": 1,
+      "dead": 200,
+      "deadZeroHungerOnly": 128,
+      "deadZeroThirstOnly": 71,
+      "deadBothZero": 1
+    },
+    "continuedH24": {
+      "active": 88,
+      "activeLowNeed": 73,
+      "activeNotLow": 15,
+      "down": 0,
+      "dead": 198,
+      "deadZeroHungerOnly": 127,
+      "deadZeroThirstOnly": 69,
+      "deadBothZero": 2
+    }
+  },
+  "mortalityDifferences": [
+    {
+      "id": "h1",
+      "community": "com:po_greywater",
+      "continuous": "DEAD",
+      "continued": "IDLE"
+    },
+    {
+      "id": "h3",
+      "community": "com:po_greywater",
+      "continuous": "DEAD",
+      "continued": "IDLE"
+    },
+    {
+      "id": "h7",
+      "community": "com:po_greywater",
+      "continuous": "DEAD",
+      "continued": "IDLE"
+    },
+    {
+      "id": "hi",
+      "community": "com:po_hook",
+      "continuous": "IDLE",
+      "continued": "DEAD"
+    },
+    {
+      "id": "h14",
+      "community": "com:po_cindercamp",
+      "continuous": "IDLE",
+      "continued": "DEAD"
+    },
+    {
+      "id": "h16",
+      "community": "com:po_cindercamp",
+      "continuous": "IDLE",
+      "continued": "DEAD"
+    },
+    {
+      "id": "h1a",
+      "community": "com:po_cindercamp",
+      "continuous": "IDLE",
+      "continued": "DEAD"
+    },
+    {
+      "id": "h4p",
+      "community": "com:po_glade",
+      "continuous": "DEAD",
+      "continued": "IDLE"
+    },
+    {
+      "id": "h4q",
+      "community": "com:po_glade",
+      "continuous": "DEAD",
+      "continued": "IDLE"
+    },
+    {
+      "id": "h4s",
+      "community": "com:po_glade",
+      "continuous": "DEAD",
+      "continued": "IDLE"
+    }
+  ],
+  "layout": "veyra05-world",
+  "notes": "Same one-hour settle boundaries; sha256 over ordered JSON. Counts for low hunger/thirst exclude dead, downed and embarked. Timings inclusive, not FPS.",
+  "preSaveVsSerializedAtH8": {
+    "ids": true,
+    "people": true,
+    "jobs": true,
+    "custody": true,
+    "communities": true
+  },
+  "pendingAtFork": [
+    {
+      "actor": "hk",
+      "occupation": "mechanic",
+      "from": [
+        2585,
+        655,
+        0
+      ],
+      "status": "PENDING_SEARCH",
+      "target": "0:2604,654",
+      "expanded": 512
+    },
+    {
+      "actor": "hv",
+      "occupation": "cook",
+      "from": [
+        1308,
+        1944,
+        0
+      ],
+      "status": "PENDING_SEARCH",
+      "target": "0:1360,1983",
+      "expanded": 512
+    },
+    {
+      "actor": "h1v",
+      "occupation": "guard",
+      "from": [
+        2131,
+        1785,
+        0
+      ],
+      "status": "PENDING_SEARCH",
+      "target": "0:2077,1718",
+      "expanded": 2816
+    }
+  ],
+  "cumulativeSettleMs": {
+    "continuous": {
+      "1": 198964,
+      "8": 692864,
+      "24": 1471441
+    },
+    "fromH8": {
+      "24": 981554
+    }
+  },
+  "continuous": [
+    {
+      "hour": 1,
+      "state": {
+        "clock": 1794733200000,
+        "all": {
+          "count": 286,
+          "states": {
+            "IDLE": 261,
+            "DOWNED": 22,
+            "WORKING": 3
+          },
+          "active": 264,
+          "hungry": 0,
+          "thirsty": 0
+        },
+        "playerDead": false,
+        "regions": [
+          {
+            "id": "com:po_hook",
+            "count": 10,
+            "states": {
+              "IDLE": 10
+            },
+            "active": 10,
+            "hungry": 0,
+            "thirsty": 0,
+            "stock": [
+              [
+                "s19w",
+                "berries",
+                18
+              ],
+              [
+                "s19x",
+                "charcoal",
+                8
+              ],
+              [
+                "s19y",
+                "spares",
+                5
+              ],
+              [
+                "s2uk",
+                "herb",
+                1
+              ],
+              [
+                "s34n",
+                "cloth",
+                1
+              ],
+              [
+                "s1a4",
+                "seed_sunroot",
+                5
+              ],
+              [
+                "s1a5",
+                "herb",
+                3
+              ]
+            ],
+            "delivered": {
+              "mushroom": 1,
+              "herb": 1
+            }
+          },
+          {
+            "id": "com:po_greywater",
+            "count": 9,
+            "states": {
+              "IDLE": 9
+            },
+            "active": 9,
+            "hungry": 0,
+            "thirsty": 0,
+            "stock": [
+              [
+                "s160",
+                "berries",
+                22
+              ],
+              [
+                "s161",
+                "charcoal",
+                8
+              ],
+              [
+                "s162",
+                "spares",
+                7
+              ],
+              [
+                "s2u0",
+                "fiber",
+                12
+              ],
+              [
+                "s341",
+                "cloth",
+                1
+              ],
+              [
+                "s2u4",
+                "spares",
+                2
+              ],
+              [
+                "s34m",
+                "fiber",
+                1
+              ],
+              [
+                "s167",
+                "seed_sunroot",
+                5
+              ],
+              [
+                "s168",
+                "herb",
+                3
+              ],
+              [
+                "s169",
+                "bandage",
+                2
+              ]
+            ],
+            "delivered": {
+              "spares": 2,
+              "fiber": 13,
+              "berries": 6
+            }
+          }
+        ],
+        "digests": {
+          "ids": "a15dcbb3f53c0e727d074b9c2f6dde319eb1ef02cf4466f0483e741dd1c9f1c4",
+          "people": "e226ec5e3d569597dca83caaca2ba5cccbad8d5722fc4005216d02f4e6856f4e",
+          "jobs": "6bb4d351f63610c748a16f6fe2e6a0d334144ef60f66b582c3f3bf045f492460",
+          "custody": "bd3f880c5ba14ca1e298b94c2315953295e5a8fbee8c4ea9709db69b2771254a",
+          "communities": "90af0b9338ff4571f8f7ffbb9412a507699050790dcd0e8fa7d576682e37ecf0"
+        }
+      },
+      "elapsedMs": 198963.76506499999,
+      "counts": {
+        "routeBoundaryChecks": 2652647,
+        "sourceLookups": 12652,
+        "sourceIndexReads": 2507,
+        "worldSlices": 57549,
+        "plannerActivations": 3600,
+        "actorPlans": 3691,
+        "regionCompilations": 210,
+        "renderCompilations": 0,
+        "routeExpansions": 975747,
+        "entityScans": 325088
+      },
+      "inclusiveMs": {
+        "advanceWorld": 198941,
+        "stepHumans": 127624,
+        "compileCanonicalGeometryRegion": 37244,
+        "planAutonomousWork": 35270,
+        "tickNeeds": 29258,
+        "compileCanonicalTerrainRegion": 25140,
+        "resumeHarvestJob": 23758,
+        "humanEventBoundary": 16488
+      }
+    },
+    {
+      "hour": 8,
+      "state": {
+        "clock": 1794758400000,
+        "all": {
+          "count": 286,
+          "states": {
+            "IDLE": 256,
+            "DOWNED": 27,
+            "WORKING": 3
+          },
+          "active": 259,
+          "hungry": 0,
+          "thirsty": 37
+        },
+        "playerDead": false,
+        "regions": [
+          {
+            "id": "com:po_hook",
+            "count": 10,
+            "states": {
+              "IDLE": 10
+            },
+            "active": 10,
+            "hungry": 0,
+            "thirsty": 3,
+            "stock": [
+              [
+                "s19w",
+                "berries",
+                17
+              ],
+              [
+                "s19x",
+                "charcoal",
+                8
+              ],
+              [
+                "s19y",
+                "spares",
+                5
+              ],
+              [
+                "s2uk",
+                "herb",
+                1
+              ],
+              [
+                "s34n",
+                "cloth",
+                1
+              ],
+              [
+                "s34o",
+                "fiber",
+                4
+              ],
+              [
+                "s34q",
+                "fiber",
+                1
+              ],
+              [
+                "sad8",
+                "wood",
+                7
+              ],
+              [
+                "s1a4",
+                "seed_sunroot",
+                6
+              ],
+              [
+                "s1a5",
+                "herb",
+                3
+              ],
+              [
+                "sad9",
+                "crop",
+                12
+              ],
+              [
+                "sada",
+                "seed_sunroot",
+                1
+              ]
+            ],
+            "delivered": {
+              "mushroom": 1,
+              "herb": 1,
+              "fiber": 5,
+              "wood": 7,
+              "crop": 4,
+              "seed_sunroot": 4
+            }
+          },
+          {
+            "id": "com:po_greywater",
+            "count": 9,
+            "states": {
+              "IDLE": 9
+            },
+            "active": 9,
+            "hungry": 0,
+            "thirsty": 4,
+            "stock": [
+              [
+                "s160",
+                "berries",
+                24
+              ],
+              [
+                "s161",
+                "charcoal",
+                8
+              ],
+              [
+                "s162",
+                "spares",
+                7
+              ],
+              [
+                "s2u0",
+                "fiber",
+                20
+              ],
+              [
+                "s341",
+                "cloth",
+                1
+              ],
+              [
+                "s2u4",
+                "spares",
+                2
+              ],
+              [
+                "s34m",
+                "fiber",
+                1
+              ],
+              [
+                "s167",
+                "seed_sunroot",
+                5
+              ],
+              [
+                "s168",
+                "herb",
+                3
+              ],
+              [
+                "s169",
+                "bandage",
+                2
+              ]
+            ],
+            "delivered": {
+              "spares": 2,
+              "fiber": 21,
+              "berries": 9
+            }
+          }
+        ],
+        "digests": {
+          "ids": "a15dcbb3f53c0e727d074b9c2f6dde319eb1ef02cf4466f0483e741dd1c9f1c4",
+          "people": "cbf6548c66439224e98380a36e0a603d270c7fb3ede20e8d130a91f83d423f8f",
+          "jobs": "1305cb710acef9a641a630fba4767ded985dc7d15b74bef470b77119c02b581d",
+          "custody": "b728c6bcb872d07742cd288e124adab638be5ee53d4853cc7dd350ad05d6ec60",
+          "communities": "34c990e685cd5cc66d2ea736a1d66cfa57f6e06e9a526a210c07ff2dfc1d7148"
+        }
+      },
+      "elapsedMs": 73333.83363299991,
+      "counts": {
+        "routeBoundaryChecks": 1001130,
+        "sourceLookups": 4325,
+        "sourceIndexReads": 1397,
+        "worldSlices": 25195,
+        "plannerActivations": 3600,
+        "actorPlans": 3648,
+        "regionCompilations": 0,
+        "renderCompilations": 0,
+        "routeExpansions": 517693,
+        "entityScans": 143582
+      },
+      "inclusiveMs": {
+        "advanceWorld": 73321,
+        "stepHumans": 40233,
+        "tickNeeds": 14371,
+        "resumeHarvestJob": 9235,
+        "humanEventBoundary": 7824,
+        "navigationRead": 3324,
+        "stepStations": 2306,
+        "planAutonomousWork": 1476
+      }
+    },
+    {
+      "hour": 9,
+      "state": {
+        "clock": 1794762000000,
+        "all": {
+          "count": 286,
+          "states": {
+            "IDLE": 253,
+            "DOWNED": 27,
+            "MOVING": 1,
+            "WORKING": 5
+          },
+          "active": 259,
+          "hungry": 0,
+          "thirsty": 42
+        },
+        "playerDead": false,
+        "regions": [
+          {
+            "id": "com:po_hook",
+            "count": 10,
+            "states": {
+              "IDLE": 10
+            },
+            "active": 10,
+            "hungry": 0,
+            "thirsty": 3,
+            "stock": [
+              [
+                "s19w",
+                "berries",
+                17
+              ],
+              [
+                "s19x",
+                "charcoal",
+                8
+              ],
+              [
+                "s19y",
+                "spares",
+                5
+              ],
+              [
+                "s2uk",
+                "herb",
+                1
+              ],
+              [
+                "s34n",
+                "cloth",
+                1
+              ],
+              [
+                "s34o",
+                "fiber",
+                4
+              ],
+              [
+                "s34q",
+                "fiber",
+                1
+              ],
+              [
+                "sad8",
+                "wood",
+                7
+              ],
+              [
+                "s1a4",
+                "seed_sunroot",
+                6
+              ],
+              [
+                "s1a5",
+                "herb",
+                3
+              ],
+              [
+                "sad9",
+                "crop",
+                12
+              ],
+              [
+                "sada",
+                "seed_sunroot",
+                1
+              ]
+            ],
+            "delivered": {
+              "mushroom": 1,
+              "herb": 1,
+              "fiber": 5,
+              "wood": 7,
+              "crop": 4,
+              "seed_sunroot": 4
+            }
+          },
+          {
+            "id": "com:po_greywater",
+            "count": 9,
+            "states": {
+              "IDLE": 9
+            },
+            "active": 9,
+            "hungry": 0,
+            "thirsty": 4,
+            "stock": [
+              [
+                "s160",
+                "berries",
+                24
+              ],
+              [
+                "s161",
+                "charcoal",
+                8
+              ],
+              [
+                "s162",
+                "spares",
+                7
+              ],
+              [
+                "s2u0",
+                "fiber",
+                21
+              ],
+              [
+                "s341",
+                "cloth",
+                1
+              ],
+              [
+                "s2u4",
+                "spares",
+                2
+              ],
+              [
+                "s34m",
+                "fiber",
+                1
+              ],
+              [
+                "s167",
+                "seed_sunroot",
+                5
+              ],
+              [
+                "s168",
+                "herb",
+                3
+              ],
+              [
+                "s169",
+                "bandage",
+                2
+              ]
+            ],
+            "delivered": {
+              "spares": 2,
+              "fiber": 22,
+              "berries": 9
+            }
+          }
+        ],
+        "digests": {
+          "ids": "a15dcbb3f53c0e727d074b9c2f6dde319eb1ef02cf4466f0483e741dd1c9f1c4",
+          "people": "50471ae8515d190ff63e5399b6572c87bae4b9a26b2f8720326f541b178b10ad",
+          "jobs": "e61838742c3279ce7421ffa5332c8f0b56ac2563af1bdf23f9b40cf5cdd3d53f",
+          "custody": "a10533f23c756ffdde2e747e41586396e6f7edde46bce044235bc48205d4597c",
+          "communities": "5bf8cb6387a3a491f3e3d39f5bcd9452fec2a7d8e660beb068095ae630bdd980"
+        }
+      },
+      "elapsedMs": 69723.96654199995,
+      "counts": {
+        "routeBoundaryChecks": 270287,
+        "sourceLookups": 3715,
+        "sourceIndexReads": 1339,
+        "worldSlices": 26595,
+        "plannerActivations": 3600,
+        "actorPlans": 3648,
+        "regionCompilations": 0,
+        "renderCompilations": 0,
+        "routeExpansions": 462702,
+        "entityScans": 148623
+      },
+      "inclusiveMs": {
+        "advanceWorld": 69710,
+        "stepHumans": 36487,
+        "tickNeeds": 14027,
+        "humanEventBoundary": 7973,
+        "resumeHarvestJob": 5451,
+        "navigationRead": 3216,
+        "stepStations": 2296,
+        "planAutonomousWork": 1459
+      }
+    },
+    {
+      "hour": 24,
+      "state": {
+        "clock": 1794816000000,
+        "all": {
+          "count": 286,
+          "states": {
+            "DEAD": 200,
+            "IDLE": 81,
+            "WORKING": 3,
+            "MOVING": 1,
+            "DOWNED": 1
+          },
+          "active": 85,
+          "hungry": 62,
+          "thirsty": 9
+        },
+        "playerDead": true,
+        "regions": [
+          {
+            "id": "com:po_hook",
+            "count": 10,
+            "states": {
+              "IDLE": 7,
+              "DEAD": 2,
+              "MOVING": 1
+            },
+            "active": 8,
+            "hungry": 0,
+            "thirsty": 1,
+            "stock": [
+              [
+                "s19x",
+                "charcoal",
+                8
+              ],
+              [
+                "s19y",
+                "spares",
+                5
+              ],
+              [
+                "s2uk",
+                "herb",
+                1
+              ],
+              [
+                "s34n",
+                "cloth",
+                1
+              ],
+              [
+                "s34o",
+                "fiber",
+                11
+              ],
+              [
+                "s34q",
+                "fiber",
+                1
+              ],
+              [
+                "sad8",
+                "wood",
+                9
+              ],
+              [
+                "s1a4",
+                "seed_sunroot",
+                9
+              ],
+              [
+                "s1a5",
+                "herb",
+                3
+              ],
+              [
+                "sada",
+                "seed_sunroot",
+                1
+              ]
+            ],
+            "delivered": {
+              "mushroom": 6,
+              "herb": 1,
+              "fiber": 12,
+              "wood": 10,
+              "crop": 12,
+              "seed_sunroot": 12,
+              "grilled_mushroom": 4,
+              "berries": 9
+            }
+          },
+          {
+            "id": "com:po_greywater",
+            "count": 9,
+            "states": {
+              "DEAD": 6,
+              "IDLE": 2,
+              "WORKING": 1
+            },
+            "active": 3,
+            "hungry": 0,
+            "thirsty": 0,
+            "stock": [
+              [
+                "s160",
+                "berries",
+                9
+              ],
+              [
+                "s161",
+                "charcoal",
+                8
+              ],
+              [
+                "s162",
+                "spares",
+                7
+              ],
+              [
+                "s2u0",
+                "fiber",
+                25
+              ],
+              [
+                "s341",
+                "cloth",
+                1
+              ],
+              [
+                "s2u4",
+                "spares",
+                2
+              ],
+              [
+                "s34m",
+                "fiber",
+                1
+              ],
+              [
+                "s167",
+                "seed_sunroot",
+                5
+              ],
+              [
+                "s168",
+                "herb",
+                3
+              ],
+              [
+                "s169",
+                "bandage",
+                2
+              ]
+            ],
+            "delivered": {
+              "spares": 2,
+              "fiber": 26,
+              "berries": 44
+            }
+          }
+        ],
+        "digests": {
+          "ids": "a15dcbb3f53c0e727d074b9c2f6dde319eb1ef02cf4466f0483e741dd1c9f1c4",
+          "people": "afbc691c1aa2626885eeb415631ad91517d0792bb424c8f58131b68bae713d55",
+          "jobs": "85d2fda5446336d78ddedb0a8673a5c4d0b2a6f7dfd3558e13401dd67dc2ada2",
+          "custody": "2aefa0b51f5b488adb120fd3f112cff5c4b6917a57d1934a62c806d98738c4c4",
+          "communities": "6595f07d6945a4d79cf761a83fe37352a289a5f563ca415db613e96ef7af2ff6"
+        }
+      },
+      "elapsedMs": 25932.800973000005,
+      "counts": {
+        "routeBoundaryChecks": 29004,
+        "sourceLookups": 265,
+        "sourceIndexReads": 231,
+        "worldSlices": 10097,
+        "plannerActivations": 3580,
+        "actorPlans": 3616,
+        "regionCompilations": 0,
+        "renderCompilations": 0,
+        "routeExpansions": 75182,
+        "entityScans": 51409
+      },
+      "inclusiveMs": {
+        "advanceWorld": 25919,
+        "stepHumans": 11900,
+        "tickNeeds": 3801,
+        "stepStations": 2117,
+        "humanEventBoundary": 1764,
+        "planAutonomousWork": 1510,
+        "navigationRead": 1418,
+        "stepTenders": 725
+      }
+    }
+  ],
+  "continued": [
+    {
+      "hour": 9,
+      "state": {
+        "clock": 1794762000000,
+        "all": {
+          "count": 286,
+          "states": {
+            "IDLE": 255,
+            "DOWNED": 27,
+            "WORKING": 4
+          },
+          "active": 259,
+          "hungry": 0,
+          "thirsty": 43
+        },
+        "playerDead": false,
+        "regions": [
+          {
+            "id": "com:po_hook",
+            "count": 10,
+            "states": {
+              "IDLE": 10
+            },
+            "active": 10,
+            "hungry": 0,
+            "thirsty": 3,
+            "stock": [
+              [
+                "s19w",
+                "berries",
+                17
+              ],
+              [
+                "s19x",
+                "charcoal",
+                8
+              ],
+              [
+                "s19y",
+                "spares",
+                5
+              ],
+              [
+                "s2uk",
+                "herb",
+                1
+              ],
+              [
+                "s34n",
+                "cloth",
+                1
+              ],
+              [
+                "s34o",
+                "fiber",
+                4
+              ],
+              [
+                "s34q",
+                "fiber",
+                1
+              ],
+              [
+                "sad8",
+                "wood",
+                7
+              ],
+              [
+                "s1a4",
+                "seed_sunroot",
+                6
+              ],
+              [
+                "s1a5",
+                "herb",
+                3
+              ],
+              [
+                "sad9",
+                "crop",
+                12
+              ],
+              [
+                "sada",
+                "seed_sunroot",
+                1
+              ]
+            ],
+            "delivered": {
+              "mushroom": 1,
+              "herb": 1,
+              "fiber": 5,
+              "wood": 7,
+              "crop": 4,
+              "seed_sunroot": 4
+            }
+          },
+          {
+            "id": "com:po_greywater",
+            "count": 9,
+            "states": {
+              "IDLE": 9
+            },
+            "active": 9,
+            "hungry": 0,
+            "thirsty": 4,
+            "stock": [
+              [
+                "s160",
+                "berries",
+                24
+              ],
+              [
+                "s161",
+                "charcoal",
+                8
+              ],
+              [
+                "s162",
+                "spares",
+                7
+              ],
+              [
+                "s2u0",
+                "fiber",
+                21
+              ],
+              [
+                "s341",
+                "cloth",
+                1
+              ],
+              [
+                "s2u4",
+                "spares",
+                2
+              ],
+              [
+                "s34m",
+                "fiber",
+                1
+              ],
+              [
+                "s167",
+                "seed_sunroot",
+                5
+              ],
+              [
+                "s168",
+                "herb",
+                3
+              ],
+              [
+                "s169",
+                "bandage",
+                2
+              ]
+            ],
+            "delivered": {
+              "spares": 2,
+              "fiber": 22,
+              "berries": 9
+            }
+          }
+        ],
+        "digests": {
+          "ids": "a15dcbb3f53c0e727d074b9c2f6dde319eb1ef02cf4466f0483e741dd1c9f1c4",
+          "people": "e784f989ac6a6f9f55ddcfd078c49b36b698c000cc3603758725c0a92ebbdbc3",
+          "jobs": "5fa2cded4fc9bac76164af62dcf28c461b8083a7bd8dbaea9938921f84533a02",
+          "custody": "03dba73de14b57274cf29fea516b811c8f49ca842cc57036044dce2b6cbe37f5",
+          "communities": "7b23130f9e55ba904cada590758afccf8693d3f22221ebd6c88a89a3008d1a6c"
+        }
+      },
+      "elapsedMs": 109183.761073,
+      "counts": {
+        "routeBoundaryChecks": 961779,
+        "sourceLookups": 3710,
+        "sourceIndexReads": 1340,
+        "worldSlices": 24667,
+        "plannerActivations": 3600,
+        "actorPlans": 3648,
+        "regionCompilations": 118,
+        "renderCompilations": 0,
+        "routeExpansions": 519430,
+        "entityScans": 141646
+      },
+      "inclusiveMs": {
+        "advanceWorld": 109154,
+        "stepHumans": 75290,
+        "compileCanonicalGeometryRegion": 27021,
+        "planAutonomousWork": 24771,
+        "compileCanonicalTerrainRegion": 22225,
+        "tickNeeds": 15917,
+        "globalSourceCandidates": 12219,
+        "resumeHarvestJob": 12140
+      }
+    },
+    {
+      "hour": 24,
+      "state": {
+        "clock": 1794816000000,
+        "all": {
+          "count": 286,
+          "states": {
+            "IDLE": 85,
+            "DEAD": 198,
+            "WORKING": 3
+          },
+          "active": 88,
+          "hungry": 70,
+          "thirsty": 13
+        },
+        "playerDead": true,
+        "regions": [
+          {
+            "id": "com:po_hook",
+            "count": 10,
+            "states": {
+              "DEAD": 3,
+              "IDLE": 7
+            },
+            "active": 7,
+            "hungry": 0,
+            "thirsty": 1,
+            "stock": [
+              [
+                "sw4f",
+                "mushroom",
+                3
+              ],
+              [
+                "s19x",
+                "charcoal",
+                8
+              ],
+              [
+                "s19y",
+                "spares",
+                5
+              ],
+              [
+                "s2uk",
+                "herb",
+                1
+              ],
+              [
+                "s34n",
+                "cloth",
+                1
+              ],
+              [
+                "s34o",
+                "fiber",
+                18
+              ],
+              [
+                "s34q",
+                "fiber",
+                1
+              ],
+              [
+                "sad8",
+                "wood",
+                7
+              ],
+              [
+                "s1a4",
+                "seed_sunroot",
+                8
+              ],
+              [
+                "s1a5",
+                "herb",
+                3
+              ],
+              [
+                "sad9",
+                "crop",
+                22
+              ],
+              [
+                "sada",
+                "seed_sunroot",
+                1
+              ]
+            ],
+            "delivered": {
+              "mushroom": 9,
+              "herb": 1,
+              "fiber": 19,
+              "wood": 7,
+              "crop": 16,
+              "seed_sunroot": 16,
+              "grilled_mushroom": 1,
+              "berries": 7
+            }
+          },
+          {
+            "id": "com:po_greywater",
+            "count": 9,
+            "states": {
+              "IDLE": 6,
+              "DEAD": 3
+            },
+            "active": 6,
+            "hungry": 6,
+            "thirsty": 0,
+            "stock": [
+              [
+                "s34c",
+                "wood",
+                1
+              ],
+              [
+                "s161",
+                "charcoal",
+                8
+              ],
+              [
+                "s162",
+                "spares",
+                7
+              ],
+              [
+                "s2u0",
+                "fiber",
+                26
+              ],
+              [
+                "s341",
+                "cloth",
+                1
+              ],
+              [
+                "s2u4",
+                "spares",
+                2
+              ],
+              [
+                "s34m",
+                "fiber",
+                1
+              ],
+              [
+                "s167",
+                "seed_sunroot",
+                5
+              ],
+              [
+                "s168",
+                "herb",
+                3
+              ],
+              [
+                "s169",
+                "bandage",
+                2
+              ]
+            ],
+            "delivered": {
+              "spares": 2,
+              "fiber": 27,
+              "berries": 28,
+              "wood": 1
+            }
+          }
+        ],
+        "digests": {
+          "ids": "a15dcbb3f53c0e727d074b9c2f6dde319eb1ef02cf4466f0483e741dd1c9f1c4",
+          "people": "fa86da7741ba700585495368854b5ef7641178a101172ba0e81ad01c82e8360a",
+          "jobs": "c0eb151d49a9fc2299be9e8a583ff894e2e6e06094031b88fccbf7e14fcea18c",
+          "custody": "b0a1945ab1809abb1ac89ece1d04b73903c8888fd7c8755826fe752094da5a0f",
+          "communities": "b5de8ec824e6f7218fab8fe92f17cfc64699909720430ee657376a7fd69b85f6"
+        }
+      },
+      "elapsedMs": 24383.07580900006,
+      "counts": {
+        "routeBoundaryChecks": 9402,
+        "sourceLookups": 348,
+        "sourceIndexReads": 224,
+        "worldSlices": 7836,
+        "plannerActivations": 3224,
+        "actorPlans": 3251,
+        "regionCompilations": 0,
+        "renderCompilations": 0,
+        "routeExpansions": 51809,
+        "entityScans": 40307
+      },
+      "inclusiveMs": {
+        "advanceWorld": 24370,
+        "stepHumans": 12285,
+        "tickNeeds": 3179,
+        "planAutonomousWork": 2461,
+        "stepStations": 2119,
+        "humanEventBoundary": 1761,
+        "navigationRead": 1284,
+        "compileCanonicalTerrainRegion": 1230
+      }
+    }
+  ],
+  "comparisons": [
+    {
+      "hour": 9,
+      "match": {
+        "ids": true,
+        "people": false,
+        "jobs": false,
+        "custody": false,
+        "communities": false
+      }
+    },
+    {
+      "hour": 10,
+      "match": {
+        "ids": true,
+        "people": false,
+        "jobs": false,
+        "custody": false,
+        "communities": false
+      }
+    },
+    {
+      "hour": 11,
+      "match": {
+        "ids": true,
+        "people": false,
+        "jobs": false,
+        "custody": false,
+        "communities": false
+      }
+    },
+    {
+      "hour": 12,
+      "match": {
+        "ids": true,
+        "people": false,
+        "jobs": false,
+        "custody": false,
+        "communities": false
+      }
+    },
+    {
+      "hour": 13,
+      "match": {
+        "ids": true,
+        "people": false,
+        "jobs": false,
+        "custody": false,
+        "communities": false
+      }
+    },
+    {
+      "hour": 14,
+      "match": {
+        "ids": true,
+        "people": false,
+        "jobs": false,
+        "custody": false,
+        "communities": false
+      }
+    },
+    {
+      "hour": 15,
+      "match": {
+        "ids": true,
+        "people": false,
+        "jobs": false,
+        "custody": false,
+        "communities": false
+      }
+    },
+    {
+      "hour": 16,
+      "match": {
+        "ids": true,
+        "people": false,
+        "jobs": false,
+        "custody": false,
+        "communities": false
+      }
+    },
+    {
+      "hour": 17,
+      "match": {
+        "ids": true,
+        "people": false,
+        "jobs": false,
+        "custody": false,
+        "communities": false
+      }
+    },
+    {
+      "hour": 18,
+      "match": {
+        "ids": true,
+        "people": false,
+        "jobs": false,
+        "custody": false,
+        "communities": false
+      }
+    },
+    {
+      "hour": 19,
+      "match": {
+        "ids": true,
+        "people": false,
+        "jobs": false,
+        "custody": false,
+        "communities": false
+      }
+    },
+    {
+      "hour": 20,
+      "match": {
+        "ids": true,
+        "people": false,
+        "jobs": false,
+        "custody": false,
+        "communities": false
+      }
+    },
+    {
+      "hour": 21,
+      "match": {
+        "ids": true,
+        "people": false,
+        "jobs": false,
+        "custody": false,
+        "communities": false
+      }
+    },
+    {
+      "hour": 22,
+      "match": {
+        "ids": true,
+        "people": false,
+        "jobs": false,
+        "custody": false,
+        "communities": false
+      }
+    },
+    {
+      "hour": 23,
+      "match": {
+        "ids": true,
+        "people": false,
+        "jobs": false,
+        "custody": false,
+        "communities": false
+      }
+    },
+    {
+      "hour": 24,
+      "match": {
+        "ids": true,
+        "people": false,
+        "jobs": false,
+        "custody": false,
+        "communities": false
+      }
+    }
+  ],
+  "eventsH0To24": {
+    "human.cargo.deliver": 2058,
+    "human.down": 367,
+    "human.harvest.crush": 38,
+    "human.production.finish": 7,
+    "human.treat": 166,
+    "human.drink": 1094,
+    "human.water": 9,
+    "human.consume": 534,
+    "human.death": 200
+  },
+  "eventsH8To24": {
+    "continuous": {
+      "human.drink": 789,
+      "human.cargo.deliver": 582,
+      "human.consume": 534,
+      "human.production.finish": 4,
+      "human.water": 7,
+      "human.down": 337,
+      "human.harvest.crush": 8,
+      "human.treat": 163,
+      "human.death": 200
+    },
+    "continued": {
+      "human.drink": 777,
+      "human.cargo.deliver": 587,
+      "human.consume": 533,
+      "human.production.finish": 3,
+      "human.water": 8,
+      "human.down": 363,
+      "human.harvest.crush": 5,
+      "human.treat": 192,
+      "human.death": 198
+    }
+  },
+  "villagesAt24": [
+    {
+      "poi": "po_academy",
+      "total": 4,
+      "active": 0,
+      "down": 0,
+      "dead": 4,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_archive",
+      "total": 4,
+      "active": 0,
+      "down": 0,
+      "dead": 4,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_beacon",
+      "total": 4,
+      "active": 0,
+      "down": 0,
+      "dead": 4,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_bonestop",
+      "total": 3,
+      "active": 0,
+      "down": 0,
+      "dead": 3,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_cairns",
+      "total": 0,
+      "active": 0,
+      "down": 0,
+      "dead": 0,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_cindercamp",
+      "total": 10,
+      "active": 3,
+      "down": 0,
+      "dead": 7,
+      "hungry": 3,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_confluence",
+      "total": 3,
+      "active": 2,
+      "down": 0,
+      "dead": 1,
+      "hungry": 2,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_dpier",
+      "total": 3,
+      "active": 2,
+      "down": 0,
+      "dead": 1,
+      "hungry": 2,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_elderwood",
+      "total": 2,
+      "active": 1,
+      "down": 0,
+      "dead": 1,
+      "hungry": 1,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_ember",
+      "total": 3,
+      "active": 2,
+      "down": 0,
+      "dead": 1,
+      "hungry": 2,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_emberwatch",
+      "total": 4,
+      "active": 0,
+      "down": 0,
+      "dead": 4,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_evac_hook",
+      "total": 3,
+      "active": 0,
+      "down": 0,
+      "dead": 3,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_evac_south",
+      "total": 3,
+      "active": 0,
+      "down": 0,
+      "dead": 3,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_evac_west",
+      "total": 3,
+      "active": 0,
+      "down": 0,
+      "dead": 3,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_falls",
+      "total": 4,
+      "active": 0,
+      "down": 0,
+      "dead": 4,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_filter",
+      "total": 0,
+      "active": 0,
+      "down": 0,
+      "dead": 0,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_fishcamp",
+      "total": 7,
+      "active": 6,
+      "down": 0,
+      "dead": 1,
+      "hungry": 6,
+      "thirsty": 2
+    },
+    {
+      "poi": "po_fracquarry",
+      "total": 4,
+      "active": 0,
+      "down": 0,
+      "dead": 4,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_freightyard",
+      "total": 0,
+      "active": 0,
+      "down": 0,
+      "dead": 0,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_gate",
+      "total": 3,
+      "active": 2,
+      "down": 0,
+      "dead": 1,
+      "hungry": 2,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_geo",
+      "total": 4,
+      "active": 0,
+      "down": 0,
+      "dead": 4,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_glade",
+      "total": 7,
+      "active": 3,
+      "down": 0,
+      "dead": 4,
+      "hungry": 3,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_greyquarry",
+      "total": 4,
+      "active": 0,
+      "down": 0,
+      "dead": 4,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_greywater",
+      "total": 9,
+      "active": 3,
+      "down": 0,
+      "dead": 6,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_gulfhead",
+      "total": 3,
+      "active": 2,
+      "down": 0,
+      "dead": 1,
+      "hungry": 2,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_gullnest",
+      "total": 7,
+      "active": 4,
+      "down": 0,
+      "dead": 3,
+      "hungry": 3,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_gullpier",
+      "total": 3,
+      "active": 2,
+      "down": 0,
+      "dead": 1,
+      "hungry": 2,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_gullwreck",
+      "total": 0,
+      "active": 0,
+      "down": 0,
+      "dead": 0,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_hall_eyes",
+      "total": 2,
+      "active": 1,
+      "down": 0,
+      "dead": 1,
+      "hungry": 1,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_hook",
+      "total": 10,
+      "active": 8,
+      "down": 0,
+      "dead": 2,
+      "hungry": 0,
+      "thirsty": 1
+    },
+    {
+      "poi": "po_ironharbor",
+      "total": 3,
+      "active": 2,
+      "down": 0,
+      "dead": 1,
+      "hungry": 2,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_ironmine",
+      "total": 4,
+      "active": 0,
+      "down": 0,
+      "dead": 4,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_ironvein",
+      "total": 4,
+      "active": 0,
+      "down": 0,
+      "dead": 4,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_ironwh",
+      "total": 3,
+      "active": 0,
+      "down": 0,
+      "dead": 3,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_kestrel",
+      "total": 4,
+      "active": 0,
+      "down": 0,
+      "dead": 4,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_kilns",
+      "total": 4,
+      "active": 0,
+      "down": 0,
+      "dead": 4,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_lantern",
+      "total": 4,
+      "active": 0,
+      "down": 0,
+      "dead": 4,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_lanternstn",
+      "total": 3,
+      "active": 2,
+      "down": 0,
+      "dead": 1,
+      "hungry": 2,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_mere",
+      "total": 3,
+      "active": 0,
+      "down": 0,
+      "dead": 3,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_meridian",
+      "total": 4,
+      "active": 0,
+      "down": 0,
+      "dead": 4,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_mill",
+      "total": 4,
+      "active": 0,
+      "down": 0,
+      "dead": 4,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_necropolis",
+      "total": 2,
+      "active": 0,
+      "down": 0,
+      "dead": 2,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_netcamp",
+      "total": 7,
+      "active": 4,
+      "down": 0,
+      "dead": 3,
+      "hungry": 4,
+      "thirsty": 2
+    },
+    {
+      "poi": "po_oasis",
+      "total": 10,
+      "active": 0,
+      "down": 0,
+      "dead": 10,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_observatory",
+      "total": 4,
+      "active": 0,
+      "down": 0,
+      "dead": 4,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_obsq",
+      "total": 4,
+      "active": 0,
+      "down": 0,
+      "dead": 4,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_oldpump",
+      "total": 4,
+      "active": 0,
+      "down": 0,
+      "dead": 4,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_pumphouse",
+      "total": 0,
+      "active": 0,
+      "down": 0,
+      "dead": 0,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_racks",
+      "total": 7,
+      "active": 0,
+      "down": 0,
+      "dead": 7,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_ranger",
+      "total": 7,
+      "active": 4,
+      "down": 0,
+      "dead": 3,
+      "hungry": 4,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_rapids",
+      "total": 3,
+      "active": 2,
+      "down": 0,
+      "dead": 1,
+      "hungry": 2,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_rc_dam",
+      "total": 0,
+      "active": 0,
+      "down": 0,
+      "dead": 0,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_rc_ironvein",
+      "total": 0,
+      "active": 0,
+      "down": 0,
+      "dead": 0,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_rc_kestrel",
+      "total": 0,
+      "active": 0,
+      "down": 0,
+      "dead": 0,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_rc_meridian",
+      "total": 0,
+      "active": 0,
+      "down": 0,
+      "dead": 0,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_rc_salt",
+      "total": 0,
+      "active": 0,
+      "down": 0,
+      "dead": 0,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_rc_sandgate",
+      "total": 0,
+      "active": 0,
+      "down": 0,
+      "dead": 0,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_ridgestop",
+      "total": 3,
+      "active": 2,
+      "down": 0,
+      "dead": 1,
+      "hungry": 2,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_saltharbor",
+      "total": 3,
+      "active": 2,
+      "down": 0,
+      "dead": 1,
+      "hungry": 2,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_saltlight",
+      "total": 4,
+      "active": 0,
+      "down": 0,
+      "dead": 4,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_saltpans",
+      "total": 4,
+      "active": 0,
+      "down": 0,
+      "dead": 4,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_sandgate",
+      "total": 3,
+      "active": 1,
+      "down": 0,
+      "dead": 2,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_sapgrove",
+      "total": 7,
+      "active": 5,
+      "down": 0,
+      "dead": 2,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_sawaion",
+      "total": 4,
+      "active": 0,
+      "down": 0,
+      "dead": 4,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_siloc",
+      "total": 3,
+      "active": 0,
+      "down": 0,
+      "dead": 3,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_slag",
+      "total": 4,
+      "active": 0,
+      "down": 0,
+      "dead": 4,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_southfoot",
+      "total": 3,
+      "active": 1,
+      "down": 1,
+      "dead": 1,
+      "hungry": 1,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_strait",
+      "total": 3,
+      "active": 0,
+      "down": 0,
+      "dead": 3,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_sulfur",
+      "total": 4,
+      "active": 0,
+      "down": 0,
+      "dead": 4,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_surtur",
+      "total": 2,
+      "active": 1,
+      "down": 0,
+      "dead": 1,
+      "hungry": 1,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_tidecamp",
+      "total": 7,
+      "active": 6,
+      "down": 0,
+      "dead": 1,
+      "hungry": 6,
+      "thirsty": 4
+    },
+    {
+      "poi": "po_timberyard",
+      "total": 4,
+      "active": 0,
+      "down": 0,
+      "dead": 4,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_tombs",
+      "total": 2,
+      "active": 1,
+      "down": 0,
+      "dead": 1,
+      "hungry": 1,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_typhon",
+      "total": 2,
+      "active": 0,
+      "down": 0,
+      "dead": 2,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_vend_gulf",
+      "total": 3,
+      "active": 0,
+      "down": 0,
+      "dead": 3,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_vend_strait",
+      "total": 3,
+      "active": 2,
+      "down": 0,
+      "dead": 1,
+      "hungry": 2,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_viaduct",
+      "total": 0,
+      "active": 0,
+      "down": 0,
+      "dead": 0,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_westbank",
+      "total": 3,
+      "active": 2,
+      "down": 0,
+      "dead": 1,
+      "hungry": 2,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_westmouth",
+      "total": 3,
+      "active": 1,
+      "down": 0,
+      "dead": 2,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_westwood",
+      "total": 8,
+      "active": 6,
+      "down": 0,
+      "dead": 2,
+      "hungry": 2,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_wreck",
+      "total": 0,
+      "active": 0,
+      "down": 0,
+      "dead": 0,
+      "hungry": 0,
+      "thirsty": 0
+    }
+  ],
+  "continuedVillagesAt24": [
+    {
+      "poi": "po_academy",
+      "total": 4,
+      "active": 0,
+      "down": 0,
+      "dead": 4,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_archive",
+      "total": 4,
+      "active": 0,
+      "down": 0,
+      "dead": 4,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_beacon",
+      "total": 4,
+      "active": 0,
+      "down": 0,
+      "dead": 4,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_bonestop",
+      "total": 3,
+      "active": 0,
+      "down": 0,
+      "dead": 3,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_cairns",
+      "total": 0,
+      "active": 0,
+      "down": 0,
+      "dead": 0,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_cindercamp",
+      "total": 10,
+      "active": 0,
+      "down": 0,
+      "dead": 10,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_confluence",
+      "total": 3,
+      "active": 2,
+      "down": 0,
+      "dead": 1,
+      "hungry": 2,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_dpier",
+      "total": 3,
+      "active": 2,
+      "down": 0,
+      "dead": 1,
+      "hungry": 2,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_elderwood",
+      "total": 2,
+      "active": 1,
+      "down": 0,
+      "dead": 1,
+      "hungry": 1,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_ember",
+      "total": 3,
+      "active": 2,
+      "down": 0,
+      "dead": 1,
+      "hungry": 2,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_emberwatch",
+      "total": 4,
+      "active": 0,
+      "down": 0,
+      "dead": 4,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_evac_hook",
+      "total": 3,
+      "active": 0,
+      "down": 0,
+      "dead": 3,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_evac_south",
+      "total": 3,
+      "active": 0,
+      "down": 0,
+      "dead": 3,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_evac_west",
+      "total": 3,
+      "active": 0,
+      "down": 0,
+      "dead": 3,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_falls",
+      "total": 4,
+      "active": 0,
+      "down": 0,
+      "dead": 4,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_filter",
+      "total": 0,
+      "active": 0,
+      "down": 0,
+      "dead": 0,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_fishcamp",
+      "total": 7,
+      "active": 6,
+      "down": 0,
+      "dead": 1,
+      "hungry": 6,
+      "thirsty": 2
+    },
+    {
+      "poi": "po_fracquarry",
+      "total": 4,
+      "active": 0,
+      "down": 0,
+      "dead": 4,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_freightyard",
+      "total": 0,
+      "active": 0,
+      "down": 0,
+      "dead": 0,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_gate",
+      "total": 3,
+      "active": 2,
+      "down": 0,
+      "dead": 1,
+      "hungry": 2,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_geo",
+      "total": 4,
+      "active": 0,
+      "down": 0,
+      "dead": 4,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_glade",
+      "total": 7,
+      "active": 6,
+      "down": 0,
+      "dead": 1,
+      "hungry": 6,
+      "thirsty": 2
+    },
+    {
+      "poi": "po_greyquarry",
+      "total": 4,
+      "active": 0,
+      "down": 0,
+      "dead": 4,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_greywater",
+      "total": 9,
+      "active": 6,
+      "down": 0,
+      "dead": 3,
+      "hungry": 6,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_gulfhead",
+      "total": 3,
+      "active": 2,
+      "down": 0,
+      "dead": 1,
+      "hungry": 2,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_gullnest",
+      "total": 7,
+      "active": 4,
+      "down": 0,
+      "dead": 3,
+      "hungry": 4,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_gullpier",
+      "total": 3,
+      "active": 2,
+      "down": 0,
+      "dead": 1,
+      "hungry": 2,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_gullwreck",
+      "total": 0,
+      "active": 0,
+      "down": 0,
+      "dead": 0,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_hall_eyes",
+      "total": 2,
+      "active": 1,
+      "down": 0,
+      "dead": 1,
+      "hungry": 1,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_hook",
+      "total": 10,
+      "active": 7,
+      "down": 0,
+      "dead": 3,
+      "hungry": 0,
+      "thirsty": 1
+    },
+    {
+      "poi": "po_ironharbor",
+      "total": 3,
+      "active": 2,
+      "down": 0,
+      "dead": 1,
+      "hungry": 2,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_ironmine",
+      "total": 4,
+      "active": 0,
+      "down": 0,
+      "dead": 4,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_ironvein",
+      "total": 4,
+      "active": 0,
+      "down": 0,
+      "dead": 4,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_ironwh",
+      "total": 3,
+      "active": 0,
+      "down": 0,
+      "dead": 3,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_kestrel",
+      "total": 4,
+      "active": 0,
+      "down": 0,
+      "dead": 4,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_kilns",
+      "total": 4,
+      "active": 0,
+      "down": 0,
+      "dead": 4,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_lantern",
+      "total": 4,
+      "active": 0,
+      "down": 0,
+      "dead": 4,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_lanternstn",
+      "total": 3,
+      "active": 2,
+      "down": 0,
+      "dead": 1,
+      "hungry": 2,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_mere",
+      "total": 3,
+      "active": 0,
+      "down": 0,
+      "dead": 3,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_meridian",
+      "total": 4,
+      "active": 0,
+      "down": 0,
+      "dead": 4,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_mill",
+      "total": 4,
+      "active": 0,
+      "down": 0,
+      "dead": 4,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_necropolis",
+      "total": 2,
+      "active": 0,
+      "down": 0,
+      "dead": 2,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_netcamp",
+      "total": 7,
+      "active": 4,
+      "down": 0,
+      "dead": 3,
+      "hungry": 4,
+      "thirsty": 2
+    },
+    {
+      "poi": "po_oasis",
+      "total": 10,
+      "active": 0,
+      "down": 0,
+      "dead": 10,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_observatory",
+      "total": 4,
+      "active": 0,
+      "down": 0,
+      "dead": 4,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_obsq",
+      "total": 4,
+      "active": 0,
+      "down": 0,
+      "dead": 4,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_oldpump",
+      "total": 4,
+      "active": 0,
+      "down": 0,
+      "dead": 4,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_pumphouse",
+      "total": 0,
+      "active": 0,
+      "down": 0,
+      "dead": 0,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_racks",
+      "total": 7,
+      "active": 0,
+      "down": 0,
+      "dead": 7,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_ranger",
+      "total": 7,
+      "active": 4,
+      "down": 0,
+      "dead": 3,
+      "hungry": 4,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_rapids",
+      "total": 3,
+      "active": 2,
+      "down": 0,
+      "dead": 1,
+      "hungry": 2,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_rc_dam",
+      "total": 0,
+      "active": 0,
+      "down": 0,
+      "dead": 0,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_rc_ironvein",
+      "total": 0,
+      "active": 0,
+      "down": 0,
+      "dead": 0,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_rc_kestrel",
+      "total": 0,
+      "active": 0,
+      "down": 0,
+      "dead": 0,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_rc_meridian",
+      "total": 0,
+      "active": 0,
+      "down": 0,
+      "dead": 0,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_rc_salt",
+      "total": 0,
+      "active": 0,
+      "down": 0,
+      "dead": 0,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_rc_sandgate",
+      "total": 0,
+      "active": 0,
+      "down": 0,
+      "dead": 0,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_ridgestop",
+      "total": 3,
+      "active": 2,
+      "down": 0,
+      "dead": 1,
+      "hungry": 2,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_saltharbor",
+      "total": 3,
+      "active": 2,
+      "down": 0,
+      "dead": 1,
+      "hungry": 2,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_saltlight",
+      "total": 4,
+      "active": 0,
+      "down": 0,
+      "dead": 4,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_saltpans",
+      "total": 4,
+      "active": 0,
+      "down": 0,
+      "dead": 4,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_sandgate",
+      "total": 3,
+      "active": 1,
+      "down": 0,
+      "dead": 2,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_sapgrove",
+      "total": 7,
+      "active": 5,
+      "down": 0,
+      "dead": 2,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_sawaion",
+      "total": 4,
+      "active": 0,
+      "down": 0,
+      "dead": 4,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_siloc",
+      "total": 3,
+      "active": 0,
+      "down": 0,
+      "dead": 3,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_slag",
+      "total": 4,
+      "active": 0,
+      "down": 0,
+      "dead": 4,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_southfoot",
+      "total": 3,
+      "active": 2,
+      "down": 0,
+      "dead": 1,
+      "hungry": 2,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_strait",
+      "total": 3,
+      "active": 0,
+      "down": 0,
+      "dead": 3,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_sulfur",
+      "total": 4,
+      "active": 0,
+      "down": 0,
+      "dead": 4,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_surtur",
+      "total": 2,
+      "active": 1,
+      "down": 0,
+      "dead": 1,
+      "hungry": 1,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_tidecamp",
+      "total": 7,
+      "active": 6,
+      "down": 0,
+      "dead": 1,
+      "hungry": 6,
+      "thirsty": 4
+    },
+    {
+      "poi": "po_timberyard",
+      "total": 4,
+      "active": 0,
+      "down": 0,
+      "dead": 4,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_tombs",
+      "total": 2,
+      "active": 1,
+      "down": 0,
+      "dead": 1,
+      "hungry": 1,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_typhon",
+      "total": 2,
+      "active": 0,
+      "down": 0,
+      "dead": 2,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_vend_gulf",
+      "total": 3,
+      "active": 0,
+      "down": 0,
+      "dead": 3,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_vend_strait",
+      "total": 3,
+      "active": 2,
+      "down": 0,
+      "dead": 1,
+      "hungry": 2,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_viaduct",
+      "total": 0,
+      "active": 0,
+      "down": 0,
+      "dead": 0,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_westbank",
+      "total": 3,
+      "active": 2,
+      "down": 0,
+      "dead": 1,
+      "hungry": 2,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_westmouth",
+      "total": 3,
+      "active": 1,
+      "down": 0,
+      "dead": 2,
+      "hungry": 0,
+      "thirsty": 0
+    },
+    {
+      "poi": "po_westwood",
+      "total": 8,
+      "active": 6,
+      "down": 0,
+      "dead": 2,
+      "hungry": 2,
+      "thirsty": 2
+    },
+    {
+      "poi": "po_wreck",
+      "total": 0,
+      "active": 0,
+      "down": 0,
+      "dead": 0,
+      "hungry": 0,
+      "thirsty": 0
+    }
+  ]
+}

@@ -1,0 +1,1133 @@
+# VEYRA INDUSTRIAL ECONOMY — Decision ledger (2026-11-12)
+
+> **CURRENT FOLLOW-ON:** §14 completes a **GOLD-wide landmass / resource-anchor inventory and replay of historical 12-window source census**. It does **not** claim full 11.2M-cell runtime collision/spawn enumeration, walkable water crossings or live play. §13 remains the red-flag / eligibility correction.
+>
+> **RED FLAG-SPAWN-001 — HIGH PRIORITY DESIGN MISMATCH:** There are **four hardcoded Veyra *regional starting windows* in today's implementation**, NOT four canonical Last Island / SOH spawn points. NEVER treat that number as a design target, coverage denominator or valid universal balance test. §12's four-region QA matrix is **SUPERSEDED** by §13's full-map, eligible-cell coverage method. No global-spawn code change has been approved or implemented.
+>
+> **READ FIRST — 2026-11-12 CURRENT STATUS:** The only Creator-approved industrial direction is §1. Earlier §4/§9 are recorded exploration hypotheses, **not approved recipes, deterministic reward sites, finite-only policy, rates or implementation authority**. §10 corrects the false guaranteed-vs-random choice; §11 below is the latest **testable SOURCE-CLASS design**, not a production loot contract. Keep original evidence without allowing rejected/superseded examples to function as implementation orders.
+
+**Status: DESIGN ONLY. No gameplay code implemented, no loot table approved, no agent implementation dispatched.**
+**Verified code reference:** `arena/f561fd0d-soul-of-hero` @ `c6c6fc50471f9dff2633e6dcde00f2d342c8ce7e`.
+**Source hierarchy:** `web/ref/bible.md` + latest explicit Creator decisions > historical Atlas v1–v11 > old proposals/reports. This design record is a working ledger, not an override of the Bible or a released game specification. Do not merge conflicting design documents as if all were current.
+
+## 1. Creator-approved design decisions (LOCKED PRINCIPLE)
+
+1. **Advanced industry must materially use meaningful intermediate components:** Metal Pipe, Mechanical Gear, Iron Plate and related products, not only generic Iron Ingot / Mechanical Parts / Spares.
+2. **Maintain real sandbox alternatives:** self-produce, explore and recover an intermediate, recycle, or pursue another gameplay branch. No mandatory linear quest or compulsory boss for general survival and technology; no arbitrary new ingredient simply to extend a chain.
+3. **Design first; implementation after explicit decisions.** Do not assign an agent to invent missing loot sources, rates, recipes, access conditions or industrial balance while the design is pending.
+4. **Atlas v1–v11 is a historical research source for originating decisions/mechanics.** Original Last Island values must be version/mode scoped; historical archived proposed orders are not live implementation orders. The archive originals (13 base64 parts + restore script) have not been reconstructed and hash-verified during this review. Partial extracted v2/v4/v5/v10/v11 research was examined.
+
+## 2. Verified current Web code facts, not runtime-play evidence
+
+**Catalogue:** `web/src/game/catalog.ts`, `web/src/game/balance.v1.json`, `web/src/game/recycler.ts`, `web/src/game/engine.ts`.
+
+- Metal Pipe: craft 2 refined iron ingot + 1 Mechanical Parts -> 1 Pipe (18s, workbench II); Recycler new jobs `X:pipe-v2`: 1 Refined Iron + 1 Mechanical Parts (12s), old saved `X:pipe-v1` remains 1 Refined Iron.
+- Mechanical Gear: craft 2 Iron Ingots + 2 Mechanical Parts + 1 Fastener -> 1 Gear (20s, workbench II); Recycler `X:gear-v1`: 1 Iron Ingot + 2 Mechanical Parts (15s).
+- Iron Plate: craft 2 Refined Iron + 1 Pipe + 1 Mechanical Parts -> 2 Plates (18s, workbench II). So **1 Plate in a requirement entails a whole 2-Plate batch** when starting with none, leaving 1 Plate as physical surplus. Plate is used to patch walls/doors by up to 25% max HP and to arm/rearm Bear Traps; no standard component Recycler recipe recorded.
+- Metal Blade: craft 4 Iron Ingots + 1 Mechanical Parts -> 1 Blade (16s, workbench II); Recycler `X:blade-v1`: 2 Iron Ingots + 1 Mechanical Parts (14s).
+- Mechanical Parts: 2 Scrap + 1 Iron Ingot -> 2 Parts (12s).
+- Gear direct uses: `industrial_pick_geared` (1), `vehicle_drive_geared` (1), `ir_sensor` (1), `bear_trap` (1). Gear recycle is a distinct sink.
+- Pipe direct uses: `vehicle_frame_piped` (1), `iron_plate` (1 per two plates); Pipe recycle is a distinct sink.
+- Baseline self-crafting Motorbike without component alternatives: Frame (3 Iron +2 Parts+2 Spares), Drive (2 Iron+2 Parts+2 Fasteners+3 Spares), Motorbike kit (1 Frame+1 Drive+2 Iron+2 Fasteners), requiring Workbench III. **Gear and Pipe are not required by this baseline route.**
+- Workbench III current upgrade: 6 Parts+8 Iron+8 Fasteners+12 Spares, no Gear or Plate. Field Generator current: 3 Iron+3 Parts+4 Spares+6 Wood. Generator *capacity upgrade already exists* (4 Parts+2 Iron+2 Fasteners+4 Spares, workbench II). Powered Door current: 4 Iron+2 Parts+3 Fasteners+3 Spares, HP350. Iron Door HP420.
+- Concrete caution: `metal_pipe` catalogue description refers only to the old single-ingot recycler outcome, inconsistent with `X:pipe-v2`. Correct description at implementation time.
+
+### Source-to-craft expansion: method and limits
+
+Assume 1 Iron Ore -> 1 Iron Ingot; 3 Iron Ingots + 1 Coal -> 2 Refined Iron; batches are integral; 2 Scrap + 1 Iron Ingot -> 2 Mechanical Parts; 1 Iron Ingot + 1 Scrap -> 3 Fasteners. Sum job times **excluding** gathering, walking, fuel to run the furnace, all station building and upgrades, research, and actions. Record leftover outputs instead of treating them as lost.
+
+| Target, self-craft | Minimum raw materials for this particular chosen expansion | Sequential processing time | Leftover |
+| --- | --- | --- | --- |
+| 1 Pipe | 4 Iron Ore, 2 Scrap, 1 Coal | 90s | 1 Mechanical Parts |
+| 1 Gear | 4 Iron Ore, 3 Scrap | 82s | 2 Fasteners |
+| 2 Plates | 7 Iron Ore, 2 Scrap, 2 Coal | 158s | none |
+| 1 Blade | 5 Iron Ore, 2 Scrap | 78s | 1 Mechanical Parts |
+
+Not a global cost-minimum optimization over every alternate route, different fuel/ore grade, salvage, and shared batches. Verified from recipe dependencies; **not tested in browser**.
+
+## 3. Veyra industrial-source audit (verified static code, NOT natural play proof)
+
+- `web/src/veyra05/arch/sites.ts` registers 33 directly plus 48 via `rest48.ts` = **81 authored POI IDs**. Six manually authored sites have their own placed caches: `po_greywater`, `po_academy`, `po_ironmine`, `po_hook`, `po_oasis`, `po_cindercamp`. Some other sites use special cash/vendor/evac roles, six Elder sites excluded from generic extra-cache. **58 remaining sites use a deterministic fallback cache only when the authored levels contain no loot**, based on 13 generic tables; this is a count by code branch, not 58 proof of physical access.
+- `web/src/veyra05/floors.ts` 13 fallback tables include some Scrap/Parts/Fasteners but do **not** explicitly include Pipe/Gear/Plate/Blade.
+- `web/src/game/loot-ecology.ts` B04/B05 higher grade toolbox pools DO include Pipe/Gear/Plate/Blade, but `engine.ts` only initializes the source ecology on `shipping_fresh`/`dev_delta_fresh`, not Veyra. **Do not claim those rolls work on Veyra.**
+- `web/src/veyra05/arch/sites.ts` authored Ironholm Crane Cab Locker contains Mechanical Parts ×2 + Fasteners ×6 + repair kit; Greywater Smith's Chest Iron Ingots ×2 + Fasteners ×4 + Scrap ×4. These are actual authored item entries, not yet confirmed natural-play reachable.
+- `web/src/game/engine.ts` `renewableLoot()` includes all authored items with category `res`/`food` except `damaged_drive`. **Any naive insertion of Pipe/Gear/Plate/Blade (all `res`) directly in ordinary authored stock causes them to be eligible for generic renewal.** A separate finite-vs-renewable custody contract is required.
+- `engine.ts` processes depletion and cooldown; Veyra floor projection preserves global depletion keys by level/global coordinate. Upgrading source semantics demands save compatibility, cooldown and negative tests. `loot-ecology.ts` has saved job / source version safety for Shipping; do not carry that authority into Veyra unexamined.
+- `web/src/veyra05/ecosystem.ts`: vampire/orc/slime anchors, notably Slime1 @ Pumphouse; Slime2 @ Old Pump; Orc1 @ Freight Yard; Orc2 @ Viaduct; Orc3 @ Ironvein. These are *configured habitats*, not proof a knife-first player can reach cache or survive.
+- Source roles must not override/map-change existing 81 POIs, GOLD geography, existing cash, vendor, evacuation, Elder lairs, authored room layouts.
+
+## 4. Current design proposals (NOT CREATOR APPROVED; NOT CODING ORDERS)
+
+### 4.1 Proposed physical source roles — names are canonical POI IDs
+
+| Item | Candidate POI/source roles | Rationale | Proof missing |
+| --- | --- | --- | --- |
+| Pipe | `po_falls` pipe store; `po_pumphouse`; `po_oldpump`; also `po_dpier`, `po_wreck` salvage | Pressurized hydraulic equipment, derelict pipe, shipped hardware | Place real containers in accessible authored rooms; grade/renewal/finite status; spawn reach |
+| Gear | `po_ironmine` crane cab; `po_falls` rotor/bearing; `po_sawaion` saw drive; `po_freightyard`; `po_kestrel` | Mechanical drives/gears in machines or transport | Specific stock, exposure, reach; no automatic monster kill gating |
+| Plate | `po_slag`; `po_ironmine`; `po_ironharbor`; perhaps `po_ember` | Foundry metal stock, industrial structure reinforcement | Batch supply and renovation sink vs scarcity |
+| Blade | Greywater smithy; Cinder forge; `po_slag`; `po_wreck` | Cutting tools/forged stock | Is a loot Blade actually useful versus sword and recycler |
+| Mechanical Parts | Roadside wrecks/scrap, maintenance POIs, existing direct craft | Broad utility base material | Veyra-specific live source and renewable economic rate |
+
+**Current ratio policy proposal (not approved):** common salvage may renew, but special premanufactured Pipe/Gear/Plate/Blade in selected caches is finite per run/source or separately capped. Do not introduce generic infinite refresh. No percentage/quantity assigned yet. Do not fabricate card/power gate. More dangerous sites should improve choice/reward only after actual hazards/reach verified.
+
+### 4.2 Proposed recipes, different statuses
+
+- **Vehicle Frame (piped) redesign candidate:** 1 Pipe + 1 Iron + 1 Mechanical Parts + 1 Spares -> 1 Frame, 20s (was 1 Pipe +2 Iron+2 Parts+2 Spares, 22s). Finding a Pipe then makes bypass valuable. Requires exact economic and source trial; **not approved**.
+- **Do NOT force Gear/Plate into the sole Workbench III path.** That would transitively force their acquisition for Motorbike, contradicting approved sandbox alternative principle. **Proposal:** retain existing direct-material Workbench III route and offer an alternative precision assembly using Gear/Plate. Prototype direct recipe: 3 Iron +3 Parts+4 Fasteners+8 Spares+1 Gear+1 Plate. Need check implementability of upgrade alternatives and relative pricing. **Not approved**.
+- **Do NOT force Gear into the only Field Generator recipe.** It already has a Generator Capacity Upgrade; proposal is to put Gear into *an alternate/upgraded capacity route* with an actual physical benefit rather than baseline power. Existing upgrade stays as fallback until balanced. **Not approved**.
+- **Do NOT force Plate into the only Powered Door recipe** without a distinct, visible reinforced benefit. Existing base door 350 HP vs ordinary Iron Door 420 HP: investigate whether paid reinforcement grants distinct defense/function, rather than just making a baseline item expensive. **Not approved**.
+- Other fixed alternatives currently: Salvager Pick gear path, Motor Drive gear path, sword blade path. Avoid destroying them.
+
+### 4.3 Preliminary demand scenarios (counts are *scenario inputs*, not proven demand forecast)
+
+| Player-selected goal | Gear direct inputs | Pipe direct inputs | Notes |
+| --- | ---: | ---: | --- |
+| One Salvager Pick by Gear route | 1 | 0 | Parts-only route exists |
+| One Motor Drive by Gear route | 1 | 0 | Default drive route exists |
+| One Infrared Sensor | 1 | 0 | Specialized optional powered automation |
+| One Bear Trap | 1 | 0 | Each (re-)arm uses one Plate, but no Pipe direct |
+| One Vehicle Frame by Pipe route | 0 | 1 | Baseline non-Pipe frame exists |
+| One Plate batch (2 pieces) | 0 | 1 | 1 Pipe +2 Refined Iron+1 Parts ->2 Plates; use for repairs/traps |
+| One optional precision Workbench III proposed | 1 | 1 indirectly for batch of two Plates | Extra Plate remains |
+| Generator capacity upgrade using Gear (proposed) | 1 | 0 | Existing direct-material capacity upgrade remains |
+| One hypothetical reinforced door via Plate | 0 | 1 indirectly for batch of two Plates | Must provide measurable distinct function |
+
+Example cumulative choice: Pick Gear (1) + Drive Gear (1) + Sensor (1) + Bear Trap (1) = **4 Gear**, all optional goals. Adding proposed precision Workbench III (1) and upgraded generator (1) = **6 Gear**. This is *not* a mandatory progression bill or target minimum supply: users may craft Gear, skip any goals, or find alternatives. Pipe demand for 1 piped frame + 2 Plates (one batch) = **2 Pipes** by direct composition; more Plates require additional batches. Do not set loot counts from these scenarios alone.
+
+## 5. Design task order and acceptance gates
+
+1. **Demand proof:** derive a small set of optional building, weapon, travel, base-defense scenarios; count consumer uses and repeated consumption (Plate trap re-arm and wall repair); avoid treating a fixed script/20 journeys as quests.
+2. **Supply geography:** map actual authored chests/rooms and nearest distinct alternatives for the four Veyra spawn choices. Mark every source candidate as proposed until physically certified. Never assume current 58 fallback caches are industrial-quality evidence.
+3. **Finite-vs-renewable versioning:** define loot identity by `run_id + global xyz/floor + authored source id`, separate fixed original stock from finite industrial bonus and renewal roll. Prove no save/reload reroll, no in-container duplication, no source respawn of finite items.
+4. **Economic balance:** measure raw materials, processing seconds, fuel, station upgrade, research, travel time, damage risk, carrying capacity, alternative loot and recycler opportunity cost. Keep batch leftovers.
+5. **Creator review:** obtain approval of numerical cost changes, source locations/rates, recharge schedule and mechanical benefits of upgrades. Only approved bounded work becomes an agent implementation brief.
+6. **Real acceptance:** production Veyra from each legal spawn where relevant, native input/no debug grant, visible pickup + recipes/recycler, logout/relaunch, positive and negative trials, pinned exact SHA, screenshots and player qualitative evaluation. CI PASS is not PLAY PROVEN.
+
+## 6. Ledger of open decisions and disputes
+
+- OPEN: Pipe-frame cost/time proposal.
+- OPEN: optional Workbench III precision alternative and actual station code support.
+- OPEN: which Generator capacity upgrade consumes Gear and whether current upgrade is replaced or complemented.
+- OPEN: Powered Door reinforcement actual HP/armor/behavior and repair ratio, not merely Plate bill.
+- OPEN: per-POI industrial loot source coordinates/rooms, finite budget and source eligibility, refill schedule.
+- OPEN: item-level rates for 336h run; no rates established in Atlas for this Veyra design.
+- OPEN: Veyra access and threat by spawn proven via actual game.
+- OPEN: historical Last Island v1–v11 original source ZIP restore + hash verification (README declares archived original 1,489,422 bytes SHA-256 `8b4fdedaa9397baaa1bcb8ba58d5c95ca2e7cbdd679963c6d4177fc9ab861e98`; **not revalidated here**).
+- OPEN: oil/fuel, broader industrial roles and structures, later design sequence.
+- NOTE: Existing Veyra architecture / code SHA is just the compared snapshot; always refresh branch/PR before assigning any implementation agent.
+
+## 7. Next design pass
+
+Prioritize realistic player-selected gear/pipe demand against geography; inspect the specific Veyra cache list for `po_falls`, `po_ironmine`, `po_pumphouse`, `po_freightyard`, `po_wreck` and authored variants. No work order until proposed numbers and source rules have explicit review. Keep this ledger updated IN PLACE; do not create an equally-authoritative competing document.
+
+---
+
+## 8. Expedition comparison and live-evidence correction — 2026-11-12 research pass 2
+
+**Evidence class:** RESEARCH_DELIVERED / STATIC_SOURCE_AUDIT + replay of existing M2 machine-readable audit, **NOT** new natural-play evidence, walking pathfinding, live re-simulation or a numerical loot-table authorization. Runtime comparison remains pinned to `c6c6fc50471f9dff2633e6dcde00f2d342c8ce7e`; M2 generated evidence may predate later D5 corrections. Record sources in §8.8.
+
+### 8.1 Crucial correction: do not cite stale M2 verdict as current runtime
+
+- Historical `M2_AUDIT_REPORT.md` reported Veyra's old `23/24` authored caches, `57/58` fallback POIs, `0` damaged drives from wrecks, and no Recycler.
+- Later `CURRENT_ACCEPTANCE.md` §1, §3 records **D3: 24/24 authored + 58/58 fallback**, and **D5/WP3: actual Veyra `po_slag` Foundry Recycler**, at global TILE coordinate `(2414,1896)`; fresh runs with authorized recycler have `wreckEconomy:'recycler-v1'`, producing finite `damaged_drive` in wreck salvage. The WP3 integration exercised physical harvest → drive → Recycler → Spares → Workbench L2 Frame → save/reload, with screenshot evidence; it does **not** prove geographic walk-route fitness or the candidate Gear/Pipe caches.
+- `web/src/game/wreck-economy.ts` pins wreck policy by run and ensures old saves without authorized recycler preserve `direct-v1` (no drive bonus, higher Spares chance). Do not overwrite this compatibility to make a loot test pass.
+- M2 `M2_SIMULATION_RESULTS.json` current static POI item count remains **0 Pipe, 0 Gear, 0 Plate, 0 Blade, 0 Refined Iron, 0 static Damaged Drive**: *static inventory* is distinct from the repaired **dynamic wreck drop**.
+- Distinguish `24/24` cache materialization from **walkable reachable from four legal starts**; code-only materialization is not reach proof.
+
+### 8.2 Verified 81-POI static cache stock at M2 snapshot
+
+`M2_SIMULATION_RESULTS.json -> worldEndowments.veyra.staticLootItems`: Pipe=0, Gear=0, Plate=0, Blade=0, Refined Iron=0; Mechanical Parts=16, Spares=62, Fasteners=44, Iron Ingot=18, Iron Ore=25, Scrap=84, Coal=41. These are contents of 81 POIs' static containers; they **exclude** wild veins, roadside scrap/wreck source stock, creature drops, crafting, vendors, recycling and any future authorized new loot contract. No claim that all are available in a given 200×200 local window or accessible from spawn.
+
+Specific currently authored/fallback POI cache contents (before proposed item source roles):
+- `po_greywater` Smith's Chest: 2 Iron Ingot +4 Fasteners +4 Scrap; Smugglers' Hoard Floor -1: 3 Spares +2 Iron Ingot +1 Fuel Can.
+- `po_pumphouse` generic cache: 2 Iron Ingot +3 Fasteners +1 Fuel Can.
+- `po_hook` Boat-Repair Locker: 2 Rope +2 Treated Canvas +3 Fasteners; `po_mere` generic cache: 5 Scrap +1 Mechanical Parts +2 Bandages.
+- `po_westmouth` generic cache: 4 Herb +1 Medkit +1 blueprint:stew; `po_dpier`: 6 Scrap +2 Rope +2 Bandages.
+- `po_westbank`: 3 Spares +1 Mechanical Parts +1 blueprint:gas_mask; `po_filter`: 4 Seed +4 Berries +3 Cloth.
+- `po_falls`: 5 Iron Ore +4 Coal +2 Fasteners.
+- `po_freightyard`: 3 Rope +1 Treated Canvas +3 Herb; `po_ironvein`: 4 Herb +1 Medkit +1 blueprint:stew.
+- `po_ironmine` Crane Cab Locker Floor +1: 2 Mechanical Parts +6 Fasteners +1 repair kit; Drowned Store Floor -1: 5 Iron Ore +4 Coal +1 repair kit.
+- `po_slag`: 4 Seed +4 Berries +3 Cloth (its **separate** D5 actual Recycler is present, even though its fallback loot is inappropriate for metalworkers).
+**Design implication:** prioritise fixing off-theme industrial fallback semantics **without** destroying existing authored/story cache stock, and separately author physical *finite* intermediate containers.
+
+### 8.3 Measured code constants for travel/carry and raw source stock
+
+- `BAL.player.speed=72` px/s, `TILE=16` px, Veyra `U=0.5` AU/tile → 1 AU = 2 tiles = 32px; fastest normal on-foot public surface `ROAD/BRIDGE=1.28` ⇒ **92.16 px/s**. Neutral grass 72, forest 61.92, marsh 44.64 px/s, ignoring slow, combat, collision, baggage. Walking while swinging multiplies speed by 0.45. Source `sim.ts:tickPlayer`.
+- Inventory `BAL.player.carryLimit=60kg`, overload movement penalty lower-bounded at 0.35; `trail_pack` +20kg but occupies back slot. Inventory holds 24 slots plus equipment. `invWeight()` includes inventory *and* equipped items. Cart 24 slots/240kg base; cart may snag at rivers/walls, and cart speed varies by road/rough/freight weight.
+- `SOURCES.iron` 5 Iron Ore per fully depleted vein (hp24), `coalv` 5 Coal per seam, roadside `scrap` 4 Scrap per source, `wreck` 8 Scrap per wreck, all finite (excluding explicitly regenerative plant sources). The tool's power changes swings/work per node; stone pick ore2/scrap2, iron pick ore5/scrap4, salvager ore8/scrap7; no invalid "one swing = five ore" assumption. Dynamic wreck bonuses separately roll Spares, drive, etc., by policy.
+- Mass: 8 Iron Ore ×2kg +5 Scrap ×1kg +1 Coal ×1kg = **22kg** raw carried. Finished 1 Gear (0.8kg) +1 Pipe (1.2kg) = **2kg** before additional co-products. Stock transport, station fuel, equipment and food are additional.
+- Workbench Level 1 placement = 14 Wood +4 Stone; Furnace = 18 Stone +4 Wood; hand-crafted Stone Pick =3 Wood+4 Stone+1 Rope, with 1 Rope =3 Fiber. Thus from a knife-only start, before collecting metals, the basic station/pick **raw item bill** is 21 Wood +26 Stone +3 Fiber (plus fuel and tool wear). At their catalog masses, Wood+Stone already weigh **52.2kg** — staged crafting / cargo/drop storage matters. No claim all building materials must be carried in one load.
+- `WORKBENCH_UPGRADE` L1→L2 =2 Mechanical Parts +1 Iron Ingot, with Parts crafted 2 Scrap+1 Iron Ingot→2 Parts.
+
+### 8.4 Controlled expedition comparison: self-produce versus near versus distant
+
+**A — Self-produce fresh-run 1 Gear + 1 Pipe, no found intermediate.**
+- If Workbench II and Furnace **already exist**: 8 Iron Ore +5 Scrap +1 Coal through 8 Iron smelts, 2 MP batches, 1 Fastener batch, 1 Refined batch, Gear and Pipe; **172 seconds of sequential nominal job time** (not user elapsed time). There is 1 MP +2 Fasteners surplus.
+- If Workbench L2 **still needs to be upgraded**, combined batch schedule: **10 Iron Ore +7 Scrap +1 Coal**, **204 seconds** of sequential nominal metal/intermediate jobs, plus initial Stone Pick, Workbench, Furnace and fuel as above. The source minimum at full stock is at least 2 iron veins, 2 roadside Scrap nodes or 1 wreck, and 1 coal seam, plus wood/stone/fiber sources. Multiple local sources, legal reach, recipe selection, fuel and queues are not proven by the inventory calculation. Actual jobs may overlap when using more than one station.
+- In a region without natural iron, `scrap_ingot` converts **3 Scrap →1 Iron Ingot** without Coal as input, though a fuelled Furnace is still required. Example at Westmouth: Workbench II +1 Gear from **23 Scrap** in a zero-ingot/zero-fastener case (6 ingots cost18 Scrap, MP cost4 Scrap, Fastener batch cost1 Scrap; 2 MP batches, one Fastener batch, Gear); 126s nominal processing plus fuel/stations/gathering. A Gear is feasible from salvage even when local Iron Ore nodes are absent. However a Pipe needs 2 Refined Iron from 3 Ingots **and 1 Coal**, so it can prompt a different expedition.
+
+**B — Near-POI skip, Greywater (theory from exact cache contents, not reach proof):**
+- Greywater Smith's Chest (2 Iron,4 Scrap,4 Fasteners) + Greywater Smugglers' Hoard F-1 (2 Iron,3 Spares) + Pumphouse Cache (2 Iron,3 Fasteners) = **6 Iron Ingots +4 Scrap +7 Fasteners +3 Spares**.
+- Workbench L2 bill consumes 2 Iron Ingots +2 Scrap to manufacture 2 Parts then pay 1 Iron; Gear bill consumes 2 Iron Ingots +2 Scrap for another 2 Parts then 2 Iron +1 Fastener. Combined for **L2+1 Gear =5 Iron +4 Scrap +1 Fastener**, leaving 1 Iron +6 Fasteners +3 Spares, if all containers accessible and unlooted. No ore vein, Coal seam or Furnace needed for these specific metal conversion steps; 2 MP jobs (24s) +Gear (20s)=**44s** sequential. Still must build Workbench (14 Wood +4 Stone), reach Floor -1, survive, interact and return as desired.
+- This is a **strong early Gear bypass**, not a guaranteed route: source competition, camera/doors/stairs, legal world collision and save persistence require natural play proof.
+
+**C — Distant industrial/ore expedition:**
+- `po_slag` currently hosts an actual Recycler from D5 and a *poorly matched* static cache (seeds/berries/cloth). Its sampled 200×200 scene had 761 iron nodes, 263 coal nodes, 39 roadside Scrap nodes and 5 wrecks in the earlier M2 resource raster. This is abundant ore in the sampled window, **not** 761 readily reachable veins on a single route. Toxic hazard matters: `sim.ts` adds radiation on `T.TOXIC` at 7/min without gas mask or 0.8/min with mask (at full exposure), and damage once rad>50; measured trip must account for actual exposure.
+- `po_ironvein` has Orc3 (configured habitat), but its current fallback cache has herbs/medkit/stew. Its name alone is not a rich loot roll or guaranteed mine ore vein.
+- Actual journey advantage must subtract time and loss risk of outbound+return travel, tools, food/water, load, survival, and spent source stock. Far POIs may be worth ore, but presently do **not** reward already-made Gear/Pipe/Plate/Blade from static caches.
+
+### 8.5 Absolute-coordinate straight-line travel LOWER BOUNDS — not traversable path or ETA
+
+Source coordinates: GOLD canonical `web/geography/veyra-lr01/map_tower/veyra_gold/VEYRA_GOLD_MAP.sohmap.json` `project.spawns[].at` and `project.pois[].at` (AU). Game chooses legal spawn near region; it does not place every run at exact GOLD anchor. Formula:
+
+`D_au = hypot(spawnAU - poiAU); straight_road_min_minutes = D_au * (32 px/AU) / (72 px/s * 1.28) / 60`.
+
+Values below are **unattainable ideal lower bounds if all displacement were on a perfectly straight clear road at full speed**; rivers, no real ferry/bridge decks, interior routes, slowing terrain, enemies, doors, load, darkness, camping, and the randomized legal spawn add cost or may make the route impossible. Do NOT present as real route times.
+
+| GOLD spawn anchor | Near relevant POI | D AU / lower bound one-way | Further industrial POI | D AU / lower bound one-way |
+| --- | --- | --- | --- | --- |
+| Greywater South Shore `sp_lake (790,622)` | Greywater Hamlet | 37.2 AU / 0.22min | Ironvein Mine | 416.3 AU / 2.41min |
+| Greywater South Shore | Greywater Pumphouse | 89.2 AU / 0.52min | Slagworks | 508.5 AU / 2.94min |
+| Westmouth Shore `sp_west (372,606)` | Drowned Pier | 169.4 AU / 0.98min | Slagworks | 882.1 AU / 5.10min |
+| Hook Meadow `sp_hook (1282,392)` | Hook Mere Pier | 40 AU / 0.23min | Ironvein Mine | 274 AU / 1.59min |
+| Gulf West Bank `sp_gulf (872,930)` | Westbank Landing | 46 AU / 0.27min | Slagworks | 318.1 AU / 1.84min |
+| Gulf West Bank | Delta Filter Station | 87.7 AU / 0.51min | Ironvein Mine | 431.9 AU / 2.50min |
+
+Even two legs at these lower bounds are **NOT** an end-to-end walking trip time, and cannot establish whether a trip is worth its loot. Pathfinding on the actual GOLD terrain is next engineering analysis/acceptance task, not delegated before policy approval.
+
+### 8.6 Source census from M2 12 × 200×200 windows (not unique 81-POI all-world totals)
+
+- Sampled `veyra05-greywater`: 0 Iron,0 Coal,40 roadside Scrap,7 Wreck. `westmouth`: 0 Iron,0 Coal,51 Scrap,11 Wreck. `hook`:0 Iron,0 Coal,25 Scrap,5 Wreck. `gulf`:195 Iron,75 Coal,37 Scrap,4 Wreck (these are window-node counts, not guaranteed reachable).
+- `veyra05-slag`: 761 Iron,263 Coal,39 Scrap,5 Wreck in the sampled window. `veyra05-greyback`:51 Iron,28 Coal. Some scene windows may overlap; aggregate counts must NOT be interpreted as unique whole-map stocks.
+- Only `greywater`, `westmouth`, `hook` and `gulf` are the four spawn-choice regions of interest. Each new run has a legal spawn chosen by runtime, not automatically the GOLD anchor.
+
+### 8.7 Recommended **design next action** (proposal, not approval)
+
+1. Do not homogenize ore spawn placement: rejected M3 proposal A6 to mint 14 Iron/8 Coal veins near every spawn is **CANON_REJECTED** in `M5_CANON_CORRECTIVE.md`. Preserve west/Hook salvage and Gulf metal mining asymmetry.
+2. **First POI content fixes** should repair the glaring mismatch: Ironvein Mine herb/medkit/stew and Slagworks Foundry seed/berries/cloth **as primary cache contents**, while preserving existing lore supplies by relocating/retaining them in plausible food/first-aid locations rather than silently deleting. Freight Yard also has rope/canvas/herb, with no machinery scrap reward.
+3. Sample proposal to review, **NOT** apply: source-bound finite 1 Gear candidate at `po_ironmine` Crane Cab Locker or `po_falls` rotor room; 1 Pipe candidate at `po_pumphouse` maintenance store or `po_falls` pipe store; 1–2 Plate candidate at `po_slag` foundry stock. Avoid making every first-hour chest guarantee an intermediate; no chance values approved.
+4. Reuse / extend the existing world floors + source ecology contract with stable global `run_id + source_id + floor + x,y`, separate **finite component bonus** from the ordinary renewed resource stack. Since `renewableLoot()` currently renews `res` items, do NOT merely append `metal_pipe`/Gear/Plate/Blade to ordinary `site.loot`.
+5. After real pathfinding / journey capture, compare available useful outputs from 20-minute natural play (not a mandatory quest) for knife-only, scrap-first, ore-first and POI-raider strategies. Only then approve per-cache counts/probabilities and Pipe/Workbench precision recipe changes.
+
+### 8.8 Evidence pointers
+
+- Live code: `web/src/game/catalog.ts`, `engine.ts`, `sim.ts`, `core.ts`, `wreck-economy.ts`, `world-economy.ts`, `web/src/veyra05/reader.ts`, `floors.ts`, `scenes.ts`, `web/geography/veyra-lr01/map_tower/veyra_gold/VEYRA_GOLD_MAP.sohmap.json`.
+- Programmatically generated source audit: `web/reports/economic-network/M2_SIMULATION_RESULTS.json`, `M2_AUDIT_REPORT.md`. **The report's first-run defect descriptions predate the later D3–D5 fixes.**
+- Corrective authority: `web/reports/economic-network/M5_CANON_CORRECTIVE.md` (rejects false source fixes), `CURRENT_ACCEPTANCE.md` (WP3/D5 Recycler proven, D3 caches fixed), `web/ref/bible.md`.
+- Historical Last Island study: `web/ref/atlas/extracted/LI_MASTER_RESEARCH_REPORT_v5.md`, v10/11 ledgers. Historical figures are research sources, not current-game recipes or production authorization.
+
+---
+
+## 9. Finite industrial loot protocol and four-site pilot — 2026-11-12 pass 3
+
+**Status:** Engineering design and quantified **CANDIDATE PILOT**. No source code implementation and **NO CREATOR APPROVAL** for amounts, specific guaranteed locations or item content changes. The *only* Creator-locked industrial principle is in §1. Do not turn §9 into an agent coding prompt before explicit review of the distribution policy.
+
+### 9.1 Confirmed lifecycle and exact failure if rare items are naively added
+
+**Files examined on runtime SHA `c6c6fc50471f9dff2633e6dcde00f2d342c8ce7e`:** `web/src/game/engine.ts` around 1332–1427, `web/src/veyra05/floors.ts` 570–735, `web/src/veyra05/continuity.ts` 190–282, `web/src/game/core.ts` run fields 218–249, `web/src/game/balance.v1.json` `lootRespawn`.
+
+1. `renewableLoot(site)` returns **all** original `site.loot` entries whose catalog `cat` is `res` or `food`, except `damaged_drive`. `metal_pipe`, `mechanical_gear`, `iron_plate`, `metal_blade` are all **`res`**. Therefore naïvely placing a Gear/Plate/Pipe/Blade in a normal static crate makes it reappear after normal inventory depletion.
+2. `lootCooldown(site)` falls back to industrial 24h / food 12h / other 18h in Veyra when no special grammar; no Veyra `lootEcology` overlay is initialized in the current default flow.
+3. `retireEmptyLoot()` executes only after a successful transaction that empties the public crate, schedules eligible refresh and removes the physical entity. Partial stock survives in `r.custody` until consumed. `stepLootRespawn()` later rebuilds `renewableStock` in a new crate, potentially minting all original component `res` items again.
+4. Veyra stores depletion and cooldown across window + floor transformations via `r.veyraGlobalDepletedLoot` and `projectDepletedLootFromGlobal`; saved offscreen entities may preserve partial container stock. These mechanisms prove **existing accounting paths**, NOT a new rare finite-source policy.
+5. `r.depletedLootSites` uses **local tile index**, while global Veyra state keys `floor:global_x:global_y` plus timer. A component source must have its own stable identity independent of arbitrary local-window tile index, random new entity ID or site label.
+6. `migrateLootRespawn()` and offline `stepLootRespawn` must obey a rare finite-stock source policy. A global `ITEMS` exclusion based on item key is insufficient because different physical sources may legitimately have different renewal status for the same product.
+7. A changed authored static plan could be materialized on **old ongoing saves** if new POI statics simply become globally visible when the player changes windows/floors. Rollout must pin a new-run loot policy version, not retrofit bonuses to legacy runs.
+8. `r.seenIntents` records successful transaction identities and `dispatch` retires emptied crates after commit. Any new finite claim must use the same authoritative successful withdrawal boundary and be idempotent across replay/restart.
+
+### 9.2 Recommended minimal industrial source contract (proposed architecture)
+
+Do not overwrite `r.lootRespawnAt` or repurpose the meaning of `depletedLootSites` in legacy saves.
+
+- Explicit opt-in on a **new run only**: `industrialLootVersion:'veyra-industrial-v1'`, absent means legacy behavior.
+- Stable **authored physical source ID**: `runId + poiId + floor + authoredSiteKey`; world global x/y as a geometry check, not the sole identity. A site key might be `po_falls/pipe_store/finite_pipe`. Once created, its item roll is bound to a run seed and version.
+- Each source has a declared `policy:` either `ordinary-renewable` (current caches) or `finite-once`. A source should not silently include both types in a single generic respawn bucket. Simpler design: keep old public cache and add **one separately tracked finite industrial lockbox or interactable stock** in a plausible actual room. Visually it may belong to the machine inventory; the real player must physically interact.
+- Single stock authority: durable physical container carries **remaining exact item UID/quantity** while source issuance/exhaustion is recorded in a compact versioned `issued / exhausted` ledger. Do NOT store two independent mutable copies of current item quantity (avoids divergent ownership).
+- On first authorized materialization: derive eligible item(s) once; create physical container and record issuance. On partial withdrawal, update physical stock transactionally; on final withdrawal, mark source exhausted and remove entity. On revisiting, no new roll or re-materialization once exhausted.
+- On ordinary public cache renewal, the industrial finite lockbox is **not** part of the refreshed stock; existing ordinary `supplyHours=12`, `industrialHours=24`, `otherHours=18` stay untouched until a separately approved economy rebalance.
+- Never mint source bonus as profile currency, blueprint or Creator Core; never hide acquisition behind new keycard gate, boss kill or invented POI access.
+- Seasonal/offline clock continues to affect existing ordinary sources. **Finite-once** remains exhausted at 336-hour run boundary. Next new run has a new stock identity and policy. Cross-run inventory transfer stays prohibited.
+
+**Specific abuse cases to test:** (a) take 1 of 2 Plates, reload, take last; (b) empty then shift window out/back; (c) empty Floor -1 chest, climb then descend; (d) empty on day 1, offline 25h, return; (e) duplicate/reordered dispatch intent; (f) reload before and after issuing first stock; (g) old save enters new POI after patch; (h) source spot becomes blocked by changed prop; (i) player death with loot in inventory; (j) inventory full/partial withdrawal; (k) rain/weather/resumed offline settlement; (l) fresh new run after previous run wipe; (m) source item dropped on ground then returned; (n) rare source initially empty due to seeded roll; (o) multiple appearances in overlapping Veyra windows. Every test must assert item UID count/receipts and no gains on replay.
+
+### 9.3 Historical four-site **superseded** deterministic control sample — NOT AUTHORIZED distribution
+
+The pilot deliberately adds **finite, complete industrial items** at only four POIs; it leaves their existing standard cache untouched. Physically distinct places must be checked for real floor cells and unobstructed interaction. **The numbers below are a deterministic fixed-outcome pilot for balancing only**; probability-based/randomized policy is still an open Creator experience decision.
+
+| POI | Existing ordinary stock | Finite source candidate with concrete authored room | Candidate first-run bonus | Rationale and verification |
+| --- | --- | --- | --- | --- |
+| `po_pumphouse` Greywater Pumphouse | 2 Iron Ingot +3 Fasteners +1 Fuel Can at F0 global tile approx (1740,1114) | `pipe_store` / Pressure Pipe and Tool Store, Floor 0; author stable source key, choose an actual unblocked cell after compile | **1 Pipe** | Near Greywater; early industrial shortcut, no boss. Do not mistake the fall back cache itself for the new finite source |
+| `po_falls` Falls Powerhouse | 5 Iron Ore +4 Coal +2 Fasteners at Floor 0 approx (1414,848) | `pipe_store` Floor 0, **1 Pipe**; `turbine_subfloor` / Bearing Chamber Floor -1, **1 Gear** | **1 Pipe +1 Gear**, separate physical finite stock | A reason to explore both maintenance storage and the machine subfloor; existing real hatch has authored landing, access still requires natural-play proof |
+| `po_freightyard` Shattered Freight Yard | 3 Rope +1 Treated Canvas +3 Herb at F0 approx (1404,991) | `freight_platform` / Broken Rail Platform with ore_cart; alternative `guard_shack` would not explain a precision Gear as well | **1 Gear** | Salvage of freight handling drive, Orc1 habitat already configured. Crew/food loot may remain as a separate ordinary cache |
+| `po_slag` Slagworks Foundry | 4 Seed +4 Berries +3 Cloth at F0 approx (2410,1852); separate real Recycler at global (2414,1896) | `slag_sort` / Quenched Bloom Sorting Bay Floor 0; additional `quench_underpass` maintenance may matter later | **2 Iron Plates** | A single craft batch equivalent; real industrial risk/toxic terrain, separate from its Recycler. Not one Plate minted at every 24h cooldown |
+
+**Pilot finite supply if all physically reachable and visited:** **Pipe=2, Gear=2, Plate=2, Blade=0**. Total rare stock mass: Pipe 2×1.2kg + Gear 2×0.8kg + Plates 2×1.5kg = **7.0kg** of finished materials. Baseline ordinary stock is preserved; *a new rare bonus increases total run supply*, so quantify separately rather than pretending a cost-neutral substitution.
+
+**Demand cross-check:** §4.3 scenario of Pick+Drive+Sensor+Trap consumes **4 Gear**, so this pilot supplies at most half of that optional Gear demand, forcing meaningful crafting or deeper explorations if player chooses all goals. One piped Frame and one Plate batch together need two Pipes by direct craft composition; pilot's two Pipes cover those selected uses, but `po_slag` already yielding two finished Plates could save that Plate batch instead. There is no required itinerary or mandatory target.
+**Trade-off:** deterministic fixed contents make each POI predictably worth a trip, but may flatten replay surprise; randomized per-run contents add uncertainty but can yield zero finished components in a run. Creator approval required before either rule is implemented.
+
+### 9.4 Why do not immediately rewrite `po_ironvein` or all 58 fallbacks
+
+- `po_ironvein` is not a generic mine shell: `rest48.ts` builds `Prospector Shelter` (F0) and `Stone Prospecting Cut` (F-1) with an actual adit hatch and ore_cart, but M2 fallback cache yields herbs/medkit/stew. A new *ore-bin* cache is thematically valid, but adding even 5 Iron Ore on a 24h renewable contract may mint up to ~70 units over 14 days in one site; must decide its renewal budget before doing so. Retain first-aid/food for now, and audit real adjacent ore seams and walk path before authorizing ore restock.
+- `po_slag` existing pantry-like fallback does not prove no industrial content exists: Recycler is separately placed and has WP3 physical evidence. Pilot only adds a bounded Plate component source, not broad infinite metal resupply.
+- `po_freightyard` has an actual `freight_platform` and cart prop, so a site-bound Gear is more coherent than adding Gear to the generic food/cloth fallback, while leaving ordinary crew supplies intact.
+- Any new source must be physically placed using `compilePlan`/world-floor stack with occupancy tests, stable identity, no obstacle to stairs/doors/props; a POI title alone cannot authorize a container.
+
+### 9.5 Acceptance metrics and stop conditions
+
+**Inventory conservation:**
+1. `physical source initial total = remaining in source + successful withdrawals + lost/destroyed stock` per source UID (account for transfer, drop, salvage and crafting separately).
+2. In one run, `finite delivered ≤ finite original issued` across reload/window/floor/offline; **0 items minted on second visit**. Intent replays never double payout.
+3. Existing non-premium crates maintain old renewal cadence and original content, and existing caches do not silently swap loot on an old save.
+
+**Sandbox usability:** Player can get a Gear through Scrap-to-Iron and Workbench II with no special POI, or by exploring the proposed sites; player can still make a Vehicle Frame and Motor Drive without rare-component routes. No boss and no mission sequence required.
+
+**Evidence classes:** `SOURCE_IMPLEMENTED` only after a merged code SHA; `TESTED` only after code build and automated tests; `PHYSICALLY_PROVEN` only after real Veyra movement, loot, inventory, recycling/crafting and separate-process save/restart; `VISUALLY_VERIFIED` from same SHA screenshots with no clipping. A toy loot-generator unit test cannot prove the loop.
+
+**Stop:** no changes to geography, old run save authority, Ragnarok cash, Creator Core distribution, airdrop or vendor rules in an industrial-loot task. No agent is commissioned just from this ledger. Exact candidate location/guarantee remains creator-review state.
+
+### 9.6 Creator decision needed, only if authorizing this pilot
+
+**Choice:** Should identifiable physical stock (e.g. a pressure-pipe store and turbine bearing) supply **a guaranteed once-per-run specific component** after it is reached, with optional randomized minor toolboxes elsewhere (recommended), or should even these specialist stocks have chance-based outcomes? This is a player-experience and 14-day exploration-economy decision, not something code can settle. Distinguish from total compulsory progression: crafting still exists. Only the selection rule is open; the lifecycle requirement (no duplicate farming) is mandatory technical integrity once finite stock is adopted.
+
+---
+
+## 10. Design correction: false guaranteed-versus-random binary — 2026-11-12 Creator challenge
+
+**STATUS: CORRECTION TO ASSISTANT PROPOSAL, NOT A NEW CREATOR DECISION.** This section explicitly qualifies §9.3–§9.6 and earlier suggestions that finished components must be once-per-run guaranteed drops. The 4-site supply `2 Pipe / 2 Gear / 2 Plate` was **a test fixture to compare source economics**, not justified as the actual SOH loot experience. Do not implement it by default; do not treat finite bonus vs timer refill as a binary based solely on whether item is "advanced".
+
+### What Last Island sources actually demonstrate
+
+1. Official 2022-11-09/10 notice `https://hero.yingxiong.com/info/2022/1109/13052.html` distinguishes **crate category** (Supply guaranteed *facility/material class*, Military guaranteed *weapons/equipment/special-material class*, Food guaranteed *food class*, Medical guaranteed *medical class*, Harpoon guaranteed *harpoon/diving class*), **crate tier** (damaged/low/mid/high as available), and **access rooms** (green/blue/purple with differing crate mixes). **Guaranteed category ≠ guaranteed Pipe/Gear/Plate SKU.**
+2. The notice expressly gives *chance* that any Toolbox drops bicycle blueprint, so specialist crates do not necessarily guarantee a particular blueprint. It separately specifies **guaranteed specific drops for particular bosses** (4 defibrillators per Port Boss death; 2 from Avenger in the named update), showing SKU-specific guarantee is a different, source-specific contract — NOT default ordinary crate behavior.
+3. LI Atlas v4 distinguishes **container family, tier, per-item chance, access** and independently records **POI loot, keycard and power cycles**; the source-specific timers are community/period-variant, not blanket official 2026 values. Atlas v5 S06 likewise distinguishes "guaranteed category" from item chance. Avoid forcing every specialist POI to be a one-time named reward chest.
+4. TapTap 2022-08-04 Metal Pipe note: Pipe appears in yellow/blue barrels, Supply, Military, Advanced Military and Airdrop, can be recycled or crafted at medium bench; it is a **multi-source economical intermediate**, not proven guaranteed once-per-run at one "Pipe Store".
+
+### What SOH canon actually requires
+
+- `web/ref/bible.md` §K3 and source model: source has identity, type, stock, finite-or-respawn status and valid timer; player interaction debits/grants atomically and has save continuity. **Plants/scrap/monsters/POIs can replenish by their own rules**; Ragnarok special cash is **finite** and cannot share ordinary loot renewal. This does **not** imply finished industrial intermediates are globally or locally once-per-run.
+- 336-hour continuously running 14-day world, wipe, offline simulation, player freedom to search/skip/recycle/craft, geographic variability: expected viable **source classes and tradeoffs**, not fixed named collectible pickup itinerary.
+- Creator-approved principle from §1 is only: advanced industry meaningfully uses intermediates, with genuine alternative sources/uses, not unnecessary compulsory chains.
+- Code's current `renewableLoot()` uses broad item-category eligibility; that is too coarse to control special finite bonuses, but **finite bonuses are not automatically the right answer to that defect**. Fix should be source-granular policy with explicit stock/renewal class and evidence-based generation.
+
+### Revised design hypothesis
+
+Prefer **source class (what a place can plausibly contain) + quality tier (how valuable/rare) + access gates/risk + physical stock + per-item probabilities** for normal scavenging. "Guaranteed" may refer to a broad class or minimum useful salvage, not an exact Gear/Pipe every run. Preserve independent replenishment rules for normal sources where intended, with bounded renewable stock and stable deterministic rolls; non-renewable named treasure and unique tech only for exceptional source contracts justified by SOH canon and actual player experience. If a source has a finite component, protect its UID and once-issued state; if it is a renewable industrial toolbox, do not ban Gear simply because it is an advanced intermediate — control cooldown, count, rarity, and anti-exploit.
+
+**Reopen** §9.3 four-site deterministic pilot for design; **DO NOT AUTHORIZE 1 guaranteed Pipe @ Pumphouse, 1 Pipe+Gear @ Falls, 1 Gear @ Freight, 2 Plates @ Slag** as an actual gameplay distribution until class/tier/access/probability and run-time sample are reviewed. Source/site names remain plausible thematic candidates only.
+
+**Next actual design question** is not "guarantee item versus random item?" but: which physical source categories should the player recognize in Veyra, how should risk, recovery, time/route and POI depth change the distribution of viable materials, and which exceptional sources alone warrant guaranteed exact rewards? Revisit Last Island source-version-referenced numbers before locking item-level odds.
+
+---
+
+## 11. Veyra source-family taxonomy and probability stress test — 2026-11-12 pass 4
+
+**STATUS:** RESEARCH + RECOMMENDED DESIGN, **NOT CREATOR-APPROVED NUMBERS** or implemented. Supersedes §9.3's deterministic `2 Pipe/2 Gear/2 Plate` distribution as a candidate **actual** gameplay policy. Retain that set only as a clearly labeled unit-test fixture. Do not commission an agent based on §11 until outstanding decisions are accepted and data/source versions are pinned.
+
+### 11.1 Key discovery: the source-class infrastructure already exists in SOH, but is Shipping-scoped
+
+- `web/src/game/loot-ecology.ts` has `LootClass=toolbox|supply|military|advanced`, W06 fixed/optional stock, B01/B04 grammar, B05 low/mid/high grade pools, per-run/physical-source/cycle deterministic hashing, source URI and historical LI container-class reference.
+- `web/src/game/loot-source-spec.ts` `LootSourceSpec` already separates `role`, `grade`, `access`, `stock=finite|renewable`, `cooldownHours`, `capacity`, `sourceId`, `match`, `digest`. It declares exactly **three Shipping** sources, not 81 Veyra sites, and is explicitly `loot-source-v2`.
+- `engine.ts` creates `r.lootEcology` only for `shipping_fresh`/`dev_delta_fresh` fresh runs; Veyra receives static authored/fallback items but **no B05 grading or roll** as of reference SHA. `lootClass()` is tied to Shipping site labels/POI aliases, so it will not magically recognize `po_falls` or `po_slag`.
+- `validLootSourceContract()` expects **all contract sites** to exist in the single `World.statics` passed to it. Veyra windows are 200×200 streaming slices of a much larger 4000×2800 geography; do not reuse its all-present Shipping assumption on Veyra's 81 POIs. Validate by compiled `global POI/source registry` once, with per-window actual physical access checked at activation.
+- B05 `LOOT_B05_TOOLBOX_GRADE.high` has **guaranteed 1 Mechanical Gear** (plus refined iron) as fixed grade stock. Shipping's `factory-exterior-industrial` source is flagged `renewable` every **24h**: when legally refilled, that can yield a Gear every cycle. This is not a historical LI rate and must **not** become the Veyra default. Ignoring practical travel/access, 14 successful daily source cycles = 14 Gear, which may overwhelm alternatives.
+- **FINITENESS BUG/SEMANTIC GAP:** B05 finite flag gates only `lootGrammarRoll` optional grade results. `renewableStock()` always concatenates `renewableLoot(site)`, whose broad `ITEMS.cat in ['res','food']` criterion can replenish original source items even if the B05 bonus is `finite`. Therefore "finite spec" does not itself prove "entire physical chest once-per-run"; design must explicitly declare policy at stock-subgroup or distinct-physical-source granularity. Do not erase ordinary replenishment by global category ban.
+
+**Design action:** adapt/reuse `LootSourceSpec` + `lootEcology` rather than building another parallel economy. Extend a versioned Veyra registry and carefully revise per-group stock accounting; preserve Shipping behavior and historical save versions.
+
+### 11.2 Canonical player-recognizable family × grade matrix (design, **not** existing in Veyra)
+
+| Family | Player clue / where | Guaranteed useful *category*, never guaranteed exact rare SKU | Optional finished intermediate | Proposed source rhythm |
+| --- | --- | --- | --- | --- |
+| Roadside **salvage** | Wreck, damaged cart, roadside scrap | Scrap/Spares, occasional Fasteners/Parts; physical harvesting uses existing `SOURCES` | In ordinary roadside low-grade source: none by default (use separate credible containers for uncommon finds) | Existing wild source stock and `wreckEconomy` untouched. Do not turn every roadside wreck into a mystery gear crate |
+| **Field toolbox** | Fishing repair locker, bridge/tool hut, small sawmill | Fasteners/Parts/repair utility | Small chance of Pipe, Blade or Gear according to context | Ordinary cache, provisional 24h; low quality |
+| **Industrial maintenance toolbox** | Pump, turbine access, saw drive loft, crane cab | Parts/Fasteners + repair/metal utility | Pipe/Gear/occasionally Plate by machinery role | Provisional 24h at grade mid, 48h for deep grade high |
+| **Material supply / metal stock** | Ore bin, furnace sorting, foundry/warehouse | Iron Ore/Ingot/Coal/Refined Iron **as site appropriate** | Plate/Blade occasionally at high industrial grade | Stock class independent of a toolbox; proposed 24h or 48h by location, not arbitrary food 12h |
+| **Food/medical/supply** | Village, camp, first aid, kitchen, storage | Existing role-specific health/food and supplies | Not made into a Pipe/Gear farm by POI name alone | Preserve own class and authored content |
+| **Military/special technology** | Actual authorized military cache / exceptional room | Combat materials or study/blueprints per separate canon | Blade/parts where justified; unique tech and Core **not inferred** | Their own explicit source contract, not a generic industrial overlay |
+
+`role` (what class of thing), `grade` (value within that class), `access` (actual geometry/gate), `stockSubgroups` (physical contents/replenishment), and `cycle` remain orthogonal. A high-quality toolbox is NOT automatically a locked military vault. A low-grade machine source is not necessarily closer to every spawn.
+
+### 11.3 Proposed test-only grade parameters to probe economy sensitivity — absolutely NOT LI values
+
+This small model is a *test hypothesis*, not an attempt to assert true official drop odds or final SOH balance. A grade entry always yields useful ordinary materials by its own class; only the finished intermediate is optional:
+
+- `field-toolbox/low`: 24h nominal class cooldown, **5%** roll for at most **one** thematically eligible finished component per eligible successful stock generation; otherwise raw repair stock.
+- `industrial-maintenance/mid`: 24h nominal, **12%** finished-component event, at most one per stock generation; if triggered, choose Pipe/Gear/Blade/Plate from that POI's allowed set using source-specific weights not yet approved.
+- `deep-industrial/high`: 48h nominal, **20%** finished-component event, at most one, still with ordinary useful stock each eligible generation.
+- `metal-stock` is a separate category and must be benchmarked for Refined Iron/Plate/Blade without reusing Gear-focused toolbox probabilities by name.
+- `unique/special` remains its own finite policy: e.g. Ragnarok-only cash and explicitly authored one-off tech. Neither "Pipe" nor "Gear" is automatically unique merely because it is a finished intermediate.
+
+| Laboratory probe | Repeated full-depletion opportunities used for arithmetic | Chance per opportunity | Expected finished components | Probability ≥1 rare success |
+| --- | ---: | ---: | ---: | ---: |
+| One low field toolbox | 14 hypothetical 24h visits | 0.05 | 0.70 | 51.2% |
+| One mid maintenance toolbox | 14 hypothetical 24h visits | 0.12 | 1.68 | 83.3% |
+| One high deep-industrial toolbox | 7 hypothetical 48h visits | 0.20 | 1.40 | 79.0% |
+| Old B05 high toolbox with Gear fixed | 14 hypothetical 24h successful restocks | Gear guaranteed in high grade pool | 14 Gear | 100% (conditional upon valid access/issued pool) |
+
+**Hard caveat:** `14`/`7` are artificial consistent visit counts within 336h, *not* measured reachable visits, not spawn-adjusted and not an inventory endowment. An in-game source restocks only when depleted and due; travel, danger, capacity, remaining partial stock, raid/reset and actual stage length matter. A fixed starting batch may create an additional first opportunity. A sample percentage applies to "any eligible finished component"; it is NOT the drop chance of one named Pipe/Gear/Blade.
+
+**Caution from LI sources:** Original developer update 2022-11-09 guarantees *classes* of supply/food/medical/military contents and specifies card-room crate combinations, not universal guaranteed individual pipe drops. 2023 published bicycle blueprint odds (0.5%→4%) apply ONLY to the stated keycard-room Toolbox context, not an analog for Veyra Pipe rate. 2022-08-04 TapTap player guide documents Pipe from barrels, Supply/Military/Airdrop and recycling. Authoritative source URLs:
+- https://hero.yingxiong.com/info/2022/1109/13052.html
+- https://www.taptap.cn/moment/304314693734893241
+
+### 11.4 Actual POI/room mapping for a 12-site **assessment roster**, not automatic 12 new crates
+
+| POI | Already-existing physical authored room or fallback | Candidate economic class / grade | Why it makes sense | Do not do |
+| --- | --- | --- | --- | --- |
+| `po_mere` | Hook Mere Pier generic 5 Scrap +1 Part + bandages | Field salvage / low | Hook starts with repair and transport material | Do not turn dock into guaranteed Gear |
+| `po_dpier` | Drowned Pier generic 6 Scrap + rope/bandages | Field salvage / low | Westmouth coastal wreck/salvage | Do not spawn a brand-new mandatory inland gate |
+| `po_westbank` | Westbank Landing generic 3 Spares +1 Part + **blueprint:gas_mask** | Field toolbox / low | Gulf's small service pier | **Preserve** existing blueprint/medical entitlement on old saves |
+| `po_pumphouse` | Real F03 `pipe_store` ground-floor room + rotor room | Maintenance toolbox / mid | A pump facility can yield piping repairs | No guaranteed Pipe SKU; no invented keycard |
+| `po_falls` | `pipe_store` F0, `turbine_subfloor` F-1 with actual hatch | Mid maintenance at F0; high at F-1 | Inner bearing room more specialized; physical depth | High grade not equal boss kill; door/hatch must physically work |
+| `po_sawaion` | `saw_attic` F+1 Belt Drive Loft | Maintenance toolbox / mid | Gear/belt tools belong to log-driving mechanism | Do not add a free Gear at exterior generic cache |
+| `po_freightyard` | Real `freight_platform` F0 with ore_cart, existing crew supplies | Freight salvage / low or mid if validated machinery | Loose wagon tools and salvage, Orc1 habitat configured | Do not give guaranteed rare item purely for combat |
+| `po_ironvein` | `iron_cut` F-1 Prospector Cut with real hatch and ore_cart; generic cache today is herb/medkit/stew | **Material supply**, mid only if high-grade vein physically present | Geological role, not generic Gear store | Do not grant renewable ore at 24h without source-stock audit |
+| `po_slag` | F03 `slag_sort` F0, `quench_underpass` F-1; actual Recycler at (2414,1896) | Material/metal stock high, risk-proven before grant | Refined iron/Plate/Blade more plausible than Gear at every cycle | Do not treat Recycler as a loot crate or overwrite its policy |
+| `po_ironmine` | Authored `Crane Cab Locker` at F+1 already has Parts×2/Fasteners×6 | Maintenance toolbox high candidate | Operating crane needs drive gear | Preserve existing authored cache/UID, no duplicate overlay by default |
+| `po_wreck` | `boat_hull` prop and weathered salvage shelter F0, generic ore+coal cache | Wreck salvage / mid after testing | Ship stock, steel or pipe remnants | Do not make free Gear with no corresponding machine evidence |
+| `po_oldpump` | F03 `pipe_store` F0; GOLD notes deeper core gate needing card+electricity+protection | Mid maintenance in *proven open periphery* only | Old hydraulic plant supports pipe repair logic | Do not silently unlock or place stock beyond unimplemented access gate |
+
+**Assessment roster is not a 12-point mandatory quest**. It spans near-spawn alternatives, deeper specialized routes, material-rich industrial stops, and authored multi-floor locations. Any assigned room/source must pass authored-plan occupancy, door/stair reach, item custody, 200×200 window shift, saved floor return and old-run isolation. The F03 designs have meaningful process-specific rooms; **do not replace Map's architecture** simply to host a crate. `po_ironvein` rest48 F-1 adit exists; no claim about its current ore quantity without a path/source audit.
+
+### 11.5 Implementation architecture restrictions (not an implementation order)
+
+- Reuse the **conceptual `LootSourceSpec`** and existing deterministic roll engine, but do not try to call unchanged `SHIPPING_LOOT_SOURCES`, `lootClass()` or `validLootSourceContract()` directly for the full global Veyra world.
+- Define a versioned **global authored Veyra-source registry**, keyed by `runId / sourceVersion / poiId / floor / stableSourceKey`. Evaluate access from real local physical geometry upon entering the source window; do not assume all 81 sites loaded. Store physical stock in one custody owner and durable cycle/issuance/depletion timer in one run ledger; preserve existing item UIDs across unload/reload. A full spec digest change must not automatically invalidate/erase legitimate old runs: keep their compatible older spec versions or explicit safe migration.
+- Add per-group stock policy: e.g. `baseMaterials: renewable`, `generatedOption: renewable or finite`, `oneOffUnique: finite`; never synthesize them from `ITEMS.cat==='res'`.
+- A source is not "available" until location exists at valid unblocked floor cell, visible/interactable, and accessible via legal movement without debug teleport. A physically closed door means it remains gated; bypass classification must never give the rewards for free.
+- Keep physical item economy, ordinary loot one-way (no PUT), partial custody, offline clock, per-cycle deterministic RNG not global RNG rerolling, legacy old save semantics, and no new post-run persistence.
+- Add scarcity stress cases across 14 days: idle 336h without claiming, 14 daily exhaustions, old save updating, low-to-high grade transitions, source without authorized room, two different source IDs same POI, repeat intent replay, recursive site in new window, floor hatch transition and unloading while partial.
+- **Economic failure tripwires:** no successful source roll if physical source didn't exist/access; no repeated bonus on reload; no advanced Gear flood proportional to time alone; no new mandatory recipe requirement sourced only from one locked room; no arbitrary flattening of uneven Veyra iron/scrap geography; no accidental refund arbitrage with Recycler.
+
+### 11.6 Working recommendation / still-open Creator choices
+
+**Working default for further exploration:** player-recognizable source family guarantees a *useful class* of material, while a small optional intermediate bonus follows grade, location and measured source rate. Ordinary mechanically plausible boxes may replenish according to their distinct cycle; unique story/cash/tech sources follow explicitly finite contracts. Exact Pipe/Gear/Plate/Blade drop weights, stock quantities, rollout versions, family-specific cooldown, risk adjustment and physical placements **remain unapproved**.
+
+The next source-grounded task is to simulate several 336h/first-hour routes with these proposed odds and existing POI stock/physical travel, compare the outcomes with baseline and the risk of already-fixed B05 values, and then solicit Creator feedback only on material gameplay trade-offs rather than a generic "guaranteed or random" question.
+
+---
+
+## 12. HISTORICAL/SUPERSEDED: four current start windows vs literal spawn cells — QA clarification 2026-11-12
+
+**Why recorded:** User challenged an ambiguous statement about "four spawns." This fixes the test scope; do not treat four GOLD geographic anchor coordinates as four exact runtime spawn points.
+
+**Verified runtime `web/src/game/engine.ts` SHA `c6c6fc5`:**
+- `VEYRA_SPAWN_LAYOUTS = ['veyra05-westmouth', U05_WORLD_LAYOUT_ID, 'veyra05-hook', 'veyra05-gulf']`. In `startRun(..., region=null, seedOverride?)` the selected region is either the user/QA supplied region index 0–3 or deterministic `seed % 4`; it selects a **regional 200×200 streaming window**, not an immutable spawn cell.
+- `chooseLegalSpawn()` makes a seeded non-repeating traversal over candidates, requiring world collision / walkability, avoiding toxic/ash/snow, avoiding local threats, checking a 3×3 safe vicinity, and requiring reachable wood, rock, food, fresh water and at least 9 buildable sites within depth 30. Its own comment expressly states **"Compiler reachability anchors and Map sp_* are never player spawn authorities."** `spawnChoice` records chosen actual tile, not GOLD-map `sp_*`.
+- GOLD `project.spawns` coordinates (Westmouth Shore, Greywater South Shore, Hook Meadow, Gulf West Bank) carry `conf='proposal'`. Their role is map reference/analysis only. Prior straight-line estimates are conceptual lower bounds from these references, never runtime spawn-to-POI walking routes.
+
+**Proposed QA purpose (NOT performed):** Test *uneven industrial viability* across selected starts, not guarantee a loot item from any named POI or enforce one route. Four regional windows × multiple seed-selected legal spawn cells (illustrative minimum 10 independent starts per region, **40 trials total**, not an official power calculation) × several player-selected styles: (A) local roadside scrap → Iron via `scrap_ingot` → Workbench II/Gear; (B) natural ore+coal → self-crafted Gear/Pipe if reachable; (C) POI salvage including nearest maintenance and deeper specialized rooms without debug teleports. Runs should respect no boss/no Core/no quest constraints, but no mandatory script.
+
+Per run log: actual `spawnChoice`, map/build SHA & loot spec version, player inventory, real path and first legal interaction to target source, successful loot withdrawals (including failed attempts), time to first **useful** part/Gear/Pipe; carrying weight, weapon/tool wear, water/food loss, encounters/radiation, travel/return time and survival; original cache UID/stock, take/drop/refill/save/relaunch continuity; compare to crafting baseline including furnace/fuel/Workbench costs. A route with no open source by 20min is a meaningful negative outcome. Ideally contrast at least multiple physical paths to a goal per region, not grant debug inventory to pass.
+
+**Ordering:** First run native real-collision reachable-source validation and record what is accessible; THEN estimate openable rolls and expected outcomes under candidate 5/12/20% category chances (which are exploratory values). Do not simulate 14 daily openings from a source if traversability, cooldown and depletion are unproven. No evidence permits a current claim that all four regions are balanced or that any named completed component is actually lootable on Veyra.
+
+---
+
+## 13. RED_FLAG-SPAWN-001 — Fixed four-region test denominator is a false design premise (2026-11-12)
+
+**Severity: P0 for design/acceptance correctness; not yet a proven runtime crash or creator-approved source-code migration.**
+**Reporter: Creator.**
+**RED-FLAG STATEMENT:** “Last Island không hề có cụ thể bao nhiêu điểm spawn cả.” We had extrapolated a SOH `4 regional windows × 10 starts` smoke-test into an assumed global player-spawn system / comprehensive loot-economy coverage. That extrapolation is **INVALID**. Creator requested this red flag be recorded, and work should continue without a fixed spawn count premise.
+
+### 13.1 Evidence hierarchy: separate LI, SOH canon, existing code and maps
+
+- **Last Island**: Independent Last Island of Survival beginner's guide (updated 2022-10-30, LevelWinner) explicitly describes **random starting/respawn areas**, rather than a documented four-point contract: https://www.levelwinner.com/last-day-rules-survival-beginners-guide-tips-cheats-strategies-to-become-a-top-survivor/ . Official 2019 `Civilization Restart` FAQ supports world/respawn gameplay but does **not** document an exact spawn-point count: https://hero.yingxiong.com/info/2019/0730/6973.html . **No assertion that LI has literally infinite possible cells or that LI's exact modern algorithm is known.**
+- **SOH authoritative `web/ref/bible.md` §world**: stable geography, **random spawn in multiple valid safe areas** with nearby viable basic survival resources, geographical asymmetry; no numerical mandate for four regions/cells.
+- **Current code, verified SHA `c6c6fc5`**: `engine.ts::VEYRA_SPAWN_LAYOUTS` contains four values: Westmouth, `U05_WORLD_LAYOUT_ID` (Greywater-centered world window), Hook and Gulf. `startRun` selects one region by seed modulo four or optional region index; `chooseLegalSpawn()` then pseudo-randomly scans eligible cells **within the currently loaded 200×200 tile window**. Thus four applies to the *first window's regional bias*, **not** exactly four spawn tiles and **not** the full Veyra map. In-game no global eligible-site sampling is currently demonstrated.
+- **GOLD map** `project.world` is 2000×1400 AU, `land` has **8** island/land polygons, `pois` **81**, `zones` **23** named candidate terrain/building locality polygons, and `spawns` **4 proposal anchors** (`conf:'proposal'`) used as geographic reference; they do **not** authorize runtime spawn policy or assert that 23 zones are all safe, connected or reachable.
+- **Current scene implementation** `web/src/veyra05/scenes.ts` uses streaming 200×200 tile =100×100 AU windows; other scenes exist (Argus, Saltwick, Slag, Cinder etc.) but are **not selected by the four-branch fresh-run chooser**. A streaming window catalog is a technical subdivision, not a population/spawn zoning mandate.
+
+### 13.2 Why this is a gameplay/economic risk and what is actually proven
+
+The previous four-region test plan excluded all regions not selected in `VEYRA_SPAWN_LAYOUTS`, disproportionately sampling main-island first-hour scenery. Unbalanced availability, island isolation, heat/cold/toxic starts, POI variety and logistics costs would be missed. This is a **test coverage invalidity** independent of whether four current starting windows produce legal positions.
+
+Two different questions MUST be separated:
+
+1. **Current implementation acceptance (bounded):** In the four currently selected starting windows, are random chosen cells safe and survival-capable? This remains an implementation smoke test, not representative global design validation.
+2. **Whole-world design suitability (global):** Across the intended full world, which land/biome cells can support legal starts, which cannot safely start until traversal systems (boat, bridges), hazards or basic resource access exist, and how does local economy vary? This is a separate assessment and requires a global candidate generator / static geometry scan and real movement sampling.
+
+No forced equal opportunity for Pipe/Gear/ore: valid cold, coast, wetlands and valley starts can have **different** industrial pathways. No universal loot gift, no guaranteed mid-tier part, no per-zone fixed quota and no compulsory route to a remote foundry.
+
+### 13.3 Replacement full-map verification, not “4×10 starts”
+
+**Step A — Discover actual *eligible cells*, not pre-name spawn points.** Scan entire streamed frame through Veyra's existing stable world geometry, in windows or global raster. Candidate conditions must be verified on physical tile/collision and source graph: safe player footprint, no immediate lethal terrain, reachable starter wood+stone+food+fresh water (not only Euclidean radius), real buildable site, no blockers/hostile spawn trap, and at least one plausible exit route. Reject an isolated island without a proven boat/bridge/escape plan; the zone name alone does not confer spawn eligibility.
+
+**Step B — Coverage strata derived from actual eligible set, not fixed four.** Group eligible cells by actual landmass, measured biome / hazard band, resource ecology, near-road vs remote and POI accessibility. Sample *all nonempty eligible clusters* with deterministic seeds. Sampling count grows from measured candidate diversity and failure cases; no universal fixed number of spawn regions is assumed. Preserve four implementation-window tests as a separate backward-compatibility track.
+
+**Step C — Economic journey comparisons from each eligible class**, not every exact tile: (1) immediate natural survival baseline and early knife → stone tools, (2) Scrap→Iron via Furnace→Workbench II→Gear, (3) quarry/coal→Refined Iron→Pipe, (4) relevant real industrial POI salvage, (5) route back/storage/recycler; collect actual paths, hazard exposures, hunger/thirst, tools and capacity, stock/cooldown/UID persistence, failed crossings and recovery. The metric is **plural viable player choices** rather than every start guaranteeing one Gear.
+
+**Step D — Class-based loot simulation** only over physically reachable sources. Evaluate expected output per opened source-cycle at actual travel / consumption, controlled by per-source versioned deterministic roll. Do not use four GOLD `sp_*` geographic references as distance origins in a balance acceptance claim.
+
+**Test deliverables:** eligible-cell / rejected-reason heatmap; strata list including island and hazardous edge cases; source-to-goal path matrix; 14-day full-run renewal / conservation stress trials; first 20-minute exploratory play outcomes; correct legacy save and no debug grants. All passed from one pinned build SHA and physical evidence where claims require gameplay proof.
+
+### 13.4 New macro-geography diagnostic (static, not runtime spawn eligibility)
+
+Read-only polygon/POI study from GOLD `project.zones[].ring` and `project.pois[].at`, using **area-weighted polygon centroid** and straight-line distance (AU), without terrain/collision/bridge checks:
+
+- **23 named locality polygons** (one explicitly `Slag Flats Pad (đất độc — viability thấp)`): no claim all are viable/safe spawn candidates.
+- **81 POIs** across **8 land polygons**; straight-line POI proximity from zone centroid: **4 of 23** zone centers have **zero POI inside 75 AU** (Mossbrook Valley Floor, Greyback Foothill Shelf, Dune Rock Outcrop, North Woods Hollow); **8 have exactly one POI**, **7 have exactly two**, **4 have ≥3** within this radius. This is an *exploration density proxy* only, not 4 sites to modify or proof of traversability.
+- Example: North Woods Hollow nearest POI is `po_rc_dam` (~139 AU by geometry), but that is a **special Ragnarok cash POI**, not an ordinary loot source. A simple nearest-POI metric is therefore insufficient to certify early economic viability.
+- Example: Saltwick Flats zone center has three POIs within 75 AU but **is an offshore landmass**; local POI count cannot prove water, food, exit or transport. Slag Flats zone nearest `po_slag` ~58 AU but toxicity may disqualify spawn.
+- Implication for item-source allocation: score **reachable usable source classes** (scrap, food, wood, stone, water, quarry ore, maintenance, foundry) rather than raw POI count or membership in a hardcoded start region. Roadside `SOURCES` can supply useful inputs independently of POI proximity.
+
+### 13.5 Action owner and status
+
+- **DESIGN CHANGE — RECOMMENDED:** no hardcoded `4` in gameplay spawn authority as a canonical design requirement. The eventual choice of safe-global spawn sampling vs weighted-eligible-zone sampling is pending source and QA constraints; it must preserve deterministic run and avoid stranded islands.
+- **AUDIT CHANGE — NOW ACTIVE:** retire §12 four-region matrix as whole-world acceptance standard; retain it only as 4-window regression/smoke coverage.
+- **ECONOMY DESIGN — CONTINUES:** proceed with Veyra's source-class × grade × actual physical room/access × stock/renewal matrix across all eligible geography; not fixed start count.
+- **IMPLEMENTATION STATE:** NOT CHANGED. Current runtime still has four starting windows until code work is specifically approved. No claim of native or browser gameplay run made here.
+- **SOURCE STATUS:** LI spawn area randomness supported by historical guide; exact algorithm/count unknown. SOH Bible is stronger for desired behavior than the four current map anchors. All proposed full-world QA outcomes still untested.
+
+### 13.6 POI-function-aware coverage check (more precise static diagnostic)
+
+Excluding 6 Elder sites, 6 special Ragnarok cash POIs, 2 vendors, and 3 evacuations = **17 non-ordinary POIs**; **64 ordinary/interactable exploration POI roles** remain in the 81-POI registry. This is a provisional class filter, NOT proof all 64 provide loot to a fresh character. Recompute the centroid/straight-line proxy excluding those 17:
+- Within 75 AU of each of the 23 named zone polygon centroids, the counts of **ordinary POI IDs** are: zero: **4 zones**, exactly one: **12 zones**, exactly two: **4 zones**, three or more: **3 zones**.
+- Four zero-centroid/proxy zones: **Mossbrook Valley Floor** (nearest `po_sapgrove`, ~83 AU), **Greyback Foothill Shelf** (nearest `po_greyquarry`, ~107 AU), **Dune Rock Outcrop** (nearest `po_cairns`, ~83 AU), **North Woods Hollow** (nearest `po_academy`, ~142 AU; likely gated specialist). All four have at least one *ordinary POI ID* inside 150 AU by straight line; not an accessibility pass.
+- **Misleading-nearest examples:** Ironvein Ridge: nearest any-POI `po_rc_meridian` (Ragnarok cash) ~36 AU vs nearest ordinary `po_ironvein` ~48 AU. Westmouth: nearest any `po_evac_west` (evac) ~48 AU vs nearest ordinary `po_westmouth` ~55 AU. Kestrel: nearest any `po_rc_kestrel` (Ragnarok cash) ~32 AU vs ordinary `po_kestrel` ~52 AU. North Woods: nearest `po_rc_dam` (special cash) ~139 AU vs ordinary `po_academy` ~142 AU.
+- **Design correction:** a radius to the nearest named POI is NOT a radius to accessible tools, scrap, food, wood, freshwater or industrial stock. Categorize each POI by *physical source role and actual access* and include roadside/natural sources, otherwise tests produce false-positive economics. This analysis cannot identify which geographic cells are legal spawns and has not simulated routes.
+
+No new spawn count, no uniform POI-distance target, no changes to quantities/cooldowns.
+
+---
+
+## 14. Full-GOLD landmass/resource coverage audit and effective spawn-source criteria (2026-11-12, pass 6)
+
+**Evidence state: COMPLETED STATIC SOURCE ANALYSIS; NATIVE/REAL WORLD-SPAWN ENUMERATION = NOT RUN.**
+**Source pinned:** `c6c6fc50471f9dff2633e6dcde00f2d342c8ce7e`.
+**Objective:** Continue industrial loot-source work without returning to a false four-spawn premise, preserve biome asymmetry, and identify regions requiring physical eligibility/pathfinding tests before issuing new loot numbers.
+
+### 14.1 Global dimension and generator implementation
+
+- GOLD geography `project.world = 2000×1400 AU`, runtime `U=0.5 AU/tile` ⇒ **4000×2800 tile cells, 11,200,000 addressable**; runtime active window = **200×200 cells (100×100 AU)**, chunks = **32×32**. The `world.ts` UI description still says `3200×2400 tiles`, contradicting the authoritative `frame.ts` 4000×2800. **COPY/ABOUT-TEXT MISMATCH**, not proof the physical engine uses the wrong bounds. Fix copy later after confirming exact live framing.
+- Current `startRun()` Veyra start window picks one of four regional layouts; `chooseLegalSpawn()` samples eligible positions within that one window only. `window.ts` prefilters `spawnEligible` with a **10–42 local-tile annulus** from scene focus and approximate freshwater distance ≤27 tiles, with a fallback if fewer than 16 eligible prefilter cells. **This is a technical first-window spawn bias, not Last Island or SOH canon**. The final gameplay `chooseLegalSpawn()` still checks actual neighborhood + water/wood/stone/food/buildable source graph, but only within chosen window.
+- `chooseLegalSpawn()` requires physically reachable wood, stone, food, water and ≥9 buildable sites within depth 30; **does not require nearby Scrap/Wreck**. `world-economy.ts::diagnoseStarts()` requires Scrap/Wreck in addition to those and uses a separate grid/anchor diagnostic. This is **validation-scope mismatch** to test for industrial starter sufficiency, not proof every current start is impossible.
+- `window.ts` filters procedural sources by reachability from **compiler anchors**, not player's actual spawn. It then filters source availability within window. Compiler-anchor reachability is insufficient evidence of a safe path from a future random spawn in another connected component. A full eligible-cell audit must use **actual spawn→source connectivity**, not compiler-anchor reach.
+- `world-economy.ts::compileEconomy()` uses deterministic competing biome weights per global tile and independently places Scrap/Wreck near roads and industrial terrain. E.g. forest has weighted tree+plant+small rock; hill has rock/iron/coal; ash favors sulfur/rock/deadwood/coal; toxic favors deadwood and very sparse iron; roadside adds scrap/wreck; marsh has willow/reed/mushroom, but no default rock in marsh weight table. These are **roll weights per eligible physical tile**, NOT quantities preallocated to GOLD's `project.resources` markers.
+- `window.ts` freshwater prefilter BFS measures tile-grid distance, not obstructed walking; final `chooseLegalSpawn()` checks nearby reachable source types using collision. Keep both in acceptance to catch non-shortcut and algorithmic efficiency errors.
+
+### 14.2 Eight separate land polygons — complete POI/author resource landmark inventory
+
+We read GOLD `project.land[].rings`, `project.pois[].at`, `project.resources[].at`. Point-in-polygon assignment to outer land ring gives the following **authored marker census**, *not* the full procedural resource stock. All **81/81 POI anchors** fall within a land polygon. Eleven resource points lie outside those outer rings (often coastal/on water/boundary), so per-land totals sum to 269/280 authored resource markers.
+
+| Land polygon | POI anchors | Authored resource landmarks inside polygon | Authored food/wood/stone/freshwater landmarks | Specific diagnostic |
+| --- | ---: | ---: | --- | --- |
+| `ld_veyra` mainland | 58 | 219 | food 47, wood 46, stone 22, freshwater 52 | Broad regional diversity; a full traversal/resource audit must include industrial interior and long routes |
+| `ld_cinder` | 6 | 15 | food 1, wood 1, stone 3, freshwater 2 | Harsh climate / little named basic survival; do not grant automatic start without hazard/crossing proof |
+| `ld_saltwick` | 5 | 11 | food 5, wood 1, stone 1, freshwater 1 | More basic source markers, but offshore return still unproven |
+| `ld_gull` | 3 | 5 | food 1, wood 1, stone 1, freshwater 1 | Isolated island; check viability + physical crossing |
+| `ld_ironholm` | 3 | 8 | food 1, wood 3, stone 1, freshwater 1; ore 1 | Industry island; attractive haul, but cannot count as a freely reachable mainland POI |
+| `ld_threshold` | 3 | 6 | food 2, wood 1, stone 1, freshwater 1 | Island access via named ferry *proposal*; prove usable transport |
+| `ld_wreck` | 2 | 5 | food 1, wood 1, stone 1, freshwater 1 | Salvage destination, no proven travel route |
+| `ld_beacon` | 1 | 0 | none authored | **Highest marker-scarcity sentinel**; procedural source generation may still yield stock, so “zero resource” is NOT yet established |
+
+GOLD also contains **23 named locality polygons**; 20 have a sample point inside mainland and 3 inside specific islands (Cinder, Saltwick, Ironholm). Four islands (Threshold, Wreck, Gull, Beacon) have NO `project.zones` locality polygon. **Do not derive a full-world spawn sample from the 23 named-zone inventory alone**. Conversely, 23 named regions do not mean 23 canonical start points.
+
+11 authored resource landmarks were not assigned to an outer land polygon: ore1, food1, fish3, freshwater6. These may be shore/water nodes, not necessarily errors; keep geometry provenance and avoid dropping them from full-world source coverage.
+
+### 14.3 Transport interdependence — transportation is a P0 gate for island spawn eligibility
+
+- GOLD declares **8 named ferry-type road routes** (Westmouth↔Threshold, Fish Camp↔Wreck Isle, Drowned Pier↔Beacon, Emberport↔Cinder, Hook↔Saltwick, Saltwick↔Gull, Southfoot↔Ironholm, Gulfhead↔Ironholm) and **27 docks**. These describe desired map logistics, **not working transport**.
+- `web/src/veyra05/reader.ts` explicitly excludes `kind:'ferry'` road links from the physical roadway `SEGS` and says **“Ferries are suggestions, never dry roads”**. Docks and bridge markers are `NODES`, not automatic walkable decks. The 12 non-ferry bridge points are mostly river crossings; they do not authorize an island sea crossing by themselves.
+- `web/src/game/catalog.ts` currently includes Motorbike and cart mechanics but **no authored boat/raft/ferry vehicle recipe**; `sim.ts::solidFor` uses block-grid collision and `T.DEEP` is impassable in normal world construction. Based on these inspected paths, **no working inter-island crossing is proven**; do not claim ferries function or grant spawn on disconnected islands by anchor count. A separate real run test must verify any alternative crossing capability; partial source survey is not a global proof of absolute impossibility.
+- **New follow-up risk label:** `WORLD-OFFSHORE-ACCESS-001` — accepting a remote island spawn or promising rare loot there without demonstrated travel/rescue/exit can strand the player and invalidate the 14-day survival/industry loop. **Do not “fix” by drawing a fake road across sea or instant teleport**. The eventual solution must be a physical boat/ferry/route mechanism consistent with SOH, or exclude that area from eligible starting cells until resolved.
+
+### 14.4 Historical M2 source counts, separated from current source feasibility
+
+`web/reports/economic-network/M2_SIMULATION_RESULTS.json -> worldEndowments.veyra.sceneSamples[]` samples **12 windows of 200×200 tiles**, not the whole continuous world. The values count deterministic placed source entities in sampled windows, *not quantities harvested or sources reachable by an individual player*. This is older analytical evidence; later M5 corrections supersede earlier M2 defect verdicts.
+
+| Historical scene window | wood trees (live types only) | bush+mushroom food sources | iron veins | coal seams | scrap nodes | wreck nodes |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Greywater | 1794 | 564 | 0 | 0 | 40 | 7 |
+| Westmouth | 711 | 1345 | 0 | 0 | 51 | 11 |
+| Hook | 2062 | 671 | 0 | 0 | 25 | 5 |
+| Gulf | 634 | 1190 | 195 | 75 | 37 | 4 |
+| Cinder | 13 | 6 | 0 | 264 | 0 | 0 |
+| Mirage | 0 | 0 | 0 | 0 | 105 | 24 |
+| Slag | 0 | 0 | 761 | 263 | 39 | 5 |
+| Saltwick | 1687 | 519 | 251 | 99 | 38 | 6 |
+| Argus | 2116 | 6 | 49 | 12 | 48 | 8 |
+
+**High-value diagnostic outcomes:** Mirage's *sampled window* has zero trees and bush/mushroom; Slag also zero of both and toxic biome; Cinder has very little of both; Argus sampled bush/mushroom counts = 6 even though tree density is high. These are **not proofs of unplayable whole zones**: other food sources may exist, partial windows overlap, distance/path/hazard conditions differ, and neither total authored anchor count nor M2 scene number proves accessibility. They DO identify which possible starting conditions must be actively rejected/proved by eligibility, and which specialized resource-expedition destinations may be attractive without spawn viability.
+
+### 14.5 Cross-system test order — replaces four-window universal balance assumptions
+
+**G0 Map/source version pin:** same GOLD hash, WMP raster revision, runtime SHA, run seed. No mixing old M2 findings into current acceptance as if refreshed.
+
+**G1 Global candidate enumeration:** across **all landmasses**, scan full tile world incrementally, or equivalent deterministic partition, and evaluate broad walkable/safe candidates from actual `getChunk` + `buildWindowWorld` outputs; do not create a giant 11.2M-cell runtime world or assume all 23 locality polygons are legal. Record eligible and rejected cells with reasons (collision, hazard, resource scarcity, lack of fresh water, immediate hostile, missing buildable space, offshore no verified crossing). Prefer reproducible stratification by landmass, biome and actual source distances. Track fraction eligible and number of isolated eligible clusters, not a fixed target point count.
+
+**G2 Prove full local survival from actual sampled candidates:** player knife/fists -> wood + rock + plant/water + buildable patch, tools and storage. Compare `chooseLegalSpawn()` with `diagnoseStarts()` and verify source compiler anchors don't conceal paths from an actual player tile. This G2 does NOT require instant Gear/Pipe.
+
+**G3 Industrial reach:** for each nonempty eligible class, identify nearby actual ordinary source classes: roadside scrap/wreck and source to turn scrap to iron; accessible quarry/hill iron+coal; maintenance/industrial POI exterior stock. Mark real routes disconnected/blocked even when Euclidean distance is small. POI special cash/elder/evac/vending alone is not an ordinary industrial source.
+
+**G4 14-day economies and play styles:** at least scrap-first, miner-first, POI-raider; compare net benefit of collected vs crafted Gear/Pipe accounting for real travel, tool wear, encumbrance, danger, fuel, research, alternate recycler and stock renewal. Advanced industrial intermediate discovery may be delayed but cannot be tied to a mandatory boss/quest. Sources after offline settlement must preserve UID/no duplication.
+
+**G5 Browser and native evidence:** source compile, collision/path constraints, physical loot, separate-process save/relaunch, screenshots and subjective choice; no simple M2 JSON count qualifies as PLAY PASS. No agents requested to implement new loot/spawn rules based on only G0–G1 proxy stats.
+
+### 14.6 Immediate triage and next research
+
+1. `RED_FLAG-SPAWN-001`: **OPEN / DESIGN-P0** — hardcoded four initial regional windows remain implemented, full eligible-cell sampling not built/proven.
+2. `WORLD-OFFSHORE-ACCESS-001`: **OPEN / DESIGN-P0** — ferry lines on GOLD only; no physical cross-island gameplay established.
+3. `SPAWN-SOURCE-CONTRACT-002`: **OPEN / QA** — the startup spawn validator does not require Scrap, but start-source diagnostics do; identify intended industrial viability threshold without forcing Scrap on every starter tile.
+4. `POI-LOOT-ROLE-003`: **OPEN / DESIGN** — 81 POI names ≠ 81 usable loot sources; 64 normal POI roles, 17 special POI roles, and sourced room/access audit still pending.
+5. `GOLD-RESOURCE-MARKERS-004`: **OPEN / DATA** — 280 GOLD resource markers, 269 inside outer land polygons and 11 coastal/water/special; neither implies actual procedural source scarcity in a zone.
+6. `WORLD-COPY-SCALE-005`: **OPEN / LOW** — stale `3200×2400` UI description vs 4000×2800 frame contract.
+7. `VEYRA-INDUSTRIAL-LOOT`: **CONTINUE DESIGN**, not implement: source class/grade/room/cooldown and generator coverage can be evaluated only for **eligible and physically reachable** resources. Do not add guaranteed rare intermediate crates as compensation for an untested spawn map.
+
+**No Creator consultation necessary yet:** these are verifiable mapping/test contract defects. Actual design debate about island spawn policy requires valid transport and survival evidence before presenting options. No changes to Gameplay, Map GOLD, production, asset binaries, or previous save contracts were made in this research pass.
+
+---
+
+## 15. Automated full-world scan audit implementation (2026-11-12)
+
+**STATUS:** TEST CODE COMMITTED / GITHUB ACTIONS EXECUTION STARTED; **NOT YET A PASS**. Must retrieve the GitHub workflow result and `manifest.json` before entering measured results. No production runtime patch, biome changes, source-minting, or spawn-policy change.
+
+**Code committed on isolated design branch:**
+- `web/src/veyra05/full-world-spawn-industrial.audit.test.ts` — direct reuse of `getChunk`, the current `T` tile rules, `GOLD`, `getWindowWorld`, `newGame/startRun` and existing `chooseLegalSpawn`.
+- `.github/workflows/veyra-global-spawn-audit.yml` — npm ci / Node 22 / Vitest on the exact design commit, evidence artifact upload even on failure.
+- Workflow run initiated on `e4c6fb91766be4e1c628b926354e5234dd7e4155`: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/43231669118
+- Evidence if generated: `web/evidence/veyra-global-spawn-audit/manifest.json` inside Actions artifact `veyra-global-spawn-industrial-audit-<sha>-<attempt>`; this is remote CI evidence, **not** a checked-in result yet.
+- Run exactly the test from `web/`: `SOH_FULL_WORLD_AUDIT=1 npx vitest run --fileParallelism=false --testTimeout=1800000 src/veyra05/full-world-spawn-industrial.audit.test.ts`.
+
+### 15.1 Test layers and what they do NOT prove
+
+- **R0 full static coverage**: stream actual engine `getChunk` over every one of 11,200,000 global tile addresses (full 125×88 chunk envelope) and count real tile codes, landmask/road/zone flags; prove scan count matches frame extent. This is a genuine full tile scan, NOT a global full-frame world materialization. Pre-existing POI solid-prop overrides are not in bare chunks.
+- **R1 global terrain graph**: 4-neighbor BFS over a conservative list of impassable `DEEP,SHALLOW,RIVER,CLIFF,PWALL,LAVA`. It reports terrain-connected components and large vs tiny regions. This is a **topological upper bound**, not real collision/hazard/door/water-vehicle reach, and no claim every tile in a component is a valid spawn.
+- **R2 representative actual-gameplay spawn probes**: for 23 GOLD named locality polygon centroids and 7 non-mainland land polygon centroids, materialize exact 200×200 game windows, tally real `sourceV3` counts, invoke `newGame` and **normal `startRun` without debug landing** with deterministic seed, log actual `spawnChoice`, failures and origin. This tests 30 geographic classes, not 30 canonical spawn points and not all 11.2M spawn cells. The inspector `veyra05-at` layout is used as the test window **only**; no world has been modified.
+- **R3 missing native physical traversal**: human/key-driven walking from the true start to actual source, collecting/processing metal parts, container opening, save/relaunch and 14d regeneration remain **NOT RUN**. Even R0/R1/R2 passing must NOT label `PLAYABLE`/source economy balanced.
+
+**Hard invariants:** Rejected landmass probes are informative, not automatic test failures; source counts alone cannot prove access. Never grant ingredients using inspection mode, rescue players by teleport, claim ferries exist, or pass incomplete `manifest.json` as success.
+
+### 15.2 Artifacts and follow-up
+
+After run completes, extract `manifest.fullRaster`, `manifest.summary`, each region probe failure and `windowCandidatePrefilter`. Update **THIS ledger in place** with actual measured output, carefully distinguish missing resource components, hazard isolation, and platform/test failures. If CI times out or uses an incompatible bundler, fix the **audit harness on the isolated branch**, rerun, and keep failure evidence. Then scope a native input and same-build visual acceptance trial from targeted pathfinding failures. No new spawn count or industrial loot probabilities should be authorized solely by R0/R1/R2.
+
+---
+
+## 16. Engine-collision correction and actual local source reachability harness — 2026-11-12
+
+**Status:** SOURCE COMMITTED, CI ACTIVE, RESULTS NOT YET RETRIEVED. Do not mark playable or full-eligible-cell PASS. Related audit commits:
+- `e4c6fb9`: global scan initial test + Actions workflow. Run #43231669118 is **superseded** as an acceptance source due to erroneous assumption that river/shallow are impassable to a walking player. Historical test may be retained only for *dry-ground* components.
+- `4bc8ac4`: extended test with actual `engine.ts::blockGrid()` BFS from normal seeded `startRun()` to adjacent physically harvestable nodes (`wood,stone,food,scrap/ore/coal`) and ordinary loot containers, recording steps and current chest contents. This is within 200×200 window and does NOT play out movement, harvesting/loot UI, enemy encounters or 14d clock. Run #43232374086 has older river graph.
+- **`f189584` FINAL CURRENT AUDIT HEAD**: corrected global terrain graph to keep `SHALLOW`/`RIVER` open for player wading (engine `solidFor()` collision class 4), while `DEEP,CLIFF,PWALL,LAVA` remain impassable. **Wading is NOT cart/vehicle pass**. Run #43232561261 is the current corrected audit candidate: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/43232561261
+- Latest source: `web/src/veyra05/full-world-spawn-industrial.audit.test.ts` on design branch; workflow `.github/workflows/veyra-global-spawn-audit.yml`.
+
+### Specific false-claim prevention
+
+Even the corrected 11.2M tile scan omits POI static solid props and dynamic actors from its global raster. It is a **terrain-only reachable supergraph**, not exact player reachable graph. The source-coverage tests that matter derive from a normal `startRun`, passable `blockGrid()` (including actual static props, doors, sources and physical entities) and adjacency to a source. They only run at 30 representative geographical windows, not a universal sample of every possible spawn.
+
+`G0/G1` full tile raster can be marked measured only after manifest is downloaded and checked against a completed workflow; `G2` spawn and local resource BFS is at most automated regional evidence; `G3+` physical travel/harvest/save/return remain NOT_RUN until separately performed. No percentage of valid global spawn cells or full 11.2M-source connectedness is established by this harness alone.
+
+**New red-flag test-method note:** `AUDIT-RIVER-PASS-006`: interpreting `SHALLOW/RIVER` as impassable for on-foot players fragments terrain in a way that contradicts real `solidFor` logic. Do not reuse former graph without marking it “dry ground only.”
+
+---
+
+## 17. Verified GitHub Actions audit outputs and root-cause probe — 2026-11-12
+
+**Evidence retrieved and inspected from CI artifacts, not invented:**
+- Audit branch sha **`f189584de582a388ab26b8fc05d2828a37c23a96`**, run https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/43232561261, artifact `veyra-global-spawn-industrial-audit-f189584de582a388ab26b8fc05d2828a37c23a96-1`, ID **13952215321**, digest `sha256:af22ad233c41f108f2b9057b0ab9b0145971f34e514db048ac37b986958ea045`; workflow **SUCCESS 2/2**; manifest ZIP retrieved and parsed in current audit session. This is **source/procedural reachability evidence, not player-interaction evidence**.
+- `4bc8ac419345f2bf486ef32a0e2f296f55597613` run https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/43232374086, successful 2/2, per-start collision BFS; **superseded by f189584d for terrain connectivity**.
+- `e4c6fb91766be4e1c628b926354e5234dd7e4155` run https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/43231669118 success 2/2, initial river-as-blocked graph; **historical only**. Its 4,916 graph components and 3,677,151 terrain-walkable cells are incompatible with real player wading, so not acceptance.
+
+### 17.1 f189584d exact measured output from manifest (no extrapolation to all starts)
+
+| Metric | Manifest value | Proper evidence interpretation |
+| --- | ---: | --- |
+| Tiles scanned | **11,200,000** | Full **bare chunk terrain** 4000×2800 |
+| Authored land-mask cells | **3,856,478** | GOLD landmask, **not** eligible spawn sites |
+| Terrain passable by foot + wading | **3,798,481** | Bare-terrain superset; ignores physical POI props/doors/source stock |
+| Coarse safe-surface pixels | **2,834,905** | Terrain-only non-lethal broad mask, **not** chooseLegalSpawn count |
+| Terrain 4-neighbor components | **4,912** | Bare-terrain geometry, includes many tiny pockets, NOT 4,912 islands or legal spawn clusters |
+| Components with size <30 cells | **4,885** | Mostly micro-islands of walkability; no player significance yet proven |
+| Largest terrain component | **3,299,660** cells | Bare terrain; may cross `SHALLOW/RIVER` by player only; not car cargo or physical bridges |
+| Current-regional source probes | **30** | 23 named locality polygon-centroid windows + seven non-mainland land polygon centroid windows, **one seed/window**, not whole-world random valid-cell study |
+| `startRun` succeeded / rejected | **13 / 17** | Case sample only, 17 rejected with `No safe, resource-accessible spawn in this region.`; no global percent claim |
+| Accepted probes with reachable Scrap/Wreck | **11/13** | Actual `blockGrid` 4-neighbor BFS within 175 steps **and current window**; not completed collection/travel |
+| Accepted probes with reachable ore | **3/13** | Actual within-window local physical adjacency only |
+| Accepted probes with reachable authored loot container | **4/13** | Within-window adjacency; no inventory transfer/UI/input performed |
+
+**Important accepted-source examples from actual manifest:**
+- `bz_greywater`: wood at **2 steps**, rock **8**, food **4**, Scrap/Wreck **94**, no ore or coal within 175 steps, no reachable authored loot container within window. This does not contradict existing authored Greywater caches on the full map; this specific spawn may be far from or blocked off from their particular containers.
+- `bz_moss`: wood 3, rock 5, food 1, **no reachable Scrap/Wreck** within BFS 175. Do not infer the entire Mossbrook region has no scrap.
+- `bz_verdant`: one physically reachable `Verdant Timberyard Cache` at 50 steps (Scrap×6, Rope×2, Bandage×2).
+- `bz_hook`: one reachable `Hook Mere Pier Cache` at 67 steps (Scrap×5, Mechanical Parts×1, Bandage×2).
+- `bz_salt`: one reachable `Salt Pans Cache` at 133 steps (Cloth×4, Spares×3, Torch×1).
+- `island-ld_saltwick`: one `Salt Pans Cache` at 39 steps, same original stock; these are **two distinct test windows over the same world object**; never double-count stock as two separate caches for one run.
+- `island-ld_cinder`: accepted, but no Scrap/Wreck within 175 steps even though near Coal×20-step and Ore×16-step; this is a meaningful alternate economic archetype, not immediate proof of failure.
+- `bz_salt`, `island-ld_cinder`, `island-ld_saltwick` have physical ore/coal nearby in these samples. This does **not** authorize offshore spawn, because sea transport/return viability remains unproved.
+
+### 17.2 Root-cause suspicion: “all 40k candidate cells” is a prefilter FALLBACK, not universal eligibility
+
+Direct source in `web/src/veyra05/window.ts`: when the near-scene water-distance/biome prefilter has <16 candidates, it broadens; if no eligible candidate remains near a freshwater marker within ≤28 tiles, **`spawnEligible.fill(1)`**. Thus a logged `windowCandidatePrefilter=40000` is often **failure fallback** saying “let engine exhaustively search,” and must NEVER be labeled 40,000 suitable starts. `chooseLegalSpawn()` still fails if local wood/stone/plant food/fresh water/buildable access is insufficient.
+
+In these data `bz_elder_clear`, `bz_greyback`, `bz_ridge`, `bz_westwood`, `bz_gulfwest`, `bz_delta`, `bz_argus`, `bz_kestrel`, `bz_slag`, `bz_forest_n`, and offshore Gull/Threshold/Wreck/Beacon all return 40,000 prefilter candidates then reject the run. **Not yet proof specifically that fresh water is missing**; physical water counters and marker comparison required.
+
+Additionally `window.ts` sets `pFresh[pi]` from actual water tile + land flag, but GOLD `resources[].kind='fresh_water'` are geographic resource MARKERS; a marker alone is not a drinkable terrain tile. A lot of authored freshwater markers in GOLD should never be counted as live wet tiles without source implementation evidence. `engine.ts::chooseLegalSpawn` searches only grid code 0 in BFS expansion, while actual walking uses collision class 4 for shallow/river. This difference can reject resource combinations that are wade-reachable in real gameplay; whether it causes any of 17 sampled rejections remains untested. Distinguish cause from hypothesis.
+
+### 17.3 Targeted diagnostic code and LIVE workflow
+
+Added separate **lightweight** source, not another full 11.2M scan:
+- `web/src/veyra05/spawn-failure-cause.audit.test.ts` (commit `1218ea2`): for **14 selected representative windows** report `w.fresh` actual wet tile count, GOLD freshwater-markers inside, safe surface, 3×3 potential and prefilter fallback, plus compiled wood/stone/food/scrap/ore/coal counts.
+- Second test runs **two deterministic non-QA `startRun` cases in each of four *currently implemented* region selectors**, to distinguish runtime regression from hypothetical world-wide span; do NOT interpret four as canonical spawn count.
+- `.github/workflows/veyra-spawn-cause-audit.yml` (commit `065f733`), run https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/43234161587, artifact `veyra-spawn-cause-<sha>-<attempt>` on completion.
+- STATUS AT DOCUMENT COMMIT: targeted job initiated; **no result inspected yet**. Update **in this same section or a clear dated extension** only after reading manifest. Do not claim a PASS from successful upload alone.
+
+### 17.4 Decisions and remaining acceptance
+
+- Current evidence proves the 11.2M bare tile *geometry scan* works and exposes valid testable geography differences. It proves **only 13 of 30 sampled windows found an eligible start under their single seed**, not that 17 geographic regions are unplayable or that 4 selected start regions are unusable.
+- **NO authorization** for changing spawn count, random-selection region policy, placing a new water source, adding loot quantities, modifying biome risks, bridging water or building ferries based on these counts.
+- Next action after targeted diagnostics: classify rejections into no actual freshwater tile; prefilter bug; 3×3 collision/safety; lack of wood/stone/plant food; actual distance/path blocked; QA window artifact. Then run controlled actual-player movement and save/reload on specific failed-versus-accepted examples before modifying production spawn or loot.
+
+---
+
+## 18. Targeted freshwater/root-cause CI evidence (2026-11-12)
+
+**Status: TEST PASSED 2/2, ARTIFACT RETRIEVED AND PARSED, PRODUCTION UNMODIFIED.** Source/CI ref `065f7337e94327f76e21ce3cdb1d6da66f508929`, workflow https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/43234161587; ZIP artifact `veyra-spawn-cause-065f7337e94327f76e21ce3cdb1d6da66f508929-1`, artifact ID **13950923955**, digest `sha256:dc82fc2c2b0f845f7e4ade47e96fa54f86ec8a68f9aff57c04cf1a19b87d29e8`. Source: `web/src/veyra05/spawn-failure-cause.audit.test.ts`; 14 actual compiled 200×200 windows + 8 actual non-QA default startRun attempts (2 seeds per 4 currently implemented region selectors). This is **NOT a global spawn census**.
+
+### 18.1 Exact water/marker evidence
+
+| Runtime 200×200 focus | Actual `w.fresh` tile count | GOLD `fresh_water` point markers inside same window | `spawnEligible` prefilter | Engine issue |
+| --- | ---: | ---: | ---: | --- |
+| `bz_greywater` | 4436 | 2 | 634 | Existing fresh-water terrain for start tests |
+| `bz_moss` | 1852 | 1 | 1607 | Has water and basic crafting resources; historical 175-step BFS no Scrap |
+| `bz_westmouth` zone centroid | 97 | 0 | 706 | Historical start failed **despite 97 wet tiles + 706 prefilter cells**; cause not yet proven; cannot label area unspawnable |
+| `bz_gulfwest` zone centroid | **0** | 0 | **40000 fallback** | Missing actual river/lake in THIS window, not proof whole Gulf lacks water |
+| `bz_delta` zone centroid | **0** | 0 | **40000 fallback** | Ditto; many compiled ore/coal/scrap exist but no runtime water here |
+| `bz_slag` zone centroid | **0** | 0 | **40000 fallback** | Toxic-surface/lack of drinking water in THIS window; industrial expedition ≠ good spawn |
+| `bz_argus` zone centroid | **0** | **1** | **40000 fallback** | GOLD water marker does not materialize to drinkable physical tile |
+| `bz_cinder` | 712 | 1 | 632 | Fresh terrain exists in selected island window |
+| `bz_salt` | 869 | 2 | 2421 | Fresh terrain exists |
+| `bz_ironholm` | 652 | 1 | 301 | Fresh terrain exists |
+| `island-ld_gull` | **0** | **1** | **40000 fallback** | Authored freshwater marker but no drinkable terrain in this sampled window |
+| `island-ld_threshold` | **0** | **1** | **40000 fallback** | Same |
+| `island-ld_wreck` | **0** | **1** | **40000 fallback** | Same |
+| `island-ld_beacon` | **0** | 0 | **40000 fallback** | No water mark, no drinkable terrain |
+
+**Confirmed code reason for mismatch:** `web/src/veyra05/window.ts` `pFresh[pi]=+(water && !!(fl & FL.LAND))`, driven by generated tile class, while `reader.ts` `GOLD.project.resources[].kind='fresh_water'` is a *node marker* not necessarily a `T.SHALLOW`/`T.RIVER`/`T.DEEP` terrain cell. **Do not call the markers usable water**. Marker-driven physical wells are a possible future feature, NOT silently implemented here.
+
+**Semantic trap:** `spawnEligible.fill(1)` is a **fallback search broadening when freshwater prefilter has zero promising cells**, not 40,000 legitimate start locations. A window with 40000 candidates and 0 actual `w.fresh` is certain to fail `chooseLegalSpawn`'s `water=true` requirement, even if sourceV3 contains thousands of tree/ore/scrap nodes.
+
+### 18.2 Actual current fresh-run selector regression (8/8, no QA warp)
+
+The separate diagnostic drove `setActiveLayout(U05_WORLD_LAYOUT_ID)`, `newGame()`, `startRun()` with explicit region index 0..3 and two independent deterministic seeds per index. All **8/8** returned success and `qaUsed=false`. Actual layouts and physical freshwater tile counts in their **CURRENT IMPLEMENTATION WINDOWS**:
+
+| Selector index (current code, NOT canon count) | Actual layout | Fresh tiles | Successes |
+| --- | --- | ---: | ---: |
+| 0 | `veyra05-westmouth` | **408** | **2/2** |
+| 1 | `veyra05-world` | **10,941** | **2/2** |
+| 2 | `veyra05-hook` | **2,813** | **2/2** |
+| 3 | `veyra05-gulf` | **329** | **2/2** |
+
+**Essential contrast:** `bz_westmouth` *centroid-probe window* failed in an older one-seed test, whereas the engine's `veyra05-westmouth` default start window passed 2/2; same named region ≠ same 200×200 coordinates. Similarly `bz_gulfwest` centroid contained 0 live water, while actual `veyra05-gulf` window had 329 wet tiles and 2/2 valid starts. DO NOT conflate maps or falsely declare both regions unplayable.
+
+### 18.3 Decision on implementation vs design
+
+- **CONFIRMED RED FLAG:** `GOLD-FRESHWATER-REALIZATION-007` — authored `fresh_water` markers and playable fresh terrain are separate data channels. For identified offshore islands and Argus centroid, at least one marker appears inside an actual test window but no drinkable terrain tile exists there. This does not prove a standalone error in GOLD if markers are metadata, but blocks using marker counts as proof of game water.
+- **CONFIRMED RED FLAG:** `SPAWN-FILTER-FALLBACK-008` — `spawnEligible.fill(1)` masks a no-local-water condition with superficially huge candidate count; audit metrics must label this branch as fallback and disqualify it from spawn-pool size.
+- **OPEN REASON:** `bz_westmouth` centroid 97 wet tiles and 706 candidates but fails one-seed test. Needs actual `chooseLegalSpawn` candidate-level reason trace, not guesses. Do not claim 706 suitable spots.
+- **CURRENT 4 START WINDOWS:** 8/8 tiny-sample success under tested exact seeds, not global spawn suitability or climate/economic balance. No user-requested fixed spawn count inferred.
+- **OFFSHORE TRANSPORT:** Still unproven despite island windows with workable trees/ore/food; a valid local spawn without route home **is not sufficient** to authorize island start.
+- **DESIGN ACTION:** Preserve geographic scarcity; implement neither automatic freshwater springs nor industrial supply gifts without a grounded physical source policy and accessibility verification. Next should test targeted failure reasons and assess water/return viability before changing source placement or global spawn authority.
+
+**Deliverable acceptance level:** G0/G1 corrected bare terrain passed; G2 candidate 30-window tests + separate 4-window selector smoke now measured; G3 actual current-window BFS limited to 175 steps reported; physical gameplay, island passage, loot transfer, save/restart and full 336h simulation remain **NOT_RUN**. Source tests live on design branch only; production SHA unchanged.
+
+---
+
+## 19. Westmouth 706-candidate forensic root-cause results (2026-11-12)
+
+**Evidence:** Dedicated test `web/src/veyra05/spawn-candidate-reasons.audit.test.ts` on design branch, source commit `959861cab7286699f5b557aad874f92bfc646683`. Workflow https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/43237314615 **SUCCESS**. The manifest artifact `veyra-spawn-reasons-959861cab7286699f5b557aad874f92bfc646683-1` was **downloaded and parsed**, artifact ID `13954105563`, digest `sha256:40bd0f61514a71b753682631d304aef6aa6656b796bada72fa14483a6c09a864`. No production changes. **Do not infer actual travel or player experience from this predicate trace.**
+
+### 19.1 Westmouth centroid window precise failed conditions
+
+`bz_westmouth` exact global origin **(673,1096)**, seed `0x5f00f56`, normal `startRun` = **REJECT** `No safe, resource-accessible spawn in this region.`. Actual `w.fresh` =97, sourceV3 compiled non-null cells =6470, prefilter candidates=706.
+
+The diagnostic built a **QA-only state after the normal start failed** using `inspectAt` solely to inspect `blockGrid()` and `sourceAt()` against source-coded `chooseLegalSpawn` eligibility. It did NOT treat that inspection landing as a passing legal spawn.
+
+**Exhaustive test of all 706 prefilter cells:**
+- 672/706 have safe center according to traced predicate.
+- 538/706 have a 3×3 safe neighborhood (this is the only set requiring BFS resource checks).
+- **533/538** have water from the walkable 30-step BFS or adjacency; 5/538 do not.
+- **0/538** have reachable wood, **0/538** rock, **0/538** bush/mushroom food, **0/538** enough 9 buildable cells within 30 steps. This outcome applies to all 538 safe 3×3 source-trace candidates.
+- **0/538** satisfy all conditions; failure combinations: 533 = missing wood+stone+food+buildable9; 5 = missing wood+stone+food+water+buildable9. The primary failure is NOT missing water in this window, nor an absent source-grid array.
+- This is a **local candidate/collision-graph vs source placement mismatch**: source cells exist in the 200×200 window but **cannot be reached by every candidate within the engine's strict 30-step limit**. Not proven whether due to geometric distance, water barriers, source solidity, or a reserved/protected terrain belt until specific source-distance diagnostics are performed.
+
+### 19.2 Positive and negative controls, not accepted gameplay proof
+
+- **Greywater centroid** `(1482,1122)`, normal start PASS, no QA landing. 634 total prefilter, sampled **91** cells, of which 75 safe center, 19 clear 3×3; **17/19** of these pass all conditions. Normal start at local (126,131), QA=false. These are sampled control counts; do not report 17 of all 634.
+- **Gulf West centroid** `(1659,1739)` has 0 wet tiles, prefilter fallback=40000; sampled **96** cells (42 clean 3×3), water=0/42, 40/42 otherwise have all wood+stone+food+buildable9. Still no legal full-match. This confirms freshwater mismatch is a distinct failure class that cannot be “fixed” by increased random trials alone.
+- No change to loot economy, island transport, source generation, player spawn selection or 336h physics authorized from these results.
+
+### 19.3 Next decisive engineering measurement
+
+Compute and compare **distance to actual source nodes** and **reachable path distance** from a representative spread of all 538 Westmouth 3×3 candidates to wood, rock, food, buildable and water; test local radius 30 versus an observational extended radius (60/120/175) without changing gameplay. Distinguish:
+(A) starter economy genuinely beyond 30 steps; (B) geometry/objects isolate it despite geometric proximity; (C) compiler protects/filters resource placements around the road/coast. Only after this distinction may we decide whether to change starting-location candidate selection, compiler route reach, or spawn acceptance conditions. **Do NOT simply grant wood/stone/food or enlarge distance threshold until quality/risk is understood.**
+
+---
+
+## 20. Westmouth 30-vs-175 walking evidence and rejection of river-as-cause hypothesis
+
+**Confirmed measurement:** dedicated test at commit `a58d92c093a46241baf9959f95a2a4ed6e64c9c3`; GitHub Actions run https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/43238181647 **SUCCESS**, artifact ID `13952898358` `veyra-spawn-reasons-a58d92c093a46241baf9959f95a2a4ed6e64c9c3-1`, digest `sha256:491aa28221b1196db4e0a02dd420545d6eeb29153860f611a07a4af16507f1af`. Manifest downloaded and parsed. No new production patch and no player-input test.
+
+Six representative **eligible safe-3×3, but globally rejected** Westmouth-centroid candidates were explored up to 175 steps via true `blockGrid` under (A) `chooseLegalSpawn()` walk graph of `grid=0 && walkable`, and (B) physical-player-wading graph `grid=0||4`. Both graphs reported **identical shortest distances to relevant source categories and buildable cells** for all six. Therefore the previously suspected *shallow/river discrepancy is NOT the cause of this specific Westmouth failure*.
+
+| Local candidate | Closest Wood / Rock / Food / Buildable / Water (BFS steps) | Earliest count of buildable cells |
+| --- | --- | --- |
+| (14,4) | 64 / 68 / 69 / 62 / 2 | 0 within 60; 3513 within 120 |
+| (33,7) | 42 / 46 / 47 / 40 / 24 | 0 within 30; 366 within 60 |
+| (16,11) | 55 / 59 / 60 / 53 / 11 | 0 within 30; 32 within 60 |
+| (6,15) | 61 / 67 / 66 / 59 / 8 | 0 within 30; 2 within 60 |
+| (15,21) | 46 / 57 / 51 / 44 / 21 | 0 within 30; 131 within 60 |
+| (10,33) | No relevant source or buildable cell reachable within depth 175 (106 visited cells only) | 0 |
+
+**Conclusion:** source/candidate neighborhoods are genuinely farther apart or physically isolated **within the current window**; moving from 30 to 60 could alter which source is seen but is NOT recommended without gameplay justification. A shallow-water allowance does not fix Westmouth. The selected candidates lie near the upper-left local window margin, so window-clipping is a plausible separate factor but NOT yet proven. To isolate whether `spawnEligible` annulus is badly positioned versus a window with zero possible starts, next check **all safe 3×3 cells across the same 200×200 window** with the same strict 30-step resource requirements, independent of the prefilter. This new test is being executed at commit `71424e0`, GitHub run https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/43239021949.
+
+**Design status:** retain criterion of nearby resources and buildable space. Do not scatter resource packs just to pass; do not increase spawn range, change POI loot or graft ferry transport to fix a spawn contract mismatch. Only scope a source-grounded adjustment after the full-window candidate comparison.
+
+---
+
+## 21. Whole-window eligibility: validated negative and positive controls (2026-11-12)
+
+**Run and evidence:** Targeted source-tested diagnostic code `web/src/veyra05/spawn-candidate-reasons.audit.test.ts` commit `36ece12fc51a56bc8ab5bcf1b6c94389ca4ed9fb`. CI run https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/43239419008 **SUCCESS**. ZIP artifact `veyra-spawn-reasons-36ece12fc51a56bc8ab5bcf1b6c94389ca4ed9fb-1`, ID **13953038999**, digest `sha256:892e8d6c6837f450f5de6b05464fcea867db8eaf843743f36180a5ba5996fdb8` downloaded and parsed. Earlier all-window `71424e0` run https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/43239021949 success, ZIP ID 13953383382; this was **independently confirmed by `36ece12` positive control**. No production changes.
+
+### 21.1 Exact demonstrated observations
+
+**Westmouth centroid window**, actual compiled origin `(673,1096)`:
+- Current `spawnEligible` prefilter =706. Exactly 538 pass 3×3 safe within prefilter, **zero** meet all survival requirements within 30 steps.
+- Discarding the current annulus/prefilter and searching **every 200×200 cell**, **25,898** have a 3×3 safe neighborhood according to the traced center/surround collision predicate.
+- A multi-source 4-neighbor BFS distance field for **actual water, wood, rock, bush/mushroom food and buildable ground**, restricted to exact engine `blockGrid===0 && economyMap.walkable` paths, finds **zero of those 25,898** cells with **all five prerequisites within 30 steps**. As the pre-screen found none, the exact per-candidate stock check had no remaining candidates to evaluate. Therefore **there is no candidate in this 200×200 window satisfying that necessary condition**, not merely a bias among its 706 chosen prefilter cells.
+- This does NOT establish that all Westmouth geography is unsuitable: the world is continuous, a 200×200 window cuts off source/path possibilities across window boundary, and the main game's *different* `veyra05-westmouth` window passed 2/2 legal starts in §18.
+
+**Positive control Greywater centroid window**, origin `(1482,1122)`:
+- Same five-distance-field algorithm finds **six independently checked strict 30-step valid positions immediately** (it deliberately stops after six, so its logged 3×3 sample count is **not** a whole-window total); each passes full source+buildable checks with the normal game collision state and no QA landing.
+- First six (local) **(4,4), (183,4), (4,5), (5,5), (4,6), (5,6)** all qualify; all happen to fall *outside* the current `spawnEligible` annulus, proving the prefilter isn't exhaustive in a window that does have legal starts. Greywater's `startRun` also succeeds from its current prefilter (previous §19).
+- The positive control makes it substantially less likely that Westmouth's zero came from a trivially broken distance-field implementation.
+
+**Negative control Gulf West centroid window** from §19: zero physical freshwater ⇒ no valid starts under the current source contract; this is a separate missing-water-in-window failure.
+
+### 21.2 Decision and engineering interpretation
+
+**Root-cause classification for this Westmouth sample is `WINDOW-ECOLOGY-COLOCATION-009`:** no location inside the inspected **fixed 200×200 window** satisfies the *necessary overlap* of water+wood+stone+food+buildable within the **current intended 30-step validator traversal**, even though all five classes exist somewhere in the total wider world and the window contains thousands of source entities. It is NOT primarily river-wading policy, a universally wrong 4-spawn count, absence of sources in the whole Westmouth region, or mere under-sampling of the currently selected spawn annulus.
+
+**Recommended correction order, NOT yet implemented:**
+1. **Do not modify `GOLD`, add artificial water/food, introduce fixed respawn points, increase radius beyond 30, or make industry spawn mandatory.** These would hide the diagnostic rather than fix its cause.
+2. Reject any attempted new-run *window* whose verified physical survival neighborhood has no legal candidate; choose a different valid window/cell from the larger world, deterministic by run seed, with **no fixed region count**. Guarantee the chosen spawn is within the window's interior safe footprint and source-accessible by actual collision; preserve world continuity and run save authority. An all-landmass candidate atlas is the long-term design; do not use 23 GOLD locality polygons as authoritative candidate zones.
+3. For each island, require a separate **landing/island travel/escape** proof before making its cells eligible for default random spawn. Ferry polylines are not playable ferry vehicles.
+4. Add negative regression for exact Westmouth centroid `(673,1096)` and positive for current `veyra05-westmouth` and Greywater. A region rejected by the safe-window selector should **not** cause silent fallback to hardcoded four windows or unapproved resource gifts.
+5. Once eligible cell source geometry and arrival/return paths have real evidence, resume industrial source/loot class/cooldown calibration. Global material rollout still requires 14-day economy + save/restart test; none is cleared by regional graph tests.
+
+**What has actually shipped:** only isolated design-branch test code/workflows and this ledger. `RED_FLAG-SPAWN-001`, `WORLD-OFFSHORE-ACCESS-001`, and physical player-input/336h acceptance remain OPEN.
+
+
+---
+
+## 22. Global start-window foundation — isolated PR #55 (2026-11-12)
+
+**Evidence:** [PR #55](https://github.com/Khanh-glitch/Soul-of-Hero/pull/55), source code tested at `eea9bd2048b950f181c96fe1c3357cb98715fac3`, [Actions run #43245734615](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/43245734615) **SUCCESS**. This is **an isolated engineering increment, NOT a production global spawn, not a full 11.2M-cell source audit, and NOT actual player-input gameplay acceptance**.
+
+**Changes actually made:**
+1. `web/src/veyra05/window.ts`: remove `anyWet===0 -> spawnEligible.fill(1)` fallback that marked the entire 40k-tile window eligible in cases that lacked any reachable-nearby freshwater prefilter candidate. It now explicitly marks no prefiltered candidates in that case; the mandatory source-based 30-step test is unchanged. No terrain/source alteration.
+2. `web/src/veyra05/global-start-discovery.ts`: implement a deterministic, non-repeating traversal of 64-tile-spaced **window origins** over the 4000×2800 frame. This is geographical discovery only; it does **not** assert that any generated window has a legal spawn, traversable escape, water, local ecology or a viable player experience.
+3. `web/src/veyra05/global-start-discovery.test.ts` plus `.github/workflows/veyra-global-start-safety.yml`: assert full origin-grid uniqueness/frame bounds and deterministic seed ordering, Westmouth centroid negative versus Greywater positive via normal `startRun` (no QA landing). Exact CI job succeeded.
+
+**Remaining design-to-production proof (P0):** determine actual globally eligible physical candidate cells using live `blockGrid`, source stock, collision-safe 3×3, five prerequisites within 30 walk steps, stable seed, and buildable count; classify and reject every island without proven physical crossing/exit; performance-bound the selection without silent four-window fallback; preserve old saves and non-Veyra modes; prove selected local/global origin persists and streams correctly; then player-input first-hour survival, return and separate-process save/restart. Only after those gates may the global selector replace the four regional layouts in `startRun`. No addition of fixed spawns, source grants, 30-step relaxation, ferry teleports or unapproved industrial loot.
+
+**Decision:** PR #55 remains DRAFT, no merge. `RED_FLAG-SPAWN-001` remains OPEN, `WORLD-OFFSHORE-ACCESS-001` remains OPEN, and industry economy calibration still waits for valid playable origin/source journey evidence.
+
+
+---
+
+## 23. Production-path global spawn candidate, strict CI and browser evidence — PR #55 (2026-11-12)
+
+**Status:** Web source implementation + test CI **PASS** on isolated [draft PR #55](https://github.com/Khanh-glitch/Soul-of-Hero/pull/55), **NOT MERGED**, NOT production-deployed, NOT real first-hour survival/human-play or offshore/336h acceptance. This supersedes §22's statement that the production `startRun` path was entirely untouched **on the PR #55 feature branch only**. It does **not** change the earlier historical branch evidence or the industrial loot design status.
+
+**Exact evidence ownership and source SHAs:**
+- `568182afb367421753f68abc122fa3d127abc4b3`: [global engine typecheck + 9/9 Vitest CI #43250100877](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/43250100877), including exact 30-step stock/collision negative/positive controls, 16 seeded fresh-run starts, and serialization/validation.
+- `59baf8b6d391ae0cabf92aae35b01da3cde86953`: [real built-Web Chromium CI #43250817742](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/43250817742) **SUCCESS**. Screenshot + manifest [artifact #13959326395](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/43250817742/artifacts/13959326395), ZIP SHA-256 `f6da4aa514d5a6161eefdf102c82f23f291e5ca09cc31d86ee476`.
+- GitHub workflow confirms exact SHA build and real DOM/keyboard clicks; no QA landing, direct player-coordinate mutation, artificial item grant, or data injection. The browser test is a **smoke test**, not a first-hour source collection or human aesthetic certification.
+
+**Engineering changes on the PR branch:**
+1. `engine.ts::startRun`: default Veyra unified-world random start (`region=null`) now uses `chooseGlobalVeyraStart` rather than selecting four fixed regional windows by modulo four. Explicit numeric demo-region requests, inspector windows, classic and other pre-existing layouts remain compatible. The selected `layoutId`, `sourceMap.veyra.originAu`, source and map digests, POI access digest and `spawnChoice` are pinned to the **selected** window before the run becomes durable.
+2. `global-start-discovery.ts`: deterministic, non-repeating 64-tile-origin traversal over the 4000×2800 stable frame. Origins are only candidate *windows*, not approved spawn locations. No assumption of four canonical starts, 23 zone starts or pre-authored GOLD `sp_*` coordinates.
+3. `global-spawn-eligibility.ts`: actual current `blockGrid` + source stock/freshwater + buildable proximity reverse-distance pre-screen. The necessary five families must be co-located within the original strict 30 walk steps; `chooseLegalSpawn(r, candidateMask)` performs final exact BFS including 3×3 and at least nine buildable cells. All candidates must also be connected through physical collision to a local window-slide edge.
+4. `ld_veyra` mainland polygon is an **offshore-veto** until inter-island boat/ferry and return route pass. It cannot grant a spawn or supersede physics. Ineligible/no-water windows are skipped/rejected, not repaired by source minting, teleport, fallback to the four old regions, or arbitrary radius increase.
+5. Runtime selection uses an explicit **24-window performance search budget**, not a 24-spawn design count or global eligibility census. If the bounded attempt cannot find a verified start, it **fails closed** with a visible reason; all seeds are NOT guaranteed. This remains an acceptance concern.
+
+**Measured tests, no extrapolation:**
+- 16 tested seeds generated 16/16 legal `startRun` results at **16 distinct global starting coordinates**. The recorded samples span different mainland window origins. Initial start measured **740–4,939 ms** in the 16-seed CI sample (runner with caching), not a device-level SLA. One selected fixed-seed duplicate run gave the exact same window+local tile. Other seeds remain untested.
+- Previous Westmouth `(673,1096)` negative and Greywater positive are retained; waterless Gulf West cannot silently become 40k 'eligible' candidates.
+- Browser chosen fresh seed `1314470747` landed at window origin `(768,896)`, local spawn `(61,101)`, global player tile `(829,997)`. Keyboard `KeyD` caused 27.53 px genuine movement. Save to `soh.state.v3`, browser page reload and Continue recovered same seed, `layoutId`, `sourceDigest=75f9e895`, and pixel position; `qaUsed=false`; browser console/page errors = 0.
+- The screenshots were independently opened at 640×360 and 1280×720: rendered marsh/shore/willow trees/player/HUD are visible. This proves a rendered Web first-start, **not** visual-art quality acceptance, harvested wood+stone, ferry/boat, UI accessibility across all devices, save after actual sliding transition, or complete gameplay enjoyment.
+
+**Unclosed critical gates / next action:**
+- G1 eligibility map has NOT exhaustively enumerated all 11.2M physical cells. A 24-window runtime search budget can fail on untested seeds. Generate a source-and-physics-grounded offline eligibility atlas or a proven bounded selection data structure, then measure startup latency (current slow sample 4.939s).
+- G2 must prove from actual selected global starts by **keyboard/mouse only**: reach, harvest and pick up wood, stone, food and water; construct a first base from paid materials; actual window-slide outbound and return; then separate-process save/reload with UID/conservation. The existing browser smoke proves only real movement and reload.
+- G3–G5 actual industrial source routes, hazards, variations in substrate/season, offline/336h and replays are NOT established by 16 successful starts. `WORLD-OFFSHORE-ACCESS-001` remains open; do not expose offshore as random start until physical transport and rescue pass.
+- `RED_FLAG-SPAWN-001` can be marked **source implementation present in draft branch / NOT FINAL ACCEPTED**; no global coverage or human-player acceptance claim, no merge/production deployment.
+
+**Control Tower decision:** Continue targeted early-survival + traversal + performance acceptance on PR #55; retain draft and owner-reviewed integration. Do not overwrite the industrial-source ledger with assumptions about Pipe/Gear/Plate scarcity, do not authorize new loot quantities or exchange rates from this spawn smoke.
+
+
+---
+
+## 24. PA1 owner decision — Building architecture is NOT inventory; deployables ARE inventory before placement (2026-11-13)
+
+**Decision by creator (LOCKED scope, not yet coded or merged):** SOH chooses **PA1: preserve core 123-item economy and repair relationships first**, not PA2/PA3 wholesale industry overhaul. The following **item ontology correction** is a prerequisite to accurate LI↔SOH comparison and future implementation.
+
+1. **Building geometry is not an item**: foundation/floor, wall, door and roof are pieces selectable in Building, not separately craftable, tradeable, storable, or inventory-bearing `stone_wall`/`iron_door` items. Player places their **wood-level** shape and may upgrade the **placed entity** through the Territory Cabinet to **stone, iron, steel**, paying a physical, authorized upgrade cost. It is prohibited to construct a new stone/iron/steel piece directly from Building. Material tier belongs to the placed piece, not to an item in inventory. Do not grant free material or change existing saves without a migration path.
+2. **Equipment/deployables ARE items pre-placement**: furnace, small/large chest, territory cabinet, workbench, campfire, refinery, generators, switches, traps, etc. must have actual craft → inventory item → storage/transport → place → world entity with health/function. Do not double-spend materials when placing an already-crafted item. Whether an already-placed device can be picked up intact is **not decided**; require explicit pickup/salvage rule and transaction/UID conservation.
+3. **Powered doors are an unresolved subtype boundary**, not permission to instantly build a steel or reinforced powered door. Prefer a separately crafted power/lock module applied to an otherwise normal, upgraded door; final UX/cost pending.
+4. **No unsupported unlock claims**: do not assert all Last Island station-device recipes are unlocked by default. Historical official/community evidence shows workbench research and recipe progression vary by version/mode. Confirm individual facility unlocks before copying.
+5. **Steel tier is decided conceptually**, but steel material ID, source, HP, cost, repair and territory upkeep are **NOT DECIDED**. The current SOH Web catalog contains `refined_iron_ingot` but no separate authoritative `steel_ingot`; do not silently equate them.
+
+**Snapshot counts, avoiding false subtraction:** SOH `ITEMS` contains **123** already excluding all geometry in `STRUCTS`. SOH `STRUCTS` contains **36** entries: **10** direct-place geometry variants (`floor_wood, floor_stone, wall_wood, wall_plank, wall_stone, wall_brick, door_wood, door_iron, roof_thatch, roof_tile`) and **26** other placed entities. `escrow` already points to actual `escrow_chest` `ITEMS` entry; **25** other placed entities lack item inventory representation under the creator's new rule (24 ordinary fixtures + `door_powered` special case). Fully materializing all 25 would produce **123+25=148** candidate inventory-item IDs, **NOT** 123-10=113. This is a *future ontology count*, not a statement of implemented gameplay.
+
+**LI comparison custody:** Restored LI Atlas original archive SHA-256 `8b4fdedaa9397baaa1bcb8ba58d5c95ca2e7cbdd679963c6d4177fc9ab861e98`; cross-era LI research graph has **132 ID labels** (not a full single-mode LI database, with duplicate aliases/loot containers), mapped one by one to the pinned SOH Web runtime source export `11a3306519103c7b309ae54819a100f95b8e8f60`. Classifications: 17 same-ID items; 14 functional counterparts; 24 partial counterparts; 50 intentionally replaced-system weapon/ammo/etc; 17 unmatched names; 9 alias/ambiguous rows; 1 loot-container row not proven inventory. These labels do **not** imply all missing items should be introduced. LI `Parts (零件)` is NOT equal 1:1 to SOH `Spares` or `Mechanical Parts`; LI `Electronic Parts` is also NOT identical to either. 22 extra officially documented LI facility names (cabinets/chests/furnaces/Workbench/etc.) were examined separately because the 132-row item index omitted them; this is **not proof each is a craftable inventory item**. Reference: https://hero.yingxiong.com/info/2023/0726/13493.html and https://news.4399.com/zhytgz/xinde/m/895633.html .
+
+**PA1 implementation gates:** architecture piece upgrade authority + HP/ownership/streaming persistence; crafted fixture inventory UID + source custody + unique transaction; no free duplication/silent double spending; preserve storage queues and placed contents; old saves migrate with original material tier intact; station/fixture recipes require verified unlock policies; UI keeps Building geometry separate from Crafting deployables. This entry is a **design decision only on audit branch; no production mutation, no merge, no economy balance change.**
+
+
+---
+
+## 25. PA1 Building shape coverage — expanded from 4 to 15 wooden forms (2026-11-13)
+
+**Code candidate:** branch feature/pa1-building-ontology-20261113. **NOT merged, NOT deployed, NOT Last Island full-building parity.** The earlier four-piece BUILD_KIT was an incomplete UI subset and is NOT the creator's intended maximum.
+
+**LI reference scope, not a SOH implementation claim:** the [2024 official shape inventory](https://hero.yingxiong.com/info/2024/0131/13737.html) lists foundations, triangle floors/ceilings, doors, door frames, window walls, half walls, triangle walls, roof corners, stairs L/U, railings, etc. The [2023 official curved-shapes release](https://hero.yingxiong.com/info/2023/0104/13178.html) also covers curved foundations/walls/windows/doors/ceilings/roof/balconies. Do NOT treat the original 2D sprites in SOH as 3D geometric parity.
+
+**Wooden non-inventory geometry actually added to Building (15 total, 11 new):**
+
+| Page | Runtime IDs | Count |
+| --- | --- | ---: |
+| Foundation | floor_wood, floor_triangle_wood, ceiling_wood, ceiling_triangle_wood | 4 |
+| Wall | wall_wood, wall_window_wood, wall_doorframe_wood, door_wood, wall_half_wood, wall_pillar_wood, wall_triangle_wood, fence_wood | 8 |
+| Roof | roof_thatch, roof_slope_thatch, roof_corner_thatch | 3 |
+| TOTAL | All base architecture, NOT inventory items | 15 |
+
+**Real execution:** each selected piece consumes physical raw resources once under a normal Build intent; has distinct source-made pixel art, placed entity, HP, render/ghost and save/reclaim support. BuildBar groups shapes into Foundation/Wall/Roof with per-page 1–8 hotkeys; BuildPanel Shell shows all 15. A door frame is traversable and does NOT seal shelter. Window wall seals shelter, blocks passage and lets non-physical sight rays through. Half walls/pillars/fences block passage but do not seal shelter. A door built on an existing paid wooden frame installs into the SAME entity ID, spends only the door's materials and preserves provenance for reclaim and save validation. These capabilities are testable, not solely decorative buttons.
+
+**Explicitly NOT completed:** triangle/corner forms are still one whole 2D tile and do not have fractional-shape collision/support/joins. Sloped roofs are not climbable ramps; ceilings are cover, not walkable upper storeys. Structural strength/support, rotations, L/U/straight stair gameplay, half-tile joins, tall/double doors, stairs between player-built floors, balconies and curved pieces are not present. The fifteen wooden shapes also do not have an approved shape-preserving wood→stone→iron→steel matrix: existing wood floor/wall/door/roof legacy upgrades remain only provisional mechanics; notably the existing wood door→iron door path skips stone, and brick is NOT steel. No steel inventory identity/cost/drop rate was invented.
+
+**Next hard gates:** authoritative geometry/rotation/upper floor and stair traversals; owner-approved steel and tier upgrade costs; no duplication/loss across damage, building UID, world sliding, reclaim and save; real browser screenshots, exploratory player construction and rollback/migration. Continue as a bounded PA1 development PR; NEVER mark complete because tests alone pass.
+
+**Deployable boundary remains §24:** 24 packable device items are not architecture shapes. Escrow already has a physical item. Powered-door electrical module design remains separate and unresolved. No additional industrial sink or loot policy introduced.
+
+## 26. PA1 recovered-paper recipe cutover — frozen revisions, retired bench formula, corrected BOMs, live-vs-historical audit honesty (2026-11-13)
+
+**Code candidate:** branch `feature/pa1-building-ontology-20261113` (PR #56, Draft, base `audit/item-recipe-network-20261112`). **NOT merged, NOT deployed, NOT a claim that the recovered paper is fully implemented.** Evidence grade per `web/ref/OPERATIONS.md`: everything below is CODE+FIXTURE (`SPEC≈CODE`); nothing here is HUMAN_S4 or LONG_S5.
+
+**Why a revision table instead of editing recipes in place.** Station jobs and blueprints are persisted by recipe *id*, so rewriting `RECIPES` in place silently re-prices work already queued in an old save. The cutover therefore freezes the old rows and moves the live rows forward:
+
+| ID | frozen revision 1 (`LEGACY_RECIPES`) | live revision 2 |
+| --- | --- | --- |
+| `metal_pipe` | 2 refined iron + 1 Mechanical Part → 1, Workbench L2, 18 s | same inputs → **2 pipes**; Recycler route `X:pipe-v3` (10 s → 1 refined iron, **no Mechanical Part**) |
+| `mechanical_gear` | 2 refined + 2 MP + 1 fastener | 1 refined + 1 iron ingot + 2 MP + 1 fastener |
+| `iron_plate` | 2 refined + 1 pipe + 1 MP → 2 | 2 refined + **1 fastener set** → 2 (the pipe sink is retired) |
+| `motorbike_kit` | frame + drive + 2 iron ingots + 2 fasteners, L3, 40 s | frame + drive + **2 iron plates** + 2 fasteners, **dry** (no fuel packaged) |
+| `fuel_can` recipe + `studyRecipe` | charcoal + sulfur + glass, L2, 20 s | **RETIRED.** Item kept with `fuel: 60`; canisters come only from `refine_salvaged_oil` and the four `refinery_*` routes |
+
+Census after cutover: **112 recipes (−1 retired), 147 items, `PA1_BASE_GEOMETRY` 15, `DEPLOYABLE_TYPES` 24, 24/24 packs starter-known with `base: true`.**
+
+**Contract that keeps old saves playable.** `RECIPE_REVISION = 2`. Every new job stamps `Job.rv`; `recipeAtRevision(id, rev)` resolves a stamped job against the frozen row and never against the live row (`rev > RECIPE_REVISION → null`, and `validate()` rejects that, so a future-save downgrade fails loudly instead of re-pricing work). A save with no `rv` resolves to `id@1` for ids frozen at revision 1, otherwise to the live row — that is the whole backwards-compat story, and `retired` ids are pruned from knowledge with a one-shot cutover note (`migrated.retiredNoticeShown`). Bumping the game by one recipe change means: bump by exactly 1, freeze a key for every changed or retired id, and only new jobs stamp the new `rv`.
+
+**Retiring a recipe must not edit the item.** Deleting `ITEMS.fuel_can.fuel` alongside the formula broke five tests and made canisters non-fuel. The item is a fuel *carrier*; the retired object was only the improvised bench formula. Corollary that a test initially got wrong: `stationBurnable('fuel_can')` stays `false` by design (`catalog.ts` excludes canisters) — a canister feeds generators and motorbikes, not station kindling.
+
+**Research families stay priced but dormant.** `isFamilyGated = price !== null && enforce`, and every family ships `enforce: false`, so reverting the starter grant to `base: true` did not regress any ontology test. `ENERGY` is the only priced family (`spares ×5, iron_ingot ×2`, `SOURCE_APPROVED`); the rest are `price: null`. `unlockFamily` **refuses to charge** for a study that would withhold nothing, pays once through a `F:<FAMILY>` queue job (cancel refunds the exact quantity) and grants exactly the still-unknown members. Turning enforcement on is an open Control-Tower decision — one flag, not a rewrite.
+
+**Audits may not launder a frozen rule as a live route.** The M5 recycler audit derived row liveness from a hardcoded `cid === 'X:pipe-v1'`, so when `X:pipe-v2` was frozen and `X:pipe-v3` became the live pipe rule, the over-return-prone `v2` was still reported as an active route. Liveness is now derived from `recoveryPlan()`, the same function the engine uses to choose a rule for a new job. The LIVE Recycler table is **10 rows**; `X:pipe-v1` and `X:pipe-v2` are emitted as `HISTORICAL_SAVED_JOBS_ONLY` + `SUPERSEDED_BY_X:pipe-v3`. Growing the LIVE count to 11 was rejected on purpose: an audit row is a claim about what the game will do next, not about what it once did. Fixture pins now name the historical pair explicitly, and `b04-p4-world` pins new pipe jobs to `X:pipe-v3` (1 ingot, 10 s, no Mechanical Part) rather than asserting a net loss that v3 no longer produces.
+
+**Deploy readiness tells the truth about custody.** `structurePreparation()` returns a `pack` projection for any structure with `d.item`: readiness is "do I carry an intact packed device", never "do I carry the ore". This mirrors `buildReason()`, whose cost for a device is exactly `[[d.item, 1]]` — the material list was paid once at the bench and is never charged a second time at placement. The Deploy detail row now spends the pack in its diagram, its CTA reads "Choose site · spends the pack" (or "Craft the pack first" when blocked), and a damaged pack asks for a repair instead of more materials. `web/tests/pa1-deploy-custody.test.ts` walks **all 24** devices in both directions and pins the four gated exceptions by name (`claim`, `refinery`, `farm_controller` need a site/level-2 Workbench; `oil_pump` needs an authorized field), so a new precondition cannot hide and a removed one must shrink the list.
+
+**Browser evidence, and how it was obtained.** `web/e2e/pa1-deploy-custody.mjs` cannot run in this sandbox — there are no Chromium binaries and `playwright install` is blocked — so the claim is carried by CI: `pa1-building-browser.yml` now runs it as its own step against the pinned build and reached **`PASS_BROWSER_UI` on `945fb8f`** (15 wooden names across Foundation 4 / Wall 8 / Roof 3 with no device among them; all 10 Stations + 9 Devices rows stating a requirement in the shipped vocabulary; the Workbench row reading "Craft the packed Workbench first" with a disabled CTA and its diagram input titled "placement spends this item"; zero console/page errors). Two lessons from its first two red runs, both recorded so they are not relearned: the step must start from the CI-proven title-screen sequence (`New run → VEYRA · Unified World → Begin the 14 days`), not a preset screen; and a "no devices in the Build palette" check by NAME-WORD was a false alarm that failed on the legitimately wooden *Wood Door Frame* / *Wood Door*, which is why the palette check is now an exact 15-name list rather than a word filter. Because Actions logs are served from blob storage this sandbox cannot read, the step also emits its failure as an `::error::` annotation and the workflow echoes the evidence manifests onto the open PR on failure — a red run stays diagnosable from here. Seven `MISSING_PAPER_BOM` slots, the 45 upper-tier STEEL costs, the `CORE_SPECIFIC` seven costs, armor/`ARMORY` pricing, powered-door geometry and ID, higher-tier geometry and the fractional-collision/stair work from §25 remain open by design. No family enforcement was switched on. The A/B regression method for this turn stayed a FAIL-**set** diff against `023ec62` (43 scoped failures at baseline, e.g. `b02-ir-sensor`, `s06-circuits`, `mec01-a2` "three different Pipe consequences", `economy-network` structure repair): zero new names, not "green".
+
+**Next hard gates:** CI Chromium run of `pa1-deploy-custody.mjs` on this SHA; a Control-Tower decision on `ENERGY`/family `enforce`; resolution of the seven MISSING_PAPER_BOM slots from paper, not from invented numbers; then a real save/rollback drill on a revision-1 save that already has station jobs queued.
+
+**Full-suite A/B read-back, not a scoped sample.** The scoped 31-file comparison was not enough: a complete run of every test file on this branch was paired with the identical command at `023ec62` (both `vitest run --fileParallelism=false`, logs kept outside the repo as `full-base2.log` / `full-cur3.log`). Baseline `023ec62`: **152 files, 47 failing files, 188 failing tests, 179 distinct failing names.** The first branch run surfaced **9 failing names the scoped set had never touched**, all of them stale fixtures of this cutover rather than behaviour defects, each fixed by naming the new contract instead of loosening a number:
+
+| File | Why it changed | Fix |
+| --- | --- | --- |
+| `b1-storage` (5) | the load-path grant moved from `ALWAYS_KNOWN_RECIPES` to `starterKnowledge()`, so the pre-policy migration fixture no longer matched | fixture derives its expectation from `starterKnowledge()` and now pins the contract itself: legacy knowledge is only ever appended to, and the only id a load may take away is one the paper retired |
+| `b05-recycler-reload` | an in-flight pipe job is now stamped `X:pipe-v3` | rule pinned to `v3`; the "no Mechanical Part minted" half of the over-return correction became an explicit assertion |
+| `b01-industrial-loot` | the retired `iron_plate` pipe sink left ONE craft consumer, and the test asked for "≥2" | pin the consumer **set** (`['vehicle_frame_piped']`) plus `recoveryPlan` → `X:pipe-v3` returning `[refined_iron_ingot ×1]`; a set fails loudly when a sink appears or disappears, a count hides it |
+| `motorbike` | the dry kit eats 2 iron plates instead of 2 ingots | fixture hands the bench 5 ingots and 2 plates, and asserts the plates are spent to zero |
+| `mec01-a2-pipe-blade`, `mec01-gear-decision-network` | `legalTileNear` scanned for a legal Workbench site while the §24 pack rule was already answering "Need an intact packed device." on every tile — the cause of both failures at `023ec62` | the fixtures now craft the packed Workbench before the scan, i.e. they follow the real custody flow; both files are green (14 tests) |
+
+After those fixes the same pair of full runs gives **154 files, 45 failing files, 186 failing tests** on the branch against the same baseline — a failing-name diff of **0 new, 2 removed** (the two `mec01-*` bench fixtures above), with 32 more tests passing because this branch also adds `pa1-deploy-custody` (4) and the `pa1-building-ontology` custody cases (4) on top of the migrated pins. State it plainly: the branch is NOT green, the baseline was never green in this sandbox, and the acceptance claim is exactly "no new failing name, and two old ones retired". Two further files were aligned with the same method AFTER that pair of runs (`economy-network`, `mec01-b-consumer-choice`), so the branch's failing-name count only dropped below the 177 above; the last 13-file confirmation batch over every file this turn touched — `economy-network`, `mec01-b-consumer-choice`, `b01-industrial-loot`, `b05-recycler-reload`, `b1-storage`, `motorbike`, both `mec01` bench files, `pa1-building-ontology`, `pa1-deploy-custody`, `pa1-recipe-migration`, `economic-network-m5-audits`, `visual-readmodels` — is **134 passed / 0 failed**, with `tsc --noEmit` and the production `vite build` clean.
+
+**Two more stale surfaces corrected in the same pass, because both are the cutover's own subject matter:**
+
+* `economy-network` "repairs real owned structure HP…" expected a **Workbench** to be patched in place with wood and stone. `repairStructure` refuses in-place material patching for any structure that owns a packed item (`engine.ts:2251`, the `def.item` guard — an explicit §24 consequence, mirrored by `nearestHomeStructure`). The test now repairs a **Wood Wall** and pins the bounded arithmetic of that path (build cost 5 wood ⇒ one patch is `ceil(5×0.25)`=2 wood and heals `ceil(160/4)`=40 HP, repeated, then refused at zero stock without healing or inventing a debt), and a second test pins the device refusal itself plus "a refused repair spends nothing". The file went 9 pass / 1 fail → **11 pass / 0 fail**.
+* `mec01-b-consumer-choice` failed 5 of 8 at `023ec62` for the same legalBench-vs-pack reason as the other bench fixtures, and its "consumer B" claim was the retired pipe→plate sink itself. Both are now honest: the fixture pays for the packed Workbench before scanning for a site, the plate test pins `RECIPES.iron_plate.ins = 2 refined + 1 fastener` and asserts that **every paid pipe section survives** platemaking, the pipe test states the rev-2 yield (one cycle ⇒ two sections, one consumed by the piped frame), and the describe title stops claiming "two" for the pipe. Its tracked artifact `web/evidence/mec01-b/consumer-choice.json` was regenerated through the repo's own switch (`SOH_WRITE_EVIDENCE=1`) — it now reads `pipeConsumersProvenInSiblingTests: ["vehicle_frame_piped"]` + `pipeSinkRetiredByPa1: "iron_plate"` + `pipeRecoveryRoute: "X:pipe-v3"` instead of asserting a sink that no longer exists. **8 pass / 0 fail.**
+
+The general rule this turn produced, worth carrying: a pin that counts consumers is a liability, a pin that names them is a contract. Three separate files ("at least two real, paid recipes") passed while the topology changed underneath them and would equally have passed had a sink been invented back in.
+
+## 27. PA1 acceptance round — the recovered ledger had to be moved into the panel the router opens (2026-11-13)
+
+**Read-back measured at `1e2563d` on `feature/pa1-building-ontology-20261113` (PR #56, still Draft).** Two commits came after it — this section and the one-line correction of its timing — both documentation-only, and the full acceptance pair (strict source/runtime + Real Chromium) is green at the pushed head `2be5162`.
+
+**A green store test is not a shipped screen.** `pa1-recipe-migration` proved the family ledger in the state, and the Chromium gate `web/e2e/pa1-research-visible.mjs` — title screen → QA preset → real movement keys → real `E` — then failed with a label census of `"Use Research Table"` and no panel. The cause was in the product: `ContainerPanel` early-returns `<StationConsole/>` for every non-compact station, while the recovered technology-family section had been written into the retired `ResearchBody` column. So the shipped console had no family list at all. Fix is one implementation in `web/src/ui/ResearchFamilies.tsx` rendered by **both** hosts, plus `tests/pa1-research-console.test.tsx`, which mounts the router entry (`ContainerPanel`) in Node and asserts the console contains `Technology families`, the eleven family names, `cost recorded (5 Spares + 2 Iron Ingot) · 9 formulas · nothing withheld in this build`, ten rows reading `open design · no authorized cost`, no `Commission study` button anywhere, and `studied · 9 formulas` once the family is owned. Rule carried forward: a UI claim is pinned through the component the router chooses, or it is pinned nowhere.
+
+**`E` is not unconditionally "use", and that is a rule worth knowing.** `case 'KeyQ': case 'KeyE'` gives the key to the active hotbar stack first: with a Creator Core selected, `E` arms the Signature skill and `interact()` is skipped (`!ITEMS[active]?.creatorCore`). A full-gear survivor therefore cannot open a station until a non-Core slot is active. The browser gate now selects a slot, presses `E`, and cancels any armed aim with the right button, recording which slot worked — the engine behavior is unchanged, because retuning combat input priority is not this PR's authority.
+
+**Browser assertions pin the refusal, not the phrasing.** CI's Chromium job went red on `1fb3286` with `workbench CTA: No placeable pack`, which was a stale copy pin, not a defect: P0a made the button *more* truthful (it names what is missing instead of echoing "Craft the pack first"). The assertion now pins the new wording **and** `ctaDisabled === true`, and the powered-door guard forbids the actual lie (`Materials prepared`, `device in hand`, `spends the pack`) rather than any sentence that mentions a pack — the honest door row is allowed to say *no approved packed-device formula exists in this build*.
+
+**Fixture honesty beats a cleverer walk.** Three revisions of the research gate failed on the same physics: `findInteract` keeps the nearest interactable within 30 px of a point 6 px ahead of the aim, so in `industry`'s machine column the refinery at 16 px always outranks the table at 22.6 px, and no path found a tile where the table won. Rather than simulate a wander, the QA sandbox gained the `research_access` preset: one authorized table on free ground within a tile of the spawn, nothing else in reach — plus the packed spare, whose key is `deploy_research` (deployables are `deploy_` + structure type; the invented `deploy_research_table` crashed the run, and `addItem` returning the leftover quantity is now turned into a build-time throw). `tests/pa1-research-console.test.tsx` pins the invariant the gate depends on: the table is the nearest prompt-bearing structure to the spawn, so a future rival machine fails a Node test instead of spending ten minutes of Chromium.
+
+**Same-SHA read-back, again with names not colours.** Full Web suite, serial, one process, `--fileParallelism=false`: `42 failed · 111 passed · 4 skipped (157)` files and `179 failed · 875 passed · 6 skipped (1060)` tests in 968.02 s, against the pre-edit baseline `023ec62` at `47 · 101 · 4 (152)` / `188 · 814 · 6 (1008)` in 1395 s. Same-name diff: **0 new failing names, 9 retired.** The exit code is 1 because 179 baseline-owned failures remain; the four `b04-p4-world` reds are in the baseline FAIL set and were left alone, as everything else in that set is.
+
+**A deliverable must not confuse its baseline with its provenance.** `SOH_ECONOMIC_GRAPH.json` stated one commit — `52f27959…` on `arena/f561fd0d-soul-of-hero` — next to edges regenerated from the post-cutover catalog (REPAIR_INPUT 41 → 104, edgeCount 2,358). The frozen block is kept and labelled for what it is (the M5 crosswalk reference), and `generatedFrom` now records `sourceSHA`, how it was resolved, `recipeRevision` and `retiredRecipes`, asserted from the file on disk. The stamp is applied by the exporter, not the pure builder, so `graph1 === graph2` remains a determinism pin.
+
+## 28. PA1 Control-Tower corrections — geometry instead of presence, the reloaded state instead of the live one, and a proof step that had to stop being a string (2026-11-14)
+
+**Measured on `arena/de604ab6-soul-of-hero`; the read-back below ran at `1fba078eb8f0037e77c8cc3521b87f54dfe5061a`, the same SHA both PA1 workflows passed at.** Control Tower's HOLD (comment `6868050500`, judged at `70b2819`) named two P0 defects. Neither was a missing feature. Both were claims that outran their evidence — one in the shipped UI, one inside the test that was meant to prove the UI's rules survive a restart.
+
+**P0-1 — "in the DOM" is not "on the screen", and a `//` line where JSX expects children is text.** The ledger had been appended to the tail of the Blueprints column, whose scroll area is capped at 142 px: `innerText()` found it and no player ever did. The fix is structural, not cosmetic. `StationConsole` gained a third tab, `Technology`, whose `research-family-pane` *replaces* the two-column body instead of dangling under it; the raw `//` justification lines are out of the JSX (`{/* */}` or nothing). `ResearchFamilies.tsx` stays the single shared implementation — the retired `ResearchBody` column in `panels.tsx` renders the same component, so the two hosts cannot drift — and `enforce:false`, the recovered 5 Spares + 2 Iron Ingot price, the 9-formula census and the ten `open design · no authorized cost` rows are untouched. `api.stationConsoleTab` is a test/inspection seam the shipped path never sets, which is what lets a static render pin a tab the player reaches by clicking.
+
+**Legibility became geometry, and geometry argued back four times.** `web/e2e/pa1-research-visible.mjs` clicks the real `research-tab-families` control and, for the heading, the ENERGY row and the *last* family row, requires `boundingBox()` inside the viewport **and** inside the pane's and panel's own boxes, plus `document.elementFromPoint` resolving to the measured element or a descendant — at 1280×720 and at the shipped minimum 640×360 — then counts rows, demands zero buy controls in the pane, and runs a `//`/identifier leak check over all three tabs' painted text. Each iteration caught something real: (1) `778eb33` failed with *the Blueprints view lost its directed-study list* because `.console-h` carries `text-transform: uppercase` and `innerText()` returns the transformed text — the screen said `DIRECTED STUDY`; section titles now match `/i` while row copy stays case-exact, because a row's wording is a claim and a heading's casing is not. (2) Growing the console to `330/288` looked like an accessibility improvement and was a regression: the whole UI lives inside a fixed **640×360** stage (`VIEW_W/VIEW_H`), so `top:34 + maxHeight:330 = 364` overflowed it and the lower rows fell outside the viewport at every window size — the sizes went back to `296/246` and the arithmetic is now *pinned* (`left+width ≤ VIEW_W`, `top+maxHeight ≤ VIEW_H`, `top+78+pane ≤ VIEW_H`). (3) "Inside the pane" was satisfiable while an ancestor's clip painted something else at that point, so the hit test had to become element-level (`el === at || el.contains(at)`). (4) `edad892` measured the 640×360 heading at `y:-1` — because the preceding "prove row eleven is reachable" step had left the *pane scrolled to the bottom*, and a scroll is state the player keeps. `resetPane()` returns it to the top before the shot and before the next measurement. **The gate was right each time; weakening it was never the fix.**
+
+**What the browser reported at the SHA CI accepted** (from the run's check-run annotation, `132278286547`): `status: COMPLETE · gate: PASS_BROWSER_UI · problems: [] · familiesSeen: 11 · purchaseControls {energyRow:0, pane:0}`; 1280×720 — heading `682,230 564×30`, ENERGY row `682,351 564×62`, last row `682,509 564×32`; 640×360 — heading `341,115 282×15`, ENERGY row `341,176 282×31`, last row `341,255 282×16`; every one `visible/fits/inPane/inPanel` true with `hitTest:"hits-element"`. Captured ENERGY copy: `ENERGY cost recorded (5 Spares + 2 Iron Ingot) · 9 formulas · nothing withheld in this build`.
+
+**A green step is not an executed step.** The workflow's visibility check was embedded as `node -e '…'` inside a YAML block scalar; its `\"` escapes are a JavaScript syntax error in a shell single-quoted string, and the runner reported the step **successful** — a green check that evaluated nothing, the same failure mode as a route the router skips, now for the fourth time on this branch. It is `web/scripts/pa1-research-proof.mjs`: parseable, `node --check`ed, run by `web/tests/pa1-research-proof.test.ts` against fixture manifests so its verdicts are tested without a browser (honest frames → COMPLETE; a clipped row, an un-clicked tab, a missing family or a drifted ENERGY price → exit 1 naming each; a red gate → publish and exit 0, so one red step names the real defect), and pinned by `web/tests/pa1-research-visible-gate.test.ts` so the YAML cannot go back to inline JS.
+
+**The channel for evidence had to be built, not assumed.** Job logs and artifact zips redirect to Actions blob storage, unreachable from an offline sandbox, and step summaries are not in the REST API. So the proof publishes its digest as a workflow-command **annotation**, which any reviewer can read with `GET /repos/{owner}/{repo}/check-runs/{id}/annotations` — verdict and problems ordered first, sliced at 4000 characters so truncation costs frames rather than the diagnosis. Meanwhile the report step's fallback of "the newest open PR" posted this session's manifest to **PR #59**, another wave's thread: deleted, and the step now resolves the PR by head-ref (the `gh api … --jq --arg b` in it was invalid too — `--arg` is a jq flag — which is why `782cc25` produced no readable evidence at all) and writes to the job summary when no open PR carries the branch.
+
+**P0-2 — a helper bound to the wrong game makes the truest-looking test lie.** `setup().place` closed over the `const g = newGame()` it created, so the step titled "redeploy after a restart" dispatched `build` against the pre-restart run; the reloaded `g2` kept its pack and gained no Workbench, and a comment documented the symptom (`the reloaded copy still holds the pack (the placement below happened in the live run)`). `place(type, pack?, game = g)` takes the state to act on and reads the entity back out of that state's own run, and the reloaded run is now the thing the assertions describe: same original physical UID, `hp 160`, exactly one carried pack spent (`s2() === -1`), **no** raw materials charged at placement, one bench in `r2` and none in the pre-restart `r` (whose own unplaced pack is untouched), a replayed intent refused with no duplicate item and no refund, a second reload that still finds the deployed entity with its UID and condition, and the worn snapshot still saying `dur: 40` so the paid re-forge did not rewrite history. **Mutation-checked, because a title is not a proof:** reverting to `o.place('workbench')` fails with `expected 5 to be -1`. The conservation ledger — two build lists plus one 4-wood/1-stone patch — is unchanged, and no repair rule was loosened.
+
+**Same-SHA read-back, names not colours.** Serial, one process, `--fileParallelism=false`, `--testTimeout=180000`, with the baseline `023ec62` re-measured in this session rather than re-quoted: Serial, one process, `--fileParallelism=false --testTimeout=180000`, with the baseline `023ec62` **re-measured in this session** rather than re-quoted (the earlier log was lost with its workspace, and a number that cannot be re-derived is not a number worth reporting).
+
+| | test files | tests | duration |
+|---|---|---|---|
+| baseline `023ec62` | 47 failed · 101 passed · 4 skipped (152) | 188 failed · 814 passed · 6 skipped (1008) | 1364.54 s |
+| `1fba078` | 42 failed · 113 passed · 4 skipped (159) | 179 failed · 891 passed · 6 skipped (1076) | 881.58 s |
+
+**NEW failing names: 0. RETIRED failing names: 9** — the atlas-export, `economy-network` repair, `mec01-a2-pipe-blade`, four `mec01-b-consumer-choice` and `mec01-gear-decision-network` names retired by §26's recipe cutover, still retired at this SHA. The arithmetic closes: +68 test names, +77 passing, −9 failing. Exit 1 is expected and is not a regression: those 179 reds belong to other waves — grouped by owner they are B-wave build/material 56, MEC-01 46, home/rest/escrow/base-soh 33, world systems (power, circuits, calendar, offline parity) 32, Control-Tower corrective and audit 7, Veyra05 and economic-network exports 5 — and **none of them is in a `pa1-*` file**. Nothing was hidden behind a new skip either: `git diff 70b2819..1fba078` adds no `.skip`/`.todo` (the whole round is 12 files, +648/−47), and skipped totals are identical at both SHAs.
+
+**Rules this round leaves behind.** (1) A UI claim is pinned to painted geometry — viewport *and* container boxes *and* a hit test on the element — or it is pinned nowhere. (2) The stage size is a hard bound on every panel: `VIEW_W/VIEW_H` is 640×360 and a console that overflows it is unreadable at every window size. (3) Rendered text includes what CSS did to it. (4) A scroll is player-visible state; a gate that scrolls must reset before it measures. (5) A test helper takes the state under test as an argument whenever the test is about a state transition. (6) Nothing that decides a verdict may live inside a YAML string. (7) Evidence goes to the thread that owns the branch — and the channel must be one the reader can actually reach.
+
+*Still HOLD, unchanged by this round:* ENERGY `enforce:false` — no enforcement is approved; the `ceil(0.25 × buildCost)` re-forge price on all 24 packed devices is **PROVISIONAL, awaiting a Creator balance decision**, derived from structure-patch arithmetic and not byte-verified Creator/Last Island law (no fictitious LI ratio backfill); `PA1_REV1_CAPTURE.md`'s "independent new runtime process opening/re-saving a persisted live profile on disk" stays **PARTIAL**; the QA full-gear `Known 112/112` sandbox is valid for routing/UI only, never for human tech-unlock progression; 336h and Last Island building parity are not complete, and neither is PA1.
+
+## 29. Item Ontology V2 — audit on the PA1 head, safe fixes shipped, ten proposals awaiting a decision (2026-11-14)
+
+**Baseline.** Taken on `feature/pa1-building-ontology-20261113` at `934f4471326116737f206d2fb2d9a84ba77328da` (draft PR #56). PR #60 was rejected and is not an ancestor of this work; its 213-line graph module was not copied. Everything below is a projection of the existing multigraph (`web/src/game/economic-graph.ts`), not a second graph.
+
+**Where it lives.** One generated appendix, [`web/ref/item-ontology-v2/APPENDIX.md`](../../web/ref/item-ontology-v2/APPENDIX.md), with its data siblings in the same folder (`ontology.json`, `manifest.csv`, `li-crosswalk.csv`, `index.html`). All five are written by `web/tests/item-ontology-v2.test.ts` from one data object and the test fails when a committed copy drifts from the live game. Regenerate with `SOH_WRITE_ONTOLOGY=1`.
+
+**Shipped in this round (no mechanic, recipe, id, source or save change).**
+
+1. *Audit defect.* The reachability solver never added the physical `blueprint` item, so both layouts reported Blueprint as unreachable although 28 static blueprint containers and paid research mint it. Fixed in the solver; shipping-unreachable 12 → 11, Veyra-unreachable 15 → 14.
+2. *Projection.* `item-ontology.ts` derives, per item, `craft_depth`, `station_tier`, `research_tier`, `acquisition_types` per layout and `runtime_reachability` as five separate facts; `rarity` is always `null` because the game has no rarity stat. Research and vendor spends routed through `currency:spares` are attributed to `spares`.
+3. *Grouping.* The inventory chip no longer says "MATERIAL" for 53 unrelated items; `item-class.ts` gives each a class (ORE, SALVAGE, PARTS, METAL, COMPONENT, …). `ItemDef.cat` is untouched and still drives every runtime branch.
+4. *Descriptions.* "Wolf Fur" → "Fur" (it drops from fox and hare, never from wolves); the literal `SOH_PROVISIONAL:` prefix and PA1 changelog sentences removed from player-facing text (the provenance moved to `SOH_PROVISIONAL_ITEMS`); Root Broth names both of its routes.
+
+**Not shipped — awaiting the Creator.** P1 Parts naming (Option A, recommended), P2 merge Fasteners into Machine Parts (this would reverse part of §26), P3 Pipe gets a required job, P4 Blade becomes the Salvager Axe edge, P5 Recycler rule for Iron Plate, P6 retire Plank, P7 one display language, P8 Veyra source gaps (HOLD), P9 Crude Petroleum (HOLD), P10 legacy cores (HOLD). Each has before/after recipes and a migration plan in the appendix; a test pins that every "before" equals the live catalog and that none of them is implemented.
+
+**What was run.** `tests/item-ontology-v2.test.ts` (projection, classes, decisions, drift) and `tests/item-ontology-v2-routes.test.ts` (engine intents on granted stock: scrap → Machine Parts, research refused without Spares, Damaged Drive → 2 Spares at the Recycler; ore → ingot at a fuelled Furnace → bench products; Pipe/Gear/Blade recycle to their versioned returns and an Iron Plate is refused). Browser evidence was **not** produced: the sandbox cannot download a Playwright browser. `tests/economic-network-m2.test.ts` Suites 2 and 8 fail identically at `934f447` without these changes.
+
+## 30. Item Ontology V2, round 2 — five proposals executed at recipe revision 3, two ruled out, three still open (2026-11-14)
+
+**Authority.** Control Tower ruling on draft PR #61: P1, P3 (Utility Frame only), P4, P5, P7 approved; P2 and P6 not authorised (analysis only); P8, P9, P10 stay unimplemented but must end in a concrete conclusion. Same branch, same PR, still Draft. **Item V2 is not complete.**
+
+**Executed (recipe revision 2 → 3).**
+
+| | Change | Save / migration |
+|---|---|---|
+| P1 | `spares` shown as **Parts** (VN *Linh kiện*); `mechanical_parts` shown as **Machine Parts** (VN *Bộ phận máy*). Ids, sources, research prices, trader, Recycler rights unchanged. Parts still has no recipe. | none (display) |
+| P3 | `vehicle_frame` = 1 Metal Pipe + 2 Iron Ingot + 2 Machine Parts + 2 Parts, 22 s. `vehicle_frame_piped` retired. **Oil Pump and Refinery costs untouched.** | `vehicle_frame@2`, `vehicle_frame_piped@2` frozen; queued rev-2 jobs finish and refund under the old BOM |
+| P4 | `industrial_axe` = Iron Axe + 1 Metal Blade + 1 Machine Part + 2 Parts. | `industrial_axe@2` frozen. No Recycler rule added or edited |
+| P5 | New Recycler rule `X:plate-v1`: 1 Iron Plate → 1 Iron Ingot, 10 s. | new key only; existing rules byte-identical |
+| P7 | English display names for six Creator Cores and the Escrow Chest; Vietnamese canon names kept as `ItemDef.vi` and shown as a subtitle in the item info box. | none (display) |
+
+**Round-1 statements withdrawn.** (1) "The Recycler is the only mint of Parts" was wrong: Parts come from authored loot and wrecks, machine creatures and the Recycler; the Recycler is the only *conversion* into Parts. (2) "The Salvager Axe needs a new Recycler rule" was wrong: the existing `X:recover-v3` return is already no larger than what the rev-3 axe embeds. (3) Plank was counted as having a consumer; see P6 below.
+
+**Measured cost of the changes** (`web/evidence/item-ontology-v2/round2-simulations.json`; ANALYTIC = arithmetic over the recipe table at each revision, INTENT = real engine dispatch on FIXTURE-granted atoms; neither is natural play, and no human played it):
+
+- Bare hands → one Utility Motorbike kit, rev 2 → rev 3: iron ore 29 → 32, coal 1 → 2, scrap 17 → 19, Parts 41 → 41, station time 543 s → 620 s. One Metal Pipe and one Machine Part are left over (the pipe recipe makes two). The INTENT run consumed exactly the analytic bill.
+- Salvager Axe: +4 iron ore, +56 s station time, Parts unchanged. The axe is refused without a Blade.
+- Loops: plate craft → recycle loses 1 Iron Ingot + 1 coal + 1 Fastener per turn; blade craft → recycle loses 2 Iron Ingot; axe craft → recycle returns less of every material than went in. Recycler jobs survive save/restart and pay once; a forged rule key is rejected.
+
+**Not executed — conclusions** (`web/ref/item-ontology-v2/ROUND2_FINDINGS.md`, generated from the live catalog):
+
+- *P2 Fasteners (ruled out).* 22 live consumers. Replacing n Fasteners with ceil(n/2) Machine Parts raises scrap on every consumer, 1.5× at best and 3× on the twelve one-fastener consumers; no integer mapping avoids it. Fasteners stay; disposition is now KEEP.
+- *P6 Plank (ruled out).* The 240 HP Plank Wall is upgrade-only geometry and no entry of `STRUCTURE_UPGRADES` leads to it, so a player cannot obtain it; the Brick Wall (600 HP) is in the same state. Plank therefore has no reachable consumer today. This is a building-ontology decision (make the tier reachable), not an item retirement. Disposition DEFER.
+- *P8 Veyra sources (open).* Six of the eight named items have no Veyra source: chitin, crawler_optic, wolf_fang, beetle_horn (creatures behind the Shipping spawner), keycard and core_demon (Shipping/Dev crates only). Spirit Essence drops on Veyra but its recipe is blocked there. No source was invented.
+- *P9 Crude Petroleum (open).* Fixture-only on both layouts; item and Oil Pump texts are quoted in the findings for wording review. No UI change made.
+- *P10 legacy cores (open).* Different mechanic from the seven (charge tool vs reserve weapon); Quake and Rime have effects no Creator Core has; three Creator Core crates are located by the legacy core inside them. Proposed canon decision: keep the four as a named minor class ("Field Core"), outside the seven. Needs the owner.
+- *Last Island 86 vs 137.* The atlas in the repository yields 86 unique item ids and 51 recipe entries. 86 + 51 = 137 is the only match found, and it is a hypothesis, not a finding: the 137-entry research summary itself was **not located** in the repository or in the connected Drive.
+
+**Also fixed while taking the screenshots.** At the 640×360 stage the item info box on the Survivor screen showed no item name at all (the name row collapsed to zero height); this predates the PR. `index.css`: the name row no longer shrinks and the box clips its last row instead of spilling onto the action buttons. Consequence: at that stage size the "used in" icon row can be cut off.
+
+## 31. Item Ontology V2, round 3 — no proposal left open; two handed to their owners unrepaired (2026-11-14)
+
+**Authority.** Control Tower "close the real gaps" ruling on draft PR #61. Same branch, same PR, still Draft. Recipe revision stays 3; no recipe, cost, loot table, creature placement or probability changed in this round. **Item V2 is not complete** while P6 and P8 are unrepaired in the world.
+
+| | Status | What is true in the build now |
+|---|---|---|
+| P1, P4, P5, P7 | IMPLEMENTED (round 2) | unchanged |
+| P3 | IMPLEMENTED_PARTIAL | Utility Frame only; Oil Pump and Refinery costs untouched |
+| P2 Fasteners | **CLOSED — KEEP** | Fasteners and Machine Parts stay separate items with separate roles. No merge, no recipe rewrite. Not to be reopened without new evidence. |
+| P10 legacy cores | **IMPLEMENTED** | Two named classes. *Creator Core* (seven): three skills on B / Q / E energy reserves. *Field Core* (Ember, Quake, Storm, Rime): one ability, fixed charges (3 / 3 / 4 / 3), no reserve, **no reload exists in code**. The class is derived from the fields the engine already uses (`creatorCore`, `core`); ids, recipes, charge rules, saves and loot are byte-identical. The three Creator Core crates located by a Field Core are pinned by a regression test. |
+| P9 Crude Petroleum | IMPLEMENTED_PARTIAL (text only) | Every player-facing string now distinguishes "no oil site exists in this world yet" from "not standing on the site" and "site is dry", and names the route that works (Salvaged Oil → Fuel Can). Crude Petroleum is still FIXTURE-only; the Oil Pump is still not runnable in natural play. |
+| P6 Plank / wall tiers | **HANDED OFF, not repaired** | Plank Wall (240 HP) and Brick Wall (600 HP) remain unobtainable. Proposal for the building-ontology owner (PR #56): `docs/design/PA1_BUILDING_ONTOLOGY_WALL_TIER_HANDOFF_2026-11-14.md`. No building code was changed in PR #61. |
+| P8 Veyra sources | **HANDED OFF, not repaired** | Ash Chitin, Crawler Optic, Wolf Fang and Beetle Horn still have no source on Veyra; Demon Core has none either. Veyra has 0 keycard doors, so Keycard needs no repair. Repair order for the Veyra ecology/map owner: `docs/design/VEYRA_WORLD_SOURCE_REPAIR_ORDER_2026-11-14.md`. Nothing was invented. On Veyra a recipe line that needs Ash Chitin or Crawler Optic now reads "has no source on Veyra yet". |
+
+**UI.** The Survivor screen item box at the 640×360 stage was re-laid-out (the round-2 clip is removed): name, class chip, rule line, description and action buttons are all visible with no clipping and no inner scroll. Measured in a real browser for all 147 catalog items and for the 63 items of the three QA presets (`web/evidence/item-ontology-v2/round3-layout-*.json`), plus the touch layout for three items.
+
+**Last Island 86 vs 137 — BLOCKED.** `LI_137_ITEM_HISTORICAL_ATLAS_AUDIT.csv` is not in the repository, in any PR head, or in the connected Drive. The round-2 "86 + 51" guess is withdrawn (the owner states 137 distinct item ids). No crosswalk was written; none can be until the file is delivered.
+
+**Not proven.** Godot was not run. No human played this build. Natural-play reachability of the Oil Pump, the wall tiers and the four Veyra materials is, by the table above, known to be absent.
+
+## 32. Item Ontology V2 — round 3 accepted as a scoped increment; owner dispatch and acceptance tracker (2026-11-14)
+
+**Authority.** Control Tower accepted PR #61 at `7b78a554` as a scoped implementation and evidence increment. PR #61 stays Draft, unmerged, undeployed. No fourth audit round. P1–P5, P7, P10 are not to be reworked; P2 is not to be reopened without new evidence.
+
+**Three acceptance states, kept apart** (`web/src/game/item-ontology-tracker.ts`, rendered in `web/ref/item-ontology-v2/APPENDIX.md` §6a and the explorer; enforced by test): `IMPLEMENTED_AND_VERIFIED` (code at a named SHA, gate passed), `HANDOFF_ACKNOWLEDGED` (dispatched to an owner; **not a fix**, no SHA), `BLOCKED_OR_UNRESOLVED`. A document never makes a row verified.
+
+- **Verified at `7b78a554` (Item V2, PR #61):** P1, P2 (closed, keep), P3 (frame only), P4, P5, P7, P10, P9 wording.
+- **Handoff acknowledged, unrepaired:** wall tiers → PA1 Building, PR #56. Ash Chitin / Crawler Optic sources and the Wolf Fang / Beetle Horn research routes → Veyra World / Ecology (no PR named). Runnable Oil Pump → Oil / World Production (PR #59 where applicable). Veyra gets no Keycards.
+- **Blocked or unresolved:** the 137-id Last Island crosswalk (inputs still not delivered to the repository, the session or the Drive); 15 browser drivers quarantined in `web/e2e/QUARANTINE.json`; the 179 inherited Vitest failures (PR #56); and one integration defect: PR #61 + PR #59 merge cleanly as text but the merged tree fails `wp3-veyra-recycler-integration` because that route crafts the Utility Frame without the Metal Pipe that recipe revision 3 requires.
+
+**The Web suite is not green.** PR #61 shows only that it adds no failure to the 179 it inherited.
+
+## 33. Item Ontology V2 — tracker corrected, PR #59 integration fix prepared, Last Island inputs still unreadable (2026-11-14)
+
+- **Tracker rule tightened.** `HANDOFF_ACKNOWLEDGED` now requires a named PR and a receipt on that PR. Only the wall tiers (PR #56) qualify. The Veyra source work (P8) has no confirmed owner or PR and is `BLOCKED_OR_UNRESOLVED`; so is the runnable Oil Pump (a notice on PR #59 that nobody accepted). No row changed to verified.
+- **PR #59 integration.** Recipe revision 3 is kept. A zero-injection Metal Pipe route for PR #59's `wp3-veyra-recycler-integration` test is delivered as `docs/integration/PR59_x_PR61_wp3_metal_pipe_route.patch` and measured on a local probe merge (`web/evidence/item-ontology-v2/integration-pr59.md`). It is **not landed**: PR #59's branch was not touched, so the defect stays unresolved until its owner applies it.
+- **Last Island 137.** Both Drive file ids supplied by Control Tower return 404 to the connected account. Content, counts and SHA-256 could not be checked; no crosswalk was written.
+
+## 34. Item Ontology V2 — Last Island 137-vs-86 historical crosswalk completed (2026-11-14)
+
+**Inputs.** Control Tower shared both Drive files with the connected account. Both were downloaded and match the published values byte for byte; they are stored reference-only in `web/ref/item-ontology-v2/li-historical/` and a test pins their hashes.
+
+| File | Bytes | Lines | SHA-256 |
+|---|---|---|---|
+| `LI_137_ITEM_HISTORICAL_ATLAS_AUDIT.csv` | 36,494 | 138 | `e4a1b066429d7afc8b9e91dc024ceed317058738e45163f02662d6315a4570c5` |
+| `LI_137_VS_86_ITEM_DIFF_20261114.txt` | 9,323 | 79 | `67b8fb988ddda6039fee6d21f048f527dc6931eebc54cbc80271aca572430d04` |
+
+**Rule.** The 137 ids are historical, multi-version evidence about another game. They are not a parity target. No SOH item, recipe, id, price or mechanic was added or changed. Recipe revision 3 is untouched.
+
+**Result** (`web/ref/item-ontology-v2/LI_HISTORICAL_CROSSWALK.md`, `li-historical-crosswalk.csv`; generator `web/src/game/item-ontology-li-historical.ts`):
+
+- 139 rows, one decision per id: 137 historical (84 shared with the atlas, 53 historical-only) + 2 atlas-only (`raw_iron_ore`, `refined_iron_ore`, naming differences).
+- Provenance: all 84 shared ids are `ATLAS_INDEXED`; the 53 historical-only ids are 45 `EXTERNAL_CRAFT_OR_INPUT` + 8 `OFFICIAL_MODERN`. The withdrawn "86 + 51" reading is now recorded as a coincidence.
+- The 53 historical-only ids: 7 version variants of atlas ids, 1 alias of an atlas id, 3 aliases of things SOH already has (`animal_hide` → `hide`, `charcoal`, `territory_cabinet` → `claim`), 6 event-only, 8 later official additions, 28 separate historical items.
+- By gameplay role, those 53 are: 29 with no SOH mechanic to use them, 15 whose role SOH already has (5 same, 10 in a different shape), 6 event-only, 1 declined as redundant, **2 genuinely missing roles**.
+- *(Wording superseded by §35: these are design candidates, not established gaps.)* The two genuine gaps, recorded for their owners and **not added**: a second head-armour tier (`refined_iron_helmet`; SOH has one head armour piece) and a fuel-free personal vehicle (`mountain_bicycle_blueprint`; SOH has Hand Cart and fuelled Motorbike only).
+- The five omissions the diff asked about: `charcoal`, `animal_hide` already exist in SOH; `egg` exists as Grouse Egg; `large_furnace` is covered by the in-place furnace lining; `electric_resistor` has no SOH mechanic.
+- The historical `match_soh` column disagrees with the crosswalk on 9 of 137 ids; each is explained in the artifact and the crosswalk verdict stands.
+- Unsupported figures stay UNKNOWN: 19 UNKNOWN benches and the empty recipes are reproduced as such. The `year_mode` column is one generic note on every row, so no id is dated by the source.
+
+**Unchanged.** PR #59 integration patch still pending owner acceptance (local probe merge only, not CI at an integrated SHA). P6 wall tiers unrepaired (PR #56). P8 Veyra sources unowned and unrepaired. Oil Pump not functional. The Web suite is not green.
+
+## 35. Item Ontology V2 — Last Island reference-quality correction (2026-11-14)
+
+Control Tower accepted the 139-id coverage at `7307442c` and asked for one bounded correction. No item, recipe, loot, balance, save or Core change. Recipe revision stays 3. The two raw inputs are unchanged and still hash-pinned.
+
+- **Source support is now derived per row** (`source_support_status`, `support_basis`, `citation_check`, `verified_source_url`, `evidence_date`, `source_note` in `li-historical-crosswalk.csv`). Of 137 historical rows: 76 DIRECT, 23 INDIRECT, 23 LEGACY_CLAIM (cited page not re-read), 15 UNSUPPORTED_CITATION.
+- **Defective citations, reproduced and flagged, not hidden.** 26 non-atlas rows cite `ATLAS_v2.json` (18 `EXTERNAL_CRAFT_OR_INPUT`, 8 `OFFICIAL_MODERN`). None is an atlas id; 22 do not occur in the file at all and 4 occur only inside another name or in prose.
+- **Official notice of 2022-11-09** (https://hero.yingxiong.com/info/2022/1109/13052.html) was read and is applied to the 14 ids it documents: 7 documented (Mountain Bicycle blueprint, Self-revive Defibrillator, resistor as a toolbox drop, the event cake and its three inputs) and 7 named in passing. No other row receives a date.
+- **`OFFICIAL_MODERN` is an inherited label.** 3 of its 8 ids are backed by the notice; 5 have no opened source (`bizon_smg`, `flamethrower_gas_ammo`, `inferno_chariot`, `inferno_chariot_blueprint`, `suicide_robot`).
+- **Design candidates, not gaps.** `mountain_bicycle_blueprint`: pedalling consumes the rider's lung air and exhaustion costs HP, so it is an exertion-for-speed vehicle, not simply fuel-free. `refined_iron_helmet`: an additional head-armour tier; SOH already has head protection. Neither is approved.
+- **Catalog vs live** (`soh_live_status`). `electric_door` → `door_powered` is MODULE_PENDING: catalog only, not live. `crude_oil` → Salvaged Oil is live, but pumped crude is not, and the row does not establish a working Oil Pump. `green_card` → Keycard and `refined_iron_chest` → Chitin Plate are Shipping-only.
+- **Tracker.** `T-LI-137` stays verified for coverage. New row `T-LI-SOURCES` (blocked): source attribution needs sources from the research owner.
+
+Item V2 development pauses here. Open gates are unchanged and belong to others: PR #59 × #61 WP3 integration (patch pending owner acceptance), P6 wall tiers (PR #56), P8 Veyra sources (no owner), Oil Pump production.

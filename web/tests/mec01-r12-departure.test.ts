@@ -1,5 +1,6 @@
 // MEC-01 R12: J10 departure readiness (read-only read model + causal before/after + settle agreement).
 // Every fixture is real engine intents except where a line says STAGED (labelled, not a success claim).
+import {dispatchCarryingPack} from './helpers/build-kit';
 import '../tests/_evidenceFs';
 import { describe, it, expect } from 'vitest';
 import { mkdirSync } from 'node:fs';
@@ -15,7 +16,7 @@ import { readFileSync } from 'node:fs';
 
 const T0 = Date.UTC(2026, 0, 1);
 let seq = 0;
-const act = (g: GameState, type: string, data: object = {}, now = T0) => dispatch(g, { id: `r12-${++seq}`, type, ...data }, now);
+const act = (g: GameState, type: string, data: object = {}, now = T0) => dispatchCarryingPack(g, { id: `r12-${++seq}`, type, ...data }, now);
 const copy = (g: GameState) => JSON.parse(JSON.parse(serializeSnapshot(g)).payload) as GameState;
 const expiryOf = (r: RunState) => r.startedAt - r.qaOffset + BAL.run.maxRunHours * HOUR;
 

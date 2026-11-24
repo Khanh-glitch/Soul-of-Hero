@@ -1,0 +1,13 @@
+{
+  "mode": "Controlled 3-minute gap; original save, production browser; second arm synchronous engine",
+  "viewport": [
+    640,
+    360
+  ],
+  "seed": 7606,
+  "cancelPreserved": true,
+  "ending": "PEOPLE OF VEYRA · 286\nReached safe water: 0 · Survived on the island: 0\nDied: 194 · Fate unknown: 92",
+  "wholeStateEqual": true,
+  "at": 1794816180000,
+  "workerSHA256": "cd5036e241c7c313eb7a46d33e8eef9e3af97c8584a35413e5a833d066fdd293"
+}

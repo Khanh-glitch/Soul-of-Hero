@@ -1,0 +1,4 @@
+npx tsc --noEmit -p .
+exit=0
+npx tsc --noEmit -p tsconfig.test.json
+exit=0

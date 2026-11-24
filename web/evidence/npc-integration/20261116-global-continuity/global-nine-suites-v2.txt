@@ -1,0 +1,28 @@
+
+ RUN  v4.1.12 /home/user/Soul-of-Hero/web
+
+ ✓ tests/npc-p0-corrective.test.ts (27 tests) 4327ms
+     ✓ P0.1: first tick after startRun does not zero hunger/thirst or down humans  2003ms
+     ✓ human melee uses K5 reach, floor and cadence gates and wears its equipped weapon  313ms
+ ✓ tests/npc-physical-authority.test.ts (10 tests) 2745ms
+     ✓ one food debit grants one serving, not the full stack  2020ms
+ ✓ tests/npc-residential-ownership.test.ts (8 tests) 2809ms
+     ✓ cargo moves the same UID once and a full destination restores the original source slot  2111ms
+ ✓ tests/npc-global-navigation.test.ts (6 tests) 2429ms
+     ✓ derived sorted entity views observe direct add/delete/replacement/archive changes immediately  1755ms
+     ✓ walks a real offscreen cardinal route with saved partial tile time and no repeated settlement  383ms
+ ✓ tests/npc-humanworld.test.ts (7 tests) 2548ms
+     ✓ startRun seeds a finite HumanWorld from the 81-POI census geometry  2051ms
+ ✓ tests/npc-shelter-incidents.test.ts (4 tests) 2045ms
+     ✓ translates global body coordinates to local roof authority on the actual floor  1865ms
+ ✓ tests/npc-paid-work.test.ts (1 test) 2112ms
+   ✓ cook spends carried canonical inputs and fuel, waits for real station, and collects once across reload  2111ms
+ ✓ tests/npc-world-budget.test.ts (1 test) 1874ms
+   ✓ accounts all 81 locations, actual beds and finite opening nutrition without calling deficits sustainable  1872ms
+ ✓ tests/npc-art.test.ts (4 tests) 29ms
+
+ Test Files  9 passed (9)
+      Tests  68 passed (68)
+   Start at  02:03:19
+   Duration  31.82s (transform 3.91s, setup 0ms, import 9.62s, tests 20.92s, environment 1ms)
+

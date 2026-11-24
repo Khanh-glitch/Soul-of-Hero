@@ -1,0 +1,730 @@
+{
+  "errors": [],
+  "requests": [],
+  "saves": [
+    {
+      "stage": "01-departure",
+      "id": "run_t60huq_mwogtb6j",
+      "seed": 1763619938,
+      "layout": "veyra05-at-1728-384",
+      "at": 1795148092718,
+      "origin": [
+        864,
+        192
+      ],
+      "local": [
+        174,
+        130
+      ],
+      "people": 286,
+      "jobs": [
+        {
+          "actor": "h5",
+          "role": "builder",
+          "location": [
+            1661,
+            1179,
+            0
+          ],
+          "community": "com:po_greywater",
+          "pack": "c176",
+          "state": "MOVING",
+          "block": "Checking physical route (512 cells examined; no travel claimed).",
+          "job": {
+            "id": "hj2ti",
+            "sourceId": "0:4773668",
+            "gx": 1668,
+            "gy": 1193,
+            "floor": 0,
+            "key": "oak",
+            "phase": "source",
+            "startedAt": 1795148078460
+          }
+        },
+        {
+          "actor": "h8",
+          "role": "medic",
+          "location": [
+            1581,
+            1176,
+            0
+          ],
+          "community": "com:po_greywater",
+          "pack": "c17j",
+          "state": "MOVING",
+          "job": {
+            "id": "hj2tk",
+            "sourceId": "0:4725570",
+            "gx": 1570,
+            "gy": 1181,
+            "floor": 0,
+            "key": "herb",
+            "phase": "delivery",
+            "startedAt": 1795148081460,
+            "storeId": "e168"
+          },
+          "output": {
+            "s2tu": 1
+          }
+        },
+        {
+          "actor": "hc",
+          "role": "mechanic",
+          "location": [
+            1862,
+            493,
+            0
+          ],
+          "community": "com:po_academy",
+          "pack": "c18f",
+          "state": "DOWNED",
+          "block": "No available community responder with medicine.",
+          "job": {
+            "id": "hj2tg",
+            "sourceId": "0:1969862",
+            "gx": 1862,
+            "gy": 492,
+            "floor": 0,
+            "key": "crystal",
+            "phase": "delivery",
+            "startedAt": 1795148074460
+          },
+          "output": {
+            "s2tl": 1
+          }
+        },
+        {
+          "actor": "hh",
+          "role": "salvager",
+          "location": [
+            2356,
+            2551,
+            0
+          ],
+          "community": "com:po_ironmine",
+          "pack": "c19o",
+          "state": "WORKING",
+          "job": {
+            "id": "hj2ts",
+            "sourceId": "0:10202356",
+            "gx": 2356,
+            "gy": 2550,
+            "floor": 0,
+            "key": "road_salvage_bale",
+            "phase": "source",
+            "startedAt": 1795148086460
+          }
+        },
+        {
+          "actor": "hj",
+          "role": "cook",
+          "location": [
+            2585,
+            699,
+            0
+          ],
+          "community": "com:po_hook",
+          "pack": "c1am",
+          "state": "MOVING",
+          "job": {
+            "id": "hj2tt",
+            "sourceId": "0:2806558",
+            "gx": 2558,
+            "gy": 701,
+            "floor": 0,
+            "key": "mushroom",
+            "phase": "source",
+            "startedAt": 1795148088460
+          }
+        }
+      ]
+    },
+    {
+      "stage": "02-return",
+      "id": "run_t60huq_mwogtb6j",
+      "seed": 1763619938,
+      "layout": "veyra05-at-1728-384",
+      "at": 1795148249126,
+      "origin": [
+        864,
+        192
+      ],
+      "local": [
+        174,
+        130
+      ],
+      "people": 286,
+      "jobs": [
+        {
+          "actor": "hc",
+          "role": "mechanic",
+          "location": [
+            1862,
+            493,
+            0
+          ],
+          "community": "com:po_academy",
+          "pack": "c18f",
+          "state": "DOWNED",
+          "block": "No available community responder with medicine.",
+          "job": {
+            "id": "hj2tg",
+            "sourceId": "0:1969862",
+            "gx": 1862,
+            "gy": 492,
+            "floor": 0,
+            "key": "crystal",
+            "phase": "delivery",
+            "startedAt": 1795148074460
+          },
+          "output": {
+            "s2tl": 1
+          }
+        },
+        {
+          "actor": "hx",
+          "role": "salvager",
+          "location": [
+            1309,
+            1947,
+            0
+          ],
+          "community": "com:po_oasis",
+          "pack": "c1cw",
+          "state": "IDLE",
+          "job": {
+            "id": "hj2u4",
+            "sourceId": "0:7761295",
+            "gx": 1295,
+            "gy": 1940,
+            "floor": 0,
+            "key": "road_fuel_rack",
+            "phase": "delivery",
+            "startedAt": 1795148102460,
+            "storeId": "e1c1"
+          },
+          "output": {
+            "s2ug": 1,
+            "s2uh": 1
+          }
+        },
+        {
+          "actor": "h17",
+          "role": "builder",
+          "location": [
+            3167,
+            1751,
+            0
+          ],
+          "community": "com:po_cindercamp",
+          "pack": "c1ey",
+          "state": "IDLE",
+          "job": {
+            "id": "hj2u6",
+            "sourceId": "0:7195205",
+            "gx": 3205,
+            "gy": 1798,
+            "floor": 0,
+            "key": "oak",
+            "phase": "delivery",
+            "startedAt": 1795148112460,
+            "storeId": "e1dt"
+          },
+          "output": {
+            "s2u9": 1
+          }
+        },
+        {
+          "actor": "h2a",
+          "role": "salvager",
+          "location": [
+            1442,
+            2250,
+            0
+          ],
+          "community": "com:po_sandgate",
+          "pack": "c1ns",
+          "state": "DOWNED",
+          "block": "No available community responder with medicine.",
+          "job": {
+            "id": "hj2v9",
+            "sourceId": "0:9005442",
+            "gx": 1442,
+            "gy": 2251,
+            "floor": 0,
+            "key": "road_fuel_rack",
+            "phase": "delivery",
+            "startedAt": 1795148151460
+          },
+          "output": {
+            "s2vk": 1,
+            "s2vl": 1
+          }
+        },
+        {
+          "actor": "h2l",
+          "role": "engineer",
+          "location": [
+            1533,
+            1368,
+            0
+          ],
+          "community": "com:po_sawaion",
+          "pack": "c1qc",
+          "state": "DOWNED",
+          "block": "No available community responder with medicine.",
+          "job": {
+            "id": "hj2vo",
+            "sourceId": "0:5473532",
+            "gx": 1532,
+            "gy": 1368,
+            "floor": 0,
+            "key": "road_salvage_bale",
+            "phase": "delivery",
+            "startedAt": 1795148162460
+          },
+          "output": {
+            "s2wf": 2
+          }
+        },
+        {
+          "actor": "h3t",
+          "role": "mechanic",
+          "location": [
+            1908,
+            317,
+            0
+          ],
+          "community": "com:po_observatory",
+          "pack": "c1zr",
+          "state": "MOVING",
+          "job": {
+            "id": "hj2xe",
+            "sourceId": "0:1261914",
+            "gx": 1914,
+            "gy": 315,
+            "floor": 0,
+            "key": "crystal",
+            "phase": "delivery",
+            "startedAt": 1795148206460,
+            "storeId": "e1zf"
+          },
+          "output": {
+            "s2ys": 1
+          }
+        },
+        {
+          "actor": "h4h",
+          "role": "gardener",
+          "location": [
+            1581,
+            1507,
+            0
+          ],
+          "community": "com:po_ranger",
+          "pack": "c251",
+          "state": "MOVING",
+          "job": {
+            "id": "hj2y4",
+            "sourceId": "0:6141605",
+            "gx": 1605,
+            "gy": 1535,
+            "floor": 0,
+            "key": "bush",
+            "phase": "delivery",
+            "startedAt": 1795148230460,
+            "storeId": "e250"
+          },
+          "output": {
+            "s2ye": 1
+          }
+        },
+        {
+          "actor": "h4j",
+          "role": "salvager",
+          "location": [
+            1580,
+            1504,
+            0
+          ],
+          "community": "com:po_ranger",
+          "pack": "c25a",
+          "state": "IDLE",
+          "job": {
+            "id": "hj2y9",
+            "sourceId": "0:5993604",
+            "gx": 1604,
+            "gy": 1498,
+            "floor": 0,
+            "key": "road_salvage_bale",
+            "phase": "delivery",
+            "startedAt": 1795148232460,
+            "storeId": "e250"
+          },
+          "output": {
+            "s2ym": 2
+          }
+        },
+        {
+          "actor": "h4m",
+          "role": "medic",
+          "location": [
+            1584,
+            1515,
+            0
+          ],
+          "community": "com:po_ranger",
+          "pack": "c25o",
+          "state": "MOVING",
+          "job": {
+            "id": "hj2yf",
+            "sourceId": "0:6173585",
+            "gx": 1585,
+            "gy": 1543,
+            "floor": 0,
+            "key": "herb",
+            "phase": "delivery",
+            "startedAt": 1795148235460,
+            "storeId": "e250"
+          },
+          "output": {
+            "s2yq": 1
+          }
+        },
+        {
+          "actor": "h4p",
+          "role": "builder",
+          "location": [
+            1582,
+            1395,
+            0
+          ],
+          "community": "com:po_glade",
+          "pack": "c26e",
+          "state": "MOVING",
+          "job": {
+            "id": "hj2yk",
+            "sourceId": "0:5589588",
+            "gx": 1588,
+            "gy": 1397,
+            "floor": 0,
+            "key": "oak",
+            "phase": "delivery",
+            "startedAt": 1795148238460,
+            "storeId": "e267"
+          },
+          "output": {
+            "s2yz": 1
+          }
+        },
+        {
+          "actor": "h4r",
+          "role": "gardener",
+          "location": [
+            1564,
+            1424,
+            0
+          ],
+          "community": "com:po_glade",
+          "pack": "c26n",
+          "state": "MOVING",
+          "job": {
+            "id": "hj2yn",
+            "sourceId": "0:5709568",
+            "gx": 1568,
+            "gy": 1427,
+            "floor": 0,
+            "key": "grass",
+            "phase": "delivery",
+            "startedAt": 1795148240460,
+            "storeId": "e267"
+          },
+          "output": {
+            "s2yu": 1
+          }
+        },
+        {
+          "actor": "h4s",
+          "role": "medic",
+          "location": [
+            1567,
+            1390,
+            0
+          ],
+          "community": "com:po_glade",
+          "pack": "c26r",
+          "state": "MOVING",
+          "job": {
+            "id": "hj2yo",
+            "sourceId": "0:5549569",
+            "gx": 1569,
+            "gy": 1387,
+            "floor": 0,
+            "key": "herb",
+            "phase": "delivery",
+            "startedAt": 1795148241460,
+            "storeId": "e267"
+          },
+          "output": {
+            "s2z0": 1
+          }
+        },
+        {
+          "actor": "h4t",
+          "role": "cook",
+          "location": [
+            1537,
+            1402,
+            0
+          ],
+          "community": "com:po_glade",
+          "pack": "c26v",
+          "state": "MOVING",
+          "job": {
+            "id": "hj2yp",
+            "sourceId": "0:5613535",
+            "gx": 1535,
+            "gy": 1403,
+            "floor": 0,
+            "key": "herb",
+            "phase": "delivery",
+            "startedAt": 1795148242460,
+            "storeId": "e267"
+          },
+          "output": {
+            "s2z4": 1
+          }
+        },
+        {
+          "actor": "h4u",
+          "role": "salvager",
+          "location": [
+            1541,
+            1389,
+            0
+          ],
+          "community": "com:po_glade",
+          "pack": "c26z",
+          "state": "MOVING",
+          "job": {
+            "id": "hj2yr",
+            "sourceId": "0:5541541",
+            "gx": 1541,
+            "gy": 1385,
+            "floor": 0,
+            "key": "road_salvage_bale",
+            "phase": "delivery",
+            "startedAt": 1795148243460,
+            "storeId": "e267"
+          },
+          "output": {
+            "s2z2": 2
+          }
+        },
+        {
+          "actor": "h4v",
+          "role": "cook",
+          "location": [
+            1932,
+            1267,
+            0
+          ],
+          "community": "com:po_sapgrove",
+          "pack": "c27f",
+          "state": "MOVING",
+          "job": {
+            "id": "hj2yt",
+            "sourceId": "0:5061947",
+            "gx": 1947,
+            "gy": 1265,
+            "floor": 0,
+            "key": "herb",
+            "phase": "source",
+            "startedAt": 1795148244460
+          }
+        },
+        {
+          "actor": "h4w",
+          "role": "gardener",
+          "location": [
+            1923,
+            1260,
+            0
+          ],
+          "community": "com:po_sapgrove",
+          "pack": "c27j",
+          "state": "MOVING",
+          "job": {
+            "id": "hj2yv",
+            "sourceId": "0:5033925",
+            "gx": 1925,
+            "gy": 1258,
+            "floor": 0,
+            "key": "herb",
+            "phase": "delivery",
+            "startedAt": 1795148245460,
+            "storeId": "e27e"
+          },
+          "output": {
+            "s2z1": 1
+          }
+        },
+        {
+          "actor": "h4y",
+          "role": "medic",
+          "location": [
+            1925,
+            1260,
+            0
+          ],
+          "community": "com:po_sapgrove",
+          "pack": "c27s",
+          "state": "MOVING",
+          "job": {
+            "id": "hj2yx",
+            "sourceId": "0:5013923",
+            "gx": 1923,
+            "gy": 1253,
+            "floor": 0,
+            "key": "herb",
+            "phase": "source",
+            "startedAt": 1795148247460
+          }
+        },
+        {
+          "actor": "h4z",
+          "role": "builder",
+          "location": [
+            1927,
+            1260,
+            0
+          ],
+          "community": "com:po_sapgrove",
+          "pack": "c27x",
+          "state": "IDLE",
+          "job": {
+            "id": "hj2z3",
+            "sourceId": "0:5045922",
+            "gx": 1922,
+            "gy": 1261,
+            "floor": 0,
+            "key": "oak",
+            "phase": "source",
+            "startedAt": 1795148248460
+          }
+        }
+      ]
+    }
+  ],
+  "closedMs": 90058,
+  "followed": [
+    {
+      "jobId": "hj2ti",
+      "source": "0:4773668",
+      "worker": "h5",
+      "pack": "c176",
+      "carried": [],
+      "landed": [
+        {
+          "at": 1795148148133.0168,
+          "jobId": "hj2ti",
+          "sourceId": "0:4773668",
+          "workerId": "h5",
+          "fromUid": "s2u2",
+          "intoUid": "s2u2",
+          "qty": 1,
+          "key": "wood",
+          "stillInStore": "c15x"
+        }
+      ],
+      "afterState": "IDLE"
+    },
+    {
+      "jobId": "hj2tk",
+      "source": "0:4725570",
+      "worker": "h8",
+      "pack": "c17j",
+      "carried": [],
+      "landed": [
+        {
+          "at": 1795148097117.149,
+          "jobId": "hj2tk",
+          "sourceId": "0:4725570",
+          "workerId": "h8",
+          "fromUid": "s2tu",
+          "intoUid": "s166",
+          "qty": 1,
+          "key": "herb",
+          "stillInStore": "c15x"
+        }
+      ],
+      "afterState": "IDLE"
+    },
+    {
+      "jobId": "hj2tg",
+      "source": "0:1969862",
+      "worker": "hc",
+      "pack": "c18f",
+      "carried": [
+        {
+          "uid": "s2tl",
+          "key": "crystal",
+          "qty": 1,
+          "production": {
+            "jobId": "hj2tg",
+            "workerId": "hc"
+          }
+        }
+      ],
+      "landed": [],
+      "block": "No available community responder with medicine.",
+      "afterJob": "hj2tg",
+      "afterState": "DOWNED"
+    },
+    {
+      "jobId": "hj2ts",
+      "source": "0:10202356",
+      "worker": "hh",
+      "pack": "c19o",
+      "carried": [],
+      "landed": [
+        {
+          "at": 1795148096860.0037,
+          "jobId": "hj2ts",
+          "sourceId": "0:10202356",
+          "workerId": "hh",
+          "fromUid": "s2tx",
+          "intoUid": "s18p",
+          "qty": 2,
+          "key": "spares",
+          "stillInStore": "c18o"
+        }
+      ],
+      "afterState": "IDLE"
+    },
+    {
+      "jobId": "hj2tt",
+      "source": "0:2806558",
+      "worker": "hj",
+      "pack": "c1am",
+      "carried": [],
+      "landed": [
+        {
+          "at": 1795148126617.1445,
+          "jobId": "hj2tt",
+          "sourceId": "0:2806558",
+          "workerId": "hj",
+          "fromUid": "s2u3",
+          "intoUid": "s2u3",
+          "qty": 1,
+          "key": "mushroom",
+          "stillInStore": null
+        }
+      ],
+      "block": "Checking physical route (256 cells examined; no travel claimed).",
+      "afterState": "IDLE"
+    }
+  ],
+  "observedDelivery": true,
+  "observedOutput": true
+}

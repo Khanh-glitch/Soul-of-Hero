@@ -1,4 +1,5 @@
 // B04-P4: adversarial cache identity, IR downstream network scoping, live bear-trap contact through tick().
+import {dispatchCarryingPack} from './helpers/build-kit';
 import { describe, it, expect } from 'vitest';
 import { TILE, WW, T, type GameState } from '../src/game/core';
 import { STRUCTS } from '../src/game/catalog';
@@ -9,7 +10,7 @@ import { serializeSnapshot, validate } from '../src/game/persist';
 
 const T0 = Date.UTC(2026, 0, 1);
 let n = 0;
-const act = (g: GameState, type: string, data: object = {}, now = T0) => dispatch(g, { id: `p4-${type}-${++n}`, type, ...data }, now);
+const act = (g: GameState, type: string, data: object = {}, now = T0) => dispatchCarryingPack(g, { id: `p4-${type}-${++n}`, type, ...data }, now);
 const raw = (g: GameState) => JSON.parse(JSON.parse(serializeSnapshot(g)).payload);
 
 function setup(seed = 97) {
@@ -19,7 +20,7 @@ function setup(seed = 97) {
   markDirty();
   const pos = (tx: number, ty: number) => { r.player.x = tx * TILE + 8; r.player.y = ty * TILE + 8; markDirty(); };
   const build = (type: string, tx: number, ty: number, px = tx, py = ty + 1) => {
-    pos(px, py); for (const [k, q] of STRUCTS[type].cost) addItem(r, 'inv', k, q);
+    pos(px, py); for (const [k, q] of STRUCTS[type].cost) addItem(r, 'inv', k, q); if (type === 'door_powered') { for (const [k, q] of STRUCTS.door_wood.cost) addItem(r, 'inv', k, q); expect(act(g, 'build', { struct: 'door_wood', tx, ty }).ok, 'host door').toBe(true); }
     expect(act(g, 'build', { struct: type, tx, ty }).ok, type).toBe(true);
     return Object.values(r.entities).find(e => e.kind === 'struct' && e.tx === tx && e.ty === ty && e.type === type)!;
   };
@@ -52,7 +53,7 @@ describe('B04-P4 F1 IR downstream is scoped to the sensor own generator network'
     for (let yy = y - 6; yy <= y + 6; yy++) for (let xx = x - 6; xx <= x + 8; xx++) { const i = yy * WW + xx; r.terrain[i] = { t: T.GRASS }; if (getWorld().sourceV3[i]) r.sources[i] = { stock: 0, hp: 0 }; }
     markDirty();
     const pos = (tx: number, ty: number) => { r.player.x = tx * TILE + 8; r.player.y = ty * TILE + 8; markDirty(); };
-    const build = (type: string, tx: number, ty: number, px = tx, py = ty + 1) => { pos(px, py); for (const [k, q] of STRUCTS[type].cost) addItem(r, 'inv', k, q); const res = act(g, 'build', { struct: type, tx, ty }); expect(res.ok, `${type}: ${(res as any).reason}`).toBe(true); return Object.values(r.entities).find(e => e.kind === 'struct' && e.tx === tx && e.ty === ty && e.type === type)!; };
+    const build = (type: string, tx: number, ty: number, px = tx, py = ty + 1) => { pos(px, py); for (const [k, q] of STRUCTS[type].cost) addItem(r, 'inv', k, q); if (type === 'door_powered') { for (const [k, q] of STRUCTS.door_wood.cost) addItem(r, 'inv', k, q); expect(act(g, 'build', { struct: 'door_wood', tx, ty }).ok, 'host door').toBe(true); } const res = act(g, 'build', { struct: type, tx, ty }); expect(res.ok, `${type}: ${(res as any).reason}`).toBe(true); return Object.values(r.entities).find(e => e.kind === 'struct' && e.tx === tx && e.ty === ty && e.type === type)!; };
     // network A: generator -> cable -> sensor -> door
     const genA = build('base_generator', x, y), cableA = build('power_cable', x + 1, y), sensor = build('ir_sensor', x + 2, y), doorA = build('door_powered', x + 3, y, x + 4, y);
     genA.basePower!.capacity = 2; addItem(r, genA.c!, 'wood', 2); pos(x, y + 1); expect(act(g, 'basePower', { eid: genA.id, enabled: true }).ok).toBe(true);
@@ -103,7 +104,7 @@ describe('B04-P4 IR sensor visual state mirrors the prompt rule (sprite key sour
     for (let yy = y - 6; yy <= y + 6; yy++) for (let xx = x - 6; xx <= x + 8; xx++) { const i = yy * WW + xx; r.terrain[i] = { t: T.GRASS }; if (getWorld().sourceV3[i]) r.sources[i] = { stock: 0, hp: 0 }; }
     markDirty();
     const pos = (tx: number, ty: number) => { r.player.x = tx * TILE + 8; r.player.y = ty * TILE + 8; markDirty(); };
-    const build = (type: string, tx: number, ty: number, px = tx, py = ty + 1) => { pos(px, py); for (const [k, q] of STRUCTS[type].cost) addItem(r, 'inv', k, q); expect(act(g, 'build', { struct: type, tx, ty }).ok, type).toBe(true); return Object.values(r.entities).find(e => e.kind === 'struct' && e.tx === tx && e.ty === ty && e.type === type)!; };
+    const build = (type: string, tx: number, ty: number, px = tx, py = ty + 1) => { pos(px, py); for (const [k, q] of STRUCTS[type].cost) addItem(r, 'inv', k, q); if (type === 'door_powered') { for (const [k, q] of STRUCTS.door_wood.cost) addItem(r, 'inv', k, q); expect(act(g, 'build', { struct: 'door_wood', tx, ty }).ok, 'host door').toBe(true); } expect(act(g, 'build', { struct: type, tx, ty }).ok, type).toBe(true); return Object.values(r.entities).find(e => e.kind === 'struct' && e.tx === tx && e.ty === ty && e.type === type)!; };
     const gen = build('base_generator', x, y), cable = build('power_cable', x + 1, y), sensor = build('ir_sensor', x + 2, y), door = build('door_powered', x + 3, y, x + 4, y);
     void door; void cable;
     expect(irSensorVisual(r, sensor)).toBe('off');
@@ -124,7 +125,7 @@ describe('B04-P4 IR sensor visual state mirrors the prompt rule (sprite key sour
 });
 
 import { RECIPES, ITEMS } from '../src/game/catalog';
-describe('B04-P4 Metal Pipe at the physical Foundry Recycler (X:pipe-v1)', () => {
+describe('B04-P4 Metal Pipe at the physical Foundry Recycler (X:pipe-v3 for new jobs)', () => {
   function recyclerRun() {
     const g = newGame(); expect(act(g, 'startRun', { character: 'female', seed: 97 }, T0).ok).toBe(true);
     const r = g.run!, tx = 80, ty = 80;
@@ -148,12 +149,15 @@ describe('B04-P4 Metal Pipe at the physical Foundry Recycler (X:pipe-v1)', () =>
     expect(ok.ok, JSON.stringify(ok)).toBe(true);
     expect(countItem(r, 'inv', 'metal_pipe')).toBe(1);             // exactly one pipe left the carried inventory (2 -> 1)
     const job = r.entities[id].station!.queue[0];
-    expect(job.recipe).toBe('X:pipe-v2'); expect(job.reserved?.length).toBe(1);   // MEC-01 A2: NEW pipe jobs use v2 (1 ingot + 1 MP, 12 s); X:pipe-v1 is kept for stored jobs
-    stepStations(g, 11000, T0 + 11000);
-    expect(countItem(r, out.id, 'refined_iron_ingot')).toBe(0);    // not finished before the real 12 s
-    stepStations(g, 1000, T0 + 12000);
-    expect(countItem(r, out.id, 'refined_iron_ingot')).toBe(1);    // one ingot + one Mechanical Part out: a net loss against the 2 ingots + parts that made the pipe
-    expect(countItem(r, out.id, 'mechanical_parts')).toBe(1);
+    // PA1 R1: new pipe jobs use X:pipe-v3 (the recovered paper return: 1 ingot in 10 s). v1/v2 stay
+    // frozen for jobs a save already holds — v2's extra Mechanical Part became an over-return the
+    // moment a craft began yielding two sections, so it can no longer be selected for a new job.
+    expect(job.recipe).toBe('X:pipe-v3'); expect(job.reserved?.length).toBe(1);
+    stepStations(g, 9000, T0 + 9000);
+    expect(countItem(r, out.id, 'refined_iron_ingot')).toBe(0);    // not finished before the real 10 s
+    stepStations(g, 1500, T0 + 10500);
+    expect(countItem(r, out.id, 'refined_iron_ingot')).toBe(1);    // one ingot back: a net loss against the 2 ingots + 1 part that made the pair
+    expect(countItem(r, out.id, 'mechanical_parts')).toBe(0);
     expect(r.entities[id].station!.queue.length).toBe(0);
   });
   it('a full output blocks the job without losing the reserved pipe; cancel returns that same UID', () => {

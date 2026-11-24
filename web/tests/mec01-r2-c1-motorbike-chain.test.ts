@@ -22,7 +22,7 @@ const east:Input={...still,right:true,mx:100,my:100};
 afterEach(()=>setActiveLayout('shipping'));
 const act=(g:GameState,type:string,p:object={},at=START+10)=>dispatch(g,{id:'c1-'+(++n),type,...p} as any,at);
 const place=(r:RunState,tx:number,ty:number)=>{r.player.x=tx*TILE+8;r.player.y=ty*TILE+8;markDirty();};
-const cacheOf=(r:RunState)=>Object.values(r.entities).find(e=>e.kind==='loot'&&e.poi==='factory'&&e.c&&r.custody[e.c]?.slots.some(s=>s?.key==='iron_sword'))!;
+const cacheOf=(r:RunState)=>Object.values(r.entities).find(e=>e.kind==='loot'&&e.poi==='factory'&&e.c&&r.custody[e.c]?.slots.some(s=>s?.key==='machete'))!;
 function start(){setActiveLayout('shipping_fresh');const g=newGame();expect(act(g,'startRun',{character:'female',seed:303},START).ok).toBe(true);g.run!.creatures=[];markDirty();return g;}
 function legalTileNear(g:GameState,cx:number,cy:number,struct='workbench'):[number,number]{
   const r=g.run!;for(let k=1;k<=10;k++)for(let dy=-k;dy<=k;dy++)for(let dx=-k;dx<=k;dx++){if(Math.max(Math.abs(dx),Math.abs(dy))!==k)continue;const tx=cx+dx,ty=cy+dy;place(r,tx-1,ty);if(!buildReason(g,struct,tx,ty))return [tx,ty];}
@@ -42,11 +42,11 @@ function craftOut(g:GameState,bench:Entity,recipe:string,at:number){
 }
 
 describe('MEC-01 R2 C1: gather-to-kit chain, then a real cargo trip (CRAFTED + FIXTURE stock + INTENT freight)',()=>{
-  it('chain: gear and drive, frame, L3 bench, Motorbike Kit, place, refuel, mount, carry 40 ingots, deliver to a chest', ()=>{
+  it('chain: gears, frame, L3 bench, Motorbike Kit, place, refuel, mount, carry 40 ingots, deliver to a chest', ()=>{
     const g=start();const r=g.run!;const c=cacheOf(r);place(r,c.tx!+1,c.ty!);
-    // FIXTURE starter stock: the amounts the whole chain needs (MP 12, iron 20, fasteners 14, spares 18), plus wood for bench and chest.
-    addItem(r,'inv','wood',40);addItem(r,'inv','stone',4);addItem(r,'inv','iron_ingot',20);addItem(r,'inv','mechanical_parts',12);
-    addItem(r,'inv','fasteners',14);addItem(r,'inv','spares',34);addItem(r,'inv','fuel_can',1);
+    // FIXTURE: materials for devices, directed research, four gears, frame and L3 kit.
+    for(const [k,q] of [['wood',40],['stone',4],['iron_ingot',23],['spares',47],['iron_plate',5],['metal_pipe',1],['refined_iron_ingot',6],['fuel_can',1]] as const) expect(addItem(r,'inv',k,q)).toBe(0);
+    for(const recipe of ['deploy_workbench','deploy_research','deploy_chest_small'])expect(act(g,'craft',{recipe}).ok,recipe).toBe(true);
     // CRAFTED: L1 bench built and upgraded to L2 (real build + paid upgrade).
     const sp=legalTileNear(g,c.tx!+1,c.ty!);expect(act(g,'build',{struct:'workbench',tx:sp[0],ty:sp[1]},START+20).ok).toBe(true);
     const bench=Object.values(r.entities).find(e=>e.kind==='struct'&&e.type==='workbench')!;
@@ -61,20 +61,19 @@ describe('MEC-01 R2 C1: gather-to-kit chain, then a real cargo trip (CRAFTED + F
     expect(act(g,'move',{from:tOut,fs:bp,to:'inv'},START+31+45600).ok).toBe(true);
     const bpi=C(r,'inv').slots.findIndex(s=>s?.key==='blueprint'&&s.meta==='motorbike_kit');
     expect(act(g,'useItem',{slot:bpi},START+31+45700).ok).toBe(true);
-    // CRAFTED: gear (2 iron + 2 MP + 1 fastener) -> geared drive; frame (3 iron + 2 MP + 2 spares).
+    // CRAFTED: two paid gears for the L3 upgrade and two for the vehicle itself.
     // CHRONOLOGY: research completes at START+31+45500 (stepStations), blueprint moved at +45600 and learned at +45700.
     // Crafts that depend on the learned recipe chain start only after that learn time.
     let t=START+45800;
-    craftOut(g,bench,'mechanical_gear',t);t+=40000;
-    craftOut(g,bench,'vehicle_drive_geared',t);t+=40000;
+    for(let i=0;i<4;i++){craftOut(g,bench,'mechanical_gear',t);t+=40000;}
     craftOut(g,bench,'vehicle_frame',t);t+=40000;
-    expect(countItem(r,'inv','vehicle_drive')).toBe(1);expect(countItem(r,'inv','vehicle_frame')).toBe(1);
-    // CRAFTED: paid upgrade to L3 (real intent, real cost). Then the kit (frame + drive + 2 iron + 2 fasteners), L3 only.
+    expect(countItem(r,'inv','mechanical_gear')).toBe(4);expect(countItem(r,'inv','vehicle_frame')).toBe(1);
+    // CRAFTED: paid upgrade to L3 (real intent, real cost). Then the kit (frame + 2 gears + 3 plates + 4 refined ingots), L3 only.
     for(const [k,q] of WORKBENCH_UPGRADE_III.cost)expect(countItem(r,'inv',k),k).toBeGreaterThanOrEqual(q);
     place(r,bench.tx!-1,bench.ty!);expect(act(g,'upgradeStation',{eid:bench.id},t).ok).toBe(true);expect(bench.station!.level).toBe(3);
     // blueprint must have been learned (run-local) before the kit craft is allowed
     craftOut(g,bench,'motorbike_kit',t+100);t+=60000;   // requires the learned recipe + L3
-    expect(countItem(r,'inv','motorbike_kit')).toBe(1);expect(countItem(r,'inv','vehicle_frame')).toBe(0);expect(countItem(r,'inv','vehicle_drive')).toBe(0);
+    expect(countItem(r,'inv','motorbike_kit')).toBe(1);expect(countItem(r,'inv','vehicle_frame')).toBe(0);expect(countItem(r,'inv','mechanical_gear')).toBe(0);
     // INTENT: place the kit on clear road (real placement rules), refuel from the carried canister, mount.
     const q=roadLine(g);place(r,q.x/TILE-1|0,q.y/TILE|0);
     expect(act(g,'placeMotorbike',q,t+200).ok).toBe(true);

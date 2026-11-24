@@ -1,0 +1,74 @@
+{
+  "seed": 7542,
+  "start": 1794729600000,
+  "guard": "h1h",
+  "post": "e1ga",
+  "enemy": "vy:roam:49:14",
+  "enemyType": "slime_2",
+  "initialHp": 46,
+  "playerSteps": 36,
+  "weapon": "s1gl",
+  "initialDur": 100,
+  "saved": 22150,
+  "hits": [
+    {
+      "ms": 22150,
+      "hp": 34,
+      "dur": 99,
+      "gx": 2474,
+      "gy": 733
+    },
+    {
+      "ms": 22900,
+      "hp": 22,
+      "dur": 98,
+      "gx": 2474,
+      "gy": 735
+    },
+    {
+      "ms": 23950,
+      "hp": 10,
+      "dur": 97,
+      "gx": 2476,
+      "gy": 736
+    },
+    {
+      "ms": 24400,
+      "hp": -2,
+      "dur": 96,
+      "gx": 2476,
+      "gy": 736
+    }
+  ],
+  "returned": [
+    2476,
+    731,
+    0
+  ],
+  "trace": [
+    {
+      "id": "r22",
+      "at": 1794729618223.2646,
+      "kind": "human.guard.duty",
+      "detail": "h1h:hw2ti:e1ga:1"
+    },
+    {
+      "id": "r32",
+      "at": 1794729621001,
+      "kind": "human.guard.alert",
+      "detail": "{\"guard\":\"h1h\",\"job\":\"defend:h1h:1794729621001\",\"postId\":\"e1ga\",\"enemyId\":\"vy:roam:49:14\",\"alertAt\":1794729621001,\"gx\":2476,\"gy\":731}"
+    },
+    {
+      "id": "r42",
+      "at": 1794729624401.0066,
+      "kind": "human.guard.recall",
+      "detail": "{\"guard\":\"h1h\",\"job\":\"defend:h1h:1794729621001\",\"postId\":\"e1ga\",\"enemyId\":\"vy:roam:49:14\",\"alertAt\":1794729621001,\"gx\":2476,\"gy\":736}"
+    },
+    {
+      "id": "r69",
+      "at": 1794729633513.1223,
+      "kind": "human.guard.duty",
+      "detail": "h1h:defend:h1h:1794729621001:e1ga:2"
+    }
+  ]
+}

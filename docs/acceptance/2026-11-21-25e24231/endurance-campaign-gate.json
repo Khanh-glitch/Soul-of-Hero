@@ -1,0 +1,160 @@
+{
+  "sha": "6d2dec8b142270d34e666815df9358f962e40402",
+  "seed": 7606,
+  "runId": "run_5va_mwhjny80",
+  "scope": "Engineering campaign only, not browser or creator review",
+  "checks": [
+    {
+      "name": "Ordinary campaign covers every hour through h336",
+      "ok": true,
+      "evidence": {
+        "actors": 286,
+        "lastMinute": 20160,
+        "observedHours": 336
+      }
+    },
+    {
+      "name": "h264 identity and snapshot",
+      "ok": true,
+      "evidence": "1ad8cdf503bda10ca9c332406d4ee7b95af472e23b2e7c3803bdb1c3fa53b81a"
+    },
+    {
+      "name": "h264 ordinary world and exact clock",
+      "ok": true,
+      "evidence": 1795680000000
+    },
+    {
+      "name": "h264 has residents fit to work",
+      "ok": true,
+      "evidence": {
+        "count": 46,
+        "communities": [
+          "com:po_greywater",
+          "com:po_mere",
+          "com:po_falls",
+          "com:po_sawaion",
+          "com:po_confluence",
+          "com:po_ranger",
+          "com:po_sapgrove",
+          "com:po_rapids",
+          "com:po_fishcamp",
+          "com:po_netcamp",
+          "com:po_saltpans",
+          "com:po_vend_strait"
+        ]
+      }
+    },
+    {
+      "name": "h264 awakening",
+      "ok": true,
+      "evidence": []
+    },
+    {
+      "name": "h312 identity and snapshot",
+      "ok": true,
+      "evidence": "e2011e013ae5dbad0422d1690d898a65737c88a75d8dd39c5fb6c1ed1ddea428"
+    },
+    {
+      "name": "h312 ordinary world and exact clock",
+      "ok": true,
+      "evidence": 1795852800000
+    },
+    {
+      "name": "h312 has residents fit to work",
+      "ok": true,
+      "evidence": {
+        "count": 38,
+        "communities": [
+          "com:po_greywater",
+          "com:po_mere",
+          "com:po_falls",
+          "com:po_sawaion",
+          "com:po_confluence",
+          "com:po_ranger",
+          "com:po_sapgrove",
+          "com:po_rapids",
+          "com:po_fishcamp",
+          "com:po_netcamp",
+          "com:po_saltpans",
+          "com:po_vend_strait"
+        ]
+      }
+    },
+    {
+      "name": "h312 awakening",
+      "ok": true,
+      "evidence": [
+        "surtur",
+        "typhon",
+        "aion",
+        "atlas",
+        "argus",
+        "anubis"
+      ]
+    },
+    {
+      "name": "h335 identity and snapshot",
+      "ok": true,
+      "evidence": "49fd83065e750547da5dd0929d1bef791f30357705001389041c76a8012ce07c"
+    },
+    {
+      "name": "h335 ordinary world and exact clock",
+      "ok": true,
+      "evidence": 1795935600000
+    },
+    {
+      "name": "Only the three physical services",
+      "ok": true,
+      "evidence": [
+        "po_evac_hook",
+        "po_evac_south",
+        "po_evac_west"
+      ]
+    },
+    {
+      "name": "h336 identity and snapshot",
+      "ok": true,
+      "evidence": "f933d1c05dde825a9a40fe85f22cc2690bdfd2759442c52edf5b15cb2ea3a80b"
+    },
+    {
+      "name": "One K8 wipe, partitioned census",
+      "ok": true,
+      "evidence": {
+        "total": 286,
+        "evacuated": 6,
+        "survived": 38,
+        "dead": 242,
+        "unresolved": 0
+      }
+    },
+    {
+      "name": "Same run: a passenger arrived AND a defended resident survived",
+      "ok": false,
+      "evidence": {
+        "services": [
+          {
+            "site": "po_evac_west",
+            "round": 1,
+            "passengers": [
+              "h5s",
+              "h8",
+              "h2l",
+              "h1",
+              "h7",
+              "h5w"
+            ]
+          }
+        ],
+        "guarded": [],
+        "outcomes": {
+          "total": 286,
+          "evacuated": 6,
+          "survived": 38,
+          "dead": 242,
+          "unresolved": 0
+        }
+      }
+    }
+  ],
+  "passed": false
+}

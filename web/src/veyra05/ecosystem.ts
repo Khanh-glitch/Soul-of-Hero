@@ -193,6 +193,26 @@ function makeVeyraActor(
   };
 }
 
+/** Ensure a canonical Elder body exists for `key` even when the loaded window does not cover its
+ *  lair. The body is created in the ARCHIVED (global pixel) representation at the same authored
+ *  dais the window seeder would use, so the assault ledger always has exactly one physical Elder
+ *  to move, damage and kill. Never duplicates an existing body and never revives a defeated one. */
+export function ensureArchivedElderActor(r: RunState, key: string): Creature | null {
+  const anywhere = [...r.creatures, ...Object.values(r.veyraOffscreenCreatures ?? {})].find(m => m.elder?.key === key);
+  if (anywhere) return anywhere;
+  const ps = VEYRA_PRIMORDIAL_SITES.find(s => s.key === key);
+  const pDef = PRIMORDIAL_ELDERS[key];
+  if (!ps || !pDef || isElderAlreadyDefeated(r, key)) return null;
+  const loc = resolvePrimordialGlobalTile(ps);
+  const actor = makeVeyraActor(`vy:elder:${key}`, `elder_${key}`, loc.gx, loc.gy, loc.floor, 30, {
+    maxHp: pDef.hpAwake,
+    elder: { key, awake: false, phase: 0, pattern: 0, special: 0 },
+  });
+  // GLOBAL pixels in the archived list: exactly what a window transition would have produced.
+  (r.veyraOffscreenCreatures ??= {})[actor.id] = actor;
+  return actor;
+}
+
 /** Archive off-window / off-floor actors into `r.veyraOffscreenCreatures` (global px) and restore matching actors,
  *  then seed newly entered habitat anchors, wildlife cells, side bosses, and Primordial Elders! */
 export function syncVeyraEcosystemActors(
@@ -610,4 +630,20 @@ export function computeCreatureEnvFactors(
   }
 
   return { speedMul, sightMul };
+}
+
+/** QA Sandbox VFX Showcase helper (see game/vfx/testkit.ts): place the n-th optional side boss on a free tile
+ *  beside the player inside an isolated QA session, using the same actor factory as the authored sites. */
+export function vfxTestSummonBoss(r: RunState, n: number, isFree: (tx: number, ty: number) => boolean): string | null {
+  const sb = VEYRA_SIDE_BOSS_SITES[((n % VEYRA_SIDE_BOSS_SITES.length) + VEYRA_SIDE_BOSS_SITES.length) % VEYRA_SIDE_BOSS_SITES.length];
+  const def = CREATURES[sb.species]; if (!def) return null;
+  const id = `vy:boss:${sb.species}`, p = r.player, ptx = Math.floor(p.x / TILE), pty = Math.floor(p.y / TILE);
+  for (const d of [5, 4, 6, 3]) for (let k = 0; k < 12; k++) {
+    const a = k * Math.PI / 6, tx = Math.round(ptx + Math.cos(a) * d), ty = Math.round(pty + Math.sin(a) * d);
+    if (tx < 5 || ty < 5 || tx >= WW - 5 || ty >= WH - 5 || !isFree(tx, ty)) continue;
+    const old = r.creatures.findIndex(m => m.id === id); if (old >= 0) r.creatures.splice(old, 1);
+    r.creatures.push(makeVeyraActor(id, sb.species, tx, ty, activeFloor(r), sb.leashTiles, { maxHp: def.hp, sideBoss: { key: sb.species, phase: 0, moveIdx: 0, leashPx: sb.leashTiles * TILE } }));
+    return sb.name;
+  }
+  return null;
 }

@@ -1,0 +1,134 @@
+{
+  "scope": "normal control, read-only saved-map pathfinding aid",
+  "steps": [
+    {
+      "at": 1797950763243,
+      "player": [
+        2497,
+        750
+      ],
+      "actor": "h1g",
+      "role": "mechanic",
+      "gx": 2522,
+      "gy": 721,
+      "route": 52,
+      "layout": "veyra05-at-2368-704",
+      "localPixels": [
+        2072,
+        744
+      ],
+      "firstLeg": 1
+    },
+    {
+      "at": 1797950778163,
+      "player": [
+        2502,
+        750
+      ],
+      "actor": "h1g",
+      "role": "mechanic",
+      "gx": 2522,
+      "gy": 721,
+      "route": 47,
+      "layout": "veyra05-at-2368-704",
+      "localPixels": [
+        2151.2000000000007,
+        744
+      ],
+      "firstLeg": 1
+    },
+    {
+      "at": 1797950796209,
+      "player": [
+        2503,
+        750
+      ],
+      "actor": "h1g",
+      "role": "mechanic",
+      "gx": 2522,
+      "gy": 721,
+      "route": 46,
+      "layout": "veyra05-at-2368-704",
+      "localPixels": [
+        2163.080000000001,
+        744
+      ],
+      "firstLeg": 1
+    },
+    {
+      "at": 1797950899784,
+      "player": [
+        2503,
+        750
+      ],
+      "actor": "h1g",
+      "role": "mechanic",
+      "gx": 2522,
+      "gy": 721,
+      "route": 46,
+      "layout": "veyra05-at-2368-704",
+      "localPixels": [
+        2167.040000000001,
+        744
+      ],
+      "firstLeg": 1
+    }
+  ],
+  "errors": [],
+  "httpErrors": [],
+  "talk": [],
+  "landings": [
+    {
+      "seed": 7542,
+      "run": "run_5ti_mxytglan",
+      "nearestTiles": 12.806248474865697
+    }
+  ],
+  "startClock": 1797950760143,
+  "seed": 7542,
+  "run": "run_5ti_mxytglan",
+  "beforeContact": {
+    "at": 1797950899784,
+    "player": [
+      {
+        "uid": "s1",
+        "key": "wood_club",
+        "qty": 1,
+        "dur": 120
+      },
+      {
+        "uid": "s2",
+        "key": "water_flask",
+        "qty": 1,
+        "charge": 2
+      },
+      {
+        "uid": "s3",
+        "key": "berries",
+        "qty": 3
+      },
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ]
+  },
+  "failure": "TimeoutError: locator.click: Timeout 60000ms exceeded.\nCall log:\n  - waiting for getByRole('button', { name: 'Save now', exact: true })\n"
+}

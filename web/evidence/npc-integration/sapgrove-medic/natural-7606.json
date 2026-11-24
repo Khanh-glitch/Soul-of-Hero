@@ -1,0 +1,52 @@
+{
+  "seed": 7606,
+  "start": 1794729600000,
+  "community": "com:po_sapgrove",
+  "cause": {
+    "id": "r3876",
+    "at": 1794730303501,
+    "kind": "human.harvest.crush",
+    "detail": "h4w:oak@1896,1264"
+  },
+  "call": {
+    "id": "r3878",
+    "at": 1794730303686.7146,
+    "kind": "human.medical.respond",
+    "detail": "h50:h4w:travel:1"
+  },
+  "saved": {
+    "job": "hw3g1",
+    "worker": "h50",
+    "patient": "h4w",
+    "at": 704,
+    "uid": "s288",
+    "qty": 2
+  },
+  "paidAt": 1794730309915.2861,
+  "paid": {
+    "worker": "h50",
+    "patient": "h4w",
+    "job": "hw3g1",
+    "seen": {
+      "gx": 1897,
+      "gy": 1264,
+      "floor": 0
+    },
+    "at": {
+      "gx": 1897,
+      "gy": 1264,
+      "floor": 0
+    },
+    "hpBefore": 1,
+    "hpAfter": 31,
+    "inputs": [
+      {
+        "slot": 1,
+        "uid": "s288",
+        "key": "bandage",
+        "qty": 1,
+        "containerId": "c285"
+      }
+    ]
+  }
+}

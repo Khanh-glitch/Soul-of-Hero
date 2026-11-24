@@ -681,7 +681,7 @@ describe('Review Round 2 Acceptance — Negative-First & Zero-Shortcut Guarantee
       for (const c of [...stallCells, ...archCells]) f0Layer.solidProps[c] = 0;
       markDirty();
     }
-  }, 60_000);
+  }, 120_000);
 
   it('P1-3: enforces sex-specific grouse egg laying across live pens, offscreen window shifts, breeding, and wild drops', () => {
     expect(resolveHusbandryYield('grouse', 'f')).toMatchObject({

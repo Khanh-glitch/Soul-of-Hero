@@ -1,0 +1,310 @@
+{
+  "sha": "62c9dae4d9a5f01f2ae440aef60c882849c50b69",
+  "seed": 7606,
+  "runId": "run_5va_mwhjny80",
+  "hour": 8,
+  "qa": false,
+  "communities": {
+    "po_greywater": {
+      "IDLE": 9
+    },
+    "po_academy": {
+      "IDLE": 4
+    },
+    "po_ironmine": {
+      "IDLE": 4
+    },
+    "po_hook": {
+      "IDLE": 10
+    },
+    "po_oasis": {
+      "IDLE": 9,
+      "DOWNED": 1
+    },
+    "po_cindercamp": {
+      "IDLE": 9,
+      "DOWNED": 1
+    },
+    "po_strait": {
+      "IDLE": 3
+    },
+    "po_mere": {
+      "IDLE": 3
+    },
+    "po_southfoot": {
+      "DOWNED": 1,
+      "IDLE": 2
+    },
+    "po_westbank": {
+      "IDLE": 3
+    },
+    "po_dpier": {
+      "IDLE": 3
+    },
+    "po_gullpier": {
+      "IDLE": 3
+    },
+    "po_gulfhead": {
+      "IDLE": 3
+    },
+    "po_westmouth": {
+      "IDLE": 3
+    },
+    "po_saltharbor": {
+      "IDLE": 3
+    },
+    "po_ironharbor": {
+      "DOWNED": 1,
+      "IDLE": 2
+    },
+    "po_ember": {
+      "IDLE": 2,
+      "DOWNED": 1
+    },
+    "po_sandgate": {
+      "IDLE": 3
+    },
+    "po_falls": {
+      "IDLE": 4
+    },
+    "po_pumphouse": {},
+    "po_oldpump": {
+      "IDLE": 2,
+      "DOWNED": 2
+    },
+    "po_sawaion": {
+      "IDLE": 4
+    },
+    "po_mill": {
+      "IDLE": 4
+    },
+    "po_timberyard": {
+      "IDLE": 4
+    },
+    "po_fracquarry": {
+      "IDLE": 4
+    },
+    "po_greyquarry": {
+      "IDLE": 3,
+      "DOWNED": 1
+    },
+    "po_obsq": {
+      "WORKING": 1,
+      "DOWNED": 2,
+      "IDLE": 1
+    },
+    "po_kilns": {
+      "IDLE": 3,
+      "WORKING": 1
+    },
+    "po_slag": {
+      "WORKING": 1,
+      "DOWNED": 2,
+      "IDLE": 1
+    },
+    "po_sulfur": {
+      "DOWNED": 1,
+      "IDLE": 2,
+      "WORKING": 1
+    },
+    "po_siloc": {
+      "IDLE": 2,
+      "WORKING": 1
+    },
+    "po_filter": {},
+    "po_geo": {
+      "IDLE": 2,
+      "WORKING": 1,
+      "DOWNED": 1
+    },
+    "po_observatory": {
+      "IDLE": 4
+    },
+    "po_archive": {
+      "IDLE": 4
+    },
+    "po_hall_eyes": {
+      "IDLE": 2
+    },
+    "po_lantern": {
+      "IDLE": 4
+    },
+    "po_lanternstn": {
+      "IDLE": 3
+    },
+    "po_kestrel": {
+      "IDLE": 4
+    },
+    "po_typhon": {
+      "IDLE": 2
+    },
+    "po_viaduct": {},
+    "po_freightyard": {},
+    "po_confluence": {
+      "DOWNED": 1,
+      "IDLE": 2
+    },
+    "po_ranger": {
+      "IDLE": 7
+    },
+    "po_glade": {
+      "IDLE": 7
+    },
+    "po_sapgrove": {
+      "IDLE": 7
+    },
+    "po_elderwood": {
+      "IDLE": 2
+    },
+    "po_meridian": {
+      "IDLE": 3,
+      "DOWNED": 1
+    },
+    "po_ironvein": {
+      "IDLE": 4
+    },
+    "po_ridgestop": {
+      "IDLE": 3
+    },
+    "po_rapids": {
+      "IDLE": 3
+    },
+    "po_westwood": {
+      "IDLE": 8
+    },
+    "po_fishcamp": {
+      "IDLE": 6,
+      "DOWNED": 1
+    },
+    "po_necropolis": {
+      "IDLE": 2
+    },
+    "po_tombs": {
+      "IDLE": 2
+    },
+    "po_cairns": {},
+    "po_bonestop": {
+      "IDLE": 3
+    },
+    "po_gate": {
+      "IDLE": 3
+    },
+    "po_beacon": {
+      "IDLE": 3,
+      "DOWNED": 1
+    },
+    "po_wreck": {},
+    "po_tidecamp": {
+      "IDLE": 7
+    },
+    "po_gullnest": {
+      "IDLE": 7
+    },
+    "po_netcamp": {
+      "IDLE": 6,
+      "DOWNED": 1
+    },
+    "po_emberwatch": {
+      "IDLE": 3,
+      "DOWNED": 1
+    },
+    "po_surtur": {
+      "IDLE": 2
+    },
+    "po_saltpans": {
+      "DOWNED": 1,
+      "IDLE": 3
+    },
+    "po_saltlight": {
+      "IDLE": 4
+    },
+    "po_racks": {
+      "IDLE": 7
+    },
+    "po_gullwreck": {},
+    "po_ironwh": {
+      "IDLE": 3
+    },
+    "po_rc_meridian": {},
+    "po_rc_ironvein": {},
+    "po_rc_kestrel": {},
+    "po_rc_dam": {},
+    "po_rc_sandgate": {},
+    "po_rc_salt": {},
+    "po_vend_gulf": {
+      "IDLE": 3
+    },
+    "po_vend_strait": {
+      "IDLE": 2,
+      "DOWNED": 1
+    },
+    "po_evac_west": {
+      "IDLE": 3
+    },
+    "po_evac_south": {
+      "IDLE": 1,
+      "DOWNED": 2
+    },
+    "po_evac_hook": {
+      "DOWNED": 2,
+      "IDLE": 1
+    }
+  },
+  "elders": [
+    {
+      "id": "surtur",
+      "alive": true,
+      "waves": 0
+    },
+    {
+      "id": "typhon",
+      "alive": true,
+      "waves": 0
+    },
+    {
+      "id": "aion",
+      "alive": true,
+      "waves": 0
+    },
+    {
+      "id": "atlas",
+      "alive": true,
+      "waves": 0
+    },
+    {
+      "id": "argus",
+      "alive": true,
+      "waves": 0
+    },
+    {
+      "id": "anubis",
+      "alive": true,
+      "waves": 0
+    }
+  ],
+  "ports": [
+    {
+      "site": "po_evac_west",
+      "phase": "STAGING",
+      "capacity": 6,
+      "boarded": [],
+      "departures": []
+    },
+    {
+      "site": "po_evac_south",
+      "phase": "STAGING",
+      "capacity": 6,
+      "boarded": [],
+      "departures": []
+    },
+    {
+      "site": "po_evac_hook",
+      "phase": "STAGING",
+      "capacity": 6,
+      "boarded": [],
+      "departures": []
+    }
+  ],
+  "defenders": [],
+  "digest": "798cac76ad3dfc750c04d94b0a373eb7be78c4832ba85316351285d8958ad92a"
+}

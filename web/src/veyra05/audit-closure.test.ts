@@ -271,7 +271,8 @@ describe('Veyra Audit Closure & Cross-System Guarantees (#48)', () => {
     expect(BUTCHER_YIELDS.deer.adult.some(([k]) => k === 'hide')).toBe(true);
     expect(BUTCHER_YIELDS.boar.adult.some(([k]) => k === 'boar_tusk')).toBe(true);
     expect(RECIPES.poached_eggs).toBeDefined();
-    expect(ALWAYS_KNOWN_RECIPES.length).toBe(14);
+    // 13 core recipes besides the PA1 deploy recipes; none of them belongs to this phase.
+    expect(ALWAYS_KNOWN_RECIPES.filter(k => !k.startsWith('deploy_'))).toHaveLength(13);
 
     // 2. Build an enclosed 5x5 pen on Veyra with a Feed & Water Trough + Rain Barrel
     const gs = startVeyraAtAu(812, 592, 7404);
@@ -765,13 +766,15 @@ describe('Veyra Audit Closure & Cross-System Guarantees (#48)', () => {
     );
     expect(ambientOffscreen.length).toBeLessThanOrEqual(96);
 
-    // UI source-contract checks: KeyM unconditionally opens Map, SkillsPanel uses PRIMORDIAL_ELDERS, MapPanel supports Continent Fog-of-War
+    // UI source-contract checks: KeyM unconditionally opens Map, SkillsPanel uses PRIMORDIAL_ELDERS, MapPanel/ExpeditionMap supports Continent Fog-of-War
     const gameTsx = readFileSync(resolve(__dirname, '../ui/Game.tsx'), 'utf8');
     const panelsTsx = readFileSync(resolve(__dirname, '../ui/panels.tsx'), 'utf8');
+    const expeditionMapTsx = readFileSync(resolve(__dirname, '../ui/ExpeditionMap.tsx'), 'utf8');
     expect(gameTsx).toContain("case 'KeyM': toggle('map'); break;");
     expect(gameTsx).not.toContain("case 'KeyM': if(r.layoutId");
     expect(panelsTsx).toContain('PRIMORDIAL_ELDERS');
-    expect(panelsTsx).toContain('map-mode-continent');
-    expect(panelsTsx).toContain('veyraGlobalDiscovered');
+    expect(panelsTsx).toContain('ExpeditionMap');
+    expect(expeditionMapTsx).toContain('map-mode-continent');
+    expect(expeditionMapTsx).toContain('veyraGlobalDiscovered');
   }, 25_000);
 });

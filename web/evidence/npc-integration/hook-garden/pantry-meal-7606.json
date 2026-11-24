@@ -1,0 +1,262 @@
+{
+  "seed": 7606,
+  "runStart": 1794729600000,
+  "watchStart": 1794730331100,
+  "window": [
+    1794784331100,
+    1794784931100
+  ],
+  "jobId": "j3jw",
+  "worker": "hl",
+  "uid": "s3kd",
+  "container": "c19v",
+  "before": [
+    {
+      "uid": "s19w",
+      "key": "berries",
+      "qty": 2
+    },
+    {
+      "uid": "s19x",
+      "key": "charcoal",
+      "qty": 8
+    },
+    {
+      "uid": "s19y",
+      "key": "spares",
+      "qty": 5
+    },
+    {
+      "uid": "s2uk",
+      "key": "herb",
+      "qty": 4
+    },
+    {
+      "uid": "s35c",
+      "key": "cloth",
+      "qty": 1
+    },
+    {
+      "uid": "s35d",
+      "key": "fiber",
+      "qty": 2
+    },
+    {
+      "uid": "s35g",
+      "key": "fiber",
+      "qty": 1
+    },
+    {
+      "uid": "s3ai",
+      "key": "grilled_mushroom",
+      "qty": 1
+    },
+    {
+      "uid": "s1a4",
+      "key": "seed_sunroot",
+      "qty": 5
+    },
+    {
+      "uid": "s3eq",
+      "key": "wood",
+      "qty": 7
+    },
+    {
+      "uid": "s3eg",
+      "key": "crop",
+      "qty": 1
+    },
+    {
+      "uid": "s3eh",
+      "key": "seed_sunroot",
+      "qty": 1
+    }
+  ],
+  "vacancy": [
+    {
+      "id": "r94424",
+      "at": 1794784865976.9639,
+      "kind": "human.consume",
+      "detail": {
+        "actorId": "hq",
+        "uid": "s19w",
+        "key": "berries",
+        "containerId": "c19v",
+        "qty": 1
+      }
+    },
+    {
+      "id": "r94437",
+      "at": 1794784879550.2483,
+      "kind": "human.consume",
+      "detail": {
+        "actorId": "hl",
+        "uid": "s19w",
+        "key": "berries",
+        "containerId": "c19v",
+        "qty": 1
+      }
+    }
+  ],
+  "ledger": [
+    {
+      "at": 1794784879579.416,
+      "jobId": "j3jw",
+      "recipe": "stew",
+      "inputs": [
+        {
+          "uid": "s3j6",
+          "key": "crop",
+          "qty": 2,
+          "containerId": "c1ax"
+        },
+        {
+          "uid": "s3j0",
+          "key": "meat",
+          "qty": 1,
+          "containerId": "c1ax"
+        },
+        {
+          "uid": "s3j7",
+          "key": "herb",
+          "qty": 1,
+          "containerId": "c1ax"
+        }
+      ],
+      "stationId": "e1ad",
+      "workerId": "hl",
+      "fromUid": "s3kd",
+      "intoUid": "s3kd",
+      "qty": 1,
+      "key": "stew"
+    }
+  ],
+  "delivered": [
+    {
+      "id": "r94439",
+      "at": 1794784879579.416,
+      "kind": "human.cargo.deliver",
+      "detail": "work:hl:s3kd>s3kd:c19v:1"
+    }
+  ],
+  "eaten": [
+    {
+      "id": "r94449",
+      "at": 1794784884532.5793,
+      "kind": "human.consume",
+      "detail": {
+        "actorId": "hn",
+        "uid": "s3kd",
+        "key": "stew",
+        "containerId": "c19v",
+        "qty": 1
+      }
+    }
+  ],
+  "after": [
+    {
+      "uid": "somo",
+      "key": "berries",
+      "qty": 2
+    },
+    {
+      "uid": "s19x",
+      "key": "charcoal",
+      "qty": 8
+    },
+    {
+      "uid": "s19y",
+      "key": "spares",
+      "qty": 5
+    },
+    {
+      "uid": "s2uk",
+      "key": "herb",
+      "qty": 4
+    },
+    {
+      "uid": "s35c",
+      "key": "cloth",
+      "qty": 1
+    },
+    {
+      "uid": "s35d",
+      "key": "fiber",
+      "qty": 2
+    },
+    {
+      "uid": "s35g",
+      "key": "fiber",
+      "qty": 1
+    },
+    {
+      "uid": "somr",
+      "key": "berries",
+      "qty": 1
+    },
+    {
+      "uid": "s1a4",
+      "key": "seed_sunroot",
+      "qty": 5
+    },
+    {
+      "uid": "s3eq",
+      "key": "wood",
+      "qty": 7
+    },
+    {
+      "uid": "s3eg",
+      "key": "crop",
+      "qty": 1
+    },
+    {
+      "uid": "s3eh",
+      "key": "seed_sunroot",
+      "qty": 1
+    }
+  ],
+  "lineage": [
+    {
+      "id": "r94438",
+      "at": 1794784879579.416,
+      "kind": "human.cargo.lineage",
+      "detail": {
+        "containerId": "c19v",
+        "transferUid": "s3kd",
+        "lineage": [
+          {
+            "at": 1794784879579.416,
+            "jobId": "j3jw",
+            "recipe": "stew",
+            "inputs": [
+              {
+                "uid": "s3j6",
+                "key": "crop",
+                "qty": 2,
+                "containerId": "c1ax"
+              },
+              {
+                "uid": "s3j0",
+                "key": "meat",
+                "qty": 1,
+                "containerId": "c1ax"
+              },
+              {
+                "uid": "s3j7",
+                "key": "herb",
+                "qty": 1,
+                "containerId": "c1ax"
+              }
+            ],
+            "stationId": "e1ad",
+            "workerId": "hl",
+            "fromUid": "s3kd",
+            "intoUid": "s3kd",
+            "qty": 1,
+            "key": "stew"
+          }
+        ]
+      }
+    }
+  ]
+}

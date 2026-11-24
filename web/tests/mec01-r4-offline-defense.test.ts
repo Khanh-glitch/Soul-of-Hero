@@ -76,25 +76,25 @@ describe('MEC-01 R4 P3 — offline causal defense: no fabricated outcomes', () =
 
   it('pre-decayed and future-stamped traces never re-arm a search', () => {
     const gs = freshRun(502); const r = gs.run!; const { px, py } = placeAtBuildablePatch(gs);
-    const boar = mkCreature(r, 'boar', (px + 1) * TILE + 8, py * TILE + 8, 40); boar.state = 'idle'; (boar as any).prov = true;
-    r.creatures.push(boar);
-    r.traces.push(mkTrace("dead-1", boar.x + 18, boar.y, T0 - 1000, 0));           // life = 0 — expired
-    r.traces.push(mkTrace("future-1", boar.x + 18, boar.y, T0 + 60000, 100000));  // not yet stamped — cannot be known yet
+    const raider = mkCreature(r, 'orc_2', (px + 1) * TILE + 8, py * TILE + 8, 40); raider.state = 'idle'; (raider as any).prov = true;
+    r.creatures.push(raider);
+    r.traces.push(mkTrace("dead-1", raider.x + 18, raider.y, T0 - 1000, 0));           // life = 0 — expired
+    r.traces.push(mkTrace("future-1", raider.x + 18, raider.y, T0 + 60000, 100000));  // not yet stamped — cannot be known yet
     settleFar(gs, 1800000);
     expect(hits(r)).toHaveLength(0); expect(structDestroyed(r)).toHaveLength(0);
-    const m = r.creatures.find(c => c.id === boar.id)!; expect(m.knows ?? null).toBeNull(); expect(m.x).toBe(boar.x);
+    const m = r.creatures.find(c => c.id === raider.id)!; expect(m.knows ?? null).toBeNull(); expect(m.x).toBe(raider.x);
   });
 
   it('rain sweeping the trail before logout never leaves a re-usable target behind', () => {
     const gs = freshRun(503); const r = gs.run!; const { px, py } = placeAtBuildablePatch(gs);
-    const boar = mkCreature(r, 'boar', (px + 1) * TILE + 8, py * TILE + 8, 40); boar.state = 'idle'; (boar as any).prov = true;
-    r.creatures.push(boar);
-    for (let k = 0; k <= 20; k++) r.traces.push({ ...mkTrace(`trail${k}`, boar.x + k * 9, boar.y, T0 + 500, 100000), chainId: 'trail0', prevId: k ? `trail${k - 1}` : undefined });
+    const raider = mkCreature(r, 'orc_2', (px + 1) * TILE + 8, py * TILE + 8, 40); raider.state = 'idle'; (raider as any).prov = true;
+    r.creatures.push(raider);
+    for (let k = 0; k <= 20; k++) r.traces.push({ ...mkTrace(`trail${k}`, raider.x + k * 9, raider.y, T0 + 500, 100000), chainId: 'trail0', prevId: k ? `trail${k - 1}` : undefined });
     decayTraces(r, 10 * 60000, 'clear');                                            // a hard dry-out window
     expect(r.traces.every(t => t.life <= 0)).toBe(true);
     settleFar(gs, 1800000);
     expect(hits(r)).toHaveLength(0); expect(structDestroyed(r)).toHaveLength(0);
-    const m = r.creatures.find(c => c.id === boar.id)!; expect(m.x).toBe(boar.x); expect(m.y).toBe(boar.y);
+    const m = r.creatures.find(c => c.id === raider.id)!; expect(m.x).toBe(raider.x); expect(m.y).toBe(raider.y);
   });
 
   it('a wolf committed to a sight-range attack at the instant of exit becomes unresolved — no combat is reconstructed offline', () => {
@@ -130,21 +130,21 @@ describe('MEC-01 R4 P3 — offline causal defense: no fabricated outcomes', () =
     expect(hits(r)).toHaveLength(0);
   });
 
-  it('CONTROL: a provoked charge-style boar with a live chain ending at the blocking wall batters exactly that wall', () => {
+  it('CONTROL: a provoked charge-style raider with a live chain ending at the blocking wall batters exactly that wall', () => {
     const gs = freshRun(506); const r = gs.run!; const { px, py } = placeAtBuildablePatch(gs);
     placeAtBuildablePatch(gs, 11);                                             // fixture demands a long unbroken sight corridor west of the wall
     const wall = wallAt(gs, px + 7, py, 100);
     const ay = py * TILE + 8;
     const trace = { ...mkTrace('charge-tail', wall.x + 10, ay, T0 + 500, 10 ** 12, 'charge-tail', Math.PI) };   // terminal footprint pinned at the wall's east face — the creature ends its d<2 approach there and its westward pushes are blocked by the wall, triggering bashAhead
     r.traces.push(trace);
-    const boar = mkCreature(r, 'boar', (px + 9) * TILE + 8, ay, 40); boar.state = 'track'; (boar as any).prov = true;
-    boar.knows = { kind: 'trace', x: trace.x, y: trace.y, at: trace.t, traceId: trace.id, chainId: trace.chainId } as any;   // FIXTURE: pre-anchored (fixture registers the knowledge, so discovery rolls are not involved)
-    r.creatures.push(boar);
+    const raider = mkCreature(r, 'orc_2', (px + 9) * TILE + 8, ay, 40); raider.state = 'track'; (raider as any).prov = true;
+    raider.knows = { kind: 'trace', x: trace.x, y: trace.y, at: trace.t, traceId: trace.id, chainId: trace.chainId } as any;   // FIXTURE: pre-anchored (fixture registers the knowledge, so discovery rolls are not involved)
+    r.creatures.push(raider);
     settleFar(gs, 3600000);
     const wallHits = hits(r).filter((q: any) => q.detail.startsWith(wall.id));
     expect(wallHits.length).toBeGreaterThanOrEqual(1);
     expect(wall.hp).toBeLessThan(100);
-    for (const q of wallHits) expect(q.detail).toContain(':boar:');
+    for (const q of wallHits) expect(q.detail).toContain(':orc_2:');
   });
 
   it('the same geometry with a lunge-style predator never reaches a swing — the bash gate is style-denied', () => {
@@ -155,9 +155,9 @@ describe('MEC-01 R4 P3 — offline causal defense: no fabricated outcomes', () =
     const wallHPBefore = wall.hp!;
     const trace = { ...mkTrace('charge-tail', wall.x + 10, ay, T0 + 500, 10 ** 12, 'charge-tail', Math.PI) };
     r.traces.push(trace);
-    const wolf = mkCreature(r, 'wolf', (px + 9) * TILE + 8, ay, 30); wolf.state = 'track';
-    wolf.knows = { kind: 'trace', x: trace.x, y: trace.y, at: trace.t, traceId: trace.id, chainId: trace.chainId } as any;   // FIXTURE anchor
-    r.creatures.push(wolf);
+    const tracker = mkCreature(r, 'orc_1', (px + 9) * TILE + 8, ay, 30); tracker.state = 'track';
+    tracker.knows = { kind: 'trace', x: trace.x, y: trace.y, at: trace.t, traceId: trace.id, chainId: trace.chainId } as any;   // FIXTURE anchor
+    r.creatures.push(tracker);
     settleFar(gs, 3600000);
     expect(hits(r)).toHaveLength(0);
     expect(wall.hp!).toBeGreaterThanOrEqual(wallHPBefore - 10);                    // only unpaid-upkeep decay is tolerated, never a bash
@@ -188,9 +188,9 @@ describe('MEC-01 R4 P3 — offline causal defense: no fabricated outcomes', () =
     placeAtBuildablePatch(gs, 11);                                             // keep the crowd beyond the 99px day sight of the old player position
     const home = { x: (px + 8) * TILE + 8, y: py * TILE + 8 };
     for (let i = 0; i < 30; i++) {
-      const m = mkCreature(r, 'boar', home.x + (i % 6) * 5, home.y + Math.floor(i / 6) * 5, 40);
+      const m = mkCreature(r, 'orc_2', home.x + (i % 6) * 5, home.y + Math.floor(i / 6) * 5, 40);
       m.state = 'wander';
-      m.knows = { kind: 'trace', x: home.x + 40, y: home.y + 20, at: T0, traceId: 'focus', chainId: 'focus' } as any;   // FIXTURE: every boar carries an identical trace anchor
+      m.knows = { kind: 'trace', x: home.x + 40, y: home.y + 20, at: T0, traceId: 'focus', chainId: 'focus' } as any;   // FIXTURE: every raider carries an identical trace anchor
       r.creatures.push(m);
     }
     r.traces.push({ ...mkTrace('focus', home.x + 40, home.y + 20, T0 + 500, 10 ** 12, 'focus', 0.5) });

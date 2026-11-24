@@ -1,0 +1,237 @@
+{
+  "seed": 7606,
+  "start": 1794729600000,
+  "scope": "player hunt; controlled inter-region arrival; autonomous cooking",
+  "crop": {
+    "at": 1794730200071.677,
+    "jobId": "hj2ul",
+    "inputs": [
+      {
+        "slot": 0,
+        "uid": "s1b7",
+        "key": "seed_sunroot",
+        "qty": 1,
+        "containerId": "c1b5"
+      }
+    ],
+    "stationId": "e2th",
+    "workerId": "hn",
+    "fromUid": "s3eg",
+    "intoUid": "s3eg",
+    "qty": 3,
+    "key": "crop"
+  },
+  "game": {
+    "id": "vy:wild:41:35:0",
+    "initial": 40,
+    "killedAt": 1794730240700,
+    "drop": "d3i2",
+    "uid": "s3i1",
+    "qty": 2,
+    "pickedAt": 1794730241100
+  },
+  "pack": [
+    {
+      "at": 1794730241100,
+      "containerId": "c19v",
+      "key": "herb",
+      "qty": 3,
+      "fromUid": "s1a5",
+      "intoUid": "s2uk"
+    }
+  ],
+  "gift": {
+    "at": 1794730241100,
+    "recipe": "stew",
+    "key": "meat",
+    "qty": 1,
+    "from": "inv",
+    "sourceUid": "s3i1",
+    "into": "c19v",
+    "receivedUid": "s3j0"
+  },
+  "bill": [
+    {
+      "at": 1794730242801,
+      "workerId": "hl",
+      "orderId": "hw3j1",
+      "containerId": "c19v",
+      "into": "c1ax",
+      "inputs": [
+        {
+          "uid": "s3eg",
+          "key": "crop",
+          "qty": 2
+        }
+      ],
+      "received": [
+        {
+          "uid": "s3j6",
+          "key": "crop",
+          "qty": 2
+        }
+      ]
+    },
+    {
+      "at": 1794730242801,
+      "workerId": "hl",
+      "orderId": "hw3j1",
+      "containerId": "c19v",
+      "into": "c1ax",
+      "inputs": [
+        {
+          "uid": "s3j0",
+          "key": "meat",
+          "qty": 1
+        }
+      ],
+      "received": [
+        {
+          "uid": "s3j0",
+          "key": "meat",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "at": 1794730242801,
+      "workerId": "hl",
+      "orderId": "hw3j1",
+      "containerId": "c19v",
+      "into": "c1ax",
+      "inputs": [
+        {
+          "uid": "s2uk",
+          "key": "herb",
+          "qty": 1
+        }
+      ],
+      "received": [
+        {
+          "uid": "s3j7",
+          "key": "herb",
+          "qty": 1
+        }
+      ]
+    }
+  ],
+  "pay": {
+    "at": 1794730263973.4336,
+    "workerId": "hl",
+    "jobId": "j3jw",
+    "recipe": "stew",
+    "stationId": "e1ad",
+    "inputs": [
+      {
+        "uid": "s3j6",
+        "key": "crop",
+        "qty": 2,
+        "containerId": "c1ax"
+      },
+      {
+        "uid": "s3j0",
+        "key": "meat",
+        "qty": 1,
+        "containerId": "c1ax"
+      },
+      {
+        "uid": "s3j7",
+        "key": "herb",
+        "qty": 1,
+        "containerId": "c1ax"
+      }
+    ],
+    "totalMs": 14000
+  },
+  "saved": "j3jw",
+  "finish": [
+    {
+      "at": 1794730277973.4482,
+      "workerId": "hl",
+      "jobId": "j3jw",
+      "recipe": "stew",
+      "stationId": "e1ad",
+      "totalMs": 14000,
+      "outputs": [
+        {
+          "uid": "s3kd",
+          "key": "stew",
+          "qty": 1
+        }
+      ]
+    }
+  ],
+  "pickup": [
+    {
+      "at": 1794730277973.4482,
+      "workerId": "hl",
+      "uid": "s3kd",
+      "qty": 1,
+      "containerId": "c1ax",
+      "production": {
+        "jobId": "j3jw",
+        "workerId": "hl",
+        "recipe": "stew",
+        "stationId": "e1ad",
+        "inputs": [
+          {
+            "uid": "s3j6",
+            "key": "crop",
+            "qty": 2,
+            "containerId": "c1ax"
+          },
+          {
+            "uid": "s3j0",
+            "key": "meat",
+            "qty": 1,
+            "containerId": "c1ax"
+          },
+          {
+            "uid": "s3j7",
+            "key": "herb",
+            "qty": 1,
+            "containerId": "c1ax"
+          }
+        ]
+      }
+    }
+  ],
+  "returnAttempt": {
+    "seed": 7606,
+    "start": 1794729600000,
+    "jobId": "j3jw",
+    "worker": "hl",
+    "arrival": {
+      "at": 1794730301100,
+      "position": [
+        2586,
+        655,
+        0
+      ],
+      "store": [
+        2585,
+        655
+      ],
+      "containerId": "c19v",
+      "reason": "Reached output store is full; cargo remains in my pack.",
+      "occupied": 12,
+      "carried": "s3kd"
+    },
+    "afterReload": {
+      "at": 1794730331100,
+      "position": [
+        2586,
+        655,
+        0
+      ],
+      "store": [
+        2585,
+        655
+      ],
+      "containerId": "c19v",
+      "reason": "Reached output store is full; cargo remains in my pack.",
+      "occupied": 12,
+      "carried": "s3kd"
+    }
+  }
+}

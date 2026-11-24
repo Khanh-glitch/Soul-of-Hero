@@ -1,0 +1,24 @@
+# 08 — SELF-SUFFICIENT CODING AGENT STANDING ORDER
+**This instruction is valid without the author of this plan in the conversation. It is subordinate to latest Creator decisions and the actual repository.**
+
+Your authorized job is to COMPLETE full production implementation of SOH THE LAST HUMANITY. You are NOT assigned a single diagnostic/checkpoint. Read EVERY file in this directory plus the Gameplay Bible and Survivor Contract relevant sections, then implement directly from current development HEAD. Initial source baseline 729cbe385a060e503c6ae4d98d3e4c39700f371a is historical. Always inspect current HEAD, branch, uncommitted changes, PR status and latest Creator instruction; do not reset or overwrite newer work.
+Do not ask for approval between internal workstreams. This is continuing an earlier full-production authorization. Do not merge/force-push production or award Creator visual acceptance.
+
+## REQUIRED FIRST ACTIONS
+1. Read this index, 01–07, current ledger and canonical sources. Inspect code; treat existing tests/progress as valid only for actual scope.
+2. Fix P0 shared simulation architecture at sim.ts advanceWorld, humanEventBoundary/tickNeeds/usingHumanBed, allRunEntities/WorldIndex and global navigation. Eliminate repeated scan/scheduler cost using deterministic causal event deadlines, preserve real needs, road/door/floor access, old saves and exactly-once jobs. Confirm with small test + real source change before rerunning 336h.
+3. Build global source/stock/road transport and reconcile physical 81-POI inhabited-source capacity; make naturally autonomous 8 roles operate and store/consume material.
+4. Finish actual multi-item social/trade/crime, independent companions all 7 commands and real K5/Core/proj combat.
+5. Deliver 6 canonical Elder island assaults, 3 genuinely operating physical evacuation systems, same-run dual rescue and h336 outcomes/K8 wipe.
+6. Finish native 640×360 clarity, A–I actual game campaigns, true FPS comparison/full regression, Vietnamese Creator walkthrough, update ledger and deliver exact SHA/status.
+
+## WORK RULE
+Produce durable PRODUCTION source diffs; a source-only code stub, fixture forcing work or evidence-only commit is not the principal deliverable. Each meaningful change needs a focused positive and negative test and real actor/source/UID/state transition. Work chronologically; event thresholds/time and finite source cannot be bypassed by UI notifications or random event flags. Do not invent recipes, Core, consumable supply, extra person, G1B treasure or physical vessel simply to make counts green without rightful source. A physical transport asset can be authored only as an actual authorized system grounded to the 3 approved sites, not a decorative invisible flag.
+After targeted tests, continue autonomously to next implementation blocker. Do NOT run the full 197-file suite repeatedly before the feature is integrated, waste an iteration on profiling an unchanged 1024s failing endurance or turn inherited-test classification into the whole job. At final integrated SHA DO run complete regression, both TS, production build, proper 336h/endurance, fair performance and A–I browser.
+Preserve one real human for all roles/states; never work at home and follow player simultaneously. Use current K1–K8 world/item/combat sources. No mandatory scripted quests or overly elaborate biography/art. Don't delete population merely to improve performance or label deficit test as solved ecology. Treat 286 template people/20 beds as UNVERIFIED baseline, not numbers to force or hide.
+No vague blanket DONE: source, engineering, real production browser and Creator playtest are separate labels. Creator will decide aesthetics/feel. If genuine blocker persists after attempts, commit actual progress, log exact source/command/constraint and resume next feasible dependency instead of submitting a test-only final report.
+
+## HANDOFF STATUS FORMAT
+Current branch and full SHA; source behavior actually changed; full physical causality now working; focused tests including negative cases; exact original and residual defects; what was NOT yet verified; next required source function and expected proof; updated 07 ledger. Unless ALL mandatory same-build gates objectively pass, global feature remains PARTIAL. Continue in subsequent context without needing new custom instructions.
+
+**A FULL feature means an autonomous finite human society operating across Veyra and offline, all 8 physical jobs, player interaction and companions, combat/crime, genuine Elder assault plus two concurrent rescue routes, correct K8 ending and playable native 640×360 release. No premature completion, no quality-reducing shortcuts.**

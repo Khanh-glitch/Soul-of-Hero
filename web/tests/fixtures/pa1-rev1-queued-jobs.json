@@ -1,0 +1,5541 @@
+{
+ "source": {
+  "kind": "pa1-rev1-queued-jobs",
+  "capturedFromSHA": "023ec62",
+  "recipeRevisionAtCapture": 1,
+  "layout": "shipping",
+  "seed": 90210,
+  "character": "male",
+  "note": "Produced by the pre-cutover engine at 023ec62. No Job.rv field exists in that engine, so every stored job must resolve through the frozen revision-1 ledger. All inputs were paid by real crafts; nothing was written into a queue by hand.",
+  "stations": {
+   "benchQueueAtCapture": [
+    "iron_plate",
+    "mechanical_gear",
+    "fuel_can"
+   ],
+   "tableQueueAtCapture": [
+    "R:motorbike_kit"
+   ]
+  },
+  "completedBeforeCapture": [
+   {
+    "recipe": "metal_pipe",
+    "ins": [
+     [
+      "refined_iron_ingot",
+      2
+     ],
+     [
+      "mechanical_parts",
+      1
+     ]
+    ],
+    "out": "metal_pipe",
+    "qty": 1,
+    "uid": "s92",
+    "pipeCountBefore": 0
+   }
+  ],
+  "queuedJobs": [
+   {
+    "recipe": "iron_plate",
+    "out": "iron_plate",
+    "qty": 2,
+    "secs": 18,
+    "stationLevel": 2,
+    "ins": [
+     [
+      "refined_iron_ingot",
+      2
+     ],
+     [
+      "metal_pipe",
+      1
+     ],
+     [
+      "mechanical_parts",
+      1
+     ]
+    ],
+    "paidBefore": {
+     "refined_iron_ingot": 10,
+     "metal_pipe": 1,
+     "mechanical_parts": 7
+    },
+    "reserved": [
+     {
+      "uid": "s93",
+      "key": "refined_iron_ingot",
+      "qty": 2,
+      "dur": null
+     },
+     {
+      "uid": "s92",
+      "key": "metal_pipe",
+      "qty": 1,
+      "dur": null
+     },
+     {
+      "uid": "s94",
+      "key": "mechanical_parts",
+      "qty": 1,
+      "dur": null
+     }
+    ],
+    "left": 18000,
+    "total": 18000
+   },
+   {
+    "recipe": "mechanical_gear",
+    "out": "mechanical_gear",
+    "qty": 1,
+    "secs": 20,
+    "stationLevel": 2,
+    "ins": [
+     [
+      "iron_ingot",
+      2
+     ],
+     [
+      "mechanical_parts",
+      2
+     ],
+     [
+      "fasteners",
+      1
+     ]
+    ],
+    "paidBefore": {
+     "iron_ingot": 7,
+     "mechanical_parts": 6,
+     "fasteners": 4
+    },
+    "reserved": [
+     {
+      "uid": "s96",
+      "key": "iron_ingot",
+      "qty": 2,
+      "dur": null
+     },
+     {
+      "uid": "s97",
+      "key": "mechanical_parts",
+      "qty": 2,
+      "dur": null
+     },
+     {
+      "uid": "s98",
+      "key": "fasteners",
+      "qty": 1,
+      "dur": null
+     }
+    ],
+    "left": 20000,
+    "total": 20000
+   },
+   {
+    "recipe": "fuel_can",
+    "out": "fuel_can",
+    "qty": 1,
+    "secs": 20,
+    "stationLevel": 2,
+    "ins": [
+     [
+      "charcoal",
+      1
+     ],
+     [
+      "sulfur",
+      1
+     ],
+     [
+      "glass",
+      1
+     ]
+    ],
+    "paidBefore": {
+     "charcoal": 4,
+     "sulfur": 4,
+     "glass": 4
+    },
+    "reserved": [
+     {
+      "uid": "s9a",
+      "key": "charcoal",
+      "qty": 1,
+      "dur": null
+     },
+     {
+      "uid": "s9b",
+      "key": "sulfur",
+      "qty": 1,
+      "dur": null
+     },
+     {
+      "uid": "s9c",
+      "key": "glass",
+      "qty": 1,
+      "dur": null
+     }
+    ],
+    "left": 20000,
+    "total": 20000
+   }
+  ],
+  "research": {
+   "fuelCanDirected": {
+    "recipe": "R:fuel_can",
+    "total": 45000,
+    "reserved": [
+     {
+      "uid": "s8w",
+      "key": "spares",
+      "qty": 9
+     }
+    ]
+   },
+   "learnedBy": "blueprint",
+   "inFlight": {
+    "recipe": "motorbike_kit",
+    "stored": "R:motorbike_kit",
+    "left": 45000,
+    "total": 45000,
+    "reserved": [
+     {
+      "uid": "s9e",
+      "key": "spares",
+      "qty": 9
+     }
+    ]
+   }
+  },
+  "retiredRecipeAtCapture": {
+   "id": "fuel_can",
+   "ins": [
+    [
+     "charcoal",
+     1
+    ],
+    [
+     "sulfur",
+     1
+    ],
+    [
+     "glass",
+     1
+    ]
+   ],
+   "out": "fuel_can",
+   "qty": 1,
+   "secs": 20,
+   "station": "workbench"
+  }
+ },
+ "earlier": {
+  "version": 3,
+  "revision": 16,
+  "profile": {
+   "securedCash": 0,
+   "achievements": {
+    "first_research": {
+     "at": 1794560400000,
+     "score": 20,
+     "runId": "run_1xlu_mweqxeo0"
+    }
+   },
+   "history": [],
+   "settings": {
+    "volume": 0.6,
+    "muted": false
+   },
+   "profileReceipts": [
+    "intent:cap-1"
+   ]
+  },
+  "run": {
+   "id": "run_1xlu_mweqxeo0",
+   "seed": 90210,
+   "character": "male",
+   "startedAt": 1794560400000,
+   "qaOffset": 0,
+   "qaUsed": false,
+   "layoutId": "shipping_fresh",
+   "sourceLayoutVersion": 3,
+   "sourceMap": {
+    "id": "shipping_fresh",
+    "revision": 1,
+    "seed": 20721,
+    "rules": 3,
+    "digest": "b3b37f89",
+    "mapDigest": "9bc19563"
+   },
+   "spawnRegion": 0,
+   "ended": null,
+   "player": {
+    "x": 120,
+    "y": 120,
+    "vx": 0,
+    "vy": 0,
+    "dir": 0,
+    "aim": 1.5707963267948966,
+    "hp": 100,
+    "stamina": 100,
+    "hunger": 85,
+    "thirst": 85,
+    "warmth": 100,
+    "rad": 0,
+    "active": 0,
+    "action": null,
+    "invuln": 0,
+    "dead": false,
+    "deadT": 0,
+    "pulling": null,
+    "skills": {
+     "gather": 0,
+     "combat": 0,
+     "craft": 2,
+     "survival": 0
+    },
+    "stepAcc": 0,
+    "lastTraceX": 0,
+    "lastTraceY": 0,
+    "regionName": "the island",
+    "sheltered": false
+   },
+   "creatures": [],
+   "sources": {},
+   "terrain": {
+    "804": {
+     "t": 3
+    },
+    "805": {
+     "t": 3
+    },
+    "806": {
+     "t": 3
+    },
+    "807": {
+     "t": 3
+    },
+    "808": {
+     "t": 3
+    },
+    "809": {
+     "t": 3
+    },
+    "810": {
+     "t": 3
+    },
+    "811": {
+     "t": 3
+    },
+    "812": {
+     "t": 3
+    },
+    "1004": {
+     "t": 3
+    },
+    "1005": {
+     "t": 3
+    },
+    "1006": {
+     "t": 3
+    },
+    "1007": {
+     "t": 3
+    },
+    "1008": {
+     "t": 3
+    },
+    "1009": {
+     "t": 3
+    },
+    "1010": {
+     "t": 3
+    },
+    "1011": {
+     "t": 3
+    },
+    "1012": {
+     "t": 3
+    },
+    "1204": {
+     "t": 3
+    },
+    "1205": {
+     "t": 3
+    },
+    "1206": {
+     "t": 3
+    },
+    "1207": {
+     "t": 3
+    },
+    "1208": {
+     "t": 3
+    },
+    "1209": {
+     "t": 3
+    },
+    "1210": {
+     "t": 3
+    },
+    "1211": {
+     "t": 3
+    },
+    "1212": {
+     "t": 3
+    },
+    "1404": {
+     "t": 3
+    },
+    "1405": {
+     "t": 3
+    },
+    "1406": {
+     "t": 3
+    },
+    "1407": {
+     "t": 3
+    },
+    "1408": {
+     "t": 3
+    },
+    "1409": {
+     "t": 3
+    },
+    "1410": {
+     "t": 3
+    },
+    "1411": {
+     "t": 3
+    },
+    "1412": {
+     "t": 3
+    },
+    "1604": {
+     "t": 3
+    },
+    "1605": {
+     "t": 3
+    },
+    "1606": {
+     "t": 3
+    },
+    "1607": {
+     "t": 3
+    },
+    "1608": {
+     "t": 3
+    },
+    "1609": {
+     "t": 3
+    },
+    "1610": {
+     "t": 3
+    },
+    "1611": {
+     "t": 3
+    },
+    "1612": {
+     "t": 3
+    },
+    "1804": {
+     "t": 3
+    },
+    "1805": {
+     "t": 3
+    },
+    "1806": {
+     "t": 3
+    },
+    "1807": {
+     "t": 3
+    },
+    "1808": {
+     "t": 3
+    },
+    "1809": {
+     "t": 3
+    },
+    "1810": {
+     "t": 3
+    },
+    "1811": {
+     "t": 3
+    },
+    "1812": {
+     "t": 3
+    },
+    "2004": {
+     "t": 3
+    },
+    "2005": {
+     "t": 3
+    },
+    "2006": {
+     "t": 3
+    },
+    "2007": {
+     "t": 3
+    },
+    "2008": {
+     "t": 3
+    },
+    "2009": {
+     "t": 3
+    },
+    "2010": {
+     "t": 3
+    },
+    "2011": {
+     "t": 3
+    },
+    "2012": {
+     "t": 3
+    },
+    "2204": {
+     "t": 3
+    },
+    "2205": {
+     "t": 3
+    },
+    "2206": {
+     "t": 3
+    },
+    "2207": {
+     "t": 3
+    },
+    "2208": {
+     "t": 3
+    },
+    "2209": {
+     "t": 3
+    },
+    "2210": {
+     "t": 3
+    },
+    "2211": {
+     "t": 3
+    },
+    "2212": {
+     "t": 3
+    },
+    "2404": {
+     "t": 3
+    },
+    "2405": {
+     "t": 3
+    },
+    "2406": {
+     "t": 3
+    },
+    "2407": {
+     "t": 3
+    },
+    "2408": {
+     "t": 3
+    },
+    "2409": {
+     "t": 3
+    },
+    "2410": {
+     "t": 3
+    },
+    "2411": {
+     "t": 3
+    },
+    "2412": {
+     "t": 3
+    }
+   },
+   "entities": {
+    "e4": {
+     "id": "e4",
+     "kind": "vendor",
+     "x": 1608,
+     "y": 1848,
+     "tx": 100,
+     "ty": 115,
+     "poi": "tp",
+     "label": "Mirela the Trader"
+    },
+    "e5": {
+     "id": "e5",
+     "kind": "cash",
+     "x": 1672,
+     "y": 1832,
+     "tx": 104,
+     "ty": 114,
+     "poi": "tp",
+     "c": "c6",
+     "minted": false,
+     "stock": {
+      "cash": 36
+     }
+    },
+    "e7": {
+     "id": "e7",
+     "kind": "loot",
+     "x": 1544,
+     "y": 1832,
+     "tx": 96,
+     "ty": 114,
+     "poi": "tp",
+     "c": "c8"
+    },
+    "ec": {
+     "id": "ec",
+     "kind": "loot",
+     "x": 1720,
+     "y": 1944,
+     "tx": 107,
+     "ty": 121,
+     "poi": "tp",
+     "c": "cd"
+    },
+    "eg": {
+     "id": "eg",
+     "kind": "loot",
+     "x": 1928,
+     "y": 1416,
+     "tx": 120,
+     "ty": 88,
+     "poi": "mill",
+     "c": "ch"
+    },
+    "el": {
+     "id": "el",
+     "kind": "loot",
+     "x": 2024,
+     "y": 1576,
+     "tx": 126,
+     "ty": 98,
+     "poi": "mill",
+     "c": "cm"
+    },
+    "ep": {
+     "id": "ep",
+     "kind": "cash",
+     "x": 2088,
+     "y": 1416,
+     "tx": 130,
+     "ty": 88,
+     "poi": "mill",
+     "c": "cq",
+     "minted": false,
+     "stock": {
+      "cash": 40
+     }
+    },
+    "er": {
+     "id": "er",
+     "kind": "door",
+     "x": 2568,
+     "y": 1592,
+     "tx": 160,
+     "ty": 99,
+     "poi": "factory",
+     "label": "Vault Door",
+     "locked": "keycard",
+     "open": false
+    },
+    "es": {
+     "id": "es",
+     "kind": "loot",
+     "x": 2568,
+     "y": 1544,
+     "tx": 160,
+     "ty": 96,
+     "poi": "factory_vault",
+     "c": "ct"
+    },
+    "ey": {
+     "id": "ey",
+     "kind": "loot",
+     "x": 2600,
+     "y": 1544,
+     "tx": 162,
+     "ty": 96,
+     "poi": "factory_vault",
+     "c": "cz"
+    },
+    "e13": {
+     "id": "e13",
+     "kind": "cash",
+     "x": 2584,
+     "y": 1560,
+     "tx": 161,
+     "ty": 97,
+     "poi": "factory_vault",
+     "c": "c14",
+     "minted": false,
+     "stock": {
+      "cash": 80
+     }
+    },
+    "e15": {
+     "id": "e15",
+     "kind": "loot",
+     "x": 2408,
+     "y": 1656,
+     "tx": 150,
+     "ty": 103,
+     "poi": "factory",
+     "c": "c16"
+    },
+    "e1c": {
+     "id": "e1c",
+     "kind": "loot",
+     "x": 2472,
+     "y": 1544,
+     "tx": 154,
+     "ty": 96,
+     "poi": "factory",
+     "c": "c1d"
+    },
+    "e1g": {
+     "id": "e1g",
+     "kind": "door",
+     "x": 456,
+     "y": 2872,
+     "tx": 28,
+     "ty": 179,
+     "poi": "light",
+     "label": "Lighthouse Door",
+     "locked": "power",
+     "open": false
+    },
+    "e1h": {
+     "id": "e1h",
+     "kind": "gen",
+     "x": 504,
+     "y": 2888,
+     "tx": 31,
+     "ty": 180,
+     "poi": "light",
+     "label": "Generator",
+     "power": 0
+    },
+    "e1i": {
+     "id": "e1i",
+     "kind": "loot",
+     "x": 440,
+     "y": 2824,
+     "tx": 27,
+     "ty": 176,
+     "poi": "light_top",
+     "c": "c1j"
+    },
+    "e1n": {
+     "id": "e1n",
+     "kind": "cash",
+     "x": 472,
+     "y": 2824,
+     "tx": 29,
+     "ty": 176,
+     "poi": "light_top",
+     "c": "c1o",
+     "minted": false,
+     "stock": {
+      "cash": 60
+     }
+    },
+    "e1p": {
+     "id": "e1p",
+     "kind": "loot",
+     "x": 504,
+     "y": 2808,
+     "tx": 31,
+     "ty": 175,
+     "poi": "light",
+     "c": "c1q"
+    },
+    "e1t": {
+     "id": "e1t",
+     "kind": "loot",
+     "x": 2072,
+     "y": 2904,
+     "tx": 129,
+     "ty": 181,
+     "poi": "wreck",
+     "c": "c1u"
+    },
+    "e1y": {
+     "id": "e1y",
+     "kind": "loot",
+     "x": 2136,
+     "y": 2888,
+     "tx": 133,
+     "ty": 180,
+     "poi": "wreck",
+     "c": "c1z"
+    },
+    "e24": {
+     "id": "e24",
+     "kind": "cash",
+     "x": 2104,
+     "y": 2920,
+     "tx": 131,
+     "ty": 182,
+     "poi": "wreck",
+     "c": "c25",
+     "minted": false,
+     "stock": {
+      "cash": 45
+     }
+    },
+    "e26": {
+     "id": "e26",
+     "kind": "loot",
+     "x": 1384,
+     "y": 920,
+     "tx": 86,
+     "ty": 57,
+     "poi": "watch",
+     "c": "c27"
+    },
+    "e2c": {
+     "id": "e2c",
+     "kind": "cash",
+     "x": 1416,
+     "y": 920,
+     "tx": 88,
+     "ty": 57,
+     "poi": "watch",
+     "c": "c2d",
+     "minted": false,
+     "stock": {
+      "cash": 34
+     }
+    },
+    "e2e": {
+     "id": "e2e",
+     "kind": "evac",
+     "x": 2808,
+     "y": 232,
+     "tx": 175,
+     "ty": 14,
+     "poi": "evac",
+     "label": "Evacuation Beacon"
+    },
+    "e2f": {
+     "id": "e2f",
+     "kind": "cash",
+     "x": 2728,
+     "y": 392,
+     "tx": 170,
+     "ty": 24,
+     "poi": "evac",
+     "c": "c2g",
+     "minted": false,
+     "stock": {
+      "cash": 30
+     }
+    },
+    "e2h": {
+     "id": "e2h",
+     "kind": "loot",
+     "x": 2760,
+     "y": 392,
+     "tx": 172,
+     "ty": 24,
+     "poi": "evac",
+     "c": "c2i"
+    },
+    "e2l": {
+     "id": "e2l",
+     "kind": "recycler",
+     "x": 2424,
+     "y": 1656,
+     "tx": 151,
+     "ty": 103,
+     "poi": "factory",
+     "label": "Foundry Recycler",
+     "station": {
+      "queue": [],
+      "burn": 0,
+      "fuelC": "c2m",
+      "outC": "c2n",
+      "stateCode": "idle"
+     }
+    },
+    "e8i": {
+     "id": "e8i",
+     "kind": "struct",
+     "type": "workbench",
+     "tx": 6,
+     "ty": 6,
+     "x": 104,
+     "y": 104,
+     "hp": 160,
+     "maxHp": 160,
+     "born": 1794560400000,
+     "deployed": {
+      "uid": "s8h",
+      "key": "deploy_workbench",
+      "qty": 1,
+      "dur": 160
+     },
+     "station": {
+      "queue": [
+       {
+        "id": "j95",
+        "recipe": "iron_plate",
+        "left": 18000,
+        "total": 18000,
+        "reserved": [
+         {
+          "uid": "s93",
+          "key": "refined_iron_ingot",
+          "qty": 2
+         },
+         {
+          "uid": "s92",
+          "key": "metal_pipe",
+          "qty": 1
+         },
+         {
+          "uid": "s94",
+          "key": "mechanical_parts",
+          "qty": 1
+         }
+        ]
+       },
+       {
+        "id": "j99",
+        "recipe": "mechanical_gear",
+        "left": 20000,
+        "total": 20000,
+        "reserved": [
+         {
+          "uid": "s96",
+          "key": "iron_ingot",
+          "qty": 2
+         },
+         {
+          "uid": "s97",
+          "key": "mechanical_parts",
+          "qty": 2
+         },
+         {
+          "uid": "s98",
+          "key": "fasteners",
+          "qty": 1
+         }
+        ]
+       },
+       {
+        "id": "j9d",
+        "recipe": "fuel_can",
+        "left": 20000,
+        "total": 20000,
+        "reserved": [
+         {
+          "uid": "s9a",
+          "key": "charcoal",
+          "qty": 1
+         },
+         {
+          "uid": "s9b",
+          "key": "sulfur",
+          "qty": 1
+         },
+         {
+          "uid": "s9c",
+          "key": "glass",
+          "qty": 1
+         }
+        ]
+       }
+      ],
+      "burn": 0,
+      "fuelC": "c8j",
+      "outC": "c8k",
+      "level": 2,
+      "stateCode": "idle"
+     }
+    },
+    "e8m": {
+     "id": "e8m",
+     "kind": "struct",
+     "type": "research",
+     "tx": 7,
+     "ty": 6,
+     "x": 120,
+     "y": 104,
+     "hp": 160,
+     "maxHp": 160,
+     "born": 1794560400000,
+     "deployed": {
+      "uid": "s8l",
+      "key": "deploy_research",
+      "qty": 1,
+      "dur": 160
+     },
+     "station": {
+      "queue": [
+       {
+        "id": "j9f",
+        "recipe": "R:motorbike_kit",
+        "left": 45000,
+        "total": 45000,
+        "reserved": [
+         {
+          "uid": "s9e",
+          "key": "spares",
+          "qty": 9
+         }
+        ]
+       }
+      ],
+      "burn": 0,
+      "fuelC": "c8n",
+      "outC": "c8o",
+      "stateCode": "idle"
+     }
+    }
+   },
+   "custody": {
+    "inv": {
+     "id": "inv",
+     "kind": "inv",
+     "slots": [
+      {
+       "uid": "s1",
+       "key": "knife",
+       "qty": 1,
+       "dur": 300
+      },
+      {
+       "uid": "s2",
+       "key": "water_flask",
+       "qty": 1,
+       "charge": 2
+      },
+      {
+       "uid": "s3",
+       "key": "berries",
+       "qty": 3
+      },
+      {
+       "uid": "s8d",
+       "key": "wood",
+       "qty": 36
+      },
+      {
+       "uid": "s8e",
+       "key": "stone",
+       "qty": 36
+      },
+      {
+       "uid": "s8f",
+       "key": "spares",
+       "qty": 16
+      },
+      {
+       "uid": "s8g",
+       "key": "iron_ingot",
+       "qty": 5
+      },
+      {
+       "uid": "s8q",
+       "key": "refined_iron_ingot",
+       "qty": 8
+      },
+      {
+       "uid": "s8r",
+       "key": "mechanical_parts",
+       "qty": 4
+      },
+      {
+       "uid": "s8s",
+       "key": "fasteners",
+       "qty": 3
+      },
+      {
+       "uid": "s8t",
+       "key": "charcoal",
+       "qty": 3
+      },
+      {
+       "uid": "s8u",
+       "key": "sulfur",
+       "qty": 3
+      },
+      {
+       "uid": "s8v",
+       "key": "glass",
+       "qty": 3
+      },
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    "eq": {
+     "id": "eq",
+     "kind": "eq",
+     "slots": [
+      null,
+      null,
+      null
+     ]
+    },
+    "c6": {
+     "id": "c6",
+     "kind": "cash",
+     "slots": [
+      null,
+      null
+     ]
+    },
+    "c8": {
+     "id": "c8",
+     "kind": "loot",
+     "slots": [
+      {
+       "uid": "s9",
+       "key": "rope",
+       "qty": 3
+      },
+      {
+       "uid": "sa",
+       "key": "cloth",
+       "qty": 2
+      },
+      {
+       "uid": "sb",
+       "key": "blueprint",
+       "qty": 1,
+       "meta": "bow"
+      },
+      {
+       "uid": "s2o",
+       "key": "spares",
+       "qty": 2
+      },
+      {
+       "uid": "s2p",
+       "key": "field_repair_kit",
+       "qty": 1
+      },
+      {
+       "uid": "s2q",
+       "key": "refined_iron_ingot",
+       "qty": 1
+      },
+      {
+       "uid": "s2r",
+       "key": "iron_plate",
+       "qty": 1
+      },
+      null,
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    "cd": {
+     "id": "cd",
+     "kind": "loot",
+     "slots": [
+      {
+       "uid": "se",
+       "key": "wood",
+       "qty": 8
+      },
+      {
+       "uid": "sf",
+       "key": "iron_ingot",
+       "qty": 1
+      },
+      {
+       "uid": "s2s",
+       "key": "bandage",
+       "qty": 1
+      },
+      {
+       "uid": "s2t",
+       "key": "berries",
+       "qty": 2
+      },
+      {
+       "uid": "s2u",
+       "key": "mushroom",
+       "qty": 1
+      },
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    "ch": {
+     "id": "ch",
+     "kind": "loot",
+     "slots": [
+      {
+       "uid": "si",
+       "key": "seed",
+       "qty": 6
+      },
+      {
+       "uid": "sj",
+       "key": "blueprint",
+       "qty": 1,
+       "meta": "stew"
+      },
+      {
+       "uid": "sk",
+       "key": "crop",
+       "qty": 2
+      },
+      {
+       "uid": "s2v",
+       "key": "bandage",
+       "qty": 1
+      },
+      {
+       "uid": "s2w",
+       "key": "berries",
+       "qty": 2
+      },
+      {
+       "uid": "s2x",
+       "key": "mushroom",
+       "qty": 1
+      },
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    "cm": {
+     "id": "cm",
+     "kind": "loot",
+     "slots": [
+      {
+       "uid": "sn",
+       "key": "leather",
+       "qty": 2
+      },
+      {
+       "uid": "so",
+       "key": "blueprint",
+       "qty": 1,
+       "meta": "brick"
+      },
+      {
+       "uid": "s2y",
+       "key": "bandage",
+       "qty": 1
+      },
+      {
+       "uid": "s2z",
+       "key": "herb",
+       "qty": 2
+      },
+      {
+       "uid": "s30",
+       "key": "herb",
+       "qty": 1
+      },
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    "cq": {
+     "id": "cq",
+     "kind": "cash",
+     "slots": [
+      null,
+      null
+     ]
+    },
+    "ct": {
+     "id": "ct",
+     "kind": "loot",
+     "slots": [
+      {
+       "uid": "su",
+       "key": "core_fire",
+       "qty": 1,
+       "charge": 3
+      },
+      {
+       "uid": "sv",
+       "key": "blueprint",
+       "qty": 1,
+       "meta": "core_earth"
+      },
+      {
+       "uid": "sw",
+       "key": "spares",
+       "qty": 6
+      },
+      {
+       "uid": "sx",
+       "key": "core_dragon",
+       "qty": 1,
+       "reserves": {
+        "basic": 0,
+        "refined": 0,
+        "signature": 3
+       }
+      },
+      {
+       "uid": "s31",
+       "key": "energy_refined",
+       "qty": 1
+      },
+      {
+       "uid": "s32",
+       "key": "mechanical_parts",
+       "qty": 1
+      },
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    "cz": {
+     "id": "cz",
+     "kind": "loot",
+     "slots": [
+      {
+       "uid": "s10",
+       "key": "blueprint",
+       "qty": 1,
+       "meta": "gas_mask"
+      },
+      {
+       "uid": "s11",
+       "key": "iron_ingot",
+       "qty": 4
+      },
+      {
+       "uid": "s12",
+       "key": "core_demon",
+       "qty": 1,
+       "reserves": {
+        "basic": 0,
+        "refined": 0,
+        "signature": 3
+       }
+      },
+      {
+       "uid": "s33",
+       "key": "energy_refined",
+       "qty": 1
+      },
+      {
+       "uid": "s34",
+       "key": "mechanical_parts",
+       "qty": 1
+      },
+      {
+       "uid": "s35",
+       "key": "medkit",
+       "qty": 1
+      },
+      {
+       "uid": "s36",
+       "key": "refined_iron_ingot",
+       "qty": 2
+      },
+      {
+       "uid": "s37",
+       "key": "metal_blade",
+       "qty": 1
+      },
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    "c14": {
+     "id": "c14",
+     "kind": "cash",
+     "slots": [
+      null,
+      null
+     ]
+    },
+    "c16": {
+     "id": "c16",
+     "kind": "loot",
+     "slots": [
+      {
+       "uid": "s17",
+       "key": "scrap",
+       "qty": 6
+      },
+      {
+       "uid": "s18",
+       "key": "spares",
+       "qty": 3
+      },
+      {
+       "uid": "s19",
+       "key": "iron_sword",
+       "qty": 1,
+       "dur": 350
+      },
+      {
+       "uid": "s1a",
+       "key": "mechanical_parts",
+       "qty": 2
+      },
+      {
+       "uid": "s1b",
+       "key": "fasteners",
+       "qty": 3
+      },
+      {
+       "uid": "s38",
+       "key": "spares",
+       "qty": 2
+      },
+      {
+       "uid": "s39",
+       "key": "fasteners",
+       "qty": 2
+      },
+      {
+       "uid": "s3a",
+       "key": "refined_iron_ingot",
+       "qty": 1
+      },
+      {
+       "uid": "s3b",
+       "key": "mechanical_gear",
+       "qty": 1
+      },
+      {
+       "uid": "s3c",
+       "key": "metal_blade",
+       "qty": 1
+      },
+      null,
+      null
+     ]
+    },
+    "c1d": {
+     "id": "c1d",
+     "kind": "loot",
+     "slots": [
+      {
+       "uid": "s1e",
+       "key": "iron_ore",
+       "qty": 4
+      },
+      {
+       "uid": "s1f",
+       "key": "coal",
+       "qty": 3
+      },
+      {
+       "uid": "s3d",
+       "key": "spares",
+       "qty": 2
+      },
+      {
+       "uid": "s3e",
+       "key": "fasteners",
+       "qty": 2
+      },
+      {
+       "uid": "s3f",
+       "key": "refined_iron_ingot",
+       "qty": 1
+      },
+      {
+       "uid": "s3g",
+       "key": "metal_pipe",
+       "qty": 1
+      },
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    "c1j": {
+     "id": "c1j",
+     "kind": "loot",
+     "slots": [
+      {
+       "uid": "s1k",
+       "key": "core_storm",
+       "qty": 1,
+       "charge": 4
+      },
+      {
+       "uid": "s1l",
+       "key": "blueprint",
+       "qty": 1,
+       "meta": "leather_armor"
+      },
+      {
+       "uid": "s1m",
+       "key": "core_meteor",
+       "qty": 1,
+       "reserves": {
+        "basic": 0,
+        "refined": 0,
+        "signature": 3
+       }
+      },
+      {
+       "uid": "s3h",
+       "key": "energy_refined",
+       "qty": 1
+      },
+      {
+       "uid": "s3i",
+       "key": "mechanical_parts",
+       "qty": 1
+      },
+      {
+       "uid": "s3j",
+       "key": "medkit",
+       "qty": 1
+      },
+      {
+       "uid": "s3k",
+       "key": "refined_iron_ingot",
+       "qty": 2
+      },
+      {
+       "uid": "s3l",
+       "key": "metal_blade",
+       "qty": 1
+      },
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    "c1o": {
+     "id": "c1o",
+     "kind": "cash",
+     "slots": [
+      null,
+      null
+     ]
+    },
+    "c1q": {
+     "id": "c1q",
+     "kind": "loot",
+     "slots": [
+      {
+       "uid": "s1r",
+       "key": "fuel_can",
+       "qty": 1
+      },
+      {
+       "uid": "s1s",
+       "key": "rope",
+       "qty": 2
+      },
+      {
+       "uid": "s3m",
+       "key": "bandage",
+       "qty": 1
+      },
+      {
+       "uid": "s3n",
+       "key": "herb",
+       "qty": 2
+      },
+      {
+       "uid": "s3o",
+       "key": "berries",
+       "qty": 1
+      },
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    "c1u": {
+     "id": "c1u",
+     "kind": "loot",
+     "slots": [
+      {
+       "uid": "s1v",
+       "key": "core_frost",
+       "qty": 1,
+       "charge": 3
+      },
+      {
+       "uid": "s1w",
+       "key": "spares",
+       "qty": 4
+      },
+      {
+       "uid": "s1x",
+       "key": "core_elsa",
+       "qty": 1,
+       "reserves": {
+        "basic": 0,
+        "refined": 0,
+        "signature": 3
+       }
+      },
+      {
+       "uid": "s3p",
+       "key": "energy_basic",
+       "qty": 4
+      },
+      {
+       "uid": "s3q",
+       "key": "arrow",
+       "qty": 4
+      },
+      {
+       "uid": "s3r",
+       "key": "arrow",
+       "qty": 4
+      },
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    "c1z": {
+     "id": "c1z",
+     "kind": "loot",
+     "slots": [
+      {
+       "uid": "s20",
+       "key": "cloth",
+       "qty": 3
+      },
+      {
+       "uid": "s21",
+       "key": "fuel_can",
+       "qty": 1
+      },
+      {
+       "uid": "s22",
+       "key": "blueprint",
+       "qty": 1,
+       "meta": "arrow"
+      },
+      {
+       "uid": "s23",
+       "key": "treated_canvas",
+       "qty": 2
+      },
+      {
+       "uid": "s3s",
+       "key": "energy_basic",
+       "qty": 4
+      },
+      {
+       "uid": "s3t",
+       "key": "arrow",
+       "qty": 4
+      },
+      {
+       "uid": "s3u",
+       "key": "bandage",
+       "qty": 1
+      },
+      null,
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    "c25": {
+     "id": "c25",
+     "kind": "cash",
+     "slots": [
+      null,
+      null
+     ]
+    },
+    "c27": {
+     "id": "c27",
+     "kind": "loot",
+     "slots": [
+      {
+       "uid": "s28",
+       "key": "keycard",
+       "qty": 1,
+       "charge": 3
+      },
+      {
+       "uid": "s29",
+       "key": "blueprint",
+       "qty": 1,
+       "meta": "fur_cloak"
+      },
+      {
+       "uid": "s2a",
+       "key": "torch",
+       "qty": 2,
+       "dur": 120
+      },
+      {
+       "uid": "s2b",
+       "key": "core_mjolnir",
+       "qty": 1,
+       "reserves": {
+        "basic": 0,
+        "refined": 0,
+        "signature": 3
+       }
+      },
+      {
+       "uid": "s3v",
+       "key": "energy_basic",
+       "qty": 4
+      },
+      {
+       "uid": "s3w",
+       "key": "spares",
+       "qty": 2
+      },
+      {
+       "uid": "s3x",
+       "key": "herb",
+       "qty": 1
+      },
+      null,
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    "c2d": {
+     "id": "c2d",
+     "kind": "cash",
+     "slots": [
+      null,
+      null
+     ]
+    },
+    "c2g": {
+     "id": "c2g",
+     "kind": "cash",
+     "slots": [
+      null,
+      null
+     ]
+    },
+    "c2i": {
+     "id": "c2i",
+     "kind": "loot",
+     "slots": [
+      {
+       "uid": "s2j",
+       "key": "medkit",
+       "qty": 1
+      },
+      {
+       "uid": "s2k",
+       "key": "water_flask",
+       "qty": 1,
+       "charge": 4
+      },
+      {
+       "uid": "s3y",
+       "key": "bandage",
+       "qty": 1
+      },
+      {
+       "uid": "s3z",
+       "key": "herb",
+       "qty": 2
+      },
+      {
+       "uid": "s40",
+       "key": "berries",
+       "qty": 1
+      },
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    "c2m": {
+     "id": "c2m",
+     "kind": "fuel",
+     "slots": []
+    },
+    "c2n": {
+     "id": "c2n",
+     "kind": "out",
+     "slots": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    "c8j": {
+     "id": "c8j",
+     "kind": "fuel",
+     "slots": [
+      null,
+      null,
+      null
+     ]
+    },
+    "c8k": {
+     "id": "c8k",
+     "kind": "out",
+     "slots": [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    "c8n": {
+     "id": "c8n",
+     "kind": "fuel",
+     "slots": []
+    },
+    "c8o": {
+     "id": "c8o",
+     "kind": "out",
+     "slots": [
+      null,
+      null,
+      null,
+      null
+     ]
+    }
+   },
+   "knowledge": {
+    "recipes": [
+     "vehicle_frame",
+     "vehicle_drive",
+     "refinery_fuel",
+     "refinery_fuel_batch",
+     "refinery_industrial",
+     "refinery_lubricant",
+     "refinery_crude",
+     "pump_crude",
+     "energy_basic",
+     "energy_refined_industrial",
+     "energy_refined",
+     "essence_fire",
+     "essence_nature",
+     "essence_water",
+     "essence_spirit",
+     "core_blast",
+     "core_earthmother",
+     "recover_drive",
+     "mechanical_parts",
+     "metal_pipe",
+     "metal_blade",
+     "mechanical_gear",
+     "iron_plate",
+     "iron_sword_blade",
+     "vehicle_frame_piped",
+     "reinforced_spear_blade",
+     "industrial_pick_geared",
+     "vehicle_drive_geared",
+     "rope",
+     "lead_rope",
+     "animal_feed",
+     "arrow_fletched",
+     "torch",
+     "stone_axe",
+     "stone_pick",
+     "wood_spear",
+     "bandage",
+     "water_flask",
+     "root_broth",
+     "poached_eggs",
+     "herb_roast",
+     "cooked_meat",
+     "salted_meat",
+     "charcoal",
+     "iron_ingot",
+     "refined_iron_ingot",
+     "refined_iron_rich",
+     "scrap_ingot",
+     "shell_glass",
+     "leather",
+     "cloth",
+     "plank",
+     "iron_axe",
+     "iron_pick",
+     "deploy_claim",
+     "deploy_bed_straw",
+     "deploy_chest_small",
+     "deploy_chest_large",
+     "deploy_campfire",
+     "deploy_furnace",
+     "deploy_oil_pump",
+     "deploy_refinery",
+     "deploy_workbench",
+     "deploy_research",
+     "deploy_garden",
+     "deploy_farm_controller",
+     "deploy_barrel",
+     "deploy_feed_trough",
+     "deploy_base_generator",
+     "deploy_power_cable",
+     "deploy_power_switch",
+     "deploy_pressure_switch",
+     "deploy_ir_sensor",
+     "deploy_arrow_turret",
+     "deploy_bear_trap",
+     "deploy_spikes",
+     "deploy_barricade",
+     "deploy_torch_post",
+     "fuel_can"
+    ],
+    "studied": []
+   },
+   "traces": [],
+   "discovered": [],
+   "poiSeen": [],
+   "intel": [],
+   "elderStones": [],
+   "achievements": [
+    "first_research"
+   ],
+   "score": 20,
+   "deposited": 0,
+   "clock": {
+    "lastSimAt": 1794560400000,
+    "simMs": 0,
+    "respawnAcc": 0,
+    "weatherSlot": -1
+   },
+   "rng": 548586580,
+   "nextId": 340,
+   "receipts": [
+    {
+     "id": "r1",
+     "seq": 1,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:tp:96,114:w06-v1:cycle0:slot0:ropex3:s9"
+    },
+    {
+     "id": "r2",
+     "seq": 2,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:tp:96,114:w06-v1:cycle0:slot1:clothx2:sa"
+    },
+    {
+     "id": "r3",
+     "seq": 3,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:tp:96,114:w06-v1:cycle0:slot2:blueprint:bowx1:sb"
+    },
+    {
+     "id": "r4",
+     "seq": 4,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:tp:96,114:w06-v1:cycle0:slot3:sparesx2:s2o"
+    },
+    {
+     "id": "r5",
+     "seq": 5,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:tp:96,114:w06-v1:cycle0:slot4:field_repair_kitx1:s2p"
+    },
+    {
+     "id": "r6",
+     "seq": 6,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:tp:96,114:w06-v1:cycle0:slot5:refined_iron_ingotx1:s2q"
+    },
+    {
+     "id": "r7",
+     "seq": 7,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:tp:96,114:w06-v1:cycle0:slot6:iron_platex1:s2r"
+    },
+    {
+     "id": "r8",
+     "seq": 8,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:tp:107,121:w06-v1:cycle0:slot0:woodx8:se"
+    },
+    {
+     "id": "r9",
+     "seq": 9,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:tp:107,121:w06-v1:cycle0:slot1:iron_ingotx1:sf"
+    },
+    {
+     "id": "r10",
+     "seq": 10,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:tp:107,121:w06-v1:cycle0:slot2:bandagex1:s2s"
+    },
+    {
+     "id": "r11",
+     "seq": 11,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:tp:107,121:w06-v1:cycle0:slot3:berriesx2:s2t"
+    },
+    {
+     "id": "r12",
+     "seq": 12,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:tp:107,121:w06-v1:cycle0:slot4:mushroomx1:s2u"
+    },
+    {
+     "id": "r13",
+     "seq": 13,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:mill:120,88:w06-v1:cycle0:slot0:seedx6:si"
+    },
+    {
+     "id": "r14",
+     "seq": 14,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:mill:120,88:w06-v1:cycle0:slot1:blueprint:stewx1:sj"
+    },
+    {
+     "id": "r15",
+     "seq": 15,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:mill:120,88:w06-v1:cycle0:slot2:cropx2:sk"
+    },
+    {
+     "id": "r16",
+     "seq": 16,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:mill:120,88:w06-v1:cycle0:slot3:bandagex1:s2v"
+    },
+    {
+     "id": "r17",
+     "seq": 17,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:mill:120,88:w06-v1:cycle0:slot4:berriesx2:s2w"
+    },
+    {
+     "id": "r18",
+     "seq": 18,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:mill:120,88:w06-v1:cycle0:slot5:mushroomx1:s2x"
+    },
+    {
+     "id": "r19",
+     "seq": 19,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:mill:126,98:w06-v1:cycle0:slot0:leatherx2:sn"
+    },
+    {
+     "id": "r20",
+     "seq": 20,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:mill:126,98:w06-v1:cycle0:slot1:blueprint:brickx1:so"
+    },
+    {
+     "id": "r21",
+     "seq": 21,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:mill:126,98:w06-v1:cycle0:slot2:bandagex1:s2y"
+    },
+    {
+     "id": "r22",
+     "seq": 22,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:mill:126,98:w06-v1:cycle0:slot3:herbx2:s2z"
+    },
+    {
+     "id": "r23",
+     "seq": 23,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:mill:126,98:w06-v1:cycle0:slot4:herbx1:s30"
+    },
+    {
+     "id": "r24",
+     "seq": 24,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:factory_vault:160,96:w06-v1:cycle0:slot0:core_firex1:su"
+    },
+    {
+     "id": "r25",
+     "seq": 25,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:factory_vault:160,96:w06-v1:cycle0:slot1:blueprint:core_earthx1:sv"
+    },
+    {
+     "id": "r26",
+     "seq": 26,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:factory_vault:160,96:w06-v1:cycle0:slot2:sparesx6:sw"
+    },
+    {
+     "id": "r27",
+     "seq": 27,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:factory_vault:160,96:w06-v1:cycle0:slot3:core_dragonx1:sx"
+    },
+    {
+     "id": "r28",
+     "seq": 28,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:factory_vault:160,96:w06-v1:cycle0:slot4:energy_refinedx1:s31"
+    },
+    {
+     "id": "r29",
+     "seq": 29,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:factory_vault:160,96:w06-v1:cycle0:slot5:mechanical_partsx1:s32"
+    },
+    {
+     "id": "r30",
+     "seq": 30,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:factory_vault:162,96:w06-v1:cycle0:slot0:blueprint:gas_maskx1:s10"
+    },
+    {
+     "id": "r31",
+     "seq": 31,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:factory_vault:162,96:w06-v1:cycle0:slot1:iron_ingotx4:s11"
+    },
+    {
+     "id": "r32",
+     "seq": 32,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:factory_vault:162,96:w06-v1:cycle0:slot2:core_demonx1:s12"
+    },
+    {
+     "id": "r33",
+     "seq": 33,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:factory_vault:162,96:w06-v1:cycle0:slot3:energy_refinedx1:s33"
+    },
+    {
+     "id": "r34",
+     "seq": 34,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:factory_vault:162,96:w06-v1:cycle0:slot4:mechanical_partsx1:s34"
+    },
+    {
+     "id": "r35",
+     "seq": 35,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:factory_vault:162,96:w06-v1:cycle0:slot5:medkitx1:s35"
+    },
+    {
+     "id": "r36",
+     "seq": 36,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:factory_vault:162,96:w06-v1:cycle0:slot6:refined_iron_ingotx2:s36"
+    },
+    {
+     "id": "r37",
+     "seq": 37,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:factory_vault:162,96:w06-v1:cycle0:slot7:metal_bladex1:s37"
+    },
+    {
+     "id": "r38",
+     "seq": 38,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:factory:150,103:w06-v1:cycle0:slot0:scrapx6:s17"
+    },
+    {
+     "id": "r39",
+     "seq": 39,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:factory:150,103:w06-v1:cycle0:slot1:sparesx3:s18"
+    },
+    {
+     "id": "r40",
+     "seq": 40,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:factory:150,103:w06-v1:cycle0:slot2:iron_swordx1:s19"
+    },
+    {
+     "id": "r41",
+     "seq": 41,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:factory:150,103:w06-v1:cycle0:slot3:mechanical_partsx2:s1a"
+    },
+    {
+     "id": "r42",
+     "seq": 42,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:factory:150,103:w06-v1:cycle0:slot4:fastenersx3:s1b"
+    },
+    {
+     "id": "r43",
+     "seq": 43,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:factory:150,103:w06-v1:cycle0:slot5:sparesx2:s38"
+    },
+    {
+     "id": "r44",
+     "seq": 44,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:factory:150,103:w06-v1:cycle0:slot6:fastenersx2:s39"
+    },
+    {
+     "id": "r45",
+     "seq": 45,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:factory:150,103:w06-v1:cycle0:slot7:refined_iron_ingotx1:s3a"
+    },
+    {
+     "id": "r46",
+     "seq": 46,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:factory:150,103:w06-v1:cycle0:slot8:mechanical_gearx1:s3b"
+    },
+    {
+     "id": "r47",
+     "seq": 47,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:factory:150,103:w06-v1:cycle0:slot9:metal_bladex1:s3c"
+    },
+    {
+     "id": "r48",
+     "seq": 48,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:factory:154,96:w06-v1:cycle0:slot0:iron_orex4:s1e"
+    },
+    {
+     "id": "r49",
+     "seq": 49,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:factory:154,96:w06-v1:cycle0:slot1:coalx3:s1f"
+    },
+    {
+     "id": "r50",
+     "seq": 50,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:factory:154,96:w06-v1:cycle0:slot2:sparesx2:s3d"
+    },
+    {
+     "id": "r51",
+     "seq": 51,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:factory:154,96:w06-v1:cycle0:slot3:fastenersx2:s3e"
+    },
+    {
+     "id": "r52",
+     "seq": 52,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:factory:154,96:w06-v1:cycle0:slot4:refined_iron_ingotx1:s3f"
+    },
+    {
+     "id": "r53",
+     "seq": 53,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:factory:154,96:w06-v1:cycle0:slot5:metal_pipex1:s3g"
+    },
+    {
+     "id": "r54",
+     "seq": 54,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:light_top:27,176:w06-v1:cycle0:slot0:core_stormx1:s1k"
+    },
+    {
+     "id": "r55",
+     "seq": 55,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:light_top:27,176:w06-v1:cycle0:slot1:blueprint:leather_armorx1:s1l"
+    },
+    {
+     "id": "r56",
+     "seq": 56,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:light_top:27,176:w06-v1:cycle0:slot2:core_meteorx1:s1m"
+    },
+    {
+     "id": "r57",
+     "seq": 57,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:light_top:27,176:w06-v1:cycle0:slot3:energy_refinedx1:s3h"
+    },
+    {
+     "id": "r58",
+     "seq": 58,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:light_top:27,176:w06-v1:cycle0:slot4:mechanical_partsx1:s3i"
+    },
+    {
+     "id": "r59",
+     "seq": 59,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:light_top:27,176:w06-v1:cycle0:slot5:medkitx1:s3j"
+    },
+    {
+     "id": "r60",
+     "seq": 60,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:light_top:27,176:w06-v1:cycle0:slot6:refined_iron_ingotx2:s3k"
+    },
+    {
+     "id": "r61",
+     "seq": 61,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:light_top:27,176:w06-v1:cycle0:slot7:metal_bladex1:s3l"
+    },
+    {
+     "id": "r62",
+     "seq": 62,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:light:31,175:w06-v1:cycle0:slot0:fuel_canx1:s1r"
+    },
+    {
+     "id": "r63",
+     "seq": 63,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:light:31,175:w06-v1:cycle0:slot1:ropex2:s1s"
+    },
+    {
+     "id": "r64",
+     "seq": 64,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:light:31,175:w06-v1:cycle0:slot2:bandagex1:s3m"
+    },
+    {
+     "id": "r65",
+     "seq": 65,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:light:31,175:w06-v1:cycle0:slot3:herbx2:s3n"
+    },
+    {
+     "id": "r66",
+     "seq": 66,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:light:31,175:w06-v1:cycle0:slot4:berriesx1:s3o"
+    },
+    {
+     "id": "r67",
+     "seq": 67,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:wreck:129,181:w06-v1:cycle0:slot0:core_frostx1:s1v"
+    },
+    {
+     "id": "r68",
+     "seq": 68,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:wreck:129,181:w06-v1:cycle0:slot1:sparesx4:s1w"
+    },
+    {
+     "id": "r69",
+     "seq": 69,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:wreck:129,181:w06-v1:cycle0:slot2:core_elsax1:s1x"
+    },
+    {
+     "id": "r70",
+     "seq": 70,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:wreck:129,181:w06-v1:cycle0:slot3:energy_basicx4:s3p"
+    },
+    {
+     "id": "r71",
+     "seq": 71,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:wreck:129,181:w06-v1:cycle0:slot4:arrowx4:s3q"
+    },
+    {
+     "id": "r72",
+     "seq": 72,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:wreck:129,181:w06-v1:cycle0:slot5:arrowx4:s3r"
+    },
+    {
+     "id": "r73",
+     "seq": 73,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:wreck:133,180:w06-v1:cycle0:slot0:clothx3:s20"
+    },
+    {
+     "id": "r74",
+     "seq": 74,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:wreck:133,180:w06-v1:cycle0:slot1:fuel_canx1:s21"
+    },
+    {
+     "id": "r75",
+     "seq": 75,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:wreck:133,180:w06-v1:cycle0:slot2:blueprint:arrowx1:s22"
+    },
+    {
+     "id": "r76",
+     "seq": 76,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:wreck:133,180:w06-v1:cycle0:slot3:treated_canvasx2:s23"
+    },
+    {
+     "id": "r77",
+     "seq": 77,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:wreck:133,180:w06-v1:cycle0:slot4:energy_basicx4:s3s"
+    },
+    {
+     "id": "r78",
+     "seq": 78,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:wreck:133,180:w06-v1:cycle0:slot5:arrowx4:s3t"
+    },
+    {
+     "id": "r79",
+     "seq": 79,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:wreck:133,180:w06-v1:cycle0:slot6:bandagex1:s3u"
+    },
+    {
+     "id": "r80",
+     "seq": 80,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:watch:86,57:w06-v1:cycle0:slot0:keycardx1:s28"
+    },
+    {
+     "id": "r81",
+     "seq": 81,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:watch:86,57:w06-v1:cycle0:slot1:blueprint:fur_cloakx1:s29"
+    },
+    {
+     "id": "r82",
+     "seq": 82,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:watch:86,57:w06-v1:cycle0:slot2:torchx2:s2a"
+    },
+    {
+     "id": "r83",
+     "seq": 83,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:watch:86,57:w06-v1:cycle0:slot3:core_mjolnirx1:s2b"
+    },
+    {
+     "id": "r84",
+     "seq": 84,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:watch:86,57:w06-v1:cycle0:slot4:energy_basicx4:s3v"
+    },
+    {
+     "id": "r85",
+     "seq": 85,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:watch:86,57:w06-v1:cycle0:slot5:sparesx2:s3w"
+    },
+    {
+     "id": "r86",
+     "seq": 86,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:watch:86,57:w06-v1:cycle0:slot6:herbx1:s3x"
+    },
+    {
+     "id": "r87",
+     "seq": 87,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:evac:172,24:w06-v1:cycle0:slot0:medkitx1:s2j"
+    },
+    {
+     "id": "r88",
+     "seq": 88,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:evac:172,24:w06-v1:cycle0:slot1:water_flaskx1:s2k"
+    },
+    {
+     "id": "r89",
+     "seq": 89,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:evac:172,24:w06-v1:cycle0:slot2:bandagex1:s3y"
+    },
+    {
+     "id": "r90",
+     "seq": 90,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:evac:172,24:w06-v1:cycle0:slot3:herbx2:s3z"
+    },
+    {
+     "id": "r91",
+     "seq": 91,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:evac:172,24:w06-v1:cycle0:slot4:berriesx1:s40"
+    },
+    {
+     "id": "r92",
+     "seq": 92,
+     "at": 1794560400000,
+     "kind": "run.start",
+     "detail": "male@the island"
+    },
+    {
+     "id": "r93",
+     "seq": 93,
+     "at": 1794560400000,
+     "kind": "craft.hand",
+     "detail": "deploy_workbench"
+    },
+    {
+     "id": "r94",
+     "seq": 94,
+     "at": 1794560400000,
+     "kind": "build",
+     "detail": "workbench@6,6"
+    },
+    {
+     "id": "r95",
+     "seq": 95,
+     "at": 1794560400000,
+     "kind": "craft.hand",
+     "detail": "deploy_research"
+    },
+    {
+     "id": "r96",
+     "seq": 96,
+     "at": 1794560400000,
+     "kind": "build",
+     "detail": "research@7,6"
+    },
+    {
+     "id": "r97",
+     "seq": 97,
+     "at": 1794560400000,
+     "kind": "station.upgrade",
+     "detail": "e8i:2"
+    },
+    {
+     "id": "r98",
+     "seq": 98,
+     "at": 1794560400000,
+     "kind": "research.directed",
+     "detail": "fuel_can"
+    },
+    {
+     "id": "r99",
+     "seq": 99,
+     "at": 1794560400000,
+     "kind": "achievement",
+     "detail": "first_research"
+    },
+    {
+     "id": "r100",
+     "seq": 100,
+     "at": 1794560400000,
+     "kind": "job.done",
+     "detail": "e8m:R:fuel_can"
+    },
+    {
+     "id": "r101",
+     "seq": 101,
+     "at": 1794560400000,
+     "kind": "station.state",
+     "detail": "e8m:running>idle"
+    },
+    {
+     "id": "r102",
+     "seq": 102,
+     "at": 1794560400000,
+     "kind": "move",
+     "detail": "blueprintx1 c8o->inv"
+    },
+    {
+     "id": "r103",
+     "seq": 103,
+     "at": 1794560400000,
+     "kind": "learn.blueprint",
+     "detail": "fuel_can"
+    },
+    {
+     "id": "r104",
+     "seq": 104,
+     "at": 1794560400000,
+     "kind": "job.queue",
+     "detail": "metal_pipe@e8i"
+    },
+    {
+     "id": "r105",
+     "seq": 105,
+     "at": 1794560387500,
+     "kind": "station.state",
+     "detail": "e8i:idle>running"
+    },
+    {
+     "id": "r106",
+     "seq": 106,
+     "at": 1794560405500,
+     "kind": "job.done",
+     "detail": "e8i:metal_pipe"
+    },
+    {
+     "id": "r107",
+     "seq": 107,
+     "at": 1794560405500,
+     "kind": "station.state",
+     "detail": "e8i:running>idle"
+    },
+    {
+     "id": "r108",
+     "seq": 108,
+     "at": 1794560400000,
+     "kind": "move",
+     "detail": "metal_pipex1 c8k->inv"
+    },
+    {
+     "id": "r109",
+     "seq": 109,
+     "at": 1794560400000,
+     "kind": "job.queue",
+     "detail": "iron_plate@e8i"
+    },
+    {
+     "id": "r110",
+     "seq": 110,
+     "at": 1794560400000,
+     "kind": "job.queue",
+     "detail": "mechanical_gear@e8i"
+    },
+    {
+     "id": "r111",
+     "seq": 111,
+     "at": 1794560400000,
+     "kind": "job.queue",
+     "detail": "fuel_can@e8i"
+    },
+    {
+     "id": "r112",
+     "seq": 112,
+     "at": 1794560400000,
+     "kind": "research.directed",
+     "detail": "motorbike_kit"
+    }
+   ],
+   "seenIntents": [
+    "cap-2",
+    "cap-3",
+    "cap-4",
+    "cap-5",
+    "cap-6",
+    "cap-7",
+    "cap-8",
+    "cap-9",
+    "cap-10",
+    "cap-11",
+    "cap-12",
+    "cap-13",
+    "cap-14",
+    "cap-15"
+   ],
+   "seq": 112,
+   "dailyLedger": {
+    "v": 1,
+    "seed": 90210,
+    "lastSeq": 112,
+    "capabilities": {
+     "learnedKeys": [
+      "fuel_can"
+     ],
+     "anyStructDate": "2026-11-13",
+     "stationDate": "2026-11-13",
+     "researchDate": "2026-11-13",
+     "recipe1Date": "2026-11-13"
+    },
+    "days": {
+     "2026-11-13": {
+      "date": "2026-11-13",
+      "baseIds": [
+       "raise",
+       "scavenge",
+       "variety",
+       "handcraft"
+      ],
+      "objectives": [
+       {
+        "id": "raise",
+        "progress": 2,
+        "done": false,
+        "seen": [
+         "tile:6,6",
+         "tile:7,6"
+        ]
+       },
+       {
+        "id": "scavenge",
+        "progress": 0,
+        "done": false,
+        "seen": []
+       },
+       {
+        "id": "variety",
+        "progress": 0,
+        "done": false,
+        "seen": []
+       },
+       {
+        "id": "handcraft",
+        "progress": 2,
+        "done": false,
+        "seen": []
+       }
+      ],
+      "points": 0,
+      "milestones": []
+     }
+    }
+   },
+   "vendorStock": {
+    "escrow_chest": 4,
+    "iron_pick": 1,
+    "iron_axe": 1,
+    "medkit": 4,
+    "cart_kit": 1,
+    "leather_armor": 1,
+    "water_flask": 2,
+    "spares:iron_ore": 5,
+    "spares:coal": 4,
+    "spares:glass": 3,
+    "spares:salvaged_oil": 4
+   },
+   "log": [
+    {
+     "t": 1794560400000,
+     "msg": "You wash up near the island. No one is coming to tell you what to do.",
+     "tone": "gold"
+    },
+    {
+     "t": 1794560400000,
+     "msg": "Achievement — Curious Mind (+20 local score)",
+     "tone": "gold"
+    }
+   ],
+   "airdrops": {
+    "version": "airdrop-v1",
+    "mapDigest": "9bc19563",
+    "seed": 90210,
+    "runId": "run_1xlu_mweqxeo0",
+    "startedAt": 1794560400000,
+    "nextIndex": 0
+   },
+   "poiAccessVersion": "poi-access-v1",
+   "poiAccessDigest": "730321ee",
+   "creatorLootV1": true,
+   "lootEcology": {
+    "version": "w06-v1",
+    "cycles": {},
+    "grammar": "b05-v1",
+    "sourceContract": {
+     "version": "loot-source-v2",
+     "digest": "8f9aaede",
+     "sites": {
+      "shipping.factory.exterior.industrial-toolbox": {
+       "sourceId": "shipping.factory.exterior.industrial-toolbox",
+       "access": "open"
+      },
+      "shipping.tp.bow-cache.standard-toolbox": {
+       "sourceId": "shipping.tp.bow-cache.standard-toolbox",
+       "access": "open"
+      },
+      "shipping.factory.vault.advanced-keycard": {
+       "sourceId": "shipping.factory.vault.advanced-keycard",
+       "access": "door-required"
+      }
+     }
+    }
+   },
+   "spawnChoice": {
+    "x": 60,
+    "y": 149,
+    "contract": "seeded-geographic-v1"
+   },
+   "wreckEconomy": "recycler-v1"
+  }
+ },
+ "later": {
+  "version": 3,
+  "revision": 17,
+  "profile": {
+   "securedCash": 0,
+   "achievements": {
+    "first_research": {
+     "at": 1794560400000,
+     "score": 20,
+     "runId": "run_1xlu_mweqxeo0"
+    }
+   },
+   "history": [],
+   "settings": {
+    "volume": 0.6,
+    "muted": false
+   },
+   "profileReceipts": [
+    "intent:cap-1"
+   ]
+  },
+  "run": {
+   "id": "run_1xlu_mweqxeo0",
+   "seed": 90210,
+   "character": "male",
+   "startedAt": 1794560400000,
+   "qaOffset": 0,
+   "qaUsed": false,
+   "layoutId": "shipping_fresh",
+   "sourceLayoutVersion": 3,
+   "sourceMap": {
+    "id": "shipping_fresh",
+    "revision": 1,
+    "seed": 20721,
+    "rules": 3,
+    "digest": "b3b37f89",
+    "mapDigest": "9bc19563"
+   },
+   "spawnRegion": 0,
+   "ended": null,
+   "player": {
+    "x": 120,
+    "y": 120,
+    "vx": 0,
+    "vy": 0,
+    "dir": 0,
+    "aim": 1.5707963267948966,
+    "hp": 100,
+    "stamina": 100,
+    "hunger": 84.93055555555556,
+    "thirst": 84.89583333333333,
+    "warmth": 100,
+    "rad": 0,
+    "active": 0,
+    "action": null,
+    "invuln": 0,
+    "dead": false,
+    "deadT": 0,
+    "pulling": null,
+    "skills": {
+     "gather": 0,
+     "combat": 0,
+     "craft": 2,
+     "survival": 0
+    },
+    "stepAcc": 0,
+    "lastTraceX": 0,
+    "lastTraceY": 0,
+    "regionName": "the island",
+    "sheltered": false
+   },
+   "creatures": [],
+   "sources": {},
+   "terrain": {
+    "804": {
+     "t": 3
+    },
+    "805": {
+     "t": 3
+    },
+    "806": {
+     "t": 3
+    },
+    "807": {
+     "t": 3
+    },
+    "808": {
+     "t": 3
+    },
+    "809": {
+     "t": 3
+    },
+    "810": {
+     "t": 3
+    },
+    "811": {
+     "t": 3
+    },
+    "812": {
+     "t": 3
+    },
+    "1004": {
+     "t": 3
+    },
+    "1005": {
+     "t": 3
+    },
+    "1006": {
+     "t": 3
+    },
+    "1007": {
+     "t": 3
+    },
+    "1008": {
+     "t": 3
+    },
+    "1009": {
+     "t": 3
+    },
+    "1010": {
+     "t": 3
+    },
+    "1011": {
+     "t": 3
+    },
+    "1012": {
+     "t": 3
+    },
+    "1204": {
+     "t": 3
+    },
+    "1205": {
+     "t": 3
+    },
+    "1206": {
+     "t": 3
+    },
+    "1207": {
+     "t": 3
+    },
+    "1208": {
+     "t": 3
+    },
+    "1209": {
+     "t": 3
+    },
+    "1210": {
+     "t": 3
+    },
+    "1211": {
+     "t": 3
+    },
+    "1212": {
+     "t": 3
+    },
+    "1404": {
+     "t": 3
+    },
+    "1405": {
+     "t": 3
+    },
+    "1406": {
+     "t": 3
+    },
+    "1407": {
+     "t": 3
+    },
+    "1408": {
+     "t": 3
+    },
+    "1409": {
+     "t": 3
+    },
+    "1410": {
+     "t": 3
+    },
+    "1411": {
+     "t": 3
+    },
+    "1412": {
+     "t": 3
+    },
+    "1604": {
+     "t": 3
+    },
+    "1605": {
+     "t": 3
+    },
+    "1606": {
+     "t": 3
+    },
+    "1607": {
+     "t": 3
+    },
+    "1608": {
+     "t": 3
+    },
+    "1609": {
+     "t": 3
+    },
+    "1610": {
+     "t": 3
+    },
+    "1611": {
+     "t": 3
+    },
+    "1612": {
+     "t": 3
+    },
+    "1804": {
+     "t": 3
+    },
+    "1805": {
+     "t": 3
+    },
+    "1806": {
+     "t": 3
+    },
+    "1807": {
+     "t": 3
+    },
+    "1808": {
+     "t": 3
+    },
+    "1809": {
+     "t": 3
+    },
+    "1810": {
+     "t": 3
+    },
+    "1811": {
+     "t": 3
+    },
+    "1812": {
+     "t": 3
+    },
+    "2004": {
+     "t": 3
+    },
+    "2005": {
+     "t": 3
+    },
+    "2006": {
+     "t": 3
+    },
+    "2007": {
+     "t": 3
+    },
+    "2008": {
+     "t": 3
+    },
+    "2009": {
+     "t": 3
+    },
+    "2010": {
+     "t": 3
+    },
+    "2011": {
+     "t": 3
+    },
+    "2012": {
+     "t": 3
+    },
+    "2204": {
+     "t": 3
+    },
+    "2205": {
+     "t": 3
+    },
+    "2206": {
+     "t": 3
+    },
+    "2207": {
+     "t": 3
+    },
+    "2208": {
+     "t": 3
+    },
+    "2209": {
+     "t": 3
+    },
+    "2210": {
+     "t": 3
+    },
+    "2211": {
+     "t": 3
+    },
+    "2212": {
+     "t": 3
+    },
+    "2404": {
+     "t": 3
+    },
+    "2405": {
+     "t": 3
+    },
+    "2406": {
+     "t": 3
+    },
+    "2407": {
+     "t": 3
+    },
+    "2408": {
+     "t": 3
+    },
+    "2409": {
+     "t": 3
+    },
+    "2410": {
+     "t": 3
+    },
+    "2411": {
+     "t": 3
+    },
+    "2412": {
+     "t": 3
+    }
+   },
+   "entities": {
+    "e4": {
+     "id": "e4",
+     "kind": "vendor",
+     "x": 1608,
+     "y": 1848,
+     "tx": 100,
+     "ty": 115,
+     "poi": "tp",
+     "label": "Mirela the Trader"
+    },
+    "e5": {
+     "id": "e5",
+     "kind": "cash",
+     "x": 1672,
+     "y": 1832,
+     "tx": 104,
+     "ty": 114,
+     "poi": "tp",
+     "c": "c6",
+     "minted": false,
+     "stock": {
+      "cash": 36
+     }
+    },
+    "e7": {
+     "id": "e7",
+     "kind": "loot",
+     "x": 1544,
+     "y": 1832,
+     "tx": 96,
+     "ty": 114,
+     "poi": "tp",
+     "c": "c8"
+    },
+    "ec": {
+     "id": "ec",
+     "kind": "loot",
+     "x": 1720,
+     "y": 1944,
+     "tx": 107,
+     "ty": 121,
+     "poi": "tp",
+     "c": "cd"
+    },
+    "eg": {
+     "id": "eg",
+     "kind": "loot",
+     "x": 1928,
+     "y": 1416,
+     "tx": 120,
+     "ty": 88,
+     "poi": "mill",
+     "c": "ch"
+    },
+    "el": {
+     "id": "el",
+     "kind": "loot",
+     "x": 2024,
+     "y": 1576,
+     "tx": 126,
+     "ty": 98,
+     "poi": "mill",
+     "c": "cm"
+    },
+    "ep": {
+     "id": "ep",
+     "kind": "cash",
+     "x": 2088,
+     "y": 1416,
+     "tx": 130,
+     "ty": 88,
+     "poi": "mill",
+     "c": "cq",
+     "minted": false,
+     "stock": {
+      "cash": 40
+     }
+    },
+    "er": {
+     "id": "er",
+     "kind": "door",
+     "x": 2568,
+     "y": 1592,
+     "tx": 160,
+     "ty": 99,
+     "poi": "factory",
+     "label": "Vault Door",
+     "locked": "keycard",
+     "open": false
+    },
+    "es": {
+     "id": "es",
+     "kind": "loot",
+     "x": 2568,
+     "y": 1544,
+     "tx": 160,
+     "ty": 96,
+     "poi": "factory_vault",
+     "c": "ct"
+    },
+    "ey": {
+     "id": "ey",
+     "kind": "loot",
+     "x": 2600,
+     "y": 1544,
+     "tx": 162,
+     "ty": 96,
+     "poi": "factory_vault",
+     "c": "cz"
+    },
+    "e13": {
+     "id": "e13",
+     "kind": "cash",
+     "x": 2584,
+     "y": 1560,
+     "tx": 161,
+     "ty": 97,
+     "poi": "factory_vault",
+     "c": "c14",
+     "minted": false,
+     "stock": {
+      "cash": 80
+     }
+    },
+    "e15": {
+     "id": "e15",
+     "kind": "loot",
+     "x": 2408,
+     "y": 1656,
+     "tx": 150,
+     "ty": 103,
+     "poi": "factory",
+     "c": "c16"
+    },
+    "e1c": {
+     "id": "e1c",
+     "kind": "loot",
+     "x": 2472,
+     "y": 1544,
+     "tx": 154,
+     "ty": 96,
+     "poi": "factory",
+     "c": "c1d"
+    },
+    "e1g": {
+     "id": "e1g",
+     "kind": "door",
+     "x": 456,
+     "y": 2872,
+     "tx": 28,
+     "ty": 179,
+     "poi": "light",
+     "label": "Lighthouse Door",
+     "locked": "power",
+     "open": false
+    },
+    "e1h": {
+     "id": "e1h",
+     "kind": "gen",
+     "x": 504,
+     "y": 2888,
+     "tx": 31,
+     "ty": 180,
+     "poi": "light",
+     "label": "Generator",
+     "power": 0
+    },
+    "e1i": {
+     "id": "e1i",
+     "kind": "loot",
+     "x": 440,
+     "y": 2824,
+     "tx": 27,
+     "ty": 176,
+     "poi": "light_top",
+     "c": "c1j"
+    },
+    "e1n": {
+     "id": "e1n",
+     "kind": "cash",
+     "x": 472,
+     "y": 2824,
+     "tx": 29,
+     "ty": 176,
+     "poi": "light_top",
+     "c": "c1o",
+     "minted": false,
+     "stock": {
+      "cash": 60
+     }
+    },
+    "e1p": {
+     "id": "e1p",
+     "kind": "loot",
+     "x": 504,
+     "y": 2808,
+     "tx": 31,
+     "ty": 175,
+     "poi": "light",
+     "c": "c1q"
+    },
+    "e1t": {
+     "id": "e1t",
+     "kind": "loot",
+     "x": 2072,
+     "y": 2904,
+     "tx": 129,
+     "ty": 181,
+     "poi": "wreck",
+     "c": "c1u"
+    },
+    "e1y": {
+     "id": "e1y",
+     "kind": "loot",
+     "x": 2136,
+     "y": 2888,
+     "tx": 133,
+     "ty": 180,
+     "poi": "wreck",
+     "c": "c1z"
+    },
+    "e24": {
+     "id": "e24",
+     "kind": "cash",
+     "x": 2104,
+     "y": 2920,
+     "tx": 131,
+     "ty": 182,
+     "poi": "wreck",
+     "c": "c25",
+     "minted": false,
+     "stock": {
+      "cash": 45
+     }
+    },
+    "e26": {
+     "id": "e26",
+     "kind": "loot",
+     "x": 1384,
+     "y": 920,
+     "tx": 86,
+     "ty": 57,
+     "poi": "watch",
+     "c": "c27"
+    },
+    "e2c": {
+     "id": "e2c",
+     "kind": "cash",
+     "x": 1416,
+     "y": 920,
+     "tx": 88,
+     "ty": 57,
+     "poi": "watch",
+     "c": "c2d",
+     "minted": false,
+     "stock": {
+      "cash": 34
+     }
+    },
+    "e2e": {
+     "id": "e2e",
+     "kind": "evac",
+     "x": 2808,
+     "y": 232,
+     "tx": 175,
+     "ty": 14,
+     "poi": "evac",
+     "label": "Evacuation Beacon"
+    },
+    "e2f": {
+     "id": "e2f",
+     "kind": "cash",
+     "x": 2728,
+     "y": 392,
+     "tx": 170,
+     "ty": 24,
+     "poi": "evac",
+     "c": "c2g",
+     "minted": false,
+     "stock": {
+      "cash": 30
+     }
+    },
+    "e2h": {
+     "id": "e2h",
+     "kind": "loot",
+     "x": 2760,
+     "y": 392,
+     "tx": 172,
+     "ty": 24,
+     "poi": "evac",
+     "c": "c2i"
+    },
+    "e2l": {
+     "id": "e2l",
+     "kind": "recycler",
+     "x": 2424,
+     "y": 1656,
+     "tx": 151,
+     "ty": 103,
+     "poi": "factory",
+     "label": "Foundry Recycler",
+     "station": {
+      "queue": [],
+      "burn": 0,
+      "fuelC": "c2m",
+      "outC": "c2n",
+      "stateCode": "idle"
+     }
+    },
+    "e8i": {
+     "id": "e8i",
+     "kind": "struct",
+     "type": "workbench",
+     "tx": 6,
+     "ty": 6,
+     "x": 104,
+     "y": 104,
+     "hp": 159.77777777777777,
+     "maxHp": 160,
+     "born": 1794560400000,
+     "deployed": {
+      "uid": "s8h",
+      "key": "deploy_workbench",
+      "qty": 1,
+      "dur": 160
+     },
+     "station": {
+      "queue": [],
+      "burn": 0,
+      "fuelC": "c8j",
+      "outC": "c8k",
+      "level": 2,
+      "stateCode": "idle"
+     }
+    },
+    "e8m": {
+     "id": "e8m",
+     "kind": "struct",
+     "type": "research",
+     "tx": 7,
+     "ty": 6,
+     "x": 120,
+     "y": 104,
+     "hp": 159.77777777777777,
+     "maxHp": 160,
+     "born": 1794560400000,
+     "deployed": {
+      "uid": "s8l",
+      "key": "deploy_research",
+      "qty": 1,
+      "dur": 160
+     },
+     "station": {
+      "queue": [],
+      "burn": 0,
+      "fuelC": "c8n",
+      "outC": "c8o",
+      "stateCode": "idle"
+     }
+    }
+   },
+   "custody": {
+    "inv": {
+     "id": "inv",
+     "kind": "inv",
+     "slots": [
+      {
+       "uid": "s1",
+       "key": "knife",
+       "qty": 1,
+       "dur": 300
+      },
+      {
+       "uid": "s2",
+       "key": "water_flask",
+       "qty": 1,
+       "charge": 2
+      },
+      {
+       "uid": "s3",
+       "key": "berries",
+       "qty": 3
+      },
+      {
+       "uid": "s8d",
+       "key": "wood",
+       "qty": 36
+      },
+      {
+       "uid": "s8e",
+       "key": "stone",
+       "qty": 36
+      },
+      {
+       "uid": "s8f",
+       "key": "spares",
+       "qty": 16
+      },
+      {
+       "uid": "s8g",
+       "key": "iron_ingot",
+       "qty": 5
+      },
+      {
+       "uid": "s8q",
+       "key": "refined_iron_ingot",
+       "qty": 8
+      },
+      {
+       "uid": "s8r",
+       "key": "mechanical_parts",
+       "qty": 4
+      },
+      {
+       "uid": "s8s",
+       "key": "fasteners",
+       "qty": 3
+      },
+      {
+       "uid": "s8t",
+       "key": "charcoal",
+       "qty": 3
+      },
+      {
+       "uid": "s8u",
+       "key": "sulfur",
+       "qty": 3
+      },
+      {
+       "uid": "s8v",
+       "key": "glass",
+       "qty": 3
+      },
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    "eq": {
+     "id": "eq",
+     "kind": "eq",
+     "slots": [
+      null,
+      null,
+      null
+     ]
+    },
+    "c6": {
+     "id": "c6",
+     "kind": "cash",
+     "slots": [
+      null,
+      null
+     ]
+    },
+    "c8": {
+     "id": "c8",
+     "kind": "loot",
+     "slots": [
+      {
+       "uid": "s9",
+       "key": "rope",
+       "qty": 3
+      },
+      {
+       "uid": "sa",
+       "key": "cloth",
+       "qty": 2
+      },
+      {
+       "uid": "sb",
+       "key": "blueprint",
+       "qty": 1,
+       "meta": "bow"
+      },
+      {
+       "uid": "s2o",
+       "key": "spares",
+       "qty": 2
+      },
+      {
+       "uid": "s2p",
+       "key": "field_repair_kit",
+       "qty": 1
+      },
+      {
+       "uid": "s2q",
+       "key": "refined_iron_ingot",
+       "qty": 1
+      },
+      {
+       "uid": "s2r",
+       "key": "iron_plate",
+       "qty": 1
+      },
+      null,
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    "cd": {
+     "id": "cd",
+     "kind": "loot",
+     "slots": [
+      {
+       "uid": "se",
+       "key": "wood",
+       "qty": 8
+      },
+      {
+       "uid": "sf",
+       "key": "iron_ingot",
+       "qty": 1
+      },
+      {
+       "uid": "s2s",
+       "key": "bandage",
+       "qty": 1
+      },
+      {
+       "uid": "s2t",
+       "key": "berries",
+       "qty": 2
+      },
+      {
+       "uid": "s2u",
+       "key": "mushroom",
+       "qty": 1
+      },
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    "ch": {
+     "id": "ch",
+     "kind": "loot",
+     "slots": [
+      {
+       "uid": "si",
+       "key": "seed",
+       "qty": 6
+      },
+      {
+       "uid": "sj",
+       "key": "blueprint",
+       "qty": 1,
+       "meta": "stew"
+      },
+      {
+       "uid": "sk",
+       "key": "crop",
+       "qty": 2
+      },
+      {
+       "uid": "s2v",
+       "key": "bandage",
+       "qty": 1
+      },
+      {
+       "uid": "s2w",
+       "key": "berries",
+       "qty": 2
+      },
+      {
+       "uid": "s2x",
+       "key": "mushroom",
+       "qty": 1
+      },
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    "cm": {
+     "id": "cm",
+     "kind": "loot",
+     "slots": [
+      {
+       "uid": "sn",
+       "key": "leather",
+       "qty": 2
+      },
+      {
+       "uid": "so",
+       "key": "blueprint",
+       "qty": 1,
+       "meta": "brick"
+      },
+      {
+       "uid": "s2y",
+       "key": "bandage",
+       "qty": 1
+      },
+      {
+       "uid": "s2z",
+       "key": "herb",
+       "qty": 2
+      },
+      {
+       "uid": "s30",
+       "key": "herb",
+       "qty": 1
+      },
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    "cq": {
+     "id": "cq",
+     "kind": "cash",
+     "slots": [
+      null,
+      null
+     ]
+    },
+    "ct": {
+     "id": "ct",
+     "kind": "loot",
+     "slots": [
+      {
+       "uid": "su",
+       "key": "core_fire",
+       "qty": 1,
+       "charge": 3
+      },
+      {
+       "uid": "sv",
+       "key": "blueprint",
+       "qty": 1,
+       "meta": "core_earth"
+      },
+      {
+       "uid": "sw",
+       "key": "spares",
+       "qty": 6
+      },
+      {
+       "uid": "sx",
+       "key": "core_dragon",
+       "qty": 1,
+       "reserves": {
+        "basic": 0,
+        "refined": 0,
+        "signature": 3
+       }
+      },
+      {
+       "uid": "s31",
+       "key": "energy_refined",
+       "qty": 1
+      },
+      {
+       "uid": "s32",
+       "key": "mechanical_parts",
+       "qty": 1
+      },
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    "cz": {
+     "id": "cz",
+     "kind": "loot",
+     "slots": [
+      {
+       "uid": "s10",
+       "key": "blueprint",
+       "qty": 1,
+       "meta": "gas_mask"
+      },
+      {
+       "uid": "s11",
+       "key": "iron_ingot",
+       "qty": 4
+      },
+      {
+       "uid": "s12",
+       "key": "core_demon",
+       "qty": 1,
+       "reserves": {
+        "basic": 0,
+        "refined": 0,
+        "signature": 3
+       }
+      },
+      {
+       "uid": "s33",
+       "key": "energy_refined",
+       "qty": 1
+      },
+      {
+       "uid": "s34",
+       "key": "mechanical_parts",
+       "qty": 1
+      },
+      {
+       "uid": "s35",
+       "key": "medkit",
+       "qty": 1
+      },
+      {
+       "uid": "s36",
+       "key": "refined_iron_ingot",
+       "qty": 2
+      },
+      {
+       "uid": "s37",
+       "key": "metal_blade",
+       "qty": 1
+      },
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    "c14": {
+     "id": "c14",
+     "kind": "cash",
+     "slots": [
+      null,
+      null
+     ]
+    },
+    "c16": {
+     "id": "c16",
+     "kind": "loot",
+     "slots": [
+      {
+       "uid": "s17",
+       "key": "scrap",
+       "qty": 6
+      },
+      {
+       "uid": "s18",
+       "key": "spares",
+       "qty": 3
+      },
+      {
+       "uid": "s19",
+       "key": "iron_sword",
+       "qty": 1,
+       "dur": 350
+      },
+      {
+       "uid": "s1a",
+       "key": "mechanical_parts",
+       "qty": 2
+      },
+      {
+       "uid": "s1b",
+       "key": "fasteners",
+       "qty": 3
+      },
+      {
+       "uid": "s38",
+       "key": "spares",
+       "qty": 2
+      },
+      {
+       "uid": "s39",
+       "key": "fasteners",
+       "qty": 2
+      },
+      {
+       "uid": "s3a",
+       "key": "refined_iron_ingot",
+       "qty": 1
+      },
+      {
+       "uid": "s3b",
+       "key": "mechanical_gear",
+       "qty": 1
+      },
+      {
+       "uid": "s3c",
+       "key": "metal_blade",
+       "qty": 1
+      },
+      null,
+      null
+     ]
+    },
+    "c1d": {
+     "id": "c1d",
+     "kind": "loot",
+     "slots": [
+      {
+       "uid": "s1e",
+       "key": "iron_ore",
+       "qty": 4
+      },
+      {
+       "uid": "s1f",
+       "key": "coal",
+       "qty": 3
+      },
+      {
+       "uid": "s3d",
+       "key": "spares",
+       "qty": 2
+      },
+      {
+       "uid": "s3e",
+       "key": "fasteners",
+       "qty": 2
+      },
+      {
+       "uid": "s3f",
+       "key": "refined_iron_ingot",
+       "qty": 1
+      },
+      {
+       "uid": "s3g",
+       "key": "metal_pipe",
+       "qty": 1
+      },
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    "c1j": {
+     "id": "c1j",
+     "kind": "loot",
+     "slots": [
+      {
+       "uid": "s1k",
+       "key": "core_storm",
+       "qty": 1,
+       "charge": 4
+      },
+      {
+       "uid": "s1l",
+       "key": "blueprint",
+       "qty": 1,
+       "meta": "leather_armor"
+      },
+      {
+       "uid": "s1m",
+       "key": "core_meteor",
+       "qty": 1,
+       "reserves": {
+        "basic": 0,
+        "refined": 0,
+        "signature": 3
+       }
+      },
+      {
+       "uid": "s3h",
+       "key": "energy_refined",
+       "qty": 1
+      },
+      {
+       "uid": "s3i",
+       "key": "mechanical_parts",
+       "qty": 1
+      },
+      {
+       "uid": "s3j",
+       "key": "medkit",
+       "qty": 1
+      },
+      {
+       "uid": "s3k",
+       "key": "refined_iron_ingot",
+       "qty": 2
+      },
+      {
+       "uid": "s3l",
+       "key": "metal_blade",
+       "qty": 1
+      },
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    "c1o": {
+     "id": "c1o",
+     "kind": "cash",
+     "slots": [
+      null,
+      null
+     ]
+    },
+    "c1q": {
+     "id": "c1q",
+     "kind": "loot",
+     "slots": [
+      {
+       "uid": "s1r",
+       "key": "fuel_can",
+       "qty": 1
+      },
+      {
+       "uid": "s1s",
+       "key": "rope",
+       "qty": 2
+      },
+      {
+       "uid": "s3m",
+       "key": "bandage",
+       "qty": 1
+      },
+      {
+       "uid": "s3n",
+       "key": "herb",
+       "qty": 2
+      },
+      {
+       "uid": "s3o",
+       "key": "berries",
+       "qty": 1
+      },
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    "c1u": {
+     "id": "c1u",
+     "kind": "loot",
+     "slots": [
+      {
+       "uid": "s1v",
+       "key": "core_frost",
+       "qty": 1,
+       "charge": 3
+      },
+      {
+       "uid": "s1w",
+       "key": "spares",
+       "qty": 4
+      },
+      {
+       "uid": "s1x",
+       "key": "core_elsa",
+       "qty": 1,
+       "reserves": {
+        "basic": 0,
+        "refined": 0,
+        "signature": 3
+       }
+      },
+      {
+       "uid": "s3p",
+       "key": "energy_basic",
+       "qty": 4
+      },
+      {
+       "uid": "s3q",
+       "key": "arrow",
+       "qty": 4
+      },
+      {
+       "uid": "s3r",
+       "key": "arrow",
+       "qty": 4
+      },
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    "c1z": {
+     "id": "c1z",
+     "kind": "loot",
+     "slots": [
+      {
+       "uid": "s20",
+       "key": "cloth",
+       "qty": 3
+      },
+      {
+       "uid": "s21",
+       "key": "fuel_can",
+       "qty": 1
+      },
+      {
+       "uid": "s22",
+       "key": "blueprint",
+       "qty": 1,
+       "meta": "arrow"
+      },
+      {
+       "uid": "s23",
+       "key": "treated_canvas",
+       "qty": 2
+      },
+      {
+       "uid": "s3s",
+       "key": "energy_basic",
+       "qty": 4
+      },
+      {
+       "uid": "s3t",
+       "key": "arrow",
+       "qty": 4
+      },
+      {
+       "uid": "s3u",
+       "key": "bandage",
+       "qty": 1
+      },
+      null,
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    "c25": {
+     "id": "c25",
+     "kind": "cash",
+     "slots": [
+      null,
+      null
+     ]
+    },
+    "c27": {
+     "id": "c27",
+     "kind": "loot",
+     "slots": [
+      {
+       "uid": "s28",
+       "key": "keycard",
+       "qty": 1,
+       "charge": 3
+      },
+      {
+       "uid": "s29",
+       "key": "blueprint",
+       "qty": 1,
+       "meta": "fur_cloak"
+      },
+      {
+       "uid": "s2a",
+       "key": "torch",
+       "qty": 2,
+       "dur": 120
+      },
+      {
+       "uid": "s2b",
+       "key": "core_mjolnir",
+       "qty": 1,
+       "reserves": {
+        "basic": 0,
+        "refined": 0,
+        "signature": 3
+       }
+      },
+      {
+       "uid": "s3v",
+       "key": "energy_basic",
+       "qty": 4
+      },
+      {
+       "uid": "s3w",
+       "key": "spares",
+       "qty": 2
+      },
+      {
+       "uid": "s3x",
+       "key": "herb",
+       "qty": 1
+      },
+      null,
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    "c2d": {
+     "id": "c2d",
+     "kind": "cash",
+     "slots": [
+      null,
+      null
+     ]
+    },
+    "c2g": {
+     "id": "c2g",
+     "kind": "cash",
+     "slots": [
+      null,
+      null
+     ]
+    },
+    "c2i": {
+     "id": "c2i",
+     "kind": "loot",
+     "slots": [
+      {
+       "uid": "s2j",
+       "key": "medkit",
+       "qty": 1
+      },
+      {
+       "uid": "s2k",
+       "key": "water_flask",
+       "qty": 1,
+       "charge": 4
+      },
+      {
+       "uid": "s3y",
+       "key": "bandage",
+       "qty": 1
+      },
+      {
+       "uid": "s3z",
+       "key": "herb",
+       "qty": 2
+      },
+      {
+       "uid": "s40",
+       "key": "berries",
+       "qty": 1
+      },
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    "c2m": {
+     "id": "c2m",
+     "kind": "fuel",
+     "slots": []
+    },
+    "c2n": {
+     "id": "c2n",
+     "kind": "out",
+     "slots": [
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    "c8j": {
+     "id": "c8j",
+     "kind": "fuel",
+     "slots": [
+      null,
+      null,
+      null
+     ]
+    },
+    "c8k": {
+     "id": "c8k",
+     "kind": "out",
+     "slots": [
+      {
+       "uid": "s9g",
+       "key": "iron_plate",
+       "qty": 2
+      },
+      {
+       "uid": "s9h",
+       "key": "mechanical_gear",
+       "qty": 1
+      },
+      {
+       "uid": "s9j",
+       "key": "fuel_can",
+       "qty": 1
+      },
+      null,
+      null,
+      null
+     ]
+    },
+    "c8n": {
+     "id": "c8n",
+     "kind": "fuel",
+     "slots": []
+    },
+    "c8o": {
+     "id": "c8o",
+     "kind": "out",
+     "slots": [
+      {
+       "uid": "s9i",
+       "key": "blueprint",
+       "qty": 1,
+       "meta": "motorbike_kit"
+      },
+      null,
+      null,
+      null
+     ]
+    }
+   },
+   "knowledge": {
+    "recipes": [
+     "vehicle_frame",
+     "vehicle_drive",
+     "refinery_fuel",
+     "refinery_fuel_batch",
+     "refinery_industrial",
+     "refinery_lubricant",
+     "refinery_crude",
+     "pump_crude",
+     "energy_basic",
+     "energy_refined_industrial",
+     "energy_refined",
+     "essence_fire",
+     "essence_nature",
+     "essence_water",
+     "essence_spirit",
+     "core_blast",
+     "core_earthmother",
+     "recover_drive",
+     "mechanical_parts",
+     "metal_pipe",
+     "metal_blade",
+     "mechanical_gear",
+     "iron_plate",
+     "iron_sword_blade",
+     "vehicle_frame_piped",
+     "reinforced_spear_blade",
+     "industrial_pick_geared",
+     "vehicle_drive_geared",
+     "rope",
+     "lead_rope",
+     "animal_feed",
+     "arrow_fletched",
+     "torch",
+     "stone_axe",
+     "stone_pick",
+     "wood_spear",
+     "bandage",
+     "water_flask",
+     "root_broth",
+     "poached_eggs",
+     "herb_roast",
+     "cooked_meat",
+     "salted_meat",
+     "charcoal",
+     "iron_ingot",
+     "refined_iron_ingot",
+     "refined_iron_rich",
+     "scrap_ingot",
+     "shell_glass",
+     "leather",
+     "cloth",
+     "plank",
+     "iron_axe",
+     "iron_pick",
+     "deploy_claim",
+     "deploy_bed_straw",
+     "deploy_chest_small",
+     "deploy_chest_large",
+     "deploy_campfire",
+     "deploy_furnace",
+     "deploy_oil_pump",
+     "deploy_refinery",
+     "deploy_workbench",
+     "deploy_research",
+     "deploy_garden",
+     "deploy_farm_controller",
+     "deploy_barrel",
+     "deploy_feed_trough",
+     "deploy_base_generator",
+     "deploy_power_cable",
+     "deploy_power_switch",
+     "deploy_pressure_switch",
+     "deploy_ir_sensor",
+     "deploy_arrow_turret",
+     "deploy_bear_trap",
+     "deploy_spikes",
+     "deploy_barricade",
+     "deploy_torch_post",
+     "fuel_can"
+    ],
+    "studied": []
+   },
+   "traces": [],
+   "discovered": [],
+   "poiSeen": [],
+   "intel": [],
+   "elderStones": [],
+   "achievements": [
+    "first_research"
+   ],
+   "score": 20,
+   "deposited": 0,
+   "clock": {
+    "lastSimAt": 1794560460000,
+    "simMs": 60000,
+    "respawnAcc": 0,
+    "weatherSlot": -1
+   },
+   "rng": 548586580,
+   "nextId": 344,
+   "receipts": [
+    {
+     "id": "r1",
+     "seq": 1,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:tp:96,114:w06-v1:cycle0:slot0:ropex3:s9"
+    },
+    {
+     "id": "r2",
+     "seq": 2,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:tp:96,114:w06-v1:cycle0:slot1:clothx2:sa"
+    },
+    {
+     "id": "r3",
+     "seq": 3,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:tp:96,114:w06-v1:cycle0:slot2:blueprint:bowx1:sb"
+    },
+    {
+     "id": "r4",
+     "seq": 4,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:tp:96,114:w06-v1:cycle0:slot3:sparesx2:s2o"
+    },
+    {
+     "id": "r5",
+     "seq": 5,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:tp:96,114:w06-v1:cycle0:slot4:field_repair_kitx1:s2p"
+    },
+    {
+     "id": "r6",
+     "seq": 6,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:tp:96,114:w06-v1:cycle0:slot5:refined_iron_ingotx1:s2q"
+    },
+    {
+     "id": "r7",
+     "seq": 7,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:tp:96,114:w06-v1:cycle0:slot6:iron_platex1:s2r"
+    },
+    {
+     "id": "r8",
+     "seq": 8,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:tp:107,121:w06-v1:cycle0:slot0:woodx8:se"
+    },
+    {
+     "id": "r9",
+     "seq": 9,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:tp:107,121:w06-v1:cycle0:slot1:iron_ingotx1:sf"
+    },
+    {
+     "id": "r10",
+     "seq": 10,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:tp:107,121:w06-v1:cycle0:slot2:bandagex1:s2s"
+    },
+    {
+     "id": "r11",
+     "seq": 11,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:tp:107,121:w06-v1:cycle0:slot3:berriesx2:s2t"
+    },
+    {
+     "id": "r12",
+     "seq": 12,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:tp:107,121:w06-v1:cycle0:slot4:mushroomx1:s2u"
+    },
+    {
+     "id": "r13",
+     "seq": 13,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:mill:120,88:w06-v1:cycle0:slot0:seedx6:si"
+    },
+    {
+     "id": "r14",
+     "seq": 14,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:mill:120,88:w06-v1:cycle0:slot1:blueprint:stewx1:sj"
+    },
+    {
+     "id": "r15",
+     "seq": 15,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:mill:120,88:w06-v1:cycle0:slot2:cropx2:sk"
+    },
+    {
+     "id": "r16",
+     "seq": 16,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:mill:120,88:w06-v1:cycle0:slot3:bandagex1:s2v"
+    },
+    {
+     "id": "r17",
+     "seq": 17,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:mill:120,88:w06-v1:cycle0:slot4:berriesx2:s2w"
+    },
+    {
+     "id": "r18",
+     "seq": 18,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:mill:120,88:w06-v1:cycle0:slot5:mushroomx1:s2x"
+    },
+    {
+     "id": "r19",
+     "seq": 19,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:mill:126,98:w06-v1:cycle0:slot0:leatherx2:sn"
+    },
+    {
+     "id": "r20",
+     "seq": 20,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:mill:126,98:w06-v1:cycle0:slot1:blueprint:brickx1:so"
+    },
+    {
+     "id": "r21",
+     "seq": 21,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:mill:126,98:w06-v1:cycle0:slot2:bandagex1:s2y"
+    },
+    {
+     "id": "r22",
+     "seq": 22,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:mill:126,98:w06-v1:cycle0:slot3:herbx2:s2z"
+    },
+    {
+     "id": "r23",
+     "seq": 23,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:mill:126,98:w06-v1:cycle0:slot4:herbx1:s30"
+    },
+    {
+     "id": "r24",
+     "seq": 24,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:factory_vault:160,96:w06-v1:cycle0:slot0:core_firex1:su"
+    },
+    {
+     "id": "r25",
+     "seq": 25,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:factory_vault:160,96:w06-v1:cycle0:slot1:blueprint:core_earthx1:sv"
+    },
+    {
+     "id": "r26",
+     "seq": 26,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:factory_vault:160,96:w06-v1:cycle0:slot2:sparesx6:sw"
+    },
+    {
+     "id": "r27",
+     "seq": 27,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:factory_vault:160,96:w06-v1:cycle0:slot3:core_dragonx1:sx"
+    },
+    {
+     "id": "r28",
+     "seq": 28,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:factory_vault:160,96:w06-v1:cycle0:slot4:energy_refinedx1:s31"
+    },
+    {
+     "id": "r29",
+     "seq": 29,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:factory_vault:160,96:w06-v1:cycle0:slot5:mechanical_partsx1:s32"
+    },
+    {
+     "id": "r30",
+     "seq": 30,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:factory_vault:162,96:w06-v1:cycle0:slot0:blueprint:gas_maskx1:s10"
+    },
+    {
+     "id": "r31",
+     "seq": 31,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:factory_vault:162,96:w06-v1:cycle0:slot1:iron_ingotx4:s11"
+    },
+    {
+     "id": "r32",
+     "seq": 32,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:factory_vault:162,96:w06-v1:cycle0:slot2:core_demonx1:s12"
+    },
+    {
+     "id": "r33",
+     "seq": 33,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:factory_vault:162,96:w06-v1:cycle0:slot3:energy_refinedx1:s33"
+    },
+    {
+     "id": "r34",
+     "seq": 34,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:factory_vault:162,96:w06-v1:cycle0:slot4:mechanical_partsx1:s34"
+    },
+    {
+     "id": "r35",
+     "seq": 35,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:factory_vault:162,96:w06-v1:cycle0:slot5:medkitx1:s35"
+    },
+    {
+     "id": "r36",
+     "seq": 36,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:factory_vault:162,96:w06-v1:cycle0:slot6:refined_iron_ingotx2:s36"
+    },
+    {
+     "id": "r37",
+     "seq": 37,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:factory_vault:162,96:w06-v1:cycle0:slot7:metal_bladex1:s37"
+    },
+    {
+     "id": "r38",
+     "seq": 38,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:factory:150,103:w06-v1:cycle0:slot0:scrapx6:s17"
+    },
+    {
+     "id": "r39",
+     "seq": 39,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:factory:150,103:w06-v1:cycle0:slot1:sparesx3:s18"
+    },
+    {
+     "id": "r40",
+     "seq": 40,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:factory:150,103:w06-v1:cycle0:slot2:iron_swordx1:s19"
+    },
+    {
+     "id": "r41",
+     "seq": 41,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:factory:150,103:w06-v1:cycle0:slot3:mechanical_partsx2:s1a"
+    },
+    {
+     "id": "r42",
+     "seq": 42,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:factory:150,103:w06-v1:cycle0:slot4:fastenersx3:s1b"
+    },
+    {
+     "id": "r43",
+     "seq": 43,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:factory:150,103:w06-v1:cycle0:slot5:sparesx2:s38"
+    },
+    {
+     "id": "r44",
+     "seq": 44,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:factory:150,103:w06-v1:cycle0:slot6:fastenersx2:s39"
+    },
+    {
+     "id": "r45",
+     "seq": 45,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:factory:150,103:w06-v1:cycle0:slot7:refined_iron_ingotx1:s3a"
+    },
+    {
+     "id": "r46",
+     "seq": 46,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:factory:150,103:w06-v1:cycle0:slot8:mechanical_gearx1:s3b"
+    },
+    {
+     "id": "r47",
+     "seq": 47,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:factory:150,103:w06-v1:cycle0:slot9:metal_bladex1:s3c"
+    },
+    {
+     "id": "r48",
+     "seq": 48,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:factory:154,96:w06-v1:cycle0:slot0:iron_orex4:s1e"
+    },
+    {
+     "id": "r49",
+     "seq": 49,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:factory:154,96:w06-v1:cycle0:slot1:coalx3:s1f"
+    },
+    {
+     "id": "r50",
+     "seq": 50,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:factory:154,96:w06-v1:cycle0:slot2:sparesx2:s3d"
+    },
+    {
+     "id": "r51",
+     "seq": 51,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:factory:154,96:w06-v1:cycle0:slot3:fastenersx2:s3e"
+    },
+    {
+     "id": "r52",
+     "seq": 52,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:factory:154,96:w06-v1:cycle0:slot4:refined_iron_ingotx1:s3f"
+    },
+    {
+     "id": "r53",
+     "seq": 53,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:factory:154,96:w06-v1:cycle0:slot5:metal_pipex1:s3g"
+    },
+    {
+     "id": "r54",
+     "seq": 54,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:light_top:27,176:w06-v1:cycle0:slot0:core_stormx1:s1k"
+    },
+    {
+     "id": "r55",
+     "seq": 55,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:light_top:27,176:w06-v1:cycle0:slot1:blueprint:leather_armorx1:s1l"
+    },
+    {
+     "id": "r56",
+     "seq": 56,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:light_top:27,176:w06-v1:cycle0:slot2:core_meteorx1:s1m"
+    },
+    {
+     "id": "r57",
+     "seq": 57,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:light_top:27,176:w06-v1:cycle0:slot3:energy_refinedx1:s3h"
+    },
+    {
+     "id": "r58",
+     "seq": 58,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:light_top:27,176:w06-v1:cycle0:slot4:mechanical_partsx1:s3i"
+    },
+    {
+     "id": "r59",
+     "seq": 59,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:light_top:27,176:w06-v1:cycle0:slot5:medkitx1:s3j"
+    },
+    {
+     "id": "r60",
+     "seq": 60,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:light_top:27,176:w06-v1:cycle0:slot6:refined_iron_ingotx2:s3k"
+    },
+    {
+     "id": "r61",
+     "seq": 61,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:light_top:27,176:w06-v1:cycle0:slot7:metal_bladex1:s3l"
+    },
+    {
+     "id": "r62",
+     "seq": 62,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:light:31,175:w06-v1:cycle0:slot0:fuel_canx1:s1r"
+    },
+    {
+     "id": "r63",
+     "seq": 63,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:light:31,175:w06-v1:cycle0:slot1:ropex2:s1s"
+    },
+    {
+     "id": "r64",
+     "seq": 64,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:light:31,175:w06-v1:cycle0:slot2:bandagex1:s3m"
+    },
+    {
+     "id": "r65",
+     "seq": 65,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:light:31,175:w06-v1:cycle0:slot3:herbx2:s3n"
+    },
+    {
+     "id": "r66",
+     "seq": 66,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:light:31,175:w06-v1:cycle0:slot4:berriesx1:s3o"
+    },
+    {
+     "id": "r67",
+     "seq": 67,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:wreck:129,181:w06-v1:cycle0:slot0:core_frostx1:s1v"
+    },
+    {
+     "id": "r68",
+     "seq": 68,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:wreck:129,181:w06-v1:cycle0:slot1:sparesx4:s1w"
+    },
+    {
+     "id": "r69",
+     "seq": 69,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:wreck:129,181:w06-v1:cycle0:slot2:core_elsax1:s1x"
+    },
+    {
+     "id": "r70",
+     "seq": 70,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:wreck:129,181:w06-v1:cycle0:slot3:energy_basicx4:s3p"
+    },
+    {
+     "id": "r71",
+     "seq": 71,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:wreck:129,181:w06-v1:cycle0:slot4:arrowx4:s3q"
+    },
+    {
+     "id": "r72",
+     "seq": 72,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:wreck:129,181:w06-v1:cycle0:slot5:arrowx4:s3r"
+    },
+    {
+     "id": "r73",
+     "seq": 73,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:wreck:133,180:w06-v1:cycle0:slot0:clothx3:s20"
+    },
+    {
+     "id": "r74",
+     "seq": 74,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:wreck:133,180:w06-v1:cycle0:slot1:fuel_canx1:s21"
+    },
+    {
+     "id": "r75",
+     "seq": 75,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:wreck:133,180:w06-v1:cycle0:slot2:blueprint:arrowx1:s22"
+    },
+    {
+     "id": "r76",
+     "seq": 76,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:wreck:133,180:w06-v1:cycle0:slot3:treated_canvasx2:s23"
+    },
+    {
+     "id": "r77",
+     "seq": 77,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:wreck:133,180:w06-v1:cycle0:slot4:energy_basicx4:s3s"
+    },
+    {
+     "id": "r78",
+     "seq": 78,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:wreck:133,180:w06-v1:cycle0:slot5:arrowx4:s3t"
+    },
+    {
+     "id": "r79",
+     "seq": 79,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:wreck:133,180:w06-v1:cycle0:slot6:bandagex1:s3u"
+    },
+    {
+     "id": "r80",
+     "seq": 80,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:watch:86,57:w06-v1:cycle0:slot0:keycardx1:s28"
+    },
+    {
+     "id": "r81",
+     "seq": 81,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:watch:86,57:w06-v1:cycle0:slot1:blueprint:fur_cloakx1:s29"
+    },
+    {
+     "id": "r82",
+     "seq": 82,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:watch:86,57:w06-v1:cycle0:slot2:torchx2:s2a"
+    },
+    {
+     "id": "r83",
+     "seq": 83,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:watch:86,57:w06-v1:cycle0:slot3:core_mjolnirx1:s2b"
+    },
+    {
+     "id": "r84",
+     "seq": 84,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:watch:86,57:w06-v1:cycle0:slot4:energy_basicx4:s3v"
+    },
+    {
+     "id": "r85",
+     "seq": 85,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:watch:86,57:w06-v1:cycle0:slot5:sparesx2:s3w"
+    },
+    {
+     "id": "r86",
+     "seq": 86,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:watch:86,57:w06-v1:cycle0:slot6:herbx1:s3x"
+    },
+    {
+     "id": "r87",
+     "seq": 87,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:evac:172,24:w06-v1:cycle0:slot0:medkitx1:s2j"
+    },
+    {
+     "id": "r88",
+     "seq": 88,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:evac:172,24:w06-v1:cycle0:slot1:water_flaskx1:s2k"
+    },
+    {
+     "id": "r89",
+     "seq": 89,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:evac:172,24:w06-v1:cycle0:slot2:bandagex1:s3y"
+    },
+    {
+     "id": "r90",
+     "seq": 90,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:evac:172,24:w06-v1:cycle0:slot3:herbx2:s3z"
+    },
+    {
+     "id": "r91",
+     "seq": 91,
+     "at": 1794560400000,
+     "kind": "loot.roll",
+     "detail": "shipping_fresh:evac:172,24:w06-v1:cycle0:slot4:berriesx1:s40"
+    },
+    {
+     "id": "r92",
+     "seq": 92,
+     "at": 1794560400000,
+     "kind": "run.start",
+     "detail": "male@the island"
+    },
+    {
+     "id": "r93",
+     "seq": 93,
+     "at": 1794560400000,
+     "kind": "craft.hand",
+     "detail": "deploy_workbench"
+    },
+    {
+     "id": "r94",
+     "seq": 94,
+     "at": 1794560400000,
+     "kind": "build",
+     "detail": "workbench@6,6"
+    },
+    {
+     "id": "r95",
+     "seq": 95,
+     "at": 1794560400000,
+     "kind": "craft.hand",
+     "detail": "deploy_research"
+    },
+    {
+     "id": "r96",
+     "seq": 96,
+     "at": 1794560400000,
+     "kind": "build",
+     "detail": "research@7,6"
+    },
+    {
+     "id": "r97",
+     "seq": 97,
+     "at": 1794560400000,
+     "kind": "station.upgrade",
+     "detail": "e8i:2"
+    },
+    {
+     "id": "r98",
+     "seq": 98,
+     "at": 1794560400000,
+     "kind": "research.directed",
+     "detail": "fuel_can"
+    },
+    {
+     "id": "r99",
+     "seq": 99,
+     "at": 1794560400000,
+     "kind": "achievement",
+     "detail": "first_research"
+    },
+    {
+     "id": "r100",
+     "seq": 100,
+     "at": 1794560400000,
+     "kind": "job.done",
+     "detail": "e8m:R:fuel_can"
+    },
+    {
+     "id": "r101",
+     "seq": 101,
+     "at": 1794560400000,
+     "kind": "station.state",
+     "detail": "e8m:running>idle"
+    },
+    {
+     "id": "r102",
+     "seq": 102,
+     "at": 1794560400000,
+     "kind": "move",
+     "detail": "blueprintx1 c8o->inv"
+    },
+    {
+     "id": "r103",
+     "seq": 103,
+     "at": 1794560400000,
+     "kind": "learn.blueprint",
+     "detail": "fuel_can"
+    },
+    {
+     "id": "r104",
+     "seq": 104,
+     "at": 1794560400000,
+     "kind": "job.queue",
+     "detail": "metal_pipe@e8i"
+    },
+    {
+     "id": "r105",
+     "seq": 105,
+     "at": 1794560387500,
+     "kind": "station.state",
+     "detail": "e8i:idle>running"
+    },
+    {
+     "id": "r106",
+     "seq": 106,
+     "at": 1794560405500,
+     "kind": "job.done",
+     "detail": "e8i:metal_pipe"
+    },
+    {
+     "id": "r107",
+     "seq": 107,
+     "at": 1794560405500,
+     "kind": "station.state",
+     "detail": "e8i:running>idle"
+    },
+    {
+     "id": "r108",
+     "seq": 108,
+     "at": 1794560400000,
+     "kind": "move",
+     "detail": "metal_pipex1 c8k->inv"
+    },
+    {
+     "id": "r109",
+     "seq": 109,
+     "at": 1794560400000,
+     "kind": "job.queue",
+     "detail": "iron_plate@e8i"
+    },
+    {
+     "id": "r110",
+     "seq": 110,
+     "at": 1794560400000,
+     "kind": "job.queue",
+     "detail": "mechanical_gear@e8i"
+    },
+    {
+     "id": "r111",
+     "seq": 111,
+     "at": 1794560400000,
+     "kind": "job.queue",
+     "detail": "fuel_can@e8i"
+    },
+    {
+     "id": "r112",
+     "seq": 112,
+     "at": 1794560400000,
+     "kind": "research.directed",
+     "detail": "motorbike_kit"
+    },
+    {
+     "id": "r113",
+     "seq": 113,
+     "at": 1794560400000,
+     "kind": "station.state",
+     "detail": "e8i:idle>running"
+    },
+    {
+     "id": "r114",
+     "seq": 114,
+     "at": 1794560418000,
+     "kind": "job.done",
+     "detail": "e8i:iron_plate"
+    },
+    {
+     "id": "r115",
+     "seq": 115,
+     "at": 1794560400000,
+     "kind": "station.state",
+     "detail": "e8m:idle>running"
+    },
+    {
+     "id": "r116",
+     "seq": 116,
+     "at": 1794560438000,
+     "kind": "job.done",
+     "detail": "e8i:mechanical_gear"
+    },
+    {
+     "id": "r117",
+     "seq": 117,
+     "at": 1794560445000,
+     "kind": "job.done",
+     "detail": "e8m:R:motorbike_kit"
+    },
+    {
+     "id": "r118",
+     "seq": 118,
+     "at": 1794560458000,
+     "kind": "job.done",
+     "detail": "e8i:fuel_can"
+    },
+    {
+     "id": "r119",
+     "seq": 119,
+     "at": 1794560445000,
+     "kind": "station.state",
+     "detail": "e8m:running>idle"
+    },
+    {
+     "id": "r120",
+     "seq": 120,
+     "at": 1794560458000,
+     "kind": "station.state",
+     "detail": "e8i:running>idle"
+    },
+    {
+     "id": "r121",
+     "seq": 121,
+     "at": 1794560460000,
+     "kind": "offline.settle",
+     "detail": "60s"
+    }
+   ],
+   "seenIntents": [
+    "cap-2",
+    "cap-3",
+    "cap-4",
+    "cap-5",
+    "cap-6",
+    "cap-7",
+    "cap-8",
+    "cap-9",
+    "cap-10",
+    "cap-11",
+    "cap-12",
+    "cap-13",
+    "cap-14",
+    "cap-15"
+   ],
+   "seq": 121,
+   "dailyLedger": {
+    "v": 1,
+    "seed": 90210,
+    "lastSeq": 121,
+    "capabilities": {
+     "learnedKeys": [
+      "fuel_can"
+     ],
+     "anyStructDate": "2026-11-13",
+     "stationDate": "2026-11-13",
+     "researchDate": "2026-11-13",
+     "recipe1Date": "2026-11-13"
+    },
+    "days": {
+     "2026-11-13": {
+      "date": "2026-11-13",
+      "baseIds": [
+       "raise",
+       "scavenge",
+       "variety",
+       "handcraft"
+      ],
+      "objectives": [
+       {
+        "id": "raise",
+        "progress": 2,
+        "done": false,
+        "seen": [
+         "tile:6,6",
+         "tile:7,6"
+        ]
+       },
+       {
+        "id": "scavenge",
+        "progress": 0,
+        "done": false,
+        "seen": []
+       },
+       {
+        "id": "variety",
+        "progress": 0,
+        "done": false,
+        "seen": []
+       },
+       {
+        "id": "handcraft",
+        "progress": 2,
+        "done": false,
+        "seen": []
+       }
+      ],
+      "points": 0,
+      "milestones": []
+     }
+    }
+   },
+   "vendorStock": {
+    "escrow_chest": 4,
+    "iron_pick": 1,
+    "iron_axe": 1,
+    "medkit": 4,
+    "cart_kit": 1,
+    "leather_armor": 1,
+    "water_flask": 2,
+    "spares:iron_ore": 5,
+    "spares:coal": 4,
+    "spares:glass": 3,
+    "spares:salvaged_oil": 4
+   },
+   "log": [
+    {
+     "t": 1794560400000,
+     "msg": "You wash up near the island. No one is coming to tell you what to do.",
+     "tone": "gold"
+    },
+    {
+     "t": 1794560400000,
+     "msg": "Achievement — Curious Mind (+20 local score)",
+     "tone": "gold"
+    }
+   ],
+   "airdrops": {
+    "version": "airdrop-v1",
+    "mapDigest": "9bc19563",
+    "seed": 90210,
+    "runId": "run_1xlu_mweqxeo0",
+    "startedAt": 1794560400000,
+    "nextIndex": 0
+   },
+   "poiAccessVersion": "poi-access-v1",
+   "poiAccessDigest": "730321ee",
+   "creatorLootV1": true,
+   "lootEcology": {
+    "version": "w06-v1",
+    "cycles": {},
+    "grammar": "b05-v1",
+    "sourceContract": {
+     "version": "loot-source-v2",
+     "digest": "8f9aaede",
+     "sites": {
+      "shipping.factory.exterior.industrial-toolbox": {
+       "sourceId": "shipping.factory.exterior.industrial-toolbox",
+       "access": "open"
+      },
+      "shipping.tp.bow-cache.standard-toolbox": {
+       "sourceId": "shipping.tp.bow-cache.standard-toolbox",
+       "access": "open"
+      },
+      "shipping.factory.vault.advanced-keycard": {
+       "sourceId": "shipping.factory.vault.advanced-keycard",
+       "access": "door-required"
+      }
+     }
+    }
+   },
+   "spawnChoice": {
+    "x": 60,
+    "y": 149,
+    "contract": "seeded-geographic-v1"
+   },
+   "wreckEconomy": "recycler-v1",
+   "combat": {
+    "projectiles": [],
+    "hazards": []
+   },
+   "calendar": {
+    "version": "world_calendar_v1",
+    "observedPhase": 0,
+    "observedAt": 1794560400000
+   }
+  }
+ }
+}

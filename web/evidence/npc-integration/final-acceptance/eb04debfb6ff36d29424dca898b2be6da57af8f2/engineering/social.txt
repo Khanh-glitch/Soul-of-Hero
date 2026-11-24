@@ -1,0 +1,51 @@
+
+ RUN  v4.1.12 /home/user/Soul-of-Hero/web
+
+ ✓ tests/npc-p0-corrective.test.ts > NPC P0 corrective > P0.1: first tick after startRun does not zero hunger/thirst or down humans 3251ms
+ ✓ tests/npc-p0-corrective.test.ts > NPC P0 corrective > seeds distinct Primordial lairs and all evacuation trips from authored global POI statics 78ms
+ ✓ tests/npc-p0-corrective.test.ts > NPC P0 corrective > doorway occupation includes a survivor body in global-to-window coordinates 59ms
+ ✓ tests/npc-p0-corrective.test.ts > NPC P0 corrective > needs advancement does not suppress autonomous human movement at the same timestamp 2343ms
+ ✓ tests/npc-p0-corrective.test.ts > NPC P0 corrective > P0.2: work never mints from a stale abstract community stock mirror 167ms
+ ✓ tests/npc-p0-corrective.test.ts > NPC P0 corrective > autonomous builder selects a real shared wood source, routes legally, harvests, and carries real output 276ms
+ ✓ tests/npc-p0-corrective.test.ts > NPC P0 corrective > returns tracked harvest UID and quantity by a real legal route to authorized community storage and survives reload 336ms
+ ✓ tests/npc-p0-corrective.test.ts > NPC P0 corrective > harvest capacity is transactional: merges one admitted unit, then a full pack causes no further source damage 318ms
+ ✓ tests/npc-p0-corrective.test.ts > NPC P0 corrective > human talk and barter commit through dispatch; save/reload preserves trust, memory and both UIDs 2922ms
+ ✓ tests/npc-p0-corrective.test.ts > NPC P0 corrective > refuses a trivial barter for a carried rare Core without moving either UID 2821ms
+ ✓ tests/npc-p0-corrective.test.ts > NPC P0 corrective > confrontation compliance physically transfers the demanded carried stack and records evidenced witnesses only 6090ms
+ ✓ tests/npc-p0-corrective.test.ts > NPC P0 corrective > does not reroll repeated confrontation clicks against an unchanged scene 201ms
+ ✓ tests/npc-p0-corrective.test.ts > NPC P0 corrective > a survivor who chooses FIGHT lands a timed, facing- and LOS-gated K5 hit on the player 253ms
+ ✓ tests/npc-p0-corrective.test.ts > NPC P0 corrective > rejects remote human social actions without success receipts or state changes 42ms
+ ✓ tests/npc-p0-corrective.test.ts > NPC P0 corrective > remote robbery of a downed survivor is rejected without moving any carried UID 33ms
+ ✓ tests/npc-p0-corrective.test.ts > NPC P0 corrective > P0.3: custody survives JSON round-trip with owner + UID stock conservation 71ms
+ ✓ tests/npc-p0-corrective.test.ts > NPC P0 corrective > P0.4: trade debits the player and preserves UID — no free mint 20ms
+ ✓ tests/npc-p0-corrective.test.ts > NPC P0 corrective > P0.4: loot preserves UID and does not mint replacements 39ms
+ ✓ tests/npc-p0-corrective.test.ts > NPC P0 corrective > P0.4: killHuman transfers equipped stacks by UID and empties the pack 116ms
+ ✓ tests/npc-p0-corrective.test.ts > NPC P0 corrective > accepted recruitment creates a real collision-aware companion follow route 311ms
+ ✓ tests/npc-p0-corrective.test.ts > NPC P0 corrective > P0.7: companion refusal is deterministic across reload for the same orderId 73ms
+ ✓ tests/npc-p0-corrective.test.ts > NPC P0 corrective > human melee uses K5 reach, floor and cadence gates and wears its equipped weapon 706ms
+ ✓ tests/npc-p0-corrective.test.ts > NPC P0 corrective > P0.8: applyDamage floors the hit and DOWNS (not auto-kills) on zero HP 46ms
+ ✓ tests/npc-p0-corrective.test.ts > NPC P0 corrective > P0.9: boardEvac requires an operating berth at physical contact and one vessel per person 62ms
+ ✓ tests/npc-p0-corrective.test.ts > NPC P0 corrective > P0.9: finalizeHumanOutcomes does not default everyone to SURVIVED 52ms
+ ✓ tests/npc-p0-corrective.test.ts > NPC P0 corrective > P0.9: endRun stores human outcome history in profile 63ms
+ ✓ tests/npc-p0-corrective.test.ts > NPC P0 corrective > P0.6: stepHumans runs consume/work/move without corrupting state 1238ms
+ ✓ tests/npc-paid-work.test.ts > cook spends carried canonical inputs and fuel, waits for real station, and collects once across reload 2915ms
+ ✓ tests/npc-paid-work.test.ts > occupation planning carries the real station floor; denied route and wrong-floor work never pay or mint 61ms
+ ✓ tests/npc-paid-work.test.ts > controlled authored campfire pauses on exhausted fuel across reload and keeps a recruited worker claim exclusive 54ms
+ ✓ tests/npc-paid-work.test.ts > recovered paid job physically fetches fuel without paying recipe inputs twice; missing station releases the actor 121ms
+ ✓ tests/npc-paid-work.test.ts > missing or claimed recipe inputs and two cooks competing for one bill never double debit across reload 61ms
+ ✓ tests/npc-humanworld.test.ts > NPC HumanWorld ledger > startRun seeds a finite HumanWorld from the 81-POI census geometry 1950ms
+ ✓ tests/npc-humanworld.test.ts > NPC HumanWorld ledger > a fresh run validates physical stores and rejects missing or forged regional sources 132ms
+ ✓ tests/npc-humanworld.test.ts > NPC HumanWorld ledger > tickNeeds + advanceElderPressure run each tick without corrupting state 307ms
+ ✓ tests/npc-humanworld.test.ts > NPC HumanWorld ledger > humanHarvest protects PLAYER_EXPLORATION (G1B) sources from human harvest 58ms
+ ✓ tests/npc-humanworld.test.ts > NPC HumanWorld ledger > companion resolveOrder returns one of the exact 5-way results 25ms
+ ✓ tests/npc-humanworld.test.ts > NPC HumanWorld ledger > finalizeHumanOutcomes assigns exactly one exclusive terminal outcome per actor 29ms
+ ✓ tests/npc-humanworld.test.ts > NPC HumanWorld ledger > seedPopulation classifies POIs by archetype into the 6 site classes 34ms
+ ✓ tests/npc-shelter-incidents.test.ts > global physical shelter and single incident > translates global body coordinates to local roof authority on the actual floor 2089ms
+ ✓ tests/npc-shelter-incidents.test.ts > global physical shelter and single incident > archived real roof/floor/door state remains queryable across JSON reload and camera relocation 69ms
+ ✓ tests/npc-shelter-incidents.test.ts > global physical shelter and single incident > one landed damage event produces one incident and grievance references that same persistent ID 33ms
+ ✓ tests/npc-shelter-incidents.test.ts > global physical shelter and single incident > offscreen warmth follows physical shelter rather than a remote active-window tile 44ms
+
+ Test Files  4 passed (4)
+      Tests  43 passed (43)
+   Start at  19:22:52
+   Duration  40.79s (transform 5.83s, setup 0ms, import 9.56s, tests 30.30s, environment 0ms)

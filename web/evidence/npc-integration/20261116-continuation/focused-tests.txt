@@ -1,0 +1,20 @@
+
+ RUN  v4.1.12 /home/user/Soul-of-Hero/web
+
+ ✓ tests/npc-p0-corrective.test.ts (27 tests) 3861ms
+     ✓ P0.1: first tick after startRun does not zero hunger/thirst or down humans  1872ms
+ ✓ tests/npc-physical-authority.test.ts (10 tests) 2387ms
+     ✓ one food debit grants one serving, not the full stack  1767ms
+ ✓ tests/npc-humanworld.test.ts (7 tests) 2250ms
+     ✓ startRun seeds a finite HumanWorld from the 81-POI census geometry  1798ms
+ ✓ tests/npc-shelter-incidents.test.ts (4 tests) 1957ms
+     ✓ translates global body coordinates to local roof authority on the actual floor  1816ms
+ ✓ tests/npc-paid-work.test.ts (1 test) 1844ms
+   ✓ cook spends carried canonical inputs and fuel, waits for real station, and collects once across reload  1842ms
+ ✓ tests/npc-art.test.ts (4 tests) 27ms
+
+ Test Files  6 passed (6)
+      Tests  53 passed (53)
+   Start at  00:53:16
+   Duration  19.82s (transform 3.52s, setup 0ms, import 6.72s, tests 12.32s, environment 1ms)
+

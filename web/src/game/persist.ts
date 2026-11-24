@@ -1,3 +1,8 @@
+import {saveNavigation,loadNavigation} from './navigation-save';
+import { SNAPSHOT_FORMAT, snapshotChecksum as checksum, wrapSnapshot, type SaveWriteReply, type SaveWriteRequest } from './save-wire';
+import { G1B_VERSION, G1B_CHEST_SLOTS, G1B_SITES, G1B_FIXTURE_BY_ID, G1B_GATE_BY_ID, G1B_SOURCE_SITES, G1B_BASE_SOURCE_SITES, G1B_LAYOUT_REVISION, G1B_FIXTURES, g1bSeed, CORE_V2 } from './g1b';
+import { G1B_BATCH2_ECOLOGY } from './g1b-ecology-batch2.frozen';
+import { G1B_BATCH3_ECOLOGY } from './g1b-ecology-batch3.frozen';
 import {supportsAirdrops, airdropTimes, airdropRewards, airdropStaticEligible} from './airdrop';
 import { recoveryPlanFor, COMPONENT_RECIPES } from './recycler';
 import { combatKindOf } from './stimulus';
@@ -9,20 +14,48 @@ import { validIntel } from './expedition-intel';
 // Local-first snapshots: one serialized profile + run + receipts per write.
 // Checksums detect accidental damage, not malicious edits or rollback of all copies.
 import { BAL, SAVE_VERSION, WW, WH, TILE, type GameState, type Stack } from './core';
-import { ALWAYS_KNOWN_RECIPES, ITEMS, RECIPES, STRUCTS, SOURCES, ELDERS, PRIMORDIAL_ELDERS, LEGACY_TO_PRIMORDIAL_ELDER, lookupElderDef, CREATURES, VENDOR_SPARES, VENDOR_SECURED } from './catalog';
-import { newGame, renewableLoot, markDirty } from './engine';
+import { OIL_SEEP_AUTHORITY, SEEP_CELL } from './oil-seeps';
+const veyraRun = (r: any) => typeof r?.layoutId === 'string' && isVeyra05Layout(r.layoutId);
+/** G1B chest / card case / generator: a real approved source id at its resolved tile, one instance, coherent lifecycle. */
+function g1bEntityOk(r: any, e: any, offscreen: boolean, seen: Set<string>): boolean {
+  const g = e.g1b; const isObj = (v: any) => v !== null && typeof v === 'object' && !Array.isArray(v);
+  if (!isObj(r.g1b) || !isObj(g) || e.kind !== 'loot' || typeof g.sid !== 'string' || seen.has(g.sid)) return false;
+  const site = G1B_SITES[g.sid], fx = G1B_FIXTURE_BY_ID[g.sid]; const at = site ?? fx; if (!at) return false;
+  if ((e.floor ?? 0) !== (site?.level ?? 0) || (e.floor === 0 && 'floor' in e)) return false; // a chest lives on the storey it was surveyed on
+  if (g.kind !== (site ? 'chest' : fx!.kind) || !['closed', 'opened', 'empty'].includes(g.state) || !Number.isSafeInteger(g.cycle) || g.cycle < 0) return false;
+  const o = r.sourceMap?.veyra?.originAu; const ox = offscreen || !o ? 0 : Math.round(o[0] / 0.5), oy = offscreen || !o ? 0 : Math.round(o[1] / 0.5);
+  if (e.tx !== at.gx - ox || e.ty !== at.gy - oy || e.x !== e.tx * 16 + 8 || e.y !== e.ty * 16 + 8) return false;
+  const c = r.custody?.[e.c]; if (!isObj(c) || !Array.isArray(c.slots) || c.slots.length !== (g.kind === 'chest' ? G1B_CHEST_SLOTS : 1)) return false;
+  const filled = c.slots.filter(Boolean).length;
+  if (g.refillAt !== undefined && (g.kind !== 'chest' || g.state !== 'empty' || !Number.isFinite(g.refillAt))) return false;
+  if (g.state === 'empty' && g.kind === 'chest' && g.refillAt === undefined) return false;
+  if (g.state !== 'opened' && filled) return false; // CLOSED is unrolled, EMPTY holds nothing
+  if (g.roll !== undefined && (g.state !== 'opened' && g.state !== 'empty' || !isObj(g.roll) || typeof g.roll.rev !== 'string' || !Number.isSafeInteger(g.roll.seed) || !Number.isFinite(g.roll.at))) return false;
+  if (g.kind === 'chest' && g.state === 'opened' && (!g.roll || g.roll.seed !== g1bSeed(r.id, g.sid, g.cycle))) return false;
+  if (g.poweredUntil !== undefined && (g.kind !== 'gen' || !Number.isFinite(g.poweredUntil))) return false;
+  if (g.kind === 'gen' && (g.state !== 'closed' || filled)) return false;
+  if (g.kind === 'card' && (g.state === 'closed' || c.slots.some((s: any) => s && s.key !== fx!.card))) return false;
+  seen.add(g.sid); return true;
+}
+const oilAuthorityOk = (r: any, a: unknown) => a === 'test-fixture-v1' ? r.oilTestFixture === true : a === OIL_SEEP_AUTHORITY ? veyraRun(r) : false;
+import { GARDEN_CROPS, isGardenCrop, LADDER_SPAN, POWERED_DOOR_HOSTS, EQ_SLOTS, starterKnowledge, ITEMS, RECIPES, STRUCTS, RETIRED_STRUCTURES, SOURCES, ELDERS, PRIMORDIAL_ELDERS, LEGACY_TO_PRIMORDIAL_ELDER, lookupElderDef, CREATURES, VENDOR_SPARES, VENDOR_SECURED, recipeForJob, RECIPE_REVISION, RESEARCH_FAMILIES } from './catalog';
+import { RETIRED_RECIPES, hasLegacyDefinition } from './recipe-migration';
+import { ITEM_SET_VERSION, isAccessCard, isRetiredLive, RETIRED_ITEM_IDS, liveItemId, liveItemPer, liveRecipeId, RECIPE_SUCCESSOR } from './final-item-set';
+import { newGame, renewableLoot, markDirty, g1bEnsureSources } from './engine';
 import { normalizeCalendarLedger, CALENDAR_VERSION } from './calendar';
-import { getWorld, hasLayout, setActiveLayout, webRecyclerSite } from './world';
+import { DAILY_BY_ID, DAILY_MILESTONES, dateKey, isValidDateKey, MAX_DAILY_LEDGER_DAYS } from './journey';
+import { getWorld, hasLayout, setActiveLayout, VEYRA_RECYCLER_SITE, webRecyclerSite } from './world';
 import { mapDigest } from './map-package';
 import { sourceDigest } from './world-economy';
 import { hasAuthorizedRecycler, wreckEconomy } from './wreck-economy';
 import { isVeyra05Layout } from '../veyra05/scenes';
-import { getWindowWorld } from '../veyra05/window';
+import { FRAME_W, FRAME_H } from '../veyra05/frame';
+import { getWindowWorld, syncVeyraPlacement } from '../veyra05/window';
 import { activeFloor, onActiveFloor, syncFloor } from '../veyra05/floors';
 
 const testMode = import.meta.env.VITE_FX_TEST === '1';
 const DB = testMode ? 'soul-of-hero-vfx-test' : 'soul-of-hero', STORE = 'kv', KEY = 'state', LS = (testMode ? 'soh.vfx-test.v' : 'soh.state.v') + SAVE_VERSION;
-const FORMAT = 'soh-snapshot-v1';
+const FORMAT = SNAPSHOT_FORMAT;
 let dbp: Promise<IDBDatabase | null> | null = null;
 let dbFailed = false;
 // Never overwrite a store that could not be read on this page load.
@@ -50,15 +83,42 @@ export function bearTrapStateValid(state:any, uses:any):boolean {
   if(state==='worn')return uses===0;
   return false;
 }
+const HUMAN_ROLE_WORDS = ['Salvager', 'Mechanic', 'Cook', 'Gardener', 'Medic', 'Guard', 'Engineer', 'Builder'];
 export function validate(raw: any): GameState | null {
   if (!obj(raw) || !integer(raw.version) || raw.version > SAVE_VERSION || !integer(raw.revision)) return null;
   const p = raw.profile;
   if (!obj(p) || !integer(p.securedCash) || !obj(p.achievements) || !Array.isArray(p.history) || !obj(p.settings) || !finite(p.settings.volume) || typeof p.settings.muted !== 'boolean' || !stringArray(p.profileReceipts)) return null;
-  if (raw.run === null) return raw as GameState;
+  // Pre-chronicle profiles legitimately have no census. If recorded, each
+  // person must be counted once, under exactly one ending for that run.
+  if (p.humanRunHistory !== undefined) {
+    if (!Array.isArray(p.humanRunHistory) || p.humanRunHistory.length > 20) return null;
+    const ids = new Set<string>();
+    for (const row of p.humanRunHistory) {
+      if (!obj(row) || typeof row.runId !== 'string' || !row.runId || ids.has(row.runId) ||
+          row.schema !== 'human-history-v1' || !['expired','abandoned','evacuated'].includes(row.ending)) return null;
+      const o = row.outcomes;
+      if (!obj(o) || ![o.total,o.evacuated,o.survived,o.dead,o.unresolved].every(integer) ||
+          o.total !== o.evacuated + o.survived + o.dead + o.unresolved) return null;
+      ids.add(row.runId);
+    }
+  }
+  if (raw.run === null) return raw.navigation === undefined ? raw as GameState : null;
   const r = raw.run;
   if (!obj(r) || typeof r.id !== 'string' || !r.id || !integer(r.nextId) || r.nextId < 1 || !finite(r.startedAt) || !finite(r.qaOffset) || !integer(r.seed) || !integer(r.rng) || !integer(r.seq) || !obj(r.player) || !obj(r.custody) || !obj(r.entities) || !obj(r.clock)) return null;
   if (r.sourceLayoutVersion !== undefined && r.sourceLayoutVersion !== 2 && r.sourceLayoutVersion !== 3) return null;
+  // Retired structures (catalog RETIRED_STRUCTURES): a wall saved by an older build becomes the live wall named
+  // there, with its health kept up to the new wall's limit. The save loads; nothing else about the wall changes.
+  for (const table of [r.entities, r.veyraOffscreenEntities]) if (obj(table)) for (const e of Object.values(table) as any[]) {
+    if (!obj(e) || e.kind !== 'struct' || typeof e.type !== 'string' || !has(RETIRED_STRUCTURES, e.type)) continue;
+    e.type = RETIRED_STRUCTURES[e.type];
+    const max = STRUCTS[e.type].hp;
+    if (finite(e.hp)) e.hp = Math.min(e.hp, max);
+    if (e.maxHp !== undefined) e.maxHp = max;
+  }
   const layout = r.layoutId || 'shipping'; if (typeof layout !== 'string' || !hasLayout(layout)) return null;
+  // G1A: resolve the window world under the placement rules this run was created with (3 = legacy scrap/wreck, 4 = industrial salvage).
+  // The digest check below is unchanged and still fails closed; rules 4 exists only for Veyra U=0.5 layouts.
+  if (isVeyra05Layout(layout)) { if (r.sourceLayoutVersion === 3 && obj(r.sourceMap) && r.sourceMap.rules !== 3 && r.sourceMap.rules !== 4) return null; syncVeyraPlacement(r); }
   const world = getWorld(layout), fingerprint = mapDigest(world);
   // Snapshots written before mapDigest existed are accepted only against the
   // exact built-in geometry which shipped with PR #44, never an imported map.
@@ -69,7 +129,7 @@ export function validate(raw: any): GameState | null {
   const activeSources = veyraActiveLayer ? veyraActiveLayer.sources : world.sourceV3;
   const activeStatics = veyraActiveLayer ? veyraActiveLayer.statics : world.statics;
   if (r.sourceLayoutVersion === 3) {
-    const m=r.sourceMap; if (!obj(m) || m.id !== world.economyMap.id || m.revision !== world.economyMap.revision || m.rules !== 3 || m.seed !== world.economyMap.seed || m.digest !== expectedSourceDigest) return null;
+    const m=r.sourceMap; if (!obj(m) || m.id !== world.economyMap.id || m.revision !== world.economyMap.revision || (m.rules !== 3 && !(m.rules === 4 && isVeyra05Layout(layout))) || m.seed !== world.economyMap.seed || m.digest !== expectedSourceDigest) return null;
     if (m.mapDigest === undefined ? baseline[layout] !== fingerprint : m.mapDigest !== fingerprint) return null;
     if (world.veyra && JSON.stringify(m.veyra)!==JSON.stringify(world.veyra)) return null;
     if (world.randomSpawn && (!obj(r.spawnChoice) || r.spawnChoice.contract!=='seeded-geographic-v1' || !Number.isInteger(r.spawnChoice.x) || !Number.isInteger(r.spawnChoice.y) || r.spawnChoice.x<1 || r.spawnChoice.y<1 || r.spawnChoice.x>=199 || r.spawnChoice.y>=199)) return null;
@@ -78,7 +138,144 @@ export function validate(raw: any): GameState | null {
   if (r.sourceLayoutVersion !== 3 && r.sourceMap !== undefined) return null;
   if ((r.player.iceUntil !== undefined && !finite(r.player.iceUntil)) || (r.player.channelUntil !== undefined && !finite(r.player.channelUntil)) || (r.player.primordialSlowMul !== undefined && (!finite(r.player.primordialSlowMul) || r.player.primordialSlowMul <= 0 || r.player.primordialSlowMul > 1)) || (r.player.primordialSlowUntil !== undefined && !finite(r.player.primordialSlowUntil)) || !['x','y','hp','stamina','hunger','thirst','warmth','rad','active'].every(k => finite(r.player[k])) || !obj(r.player.skills) || typeof r.player.dead !== 'boolean' || !finite(r.clock.lastSimAt) || !finite(r.clock.simMs) || !finite(r.clock.respawnAcc) || !finite(r.clock.weatherSlot)) return null;
   if (r.clock.defenseFrames !== undefined && (!Number.isInteger(r.clock.defenseFrames) || r.clock.defenseFrames < 0 || r.clock.defenseFrames > 14400)) return null;
-  if (obj(r.knowledge) && stringArray(r.knowledge.recipes)) for (const k of ALWAYS_KNOWN_RECIPES) if (!r.knowledge.recipes.includes(k)) r.knowledge.recipes.push(k); // B01-D: single knowledge authority migration (idempotent)
+  // B01-D: single knowledge authority migration (idempotent). PA1 WP3 routes it through
+  // starterKnowledge() so an approved family gate is honoured on legacy loads too — while a
+  // recipe the save already knew is NEVER taken away, gated or not.
+  if (obj(r.knowledge) && stringArray(r.knowledge.recipes)) for (const k of starterKnowledge()) if (!r.knowledge.recipes.includes(k)) r.knowledge.recipes.push(k);
+  // PA1 R1: the retired `fuel_can` bench formula must not brick a save that learned it (or
+  // that studied the canister as a specimen). Knowledge is pruned explicitly and the run is
+  // flagged so the player is told what happened; a queued job or blueprint for the same
+  // formula stays resolvable through the frozen migration ledger and is NOT touched here.
+  // ARENA 1 — FINAL ITEM SET v2 migration (Bible §0.2a, roster rule 6). Runs BEFORE structural validation, on every
+  // custody container of the run (pack, equipment, chests, station slots, drops, bags, vehicles — they all live in
+  // `run.custody`), and is idempotent: a second load finds nothing to convert.
+  //   * a stack of a LIVE-retired id becomes its 1:1 successor IN PLACE — same uid, same count, same slot. Nothing is
+  //     deleted and nothing is minted, so the conversion cannot be farmed (the old id can no longer be obtained).
+  //   * durability carries over as the same FRACTION of the successor's maximum; a stale charge/meta the successor
+  //     does not use is dropped. An over-full stack is clamped to the successor's stack size only if the successor is
+  //     smaller (never the case for the seven ids of this revision; pinned by tests/final-item-set.test.ts).
+  //   * a blueprint naming a retired formula is re-pointed to the successor formula when one exists.
+  //   * learned / studied knowledge of a retired formula is replaced by the successor (or pruned below).
+  //   * queued jobs are NOT touched: they resolve through the frozen `@3` ledger and pay out through `mkStack`,
+  //     which mints the successor.
+  // A save stamped with a NEWER item set than this build fails closed.
+  if (r.itemSetVersion !== undefined && (!integer(r.itemSetVersion) || r.itemSetVersion < 1 || r.itemSetVersion > ITEM_SET_VERSION)) return null;
+  // Item set v3: the equipment container grew from head/body/back to head/body/back/legs/feet. Old slots keep their index.
+  if (obj(r.custody) && obj(r.custody.eq) && Array.isArray(r.custody.eq.slots) && r.custody.eq.slots.length === 3) r.custody.eq.slots.push(null, null);
+  // G1B source-layout migration (batch 2 → 3). A run is brought up to the current layout by ADDING the sources it has
+  // never had, closed and unrolled. Nothing it already has is touched (state, cycle, roll, contents, restock time), so
+  // the migration cannot re-roll or duplicate loot, and it runs once: the run is stamped. Three recognized schemas:
+  //   (a) unstamped, holding exactly the 130 round-1 chests → add the missing sources, stamp to the current revision;
+  //   (b) stamped layout=2, holding exactly the 557 Batch-2 chests (130 base + 427 frozen ecology) → add the 172 new
+  //       Batch-3 chests, stamp to layout=3. The frozen Batch-2 ecology roster is the recognized old schema: every id
+  //       and tile a Batch-2 save carries is kept verbatim, never moved or deleted;
+  //   (c) already the current revision → nothing to do.
+  // Anything else (foreign ids, a partial stamped set, an unknown / future revision) is left for validation to reject.
+  if (obj(r.g1b) && obj(r.g1b.far) && obj(r.entities) && obj(r.custody) && r.g1b.layout !== undefined && r.g1b.layout < G1B_LAYOUT_REVISION) {
+    try {
+      const had = new Set<string>(); for (const e of [...Object.values(r.entities), ...Object.values(r.g1b.far)] as any[]) if (obj(e) && obj(e.g1b) && typeof e.g1b.sid === 'string') { if (had.has(e.g1b.sid)) return null; had.add(e.g1b.sid); }
+      if (r.g1b.layout === 2) {
+        const batch2 = [...G1B_BASE_SOURCE_SITES.map(q => q.id), ...G1B_BATCH2_ECOLOGY.map(q => q.id), ...G1B_FIXTURES.map(q => q.id)];
+        if (had.size !== batch2.length || !batch2.every(id => had.has(id))) return null;   // a Batch-2 save must carry exactly the recognized 557+6 set
+        g1bEnsureSources(r);
+      } else if (r.g1b.layout === 1) {
+        const round1 = [...G1B_BASE_SOURCE_SITES.map(q => q.id), ...G1B_FIXTURES.map(q => q.id)];
+        if (had.size !== round1.length || !round1.every(id => had.has(id))) return null;
+        g1bEnsureSources(r);
+      } else if (r.g1b.layout === 3) {
+        // Batch-3 layout: exactly the 130 base + 599 Batch-3 ecology + fixtures. P2 batch-3.2 adds the
+        // justified physical chests; every id the Batch-3 save carries is kept verbatim.
+        const batch3 = [...G1B_BASE_SOURCE_SITES.map(q => q.id), ...G1B_BATCH3_ECOLOGY.map(q => q.id), ...G1B_FIXTURES.map(q => q.id)];
+        if (had.size !== batch3.length || !batch3.every(id => had.has(id))) return null;
+        g1bEnsureSources(r);
+      } else return null;                                                                          // unknown / forged / future revision
+    } catch { return null; }
+  }
+  // unstamped save (written before the layout stamp existed): recognised by holding exactly the round-1 set
+  if (obj(r.g1b) && r.g1b.layout === undefined && obj(r.g1b.far) && obj(r.entities) && obj(r.custody)) {
+    try {
+      const had = new Set<string>(); for (const e of [...Object.values(r.entities), ...Object.values(r.g1b.far)] as any[]) if (obj(e) && obj(e.g1b) && typeof e.g1b.sid === 'string') { if (had.has(e.g1b.sid)) return null; had.add(e.g1b.sid); }
+      const round1 = [...G1B_BASE_SOURCE_SITES.map(q => q.id), ...G1B_FIXTURES.map(q => q.id)];
+      if (had.size === G1B_SOURCE_SITES.length + G1B_FIXTURES.length) r.g1b.layout = G1B_LAYOUT_REVISION;      // written by this build before the stamp existed
+      else if (had.size === round1.length && round1.every(id => had.has(id))) g1bEnsureSources(r);
+      else return null;
+    } catch { return null; }
+  }
+  // G1B — Creator Core V2 migration (idempotent, in place, same UID). A Core minted before V2 owned all three skills
+  // and had no durability: it becomes Lv3 at full durability so nothing the player held is lost. V2 has no magazine, so
+  // the energy loaded into it is converted ONCE into `owed` — the exact items it was loaded from (1 Basic Energy per
+  // LMB charge, 1 Refined Energy per Q charge, 1 Refined Energy + 1 Essence per E charge) — and `reserves` is removed.
+  // The engine hands `owed` back into the Core's own container as room allows; a cast never draws on it.
+  if (obj(r.custody)) for (const c of Object.values(r.custody) as any[]) {
+    if (!obj(c) || !Array.isArray(c.slots)) continue;
+    for (const st of c.slots) {
+      if (!obj(st) || typeof st.key !== 'string' || !has(ITEMS, st.key) || !ITEMS[st.key].creatorCore) continue;
+      if (st.lvl === undefined) { st.lvl = 3; if (st.dur === undefined) st.dur = CORE_V2.maxDur; }
+      // (also a save written by the first V2 build, which still kept the bank beside a level)
+      if (obj(st.reserves)) {
+        // a bank no real Core could have held (old capacities 40 / 12 / 4) is a forged save, not energy to hand out
+        if (Object.keys(st.reserves).sort().join(',') !== 'basic,refined,signature' || (['basic', 'refined', 'signature'] as const).some(k => !integer(st.reserves[k]) || st.reserves[k] < 0 || st.reserves[k] > ({ basic: 40, refined: 12, signature: 4 })[k])) return null;
+        const n = (k: string) => (integer(st.reserves[k]) && st.reserves[k] > 0 ? st.reserves[k] : 0) as number;
+        const owed: Record<string, number> = {}; const add = (k: string, q: number) => { if (q > 0) owed[k] = (owed[k] ?? 0) + q; };
+        add('energy_basic', n('basic')); add('energy_refined', n('refined') + n('signature')); add(`essence_${ITEMS[st.key].essence}`, n('signature'));
+        delete st.reserves; if (Object.keys(owed).length) st.owed = owed;
+      }
+    }
+  }
+  let retiredItems = 0;
+  if (obj(r.custody)) for (const c of Object.values(r.custody) as any[]) {
+    if (!obj(c) || !Array.isArray(c.slots)) continue;
+    for (const st of c.slots) {
+      if (!obj(st) || typeof st.key !== 'string') continue;
+      if (st.key === 'blueprint' && typeof st.meta === 'string' && Object.prototype.hasOwnProperty.call(RECIPE_SUCCESSOR, st.meta) && liveRecipeId(st.meta)) { st.meta = liveRecipeId(st.meta); retiredItems++; continue; }
+      if (!isRetiredLive(st.key) || !has(ITEMS, st.key)) continue;
+      const from = ITEMS[st.key], toKey = liveItemId(st.key), to = ITEMS[toKey];
+      if (!to) return null;
+      if (to.dur) st.dur = from.dur && finite(st.dur) ? Math.max(1, Math.min(to.dur, Math.round(st.dur / from.dur * to.dur))) : to.dur; else delete st.dur;
+      if (!to.charge && !isAccessCard(toKey)) delete st.charge;
+      delete st.meta;
+      // Value-preserving: the count is multiplied where one successor is worth less (final-item-set `per`). A converted
+      // stack that could not fit its successor's stack size would be a silent loss, so that fails closed instead.
+      if (!integer(st.qty) || st.qty < 1) return null;
+      st.qty = Math.ceil(st.qty * liveItemPer(st.key)); if (st.qty > to.max) return null;
+      st.key = toKey; retiredItems++;
+    }
+  }
+  // Item set v4: a resident's worn gear is embedded in the human ledger, not in a custody container, so the loop above
+  // never sees it. A tool in a resident's hand follows the same rule: same uid, same fraction of durability.
+  if (obj(r.humanWorld) && obj(r.humanWorld.people)) for (const h of Object.values(r.humanWorld.people) as any[]) {
+    if (!obj(h) || !obj(h.equip)) continue;
+    for (const st of Object.values(h.equip) as any[]) {
+      if (!obj(st) || typeof st.key !== 'string' || !isRetiredLive(st.key) || !has(ITEMS, st.key) || liveItemPer(st.key) !== 1) continue;
+      const from = ITEMS[st.key], toKey = liveItemId(st.key), to = ITEMS[toKey];
+      if (!to) return null;
+      if (to.dur) st.dur = from.dur && finite(st.dur) ? (st.dur <= 0 ? 0 : Math.max(1, Math.min(to.dur, Math.round(st.dur / from.dur * to.dur)))) : to.dur; else delete st.dur;
+      st.key = toKey;
+    }
+  }
+  if (obj(r.knowledge) && stringArray(r.knowledge.recipes)) for (const list of [r.knowledge.recipes, r.knowledge.studied]) {
+    if (!stringArray(list)) continue;
+    for (const k of [...list]) { const live = liveRecipeId(k); if (live && live !== k && has(RECIPES, live) && !list.includes(live)) list.push(live); }
+  }
+  if (retiredItems > 0) r.migrated = { ...(obj(r.migrated) ? r.migrated : {}), retiredRecipes: integer(r.migrated?.retiredRecipes) ? r.migrated.retiredRecipes : 0, retiredItems: (integer(r.migrated?.retiredItems) ? r.migrated.retiredItems : 0) + retiredItems, /* the conversion is new information: re-arm the one-shot receipt */ retiredNoticeShown: undefined, retiredItemsUnseen: retiredItems };
+  if (retiredItems > 0) delete r.migrated.retiredNoticeShown;
+  r.itemSetVersion = ITEM_SET_VERSION;
+  let retiredKnowledge = 0;
+  if (obj(r.knowledge) && stringArray(r.knowledge.recipes)) {
+    const live = r.knowledge.recipes.filter((k: string) => !RETIRED_RECIPES.includes(k));
+    retiredKnowledge = r.knowledge.recipes.length - live.length;
+    if (retiredKnowledge > 0) {
+      r.knowledge.recipes = live;
+      if (stringArray(r.knowledge.studied)) r.knowledge.studied = r.knowledge.studied.filter((k: string) => !RETIRED_RECIPES.includes(k));
+      r.migrated = { ...r.migrated, retiredRecipes: integer(r.migrated?.retiredRecipes) ? r.migrated.retiredRecipes + retiredKnowledge : retiredKnowledge };
+    }
+  }
+  // PA1 R1 ledgers are additive: absent on an older run, validated when present.
+  // The counter is durable evidence; `retiredNoticeShown` is the one-shot player notice.
+  if (r.migrated !== undefined && (!obj(r.migrated) || !integer(r.migrated.retiredRecipes) || (r.migrated.retiredItems !== undefined && (!integer(r.migrated.retiredItems) || r.migrated.retiredItems < 0)) ||
+    (r.migrated.retiredNoticeShown !== undefined && r.migrated.retiredNoticeShown !== true) || (r.migrated.retiredItemsUnseen !== undefined && (!integer(r.migrated.retiredItemsUnseen) || r.migrated.retiredItemsUnseen < 0)))) return null;
+  if (r.tech !== undefined && (!obj(r.tech) || !stringArray(r.tech.families) || new Set(r.tech.families).size !== r.tech.families.length ||
+    !r.tech.families.every((f: string) => !!RESEARCH_FAMILIES[f]) || !integer(r.tech.recipeRev) || r.tech.recipeRev < 1 || r.tech.recipeRev > RECIPE_REVISION)) return null;
   if (r.intel !== undefined && !validIntel(r.intel)) return null;
   if (!Array.isArray(r.creatures) || !obj(r.sources) || !obj(r.terrain) || Object.values(r.terrain).some((m: any) => !obj(m) || (m.untilAt !== undefined && !finite(m.untilAt))) || !obj(r.knowledge) || !stringArray(r.knowledge.recipes) || !stringArray(r.knowledge.studied) || !r.knowledge.recipes.every((k: string) => has(RECIPES, k)) || !Array.isArray(r.traces) || !Array.isArray(r.discovered) || !stringArray(r.poiSeen) || !stringArray(r.elderStones) || !stringArray(r.achievements) || !Array.isArray(r.receipts) || !stringArray(r.seenIntents) || !obj(r.vendorStock) || !Object.values(r.vendorStock).every(integer) || !integer(r.score) || !integer(r.deposited) || !Array.isArray(r.log)) return null;
   // Old saves have no combat record. New records preserve committed effects,
@@ -86,15 +283,29 @@ export function validate(raw: any): GameState | null {
   if (r.combat !== undefined) {
     const c = r.combat;
     if (!obj(c) || !Array.isArray(c.projectiles) || !Array.isArray(c.hazards) || c.projectiles.length > 5000 || c.hazards.length > 5000) return null;
-    if (c.projectiles.some((q: any) => !obj(q) || !['x','y','vx','vy','life','dmg','r'].every(k => finite(q[k])) || !['player','enemy'].includes(q.from) || typeof q.kind !== 'string' || (q.delay !== undefined && !finite(q.delay)) || (q.homing !== undefined && !finite(q.homing)))) return null;
-    if (c.hazards.some((h: any) => !obj(h) || !['circle','line','ring','wave','sweep','pool'].includes(h.kind) || !['x','y','t','tell','dur','dmg'].every(k => finite(h[k])) || typeof h.style !== 'string' || (h.elder !== undefined && !lookupElderDef(h.elder)) || ['r','angle','len','w','tickAcc','a0','a1','expiresSimMs'].some(k => h[k] !== undefined && !finite(h[k])))) return null;
+    if (c.projectiles.some((q: any) => !obj(q) || !['x','y','vx','vy','life','dmg','r'].every(k => finite(q[k])) || !['player','enemy','human'].includes(q.from) || typeof q.kind !== 'string' || (q.floor !== undefined && ![-1,0,1,2].includes(q.floor)) || (q.summonTornadoNext !== undefined && !finite(q.summonTornadoNext)) || (q.delay !== undefined && !finite(q.delay)) || (q.homing !== undefined && !finite(q.homing)))) return null;
+    // A survivor's arrow carries the body that fired it; an unattributed human arrow is not a lawful rule.
+    if (c.projectiles.some((q: any) => q.from === 'human' && (typeof q.owner !== 'string' || !q.owner || !raw.run?.humanWorld?.people?.[q.owner]))) return null;
+    // A survivor's shot names who it was aimed at; that name must be a body (or the player) in this run.
+    // A paid, non-homing Core projectile can outlive its original creature. Its victim
+    // is historical provenance for settlement, not a target to reacquire.
+    if (c.projectiles.some((q: any) => q.from === 'human' && (typeof q.victim !== 'string' || !q.victim ||
+      (q.victim !== 'player' && !(['fire_tornado','blast_bomb','blast_signature','blast_round'].includes(q.kind) && q.coreUid && q.floor!==undefined && !q.homing) && !raw.run?.humanWorld?.people?.[q.victim] && !(raw.run?.creatures ?? []).some((m: any) => m?.id === q.victim))))) return null;
+    // The UID is provenance, not a claim that the caster must still own the item at impact.
+    if(c.projectiles.some((q:any)=>q.coreUid!==undefined&&(typeof q.coreUid!=='string'||!q.coreUid)))return null;
+    if(c.hazards.some((h:any)=>h?.coreUid!==undefined && (typeof h.coreUid!=='string'||!h.coreUid||h.owner!=='player'&&(!r.humanWorld?.people?.[h.owner]||typeof h.victim!=='string'))))return null;
+    if (c.hazards.some((h: any) => !obj(h) || h.floor!==undefined&&![-1,0,1,2].includes(h.floor) || !['circle','line','ring','wave','sweep','pool'].includes(h.kind) || !['x','y','t','tell','dur','dmg'].every(k => finite(h[k])) || typeof h.style !== 'string' || (h.elder !== undefined && !lookupElderDef(h.elder)) || ['r','angle','len','w','tickAcc','a0','a1','expiresSimMs'].some(k => h[k] !== undefined && !finite(h[k])))) return null;
   }
   if (r.sourceLayoutVersion === 3) for (const [key, st] of Object.entries(r.sources) as [string, any][]) {
     const i=Number(key); if (!Number.isInteger(i) || String(i)!==key || i<0 || i>=activeSources.length || !activeSources[i] || !obj(st)) return null;
     const def=SOURCES[st.burnt ? 'deadtree' : activeSources[i]!];
     if (!def || !finite(st.stock) || !Number.isInteger(st.stock) || st.stock<0 || st.stock>def.stock || !finite(st.hp) || st.hp<0 || st.hp>def.hp || (st.burnt!==undefined && typeof st.burnt!=='boolean') || (st.regrowAt!==undefined && (!finite(st.regrowAt)||st.regrowAt<0)) || ((st.regrowFrom!==undefined || st.regrowAcc!==undefined || st.regrowDoneAt!==undefined) && (!def.regrow || (st.regrowFrom!==undefined && (!finite(st.regrowFrom)||st.regrowFrom<0)) || (st.regrowAcc!==undefined && (!finite(st.regrowAcc)||st.regrowAcc<0)) || (st.regrowDoneAt!==undefined && !finite(st.regrowDoneAt)))) || (st.fire!==undefined && (!finite(st.fire)||st.fire<0)) || (st.fireSpreadAt!==undefined && (!finite(st.fireSpreadAt)||st.fireSpreadAt<0 || !st.fire || st.fireSpreadAt>st.fire)) || (st.fireDepth!==undefined && (!Number.isInteger(st.fireDepth)||st.fireDepth<0||st.fireDepth>BAL.fire.maxSpreadDepth))) return null;
   }
-  if (!r.custody.inv || !r.custody.eq || r.custody.inv.kind !== 'inv' || r.custody.eq.kind !== 'eq' || (r.custody.inv.slots?.length !== 24 && !(testMode && r.qaUsed === true && r.custody.inv.slots?.length === 128)) || r.custody.eq.slots?.length !== 3) return null;
+  if (!r.custody.inv || !r.custody.eq || r.custody.inv.kind !== 'inv' || r.custody.eq.kind !== 'eq' || (r.custody.inv.slots?.length !== 24 && !(testMode && r.qaUsed === true && r.custody.inv.slots?.length === 128)) || r.custody.eq.slots?.length !== EQ_SLOTS.length) return null;
+  if (r.player.deathBag !== undefined) {
+    const db = r.player.deathBag;
+    if (!obj(db) || typeof db.cause !== 'string' || (db.id !== null && (typeof db.id !== 'string' || !db.id))) return null;
+  }
   if (!Number.isInteger(r.player.active) || r.player.active < 0 || r.player.active > 7 || !['vx','vy','dir','aim','invuln','deadT','stepAcc','lastTraceX','lastTraceY'].every(k => finite(r.player[k])) || !['gather','combat','craft','survival'].every(k => finite(r.player.skills[k]))) return null;
   const beforeNext = (id: string, re: RegExp) => { const m = re.exec(id); return !m || parseInt(m[1], 36) < r.nextId; };
   // Versioned Elder schema validation & deterministic v1 -> v2 migration on Veyra saves (fails closed on unknown schema version or unknown Elder key).
@@ -234,40 +445,56 @@ export function validate(raw: any): GameState | null {
       const source=r.entities[k.sourceId.split(':')[2]];if(source&&(source.kind!=='airdrop'||source.airdrop?.index!==k.eventIndex||source.x!==k.x||source.y!==k.y))return null;
     }
   }
+  if(r.dragonDive?.owner!==undefined && (r.dragonDive.owner!=='player' && !r.humanWorld?.people?.[r.dragonDive.owner] || typeof r.dragonDive.coreUid!=='string' || !r.dragonDive.coreUid || ![-1,0,1,2].includes(r.dragonDive.floor)))return null;
   if (r.dragonDive !== undefined && (!obj(r.dragonDive) || !Array.isArray(r.dragonDive.ids) || new Set(r.dragonDive.ids).size !== r.dragonDive.ids.length || r.dragonDive.ids.some((id: any) => typeof id !== 'string' || !id) || !finite(r.dragonDive.x) || !finite(r.dragonDive.y) || !finite(r.dragonDive.left) || r.dragonDive.left <= 0 || r.dragonDive.left > BAL.creatorCoreDragon.collectMs || (r.dragonDive.route !== undefined && (!Array.isArray(r.dragonDive.route) || r.dragonDive.route.length>500 || r.dragonDive.route.length!==r.dragonDive.ids.length || r.dragonDive.route.some((q:any,i:number)=>!obj(q)||q.id!==r.dragonDive.ids[i]||!finite(q.x)||!finite(q.y)) || !Number.isInteger(r.dragonDive.index) || r.dragonDive.index<0 || r.dragonDive.index>r.dragonDive.route.length || !finite(r.dragonDive.dragonX) || !finite(r.dragonDive.dragonY) || !['traverse','gather','dive'].includes(r.dragonDive.phase) || !Array.isArray(r.dragonDive.hitIds) || new Set(r.dragonDive.hitIds).size!==r.dragonDive.hitIds.length || r.dragonDive.hitIds.some((id:any)=>!r.dragonDive.ids.includes(id)))))) return null;
   if (r.natureTrees !== undefined && (!Array.isArray(r.natureTrees) || r.natureTrees.length>100 || new Set(r.natureTrees.map((q:any)=>`${q.tx},${q.ty}`)).size!==r.natureTrees.length || r.natureTrees.some((q:any)=>!obj(q)||!integer(q.tx)||!integer(q.ty)||q.tx<0||q.ty<0||q.tx>=WW||q.ty>=WW||!finite(q.until)||q.until<=0))) return null;
   if(r.spiritTransit!==undefined && (!obj(r.spiritTransit)||!finite(r.spiritTransit.x)||!finite(r.spiritTransit.y)||r.spiritTransit.x<TILE||r.spiritTransit.y<TILE||r.spiritTransit.x>=(WW-1)*TILE||r.spiritTransit.y>=(WW-1)*TILE||!finite(r.spiritTransit.arriveAt)||r.spiritTransit.arriveAt<r.startedAt-r.qaOffset||r.spiritTransit.arriveAt>r.clock.lastSimAt+BAL.creatorCoreDemon.teleportMs||typeof r.spiritTransit.uid!=='string'||!/^s[0-9a-z]+$/.test(r.spiritTransit.uid)||!beforeNext(r.spiritTransit.uid,/^s([a-z0-9]+)$/)))return null;
-  const uids = new Set<string>(), ownedContainers = new Set<string>(['inv', 'eq']);
-  const stack = (s: any): s is Stack => {
-    if (!obj(s) || typeof s.uid !== 'string' || !s.uid || !beforeNext(s.uid, /^s([a-z0-9]+)$/) || uids.has(s.uid) || typeof s.key !== 'string' || !has(ITEMS, s.key) || !integer(s.qty) || s.qty < 1 || s.qty > ITEMS[s.key].max) return false;
-    if (s.upgrade !== undefined && (s.key !== 'cart_kit' || s.upgrade !== 'freight')) return false;
-    if(s.key==='keycard' && s.charge!==undefined && (!integer(s.charge)||s.charge<1||s.charge>100||s.qty!==1))return false;
-    if(s.key==='motorbike_kit' && (!finite(s.dur)||s.dur<0||s.dur>BAL.motorbike.maxHp))return false;
-    if (ITEMS[s.key].creatorCore ? (!obj(s.reserves) || Object.keys(s.reserves).sort().join(',') !== 'basic,refined,signature' || !['basic','refined','signature'].every(k => integer(s.reserves[k]) && s.reserves[k] >= 0 && s.reserves[k] <= ({basic:40,refined:12,signature:4} as any)[k])) : s.reserves !== undefined) return false;
-    if ((s.dur !== undefined && (!finite(s.dur) || s.dur < 0)) || (s.charge !== undefined && (!finite(s.charge) || s.charge < 0)) || (s.meta !== undefined && typeof s.meta !== 'string') || (s.key === 'blueprint' && (!s.meta || !has(RECIPES, s.meta)))) return false;
-    uids.add(s.uid); return true;
-  };
+  const uids = new Set<string>(), ownedContainers = new Set<string>(['inv', 'eq']); const g1bSeen = new Set<string>();
+  const stack = (s: any): s is Stack => stackInvariant(s, uids, beforeNext) === null;
+
   for (const [id, c] of Object.entries(r.custody) as [string, any][]) {
     if (!obj(c) || c.id !== id || (id !== 'inv' && id !== 'eq' && !beforeNext(id, /^c([a-z0-9]+)$/)) || !['inv','eq','drop','bag','cart','vehicle','loot','cash','chest','fuel','out','rest'].includes(c.kind) || !Array.isArray(c.slots)) return null;
-    for (let i = 0; i < c.slots.length; i++) { const s = c.slots[i]; if (s !== null && (!stack(s) || (c.kind === 'eq' && ITEMS[s.key].slot !== ['head','body','back'][i]) || (c.kind === 'fuel' && !ITEMS[s.key].fuel))) return null; }
+    for (let i = 0; i < c.slots.length; i++) { const s = c.slots[i]; if (s !== null && (!stack(s) || (c.kind === 'eq' && ITEMS[s.key].slot !== EQ_SLOTS[i]) || (c.kind === 'fuel' && !ITEMS[s.key].fuel))) return null; }
   }
   const jobIds = new Set<string>();
   const jobs = (queue: any, station: string): boolean => Array.isArray(queue) && queue.every((j: any) => {
     if (!obj(j) || typeof j.id !== 'string' || !j.id || jobIds.has(j.id) || !beforeNext(j.id, /^j([a-z0-9]+)$/) || typeof j.recipe !== 'string') return false;
-    if(j.recipe==='X:recover-v1'||j.recipe==='X:recover-v2'||j.recipe==='X:recover-v3'||COMPONENT_RECIPES.includes(j.recipe)){
+    if(j.recipe==='X:recover-v1'||j.recipe==='X:recover-v2'||j.recipe==='X:recover-v3'||j.recipe==='X:recover-v4'||COMPONENT_RECIPES.includes(j.recipe)){
       if(station!=='recycler'||!finite(j.left)||!finite(j.total)||j.left<0||j.left>j.total||!Array.isArray(j.reserved)||j.reserved.length!==1)return false;
       const plan=recoveryPlanFor(j.reserved[0],j.recipe);if(!plan||plan.recipe!==j.recipe||j.total!==plan.total||!j.reserved.every(stack))return false;
       jobIds.add(j.id);return true;
     }
     const recycler = j.recipe==='X:drive';
     if(recycler){if(station!=='recycler'||!finite(j.left)||!finite(j.total)||j.total!==12000||j.left<0||j.left>j.total||!Array.isArray(j.reserved)||j.reserved.length!==1||j.reserved[0]?.key!=='damaged_drive'||j.reserved[0]?.qty!==1||!j.reserved.every(stack))return false;jobIds.add(j.id);return true;}
-    const research = j.recipe.startsWith('R:'), recipe = research ? j.recipe.slice(2) : j.recipe;
-    if (!has(RECIPES, recipe) || (station === 'research' ? !research : research || RECIPES[recipe].station !== station) || !finite(j.left) || !finite(j.total) || j.total <= 0 || j.left < 0 || j.left > j.total || (j.reserved !== undefined && (!Array.isArray(j.reserved) || !j.reserved.every(stack)))) return false;
+    // PA1 R1: a job is validated against the CATALOG REVISION it was queued under
+    // (`j.rv`; absent = a pre-stamping save, resolved by the migration ledger), never
+    // against whatever the live table says today. Retired and superseded formulas keep
+    // their frozen definition, so a recipe cutover can neither reject a valid save nor
+    // re-price a paid job.
+    if (j.rv !== undefined && (!Number.isSafeInteger(j.rv) || j.rv < 1 || j.rv > RECIPE_REVISION)) return false;
+    const study = j.recipe.startsWith('R:'), studyFamily = j.recipe.startsWith('F:');
+    const recipe = study || studyFamily ? j.recipe.slice(2) : j.recipe;
+    if (studyFamily) {
+      // A queued family study holds exactly its authorized price and the study duration.
+      const def = RESEARCH_FAMILIES[recipe];
+      if (station !== 'research' || !def || !def.price || !finite(j.left) || !finite(j.total) || j.total !== BAL.research.directedSeconds * 1000 || j.left < 0 || j.left > j.total) return false;
+      if (!Array.isArray(j.reserved)) return false;
+      const want = new Map(def.price.map(([k, q]) => [k, q] as [string, number]));
+      const got = new Map<string, number>();
+      for (const st2 of j.reserved) got.set(st2.key, (got.get(st2.key) ?? 0) + st2.qty);
+      if (got.size !== want.size || [...want].some(([k, q]) => got.get(k) !== q)) return false;
+      if (!j.reserved.every(stack)) return false;
+      jobIds.add(j.id); return true;
+    }
+    const rc = recipeForJob(recipe, j.rv);
+    if (!rc || (station === 'research' ? !study : study || rc.station !== station) || !finite(j.left) || !finite(j.total) || j.total <= 0 || j.left < 0 || j.left > j.total || (j.reserved !== undefined && (!Array.isArray(j.reserved) || !j.reserved.every(stack)))) return false;
+    // A stored job may not name a revision that has no definition left in the ledger.
+    if (j.rv !== undefined && j.rv < RECIPE_REVISION && !has(RECIPES, recipe) && !hasLegacyDefinition(recipe)) return false;
     // B05-R pump jobs: only the canonical extraction cycle, no inputs held, canonical time.
     if (station === 'oil_pump') { if (recipe !== 'pump_crude' || j.total !== BAL.oilPumpV1.secs * 1000 || (j.reserved !== undefined && j.reserved.length !== 0)) return false; }
     // Refinery jobs: the recipe is canonical. Time must be the recipe time and any recorded reservation must equal the recipe inputs exactly.
     if (station === 'refinery') {
-      const canon = RECIPES[recipe];
+      const canon = rc!;
       if (j.total !== canon.secs * 1000) return false;
       // New refinery jobs always hold paid reservations; there is no historical refinery save to migrate (feature is branch-local).
       if (!Array.isArray(j.reserved)) return false;
@@ -294,6 +521,8 @@ export function validate(raw: any): GameState | null {
       if (!raw.profile.profileReceipts.includes(`spend:${r.id}:${e.parcel.purchaseId}:${VENDOR_SECURED[e.parcel.item].price}`)) return null;
     }
     if (!['drop','struct','bag','cart','vehicle','loot','cash','vendor','evac','door','gen','recycler','airdrop'].includes(e.kind)) return null;
+    if (e.g1b !== undefined && !g1bEntityOk(r, e, false, g1bSeen)) return null;
+    if (e.manual !== undefined && (e.manual !== true || e.kind !== 'drop')) return null;
     if (e.kind === 'struct' && !has(STRUCTS, e.type)) return null;
     if(e.kind==='airdrop'){
       const a=e.airdrop,d=r.airdrops;
@@ -319,6 +548,8 @@ export function validate(raw: any): GameState | null {
       if(r.custody[e.c].slots.reduce((sum:number,s:any)=>sum+(s?ITEMS[s.key].w*s.qty:0),0)>BAL.motorbike.maxWeight+1e-8)return null;
     } else if(e.vehicle!==undefined)return null;
     if (e.kind === 'cart' && e.deployed?.upgrade === 'freight' && r.custody[e.c].slots.length !== BAL.cart.freightSlots) return null;
+    if(e.framePaid!==undefined && (e.framePaid!==true || e.kind!=='struct' ||
+      !['door_wood','door_iron'].includes(e.type)))return null;
     if (e.kind === 'struct' && e.c && r.custody[e.c]?.kind !== 'chest') return null;
     const refs = [e.c, e.station?.fuelC, e.station?.outC].filter((v: any) => v !== undefined);
     for (const cid of refs) { if (typeof cid !== 'string' || !r.custody[cid] || ownedContainers.has(cid)) return null; ownedContainers.add(cid); }
@@ -330,6 +561,9 @@ export function validate(raw: any): GameState | null {
     }
     if(e.bearTrap!==undefined&&(e.type!=='bear_trap'||!obj(e.bearTrap)||e.bearTrap.version!=='trap-v1'||!bearTrapStateValid(e.bearTrap.state,e.bearTrap.uses)||(e.bearTrap.snapAt!==undefined&&!(Number.isSafeInteger(e.bearTrap.snapAt)&&e.bearTrap.snapAt>=0))))return null;
     if(e.type==='bear_trap'&&e.bearTrap===undefined)return null;
+    // Item set v3: a ladder record only on a ladder, a unit direction, and a reach its type allows; a fitted lock module names a real host door.
+    if(e.ladder!==undefined&&(!LADDER_SPAN[e.type]||!obj(e.ladder)||!Array.isArray(e.ladder.dir)||e.ladder.dir.length!==2||![[1,0],[-1,0],[0,1],[0,-1]].some(v=>v[0]===e.ladder.dir[0]&&v[1]===e.ladder.dir[1])||!integer(e.ladder.len)||e.ladder.len<1||e.ladder.len>LADDER_SPAN[e.type]))return null;
+    if(e.poweredHost!==undefined&&(e.type!=='door_powered'||!POWERED_DOOR_HOSTS.includes(e.poweredHost)))return null;
     if(e.irSensor!==undefined&&(e.type!=='ir_sensor'||!obj(e.irSensor)||e.irSensor.version!=='ir-v1'||typeof e.irSensor.enabled!=='boolean'))return null;
     if(e.type==='ir_sensor'&&e.irSensor===undefined)return null;
     if(e.wireSwitch!==undefined&&e.type!=='power_switch'||e.electricDoor!==undefined&&e.type!=='door_powered')return null;
@@ -340,12 +574,12 @@ export function validate(raw: any): GameState | null {
     if (e.turret !== undefined && (!obj(e.turret) || e.type !== 'arrow_turret' || typeof e.turret.enabled !== 'boolean' || !finite(e.turret.cooldown) || e.turret.cooldown < 0 || !finite(e.turret.angle) || (e.turret.tracking !== undefined && typeof e.turret.tracking !== 'boolean') || (e.turret.generatorId !== undefined && (typeof e.turret.generatorId !== 'string' || !e.turret.generatorId)) || !e.c)) return null;
     if (e.type === 'base_generator' && !e.basePower || e.type === 'arrow_turret' && !e.turret) return null;
     if(e.garden?.coldFrame !== undefined && (e.type !== 'garden' || e.garden.coldFrame !== true)) return null;
-    if(e.farm !== undefined && (!obj(e.farm) || e.kind!=='struct' || e.type!=='farm_controller' || !e.c || r.custody[e.c]?.slots.length!==3 || typeof e.farm.enabled!=='boolean' || !['crop','herb'].includes(e.farm.crop) || !finite(e.farm.energy) || e.farm.energy<0 || e.farm.energy>90000 || ['gardenId','barrelId','chestId'].some(k=>e.farm[k]!==undefined && (typeof e.farm[k]!=='string'||!e.farm[k])) || (e.farm.lastCode!==undefined && (typeof e.farm.lastCode!=='string' || e.farm.lastCode.length>24))))return null;
+    if(e.farm !== undefined && (!obj(e.farm) || e.kind!=='struct' || e.type!=='farm_controller' || !e.c || r.custody[e.c]?.slots.length!==3 || typeof e.farm.enabled!=='boolean' || !['crop','herb','berry'].includes(e.farm.crop) || !finite(e.farm.energy) || e.farm.energy<0 || e.farm.energy>90000 || ['gardenId','barrelId','chestId'].some(k=>e.farm[k]!==undefined && (typeof e.farm[k]!=='string'||!e.farm[k])) || (e.farm.lastCode!==undefined && (typeof e.farm.lastCode!=='string' || e.farm.lastCode.length>24))))return null;
     if(e.type==='farm_controller' && !e.farm)return null;
     if (e.station?.upgrade !== undefined && (e.type !== 'furnace' || e.station.upgrade !== 'kiln_lining')) return null;
     if (e.type === 'refinery' && (e.kind !== 'struct' || !finite(e.hp) || e.hp < 0 || e.hp > STRUCTS.refinery.hp || !e.station || e.station.level !== undefined)) return null;
     // B05-R oil pump: a pump must stand on a registered test-fixture oil source at its own tile; stock may be 0 (depleted) but never negative.
-    if (e.type === 'oil_pump') { const src = r.oilSources?.[`oil:${e.tx}:${e.ty}`]; if (e.kind !== 'struct' || !e.station || !finite(e.hp) || e.hp < 0 || e.hp > STRUCTS.oil_pump.hp || !src || src.authority !== 'test-fixture-v1' || src.tx !== e.tx || src.ty !== e.ty || !integer(src.stock) || src.stock < 0 || src.stock > BAL.oilPumpV1.maxSourceStock) return null; }
+    if (e.type === 'oil_pump') { const src = r.oilSources?.[`oil:${e.tx}:${e.ty}`]; if (e.kind !== 'struct' || !e.station || !finite(e.hp) || e.hp < 0 || e.hp > STRUCTS.oil_pump.hp || !src || !oilAuthorityOk(r, src.authority) || src.tx !== e.tx || src.ty !== e.ty || !integer(src.stock) || src.stock < 0 || src.stock > BAL.oilPumpV1.maxSourceStock) return null; }
     // Identity binds the station type: a refinery cannot be emptied and relabeled, and a non-refinery cannot claim refinery identity.
     if ((e.identity !== undefined && e.identity !== 'refinery-v1') || (e.identity === 'refinery-v1' && e.type !== 'refinery') || (e.type === 'refinery' && e.identity !== 'refinery-v1')) return null;
     if (e.station?.level !== undefined && (e.type !== 'workbench' || ![1, 2, 3].includes(e.station.level))) return null;
@@ -355,12 +589,36 @@ export function validate(raw: any): GameState | null {
   if(r.airdrops!==undefined && (!obj(r.airdrops)||r.airdrops.version!=='airdrop-v1'||!supportsAirdrops(r.layoutId)||r.sourceLayoutVersion!==3||r.airdrops.mapDigest!==r.sourceMap?.mapDigest||r.airdrops.mapDigest!==mapDigest(world)||r.airdrops.seed!==r.seed||r.airdrops.runId!==r.id||r.airdrops.startedAt!==r.startedAt||!integer(r.airdrops.nextIndex)||r.airdrops.nextIndex>BAL.airdropV1.maxEvents||r.airdrops.nextIndex!==Array.from({length:BAL.airdropV1.maxEvents},(_,i)=>airdropTimes(r,i).signalAt).filter(t=>t<=r.clock.lastSimAt).length))return null;
   if((Object.values(r.entities) as any[]).filter(e=>e.kind==='airdrop').length>1)return null;
   if(r.player.vehicle!==undefined) {const e=r.entities[r.player.vehicle];if(typeof r.player.vehicle!=='string'||!e||e.kind!=='vehicle'||r.player.dead||r.player.pulling||r.spiritTransit||r.player.x!==e.x||r.player.y!==e.y)return null;}
-  if((Object.values(r.entities) as any[]).filter(e=>e.kind==='recycler').length>1)return null;
+  if(([...Object.values(r.entities), ...Object.values(r.veyraOffscreenEntities || {})] as any[]).filter(e=>e.kind==='recycler').length>1)return null;
   for(const [key,offer] of Object.entries(VENDOR_SPARES)){const stock=r.vendorStock[`spares:${key}`];if(stock!==undefined && (!integer(stock) || stock>offer.stock))return null;}
-  for(const g of Object.values(r.entities) as any[]) if(g.basePower&&g.basePower.network!=='wire-v1'){const links=(Object.values(r.entities) as any[]).filter(t=>t.turret?.generatorId===g.id).length;if(links>(g.basePower.capacity??1))return null;}
+  const allValidatedEntities = [...Object.values(r.entities), ...Object.values(r.veyraOffscreenEntities || {})] as any[];
+  // Broken circuits may legitimately refer to removed equipment; never create
+  // the missing terminal or refill a tank during validation.
+  for(const e of allValidatedEntities){
+    if(e.workLight!==undefined && (e.type!=='torch_post'||!obj(e.workLight)||typeof e.workLight.generatorId!=='string'||typeof e.workLight.cableId!=='string'))return null;
+    if(e.basePower?.workLightId!==undefined && typeof e.basePower.workLightId!=='string')return null;
+  }
+  for(const e of allValidatedEntities)if(e?.garden?.sowing!==undefined){
+    const g=e.garden,lot=g.sowing;
+    if(e.type!=='garden'||!isGardenCrop(g.crop)||!obj(lot)||typeof lot.id!=='string'||!/^hj[a-z0-9]+$/.test(lot.id)||!Array.isArray(lot.inputs))return null;
+    const rule=GARDEN_CROPS[g.crop as keyof typeof GARDEN_CROPS];
+    const remaining=new Map(rule.inputs),seen=new Set<string>();
+    for(const line of lot.inputs){
+      if(!obj(line)||typeof line.uid!=='string'||!/^s[a-z0-9]+$/.test(line.uid)||seen.has(line.uid)||
+        !integer(line.qty)||line.qty<1||!integer(line.slot)||line.slot<0||typeof line.containerId!=='string')return null;
+      seen.add(line.uid);const need=remaining.get(line.key);
+      if(need===undefined||line.qty>need)return null;
+      if(need===line.qty)remaining.delete(line.key);else remaining.set(line.key,need-line.qty);
+    }
+    if(remaining.size)return null;
+  }
+  for(const g of allValidatedEntities) if(g.basePower&&g.basePower.network!=='wire-v1'){const links=allValidatedEntities.filter(t=>t.turret?.generatorId===g.id).length;if(links>(g.basePower.capacity??1))return null;}
   // B05-R oil sources: registry keyed by tile; only the labelled test-fixture authority is accepted (production oil sites are not authorized).
-  if (r.oilSources !== undefined && r.oilTestFixture !== true) return null;   // domain separation: fixture sources need the fixture marker
-  if (r.oilSources !== undefined) { if (!obj(r.oilSources)) return null; for (const [key, src] of Object.entries(r.oilSources) as any[]) { if (key !== `oil:${src?.tx}:${src?.ty}` || !integer(src?.tx) || !integer(src?.ty) || src?.authority !== 'test-fixture-v1' || !integer(src?.stock) || src.stock < 0 || src.stock > BAL.oilPumpV1.maxSourceStock) return null; } }
+  // domain separation: a fixture row needs the fixture marker; a seep row needs a Veyra run and a ledger row at the same global tile that never holds less than the live row (a pump only draws down)
+  if (r.oilSeeps !== undefined) { if (!obj(r.oilSeeps) || !veyraRun(r)) return null; for (const [key, row] of Object.entries(r.oilSeeps) as any[]) { if (!obj(row) || !integer(row.gx) || !integer(row.gy) || key !== Math.floor(row.gx / SEEP_CELL) + ':' + Math.floor(row.gy / SEEP_CELL) || !integer(row.stock) || row.stock < 0 || row.stock > BAL.oilPumpV1.seepStock) return null; } }
+  if (r.oilSeepWindow !== undefined && (typeof r.oilSeepWindow !== 'string' || !/^-?\d+,-?\d+$/.test(r.oilSeepWindow) || !veyraRun(r))) return null;
+  if (r.oilSources !== undefined && obj(r.oilSources)) { for (const src of Object.values(r.oilSources) as any[]) { if (src?.authority !== OIL_SEEP_AUTHORITY) continue; if (!r.oilSeepWindow || !r.oilSeeps) return null; const [sox, soy] = r.oilSeepWindow.split(',').map(Number); const gx = sox + src.tx, gy = soy + src.ty; const row = r.oilSeeps[Math.floor(gx / SEEP_CELL) + ':' + Math.floor(gy / SEEP_CELL)]; if (!row || row.gx !== gx || row.gy !== gy || src.stock > row.stock) return null; } }
+  if (r.oilSources !== undefined) { if (!obj(r.oilSources)) return null; for (const [key, src] of Object.entries(r.oilSources) as any[]) { if (key !== `oil:${src?.tx}:${src?.ty}` || !integer(src?.tx) || !integer(src?.ty) || !oilAuthorityOk(r, src?.authority) || !integer(src?.stock) || src.stock < 0 || src.stock > BAL.oilPumpV1.maxSourceStock) return null; } }
   if (r.wreckEconomy !== undefined && r.wreckEconomy !== 'direct-v1' && r.wreckEconomy !== 'recycler-v1') return null;
   if (r.wreckEconomy === 'recycler-v1' && !hasAuthorizedRecycler(r)) return null;
   // A retired site must be a real authored public loot site and cannot also
@@ -369,11 +627,157 @@ export function validate(raw: any): GameState | null {
     if (!veyraWw || !obj(r.veyraOffscreenEntities)) return null;
     for (const [oid, oe] of Object.entries(r.veyraOffscreenEntities) as [string, any][]) {
       if (!obj(oe) || oe.id !== oid || r.entities[oid] || !beforeNext(oid, /^(?:cart|[ebd])([a-z0-9]+)$/) || typeof oe.kind !== 'string' || !finite(oe.x) || !finite(oe.y)) return null;
+      if (oe.kind === 'struct' && !has(STRUCTS, oe.type)) return null;
+      if (oe.g1b !== undefined) return null; // G1B objects live in r.g1b.far, never in the structure table
+      if (oe.kind === 'recycler') {
+        if (webRecyclerSite(world, r.layoutId) || oe.tx !== VEYRA_RECYCLER_SITE.tx || oe.ty !== VEYRA_RECYCLER_SITE.ty || oe.x !== VEYRA_RECYCLER_SITE.tx * 16 + 8 || oe.y !== VEYRA_RECYCLER_SITE.ty * 16 + 8 || oe.poi !== 'factory' || oe.type !== undefined || !obj(oe.station) || !finite(oe.station.burn) || oe.station.burn < 0 || r.custody[oe.station.fuelC]?.kind !== 'fuel' || r.custody[oe.station.outC]?.kind !== 'out' || !jobs(oe.station.queue, 'recycler') || oe.station.queue?.length > 1) return null;
+      }
+      if (oe.basePower !== undefined && (!obj(oe.basePower) || oe.type !== 'base_generator' || typeof oe.basePower.enabled !== 'boolean' || !finite(oe.basePower.energy) || oe.basePower.energy < 0 || (oe.basePower.capacity !== undefined && oe.basePower.capacity !== 2) || (oe.basePower.priority !== undefined && !['defense','production'].includes(oe.basePower.priority)) || (oe.basePower.network !== undefined && oe.basePower.network!=='wire-v1') || !oe.c)) return null;
+      if(['power_cable','power_switch','pressure_switch','door_powered'].includes(oe.type)) {
+        if(oe.kind!=='struct'||!integer(oe.tx)||!integer(oe.ty)||oe.tx<1||oe.ty<1||oe.tx>=FRAME_W-1||oe.ty>=FRAME_H-1||oe.x!==oe.tx*TILE+8||oe.y!==oe.ty*TILE+8)return null;
+        if(oe.type==='power_switch'&&(!obj(oe.wireSwitch)||oe.wireSwitch.version!=='wire-v1'||typeof oe.wireSwitch.on!=='boolean'))return null;
+        if(oe.type==='door_powered'&&(!obj(oe.electricDoor)||oe.electricDoor.version!=='wire-v1'||!Array.isArray(oe.electricDoor.interior)||oe.electricDoor.interior.length!==2||![[1,0],[-1,0],[0,1],[0,-1]].some(v=>v[0]===oe.electricDoor.interior[0]&&v[1]===oe.electricDoor.interior[1])||(oe.electricDoor.releaseUntil!==undefined&&(!finite(oe.electricDoor.releaseUntil)||oe.electricDoor.releaseUntil<r.startedAt))))return null;
+      }
+      if(oe.irSensor!==undefined&&(oe.type!=='ir_sensor'||!obj(oe.irSensor)||oe.irSensor.version!=='ir-v1'||typeof oe.irSensor.enabled!=='boolean'))return null;
+      if(oe.type==='ir_sensor'&&oe.irSensor===undefined)return null;
+      if(oe.wireSwitch!==undefined&&oe.type!=='power_switch'||oe.electricDoor!==undefined&&oe.type!=='door_powered')return null;
+      if (oe.type === 'base_generator' && !oe.basePower || oe.type === 'arrow_turret' && !oe.turret) return null;
+      if (oe.industrial !== undefined && (!obj(oe.industrial) || oe.type !== 'workbench' || !oe.station || typeof oe.industrial.enabled !== 'boolean' || (oe.industrial.generatorId !== undefined && (typeof oe.industrial.generatorId !== 'string' || !oe.industrial.generatorId)))) return null;
+      if (oe.turret !== undefined && (!obj(oe.turret) || oe.type !== 'arrow_turret' || typeof oe.turret.enabled !== 'boolean' || !finite(oe.turret.cooldown) || oe.turret.cooldown < 0 || !finite(oe.turret.angle) || (oe.turret.tracking !== undefined && typeof oe.turret.tracking !== 'boolean') || (oe.turret.generatorId !== undefined && (typeof oe.turret.generatorId !== 'string' || !oe.turret.generatorId)) || !oe.c)) return null;
+      if (oe.garden !== undefined && (oe.type !== 'garden' || !obj(oe.garden) || (oe.garden.crop !== null && !['crop', 'herb', 'berry'].includes(oe.garden.crop)) || !finite(oe.garden.growth) || oe.garden.growth < 0 || oe.garden.growth > 1 || !finite(oe.garden.water) || oe.garden.water < 0 || oe.garden.water > 3 || (oe.garden.coldFrame !== undefined && oe.garden.coldFrame !== true))) return null;
+      if (oe.farm !== undefined && (!obj(oe.farm) || oe.kind !== 'struct' || oe.type !== 'farm_controller' || !oe.c || r.custody[oe.c]?.slots.length !== 3 || typeof oe.farm.enabled !== 'boolean' || !['crop', 'herb', 'berry'].includes(oe.farm.crop) || !finite(oe.farm.energy) || oe.farm.energy < 0 || oe.farm.energy > 90000 || ['gardenId', 'barrelId', 'chestId'].some(k => oe.farm[k] !== undefined && (typeof oe.farm[k] !== 'string' || !oe.farm[k])) || (oe.farm.lastCode !== undefined && (typeof oe.farm.lastCode !== 'string' || oe.farm.lastCode.length > 24)))) return null;
+      if (oe.type === 'farm_controller' && !oe.farm) return null;
       const orefs = [oe.c, oe.station?.fuelC, oe.station?.outC].filter((v: any) => v !== undefined);
       for (const cid of orefs) {
         if (typeof cid !== 'string' || !r.custody[cid] || ownedContainers.has(cid)) return null;
         ownedContainers.add(cid);
       }
+    }
+  }
+  if (r.dailyLedger !== undefined) {
+    const dl = r.dailyLedger;
+    if (
+      !obj(dl) ||
+      dl.v !== 1 ||
+      !integer(dl.seed) ||
+      dl.seed !== r.seed ||
+      !integer(dl.lastSeq) ||
+      dl.lastSeq < 0 ||
+      dl.lastSeq > r.seq ||
+      !obj(dl.capabilities) ||
+      !stringArray(dl.capabilities.learnedKeys) ||
+      dl.capabilities.learnedKeys.length > 2 ||
+      new Set(dl.capabilities.learnedKeys).size !== dl.capabilities.learnedKeys.length ||
+      !obj(dl.days) ||
+      Object.keys(dl.days).length > MAX_DAILY_LEDGER_DAYS
+    ) return null;
+    for (const ck of ['recipe1Date', 'recipe2Date', 'anyStructDate', 'bedDate', 'stationDate', 'researchDate'] as const) {
+      const cv = dl.capabilities[ck];
+      if (cv !== undefined && (typeof cv !== 'string' || !isValidDateKey(cv))) return null;
+    }
+    const minValidTime = r.startedAt - Math.max(0, r.qaOffset);
+    for (const [dk, day] of Object.entries(dl.days) as [string, any][]) {
+      if (
+        !isValidDateKey(dk) ||
+        !obj(day) ||
+        day.date !== dk ||
+        !stringArray(day.baseIds) ||
+        day.baseIds.length < 1 ||
+        day.baseIds.length > 4 ||
+        new Set(day.baseIds).size !== day.baseIds.length ||
+        day.baseIds.some((id: string) => !DAILY_BY_ID[id]) ||
+        !Array.isArray(day.objectives) ||
+        day.objectives.length !== day.baseIds.length ||
+        !integer(day.points) ||
+        day.points < 0 ||
+        !stringArray(day.milestones)
+      ) return null;
+      if (day.reroll !== undefined) {
+        const rr = day.reroll;
+        if (
+          !obj(rr) ||
+          typeof rr.from !== 'string' ||
+          !day.baseIds.includes(rr.from) ||
+          typeof rr.to !== 'string' ||
+          !DAILY_BY_ID[rr.to] ||
+          day.baseIds.includes(rr.to) ||
+          rr.from === rr.to ||
+          !finite(rr.at) ||
+          rr.at < r.startedAt ||
+          dateKey(rr.at) !== dk ||
+          !integer(rr.seq) ||
+          rr.seq < 1 ||
+          rr.seq > r.seq ||
+          typeof rr.intentId !== 'string' ||
+          !rr.intentId
+        ) return null;
+      }
+      const expectedIds = day.reroll
+        ? day.baseIds.map((id: string) => (id === day.reroll.from ? day.reroll.to : id))
+        : day.baseIds;
+      let expectedPoints = 0;
+      for (let i = 0; i < day.objectives.length; i++) {
+        const o = day.objectives[i];
+        if (!obj(o) || o.id !== expectedIds[i]) return null;
+        const def = DAILY_BY_ID[o.id];
+        if (
+          !def ||
+          !integer(o.progress) ||
+          o.progress < 0 ||
+          o.progress > def.target ||
+          typeof o.done !== 'boolean' ||
+          o.done !== (o.progress >= def.target) ||
+          (o.doneAt !== undefined && (!finite(o.doneAt) || o.doneAt < minValidTime)) ||
+          !stringArray(o.seen) ||
+          o.seen.length > 40 ||
+          o.seen.some((sk: string) => sk.length > 64)
+        ) return null;
+        if (o.done) expectedPoints += def.points;
+      }
+      if (day.points !== expectedPoints) return null;
+      const expectedMilestones = DAILY_MILESTONES.filter(m => expectedPoints >= m.at).map(m => m.id);
+      if (
+        day.milestones.length !== expectedMilestones.length ||
+        day.milestones.some((m: string, i: number) => m !== expectedMilestones[i])
+      ) return null;
+    }
+  }
+  if (r.handbook !== undefined) {
+    // Survivor Handbook ledger: shape and bounds only. Unknown step / chapter ids are tolerated (a chapter may
+    // be renamed between builds) — they simply match nothing; the claim intent re-checks against live chapters.
+    const hb = r.handbook;
+    if (
+      !obj(hb) || hb.v !== 1 ||
+      !integer(hb.lastSeq) || hb.lastSeq < 0 || hb.lastSeq > r.seq ||
+      !obj(hb.steps) || Object.keys(hb.steps).length > 400 ||
+      !stringArray(hb.done) || hb.done.length > 400 || new Set(hb.done).size !== hb.done.length ||
+      !stringArray(hb.claimed) || hb.claimed.length > 64 || new Set(hb.claimed).size !== hb.claimed.length
+    ) return null;
+    for (const [k, n] of Object.entries(hb.steps) as [string, any][]) {
+      if (k.length > 80 || !integer(n) || n < 0 || n > 100000) return null;
+    }
+    if ([...hb.done, ...hb.claimed].some((k: string) => k.length > 80)) return null;
+  }
+  if (r.dailyRerolls !== undefined) {
+    if (!obj(r.dailyRerolls) || Object.keys(r.dailyRerolls).length > 32) return null;
+    for (const [dk, rec] of Object.entries(r.dailyRerolls) as [string, any][]) {
+      if (
+        !isValidDateKey(dk) ||
+        !obj(rec) ||
+        typeof rec.from !== 'string' ||
+        !DAILY_BY_ID[rec.from] ||
+        typeof rec.to !== 'string' ||
+        !DAILY_BY_ID[rec.to] ||
+        rec.from === rec.to ||
+        !finite(rec.at) ||
+        rec.at < r.startedAt ||
+        dateKey(rec.at) !== dk ||
+        !integer(rec.seq) ||
+        rec.seq < 1 ||
+        rec.seq > r.seq ||
+        typeof rec.intentId !== 'string' ||
+        !rec.intentId
+      ) return null;
     }
   }
   const activeEnts = veyraWw ? (Object.values(r.entities) as any[]).filter(e => onActiveFloor(r, e)) : (Object.values(r.entities) as any[]);
@@ -420,8 +824,223 @@ export function validate(raw: any): GameState | null {
       } else {
         const cycle=r.lootEcology?.cycles[lootSiteIndex(site)] || 0;
         const base=r.lootEcology && lootClass(site) && cycle>0 ? renewableLoot(site) : site.loot || [];
-        const available = new Map<string,number>(); for(const [k,q] of [...base,...lootRoll(r,site,cycle)]) available.set(k,(available.get(k)||0)+q); const unique=r.creatorLootV1 && !r.renewedLootSites?.includes(site.ty*WW+site.tx) && creatorLootV1(site);if(unique)available.set(unique,1);
+        const available = new Map<string,number>(); /* Item set v2: authored loot tables may still NAME a retired id (their signatures are digest-pinned); what the crate physically holds is the successor, so the allowance is counted in live ids. */ const liveLootKey=(k:string)=>k.startsWith('blueprint:')?`blueprint:${liveRecipeId(k.slice(10))??k.slice(10)}`:liveItemId(k); for(const [k0,q] of [...base,...lootRoll(r,site,cycle)]) { const k=liveLootKey(k0); available.set(k,(available.get(k)||0)+Math.ceil(q*liveItemPer(k0))); } const unique=r.creatorLootV1 && !r.renewedLootSites?.includes(site.ty*WW+site.tx) && creatorLootV1(site);if(unique)available.set(unique,1);
         for(const stack of slots){if(!stack)continue;const key=stack.key==='blueprint'?`blueprint:${stack.meta}`:stack.key;const left=(available.get(key)||0)-stack.qty;if(left<0)return null;available.set(key,left);}
+      }
+    }
+  }
+  // G1B: a run either carries the whole approved chest system (every source id exactly once) or none of it.
+  if (r.g1b !== undefined) {
+    if (r.g1b.layout !== undefined && (!integer(r.g1b.layout) || r.g1b.layout !== G1B_LAYOUT_REVISION)) return null;
+    if (!obj(r.g1b) || r.g1b.version !== G1B_VERSION || typeof r.g1b.rev !== 'string' || !veyraRun(r) || !obj(r.g1b.doors) || Object.entries(r.g1b.doors).some(([k, v]: [string, any]) => !G1B_GATE_BY_ID[k] || !obj(v) || !finite(v.closeAt))) return null;
+    if (!obj(r.g1b.far)) return null;
+    for (const [oid, oe] of Object.entries(r.g1b.far) as [string, any][]) {
+      if (!obj(oe) || oe.id !== oid || r.entities[oid] || r.veyraOffscreenEntities?.[oid] || !/^e[a-z0-9]+$/.test(oid) || !beforeNext(oid, /^e([a-z0-9]+)$/) || !finite(oe.x) || !finite(oe.y)) return null;
+      if (Object.keys(oe).some(k => !['id', 'kind', 'x', 'y', 'tx', 'ty', 'c', 'label', 'g1b', 'floor'].includes(k))) return null;
+      if (!g1bEntityOk(r, oe, true, g1bSeen)) return null;
+      if (typeof oe.c !== 'string' || !r.custody[oe.c] || ownedContainers.has(oe.c)) return null; ownedContainers.add(oe.c);
+    }
+    if (g1bSeen.size !== G1B_SOURCE_SITES.length + G1B_FIXTURES.length) return null;
+  } else if (g1bSeen.size) return null;
+  // HumanWorld: migrate + validate the authoritative human ledger on load.
+  if (r.humanWorld) {
+    const hw = r.humanWorld as any;
+    // P0.1 migration: a ledger seeded with lastResolvedAt=0 (or stale) is re-anchored to the
+    // run clock so the first tick after load never computes a catastrophic time delta.
+    if (!Number.isFinite(hw.lastResolvedAt) || hw.lastResolvedAt <= 0 || hw.lastResolvedAt > r.clock.lastSimAt) {
+      hw.lastResolvedAt = r.clock.lastSimAt;
+    }
+    // Split the old shared clock: needs and movement must each advance once per world timestamp.
+    // Old saves inherit their previous resolved point; malformed/future clocks re-anchor safely.
+    for (const key of ['lastNeedsAt', 'lastStepAt'] as const) {
+      if (!Number.isFinite(hw[key]) || hw[key] < 0 || hw[key] > r.clock.lastSimAt) hw[key] = hw.lastResolvedAt;
+    }
+    if(hw.playerAid!==undefined) {
+      const a=hw.playerAid;
+      if(!obj(a)||typeof a.id!=='string'||typeof a.actorId!=='string'||!hw.people?.[a.actorId]||typeof a.stackUid!=='string'||!['food','water','medical'].includes(a.kind)||![a.startedAt,a.dueAt,a.px,a.py,a.hp].every(finite)||!integer(a.floor)||a.dueAt<a.startedAt||a.dueAt-a.startedAt>6000)return null;
+    }
+    // Schema validation: every human record must carry the required identity fields.
+    const seenUids = new Set<string>();
+    for (const h of Object.values(hw.people ?? {}) as any[]) {
+      if (!h || typeof h.actorId !== 'string' || !h.actorId || typeof h.sourceId !== 'string' || !h.sourceId) return null;
+      // Names follow the work a person actually does (2026-11-21). A save written before that
+      // keeps every surname and only has a wrong role word corrected.
+      if (typeof h.name === 'string' && typeof h.occupation === 'string') {
+        const role = h.occupation.charAt(0).toUpperCase() + h.occupation.slice(1), at = h.name.indexOf(' ');
+        if (at > 0 && HUMAN_ROLE_WORDS.includes(role) && HUMAN_ROLE_WORDS.includes(h.name.slice(0, at)) && h.name.slice(0, at) !== role) h.name = role + h.name.slice(at);
+      }
+      if (typeof h.inv?.packId !== 'string' || typeof h.inv?.cartId !== 'string') return null;
+      if (h.threat !== undefined && (!obj(h.threat) || ![h.threat.waves, h.threat.hit, h.threat.guarded].every(integer))) return null;
+      const d=h.intent?.delivery;
+      if(d!==undefined && (!obj(d)||typeof d.storeId!=='string'||typeof d.containerId!=='string'||!Array.isArray(d.cargo)||!d.cargo.length||d.cargo.some((q:any)=>!obj(q)||typeof q.uid!=='string'||!integer(q.qty)||q.qty<1)||new Set(d.cargo.map((q:any)=>q.uid)).size!==d.cargo.length))return null;
+      const alarm=h.intent?.watchResponse;
+      if(alarm!==undefined && (!obj(alarm)||typeof alarm.postId!=='string'||!alarm.postId||typeof alarm.enemyId!=='string'||!alarm.enemyId||!finite(alarm.alertAt)||
+        !(h.intent.kind==='fight' && h.intent.target===alarm.enemyId || h.intent.kind==='work' && h.intent.work?.kind==='guard' && !h.intent.work.itemUid && h.intent.work.entityId===alarm.postId)))return null;
+      const work=h.intent?.work,seen=work?.observedPatient;
+      if(work?.catchment!==undefined){const s=work.catchment,c=hw.communities?.[h.community];
+        if(work.kind!=='build'||work.rebuildSite!==undefined||work.patchType!==undefined||work.entityId!==undefined||!obj(s)||!integer(s.gx)||s.gx>=FRAME_W||!integer(s.gy)||s.gy>=FRAME_H||typeof s.twist!=='boolean'||!Array.isArray(c?.storeTile))return null;
+        const dist=Math.abs(c.storeTile[0]-s.gx)+Math.abs(c.storeTile[1]-s.gy);if(dist<2||dist>8)return null;
+      }
+      if(work?.patchType!==undefined && (work.kind!=='build'||typeof work.patchType!=='string'||!Object.prototype.hasOwnProperty.call(STRUCTS,work.patchType)||STRUCTS[work.patchType].item||typeof work.entityId!=='string'||work.rebuildSite!==undefined))return null;
+      if(work?.patchLots!==undefined && (!work.patchType||!Array.isArray(work.patchLots)||!work.patchLots.length||work.patchLots.some((id:any)=>typeof id!=='string'||!/^s[a-z0-9]+$/.test(id))||new Set(work.patchLots).size!==work.patchLots.length))return null;
+      if(work?.patchType!==undefined && work.phase!=='fetch'&&!work.patchLots)return null;
+      if(seen!==undefined && (work.kind!=='medical'||!hw.people[work.patientId]||!obj(seen)||!integer(seen.gx)||seen.gx>=FRAME_W||!integer(seen.gy)||seen.gy>=FRAME_H||![-1,0,1,2].includes(seen.floor)))return null;
+      const swing=h.intent?.swing;
+      if(swing!==undefined && (!obj(swing)||typeof swing.uid!=='string'||typeof swing.victim!=='string'||!Number.isInteger(swing.floor)||![swing.angle,swing.distance,swing.contactAt].every(finite)||swing.distance<0))return null;
+      if(h.defenseTrustReceipt!==undefined && (typeof h.defenseTrustReceipt!=='string'||!h.defenseTrustReceipt))return null;
+      if(h.spiritStep!==undefined && (!obj(h.spiritStep)||typeof h.spiritStep.uid!=='string'||!h.spiritStep.uid||![h.spiritStep.gx,h.spiritStep.gy].every(integer)||![-1,0,1,2].includes(h.spiritStep.floor)||!finite(h.spiritStep.arriveAt)))return null;
+      if(['attackReadyAt','iceUntil','channelUntil','burnHitNext','rootedUntil'].some(k=>h[k]!==undefined&&!finite(h[k])))return null;
+      const cast=h.intent?.coreCast;
+      if(cast!==undefined && (!obj(cast)||typeof cast.uid!=='string'||typeof cast.victim!=='string'||!Number.isInteger(cast.floor)||!finite(cast.angle)||!finite(cast.readyAt)))return null;
+      if(cast?.mode!==undefined && (!['basic','refined','signature'].includes(cast.mode)||!finite(cast.distance)||cast.distance<0))return null;
+      const lead=h.recoveryLead;
+      if(lead!==undefined){const inc=hw.incidents?.[lead?.incidentId];if(!obj(lead)||!inc||inc.victim!==h.actorId||inc.kind!=='robbery'||!inc.property?.includes(lead.uid)||typeof lead.chestId!=='string'||typeof lead.containerId!=='string'||![lead.tx,lead.ty].every(integer)||!Number.isInteger(lead.floor)||!finite(lead.seenAt))return null;}
+      // Embedded equipment UIDs must be unique across the run (no duplicate claimant).
+      for (const slot of ['weapon', 'body', 'head', 'legs', 'feet'] as const) {
+        const st = h.equip?.[slot]; if (st && typeof st.uid === 'string' && st.uid) {
+          if (seenUids.has(st.uid)) return null; seenUids.add(st.uid);
+        }
+      }
+    }
+    // Human-owned custody: mark personal pack/cart + community store containers as owned.
+    for (const h of Object.values(hw.people ?? {}) as any[]) {
+      for (const c of [h?.inv?.packId, h?.inv?.cartId]) if (typeof c === 'string' && r.custody[c]) ownedContainers.add(c);
+    }
+    for (const comm of Object.values(hw.communities ?? {}) as any[]) {
+      if(comm.rainBarrelId!==undefined){
+        if(typeof comm.rainBarrelId!=='string'||!beforeNext(comm.rainBarrelId,/^e([a-z0-9]+)$/))return null;
+        const barrel=r.entities[comm.rainBarrelId]??r.veyraOffscreenEntities?.[comm.rainBarrelId];
+        if(barrel&&(barrel.kind!=='struct'||barrel.type!=='barrel'||barrel.owner!==comm.id||!finite(barrel.water)||barrel.water<0||barrel.water>12))return null;
+      }
+      if(comm.lostWorksites!==undefined && (!obj(comm.lostWorksites)||Object.entries(comm.lostWorksites).some(([id,v]:[string,any])=>!comm.workStations?.includes(id)||!obj(v)||!['campfire','workbench','furnace'].includes(v.type)||!integer(v.tx)||!integer(v.ty)||!Number.isInteger(v.floor))))return null;
+      // Pre-residential saves stored an empty chest ID as a bed. Preserve its custody,
+      // but remove the false sleeping entitlement. Never create furniture on load.
+      if(Array.isArray(comm?.homeBeds)) {
+        const legacy=comm.homeBeds.filter((id:unknown)=>typeof id==='string' && r.custody[id]?.kind==='chest');
+        if(legacy.length) {
+          comm.legacyHouseholdContainers=[...new Set([...(comm.legacyHouseholdContainers??[]),...legacy])];
+          comm.homeBeds=comm.homeBeds.filter((id:string)=>!legacy.includes(id));
+          for(const h of Object.values(hw.people??{}) as any[])if(legacy.includes(h.bedId))delete h.bedId;
+        }
+      }
+      // P0.2: old abstract stock mirrors could mint items during work ticks. Physical custody is canonical.
+      if (comm && typeof comm === 'object') delete comm.stock;
+      if (comm?.storeEntityId !== undefined) {
+        const storeEntity = r.entities[comm.storeEntityId] ?? r.veyraOffscreenEntities?.[comm.storeEntityId];
+        const store = comm.storeContainers?.length === 1 ? r.custody[comm.storeContainers[0]] : null;
+        if (typeof comm.poi !== 'string' || comm.id !== `com:${comm.poi}` || typeof comm.storeEntityId !== 'string' || !storeEntity || storeEntity.kind !== 'bag' || storeEntity.poi !== comm.poi || storeEntity.c !== store?.id || store?.kind !== 'bag' || store.origin?.authority !== 'REGIONAL_HUMAN_ECONOMY' || store.origin.sourceId !== `regional-human-economy:${comm.poi}` || !Array.isArray(comm.storeTile) || comm.storeTile.length !== 2 || !comm.storeTile.every(integer)) return null;
+      }
+      for (const c of [...(comm?.storeContainers ?? []), ...(comm?.foodStores ?? []), ...(comm?.legacyHouseholdContainers ?? [])]) if (typeof c === 'string' && r.custody[c]) ownedContainers.add(c);
+    }
+    for (const [cid, c] of Object.entries(r.custody) as [string, any][]) if (c?.origin !== undefined) {
+      const owners = Object.values(hw.communities ?? {}) as any[];
+      if (!obj(c.origin) || c.kind !== 'bag' || c.origin.authority !== 'REGIONAL_HUMAN_ECONOMY' || typeof c.origin.sourceId !== 'string' || owners.filter(comm => comm?.storeContainers?.includes(cid) && comm.storeEntityId && c.origin.sourceId === `regional-human-economy:${comm.poi}`).length !== 1) return null;
+    }
+    // A humanWorld written before these ledgers existed is normalised to "no services / no Elders"
+    // rather than being destroyed: nothing is minted by an empty table, and the run keeps its people.
+    if (hw.evacuation === undefined) hw.evacuation = {};
+    if (hw.elderPressure === undefined) hw.elderPressure = {};
+    // Physical evacuation services: a seat exists only as a well-formed manifest entry on one of
+    // the three approved sites. A save cannot invent a berth, a fourth service, an anonymous seat,
+    // a duplicate seat, a passenger on two vessels, or a body "aboard" a vessel that is not carrying it.
+    const EVAC_PHASES = ['STAGING', 'BOARDING', 'BERTHED', 'DEPARTING', 'IN_TRANSIT', 'SERVICE_ENDED', 'FAILED'];
+    const seated = new Set<string>();
+    if (!obj(hw.evacuation)) return null;
+    for (const [tid, trip] of Object.entries(hw.evacuation) as [string, any][]) {
+      if (!obj(trip) || trip.tripId !== tid || !['po_evac_west', 'po_evac_south', 'po_evac_hook'].includes(trip.site) || tid !== `evac:${trip.site}`) return null;
+      if (!integer(trip.capacity) || trip.capacity < 1 || trip.capacity > 64 || !finite(trip.siteGx) || !finite(trip.siteGy)) return null;
+      if (!Array.isArray(trip.boarded) || trip.boarded.some((id: unknown) => typeof id !== 'string')) return null;
+      if (trip.phase !== undefined && !EVAC_PHASES.includes(trip.phase)) return null;
+      if (trip.dockUntil !== undefined && !finite(trip.dockUntil)) return null;
+      if (trip.arriveAt !== undefined && !finite(trip.arriveAt)) return null;
+      const manifest = trip.manifest ?? [];
+      if (!Array.isArray(manifest) || manifest.length > trip.capacity) return null;
+      if(trip.vessel!==undefined){
+        const v=trip.vessel;
+        if(!obj(v)||typeof v.holdId!=='string'||r.custody[v.holdId]?.kind!=='bag'||r.custody[v.holdId].origin||ownedContainers.has(v.holdId)||!integer(v.hull)||v.hull>100)return null;
+        ownedContainers.add(v.holdId);
+        if(v.stranded!==undefined && (v.stranded!==true || trip.phase!=='FAILED'))return null;
+        if(trip.phase==='IN_TRANSIT'||trip.phase==='BERTHED'&&v.helm!==undefined||v.stranded){
+          if(!finite(v.wearAt)||v.wearAt<trip.departAt||v.wearAt>Math.max(trip.arriveAt??0,trip.dockUntil??0)||!manifest.some((p:any)=>p?.actorId===v.helm))return null;
+        }else if(v.helm!==undefined||v.wearAt!==undefined)return null;
+      }
+      const seats = new Set<number>();
+      for (const p of manifest as any[]) {
+        if (!obj(p) || typeof p.actorId !== 'string' || !p.actorId) return null;
+        if (p.actorId !== 'player' && !hw.people?.[p.actorId]) return null;
+        if (!integer(p.seat) || p.seat < 0 || p.seat >= trip.capacity || seats.has(p.seat)) return null;
+        seats.add(p.seat);
+        if (seated.has(p.actorId)) return null;
+        seated.add(p.actorId);
+        if (p.actorId === 'player' && trip.playerAboard !== true) return null;
+        if (p.actorId !== 'player') {
+          const body: any = hw.people[p.actorId];
+          if (body.state === 'DEAD' || body.state === 'EVACUATED') return null;
+          if (body.transit?.tripId !== tid) return null;
+        }
+      }
+      if (trip.playerAboard === true && !manifest.some((p: any) => p.actorId === 'player')) return null;
+      if (trip.departures !== undefined) {
+        if (!Array.isArray(trip.departures)) return null;
+        for (const d of trip.departures as any[]) {
+          if (!obj(d) || !integer(d.round) || !finite(d.departAt) || !finite(d.arriveAt) || typeof d.departedReceipt !== 'string' || !Array.isArray(d.passengers)) return null;
+          if (d.arrivedAt !== undefined && !finite(d.arrivedAt)) return null;
+        }
+      }
+      // A live passage must match its sealed departure, not just a phase flag.
+      // Older manifests may still list boarding-time cargo; identity and seat
+      // do not change, and the departure log owns the cast-off quantities.
+      if (trip.vessel && (trip.phase === 'IN_TRANSIT' || trip.vessel.stranded && trip.playerAboard)) {
+        const leg = trip.departures?.at(-1);
+        if (!leg || leg.arrivedAt !== undefined || !manifest.length || leg.departAt !== trip.departAt ||
+            leg.arriveAt !== trip.arriveAt || leg.arriveAt <= leg.departAt || leg.departedReceipt !== trip.receipt ||
+            leg.passengers.length !== manifest.length || !manifest.every((seat:any) => leg.passengers.some((p:any) =>
+              p?.actorId === seat.actorId && p.seat === seat.seat))) return null;
+      }
+    }
+    for (const [aid, body] of Object.entries(hw.people ?? {}) as [string, any][]) {
+      if (body.state !== 'ON_VESSEL') { if (body.transit !== undefined) return null; continue; }
+      if (!obj(body.transit) || typeof body.transit.tripId !== 'string' || !hw.evacuation[body.transit.tripId] || !seated.has(aid)) return null;
+    }
+    if (hw.playerEvacArrivedAt !== undefined) {
+      const service = hw.evacuation[hw.playerEvacTripId];
+      if (!finite(hw.playerEvacArrivedAt) || !service?.departures?.some((leg:any) =>
+        leg.arrivedAt === hw.playerEvacArrivedAt && leg.arrivalReceipt && leg.passengers.some((p:any)=>p?.actorId==='player'))) return null;
+    }
+    // Elder assault ledger: one entry per canonical Elder id, timed approach/contact records only.
+    // HP, defeat and patterns stay on the canonical Creature; a save cannot carry a second health.
+    if (!obj(hw.elderPressure)) return null;
+    for (const [eid, elder] of Object.entries(hw.elderPressure) as [string, any][]) {
+      if (!obj(elder) || elder.elderId !== eid || typeof elder.alive !== 'boolean') return null;
+      if (!finite(elder.lairGx) || !finite(elder.lairGy) || !Number.isSafeInteger(elder.lairFloor)) return null;   // Veyra lairs sit on negative floors
+      if (elder.gx !== undefined && (!finite(elder.gx) || !finite(elder.gy))) return null;
+      if (elder.awakenedAt !== undefined && !finite(elder.awakenedAt)) return null;
+      if (elder.defeatedAt !== undefined && !finite(elder.defeatedAt)) return null;
+      if (elder.nextWaveAt !== undefined && !finite(elder.nextWaveAt)) return null;
+      if (elder.march !== undefined) {
+        // An overland march leg: a walked polyline in global tiles and how much of it is covered.
+        const mr = elder.march;
+        if (!obj(mr) || typeof mr.targetPoi !== 'string' || !mr.targetPoi) return null;
+        if (![mr.targetGx, mr.targetGy, mr.startedAt, mr.lastAt, mr.walked, mr.length].every(finite)) return null;
+        if (!Array.isArray(mr.path) || mr.path.length < 4 || mr.path.length % 2 !== 0 || mr.path.length > 2048 || !mr.path.every(integer)) return null;
+        if (mr.walked < 0 || mr.length < 0 || mr.walked > mr.length + 1e-6) return null;
+        if (mr.ignore !== undefined && (!Array.isArray(mr.ignore) || !mr.ignore.every((x: unknown) => typeof x === 'string'))) return null;
+        if (mr.sea !== undefined && (!finite(mr.sea) || mr.sea < 0)) return null;
+      }
+      if (elder.events !== undefined) {
+        if (!Array.isArray(elder.events)) return null;
+        for (const ev of elder.events as any[]) {
+          if (!obj(ev) || typeof ev.id !== 'string' || !ev.id || ev.elderId !== eid || !integer(ev.wave)) return null;
+          if (!['APPROACH', 'CONTACT', 'PENDING_LOCAL', 'BLOCKED'].includes(ev.state)) return null;
+          if (!finite(ev.launchedAt) || !finite(ev.arriveAt) || !finite(ev.targetGx) || !finite(ev.targetGy)) return null;
+          if (ev.affected !== undefined && (!obj(ev.affected) || ![ev.affected.humans, ev.affected.structures, ev.affected.downed, ev.affected.skippedLocal, ev.affected.interposed, ev.affected.ammoSpent].every(integer))) return null;
+        }
+      }
+      // A bounty banked from a body that fell outside the loaded window: real items, real ground.
+      if (elder.pendingLoot !== undefined) {
+        const pl = elder.pendingLoot;
+        if (!obj(pl) || !finite(pl.gx) || !finite(pl.gy) || !Array.isArray(pl.keys) || pl.keys.length === 0) return null;
+        for (const pair of pl.keys as any[]) if (!Array.isArray(pair) || pair.length !== 2 || typeof pair[0] !== 'string' || !integer(pair[1]) || pair[1] < 1) return null;
       }
     }
   }
@@ -438,6 +1057,11 @@ export function validate(raw: any): GameState | null {
     if (cal.changed) r.calendar = cal.ledger;
     if (r.calendar.version !== CALENDAR_VERSION) return null;
   }
+  if (raw.navigation !== undefined) {
+    try { loadNavigation(r, raw.navigation); } catch { return null; }
+    // Consume the wire representation; the restored run now owns its maps.
+    delete raw.navigation;
+  }
   return raw as GameState;
 }
 
@@ -448,15 +1072,17 @@ export function migrate(raw: any): LoadResult {
   if (validate(candidate)) return { gs: candidate, note: `Save format v${raw.version} migrated with its run and profile intact.` };
   return { gs: null, note: `Save format v${raw.version} is incompatible; the original run and profile were left untouched for recovery.` };
 }
-function checksum(text: string) { let h = 2166136261; for (let i = 0; i < text.length; i++) h = Math.imul(h ^ text.charCodeAt(i), 16777619); return (h >>> 0).toString(16).padStart(8, '0'); }
-/** Each serialized snapshot gets a new sequence even when only the simulation changed. */
-export function serializeSnapshot(gs: GameState): string {
-  if (!validate(gs)) throw new Error('Refusing to save invalid game state.');
+/** State text of a snapshot that the caller has ALREADY validated. Each one gets a new sequence even when only the simulation changed. */
+function snapshotPayload(gs: GameState): string {
   if (gs.run && !gs.run.wreckEconomy) gs.run.wreckEconomy = wreckEconomy(gs.run);
   if (!Number.isSafeInteger(gs.revision + 1)) throw new Error('Snapshot sequence exhausted.');
   gs.revision++;
-  const payload = JSON.stringify(gs);
-  return JSON.stringify({ format: FORMAT, payload, checksum: checksum(payload) });
+  const nav=gs.run && saveNavigation(gs.run);
+  return JSON.stringify(nav?{...gs,navigation:nav}:gs);
+}
+export function serializeSnapshot(gs: GameState): string {
+  if (!validate(gs)) throw new Error('Refusing to save invalid game state.');
+  return wrapSnapshot(snapshotPayload(gs));
 }
 type Candidate = { gs: GameState; payload: string; legacy: boolean; index: number };
 function decode(text: string, index: number): Candidate | null {
@@ -467,8 +1093,10 @@ function decode(text: string, index: number): Candidate | null {
       if (raw.format !== FORMAT || typeof raw.payload !== 'string' || raw.checksum !== checksum(raw.payload)) return null;
       payload = raw.payload; state = JSON.parse(payload);
     }
+    const nav=state?.navigation;
     const v = validate(state); if (!v) return null;
-    return { gs: v, payload: JSON.stringify(v), legacy: raw?.format === undefined, index };
+    const normalized=JSON.stringify(nav===undefined?v:{...v,navigation:nav});
+    return { gs: v, payload: normalized, legacy: raw?.format === undefined, index };
   } catch { return null; }
 }
 /** Legacy writes did not increment revision for simulation. Same-run old copies can
@@ -476,7 +1104,20 @@ function decode(text: string, index: number): Candidate | null {
  * New-format ties or ties without an ordering signal remain ambiguous. */
 export function selectSnapshots(copies: (string | null)[]): { gs: GameState | null; bad: number[]; conflict: boolean; unsupported: boolean; legacyAlternate: number | null } {
   const bad: number[] = []; const valid: Candidate[] = []; let unsupported = false;
-  copies.forEach((text, i) => { if (text === null) return; try { const outer = JSON.parse(text); const value = outer?.format === FORMAT && typeof outer.payload === 'string' ? JSON.parse(outer.payload) : outer; if (Number.isInteger(value?.version) && value.version > SAVE_VERSION) unsupported = true; } catch { /* reported as damaged */ } const v = decode(text, i); if (v) valid.push(v); else bad.push(i); });
+  copies.forEach((text, i) => {
+    if (text === null) return;
+    // Usually both stores hold identical bytes. Hydrate large search maps just
+    // once in that case; keep per-copy damage diagnostics for quarantine.
+    const same = copies.indexOf(text);
+    if (same < i) { if (bad.includes(same)) bad.push(i); return; }
+    try {
+      const outer = JSON.parse(text);
+      const value = outer?.format === FORMAT && typeof outer.payload === 'string' ? JSON.parse(outer.payload) : outer;
+      if (Number.isInteger(value?.version) && value.version > SAVE_VERSION) unsupported = true;
+    } catch { /* reported as damaged */ }
+    const v = decode(text, i);
+    if (v) valid.push(v); else bad.push(i);
+  });
   valid.sort((a, b) => b.gs.revision - a.gs.revision);
   let top = valid[0]; let conflict = false; let legacyAlternate: number | null = null;
   if (top && valid[1] && top.gs.revision === valid[1].gs.revision && top.payload !== valid[1].payload) {
@@ -512,6 +1153,7 @@ export async function load(): Promise<LoadResult> {
   const m = migrate(selected.gs); const r = m.gs?.run;
   if (r && !r.wreckEconomy) r.wreckEconomy = wreckEconomy(r);
   if (r?.layoutId && isVeyra05Layout(r.layoutId)) {
+    syncVeyraPlacement(r);
     setActiveLayout(r.layoutId);
     const ww = getWindowWorld(r.layoutId);
     syncFloor(m.gs!, ww, ww.floors, markDirty);
@@ -542,10 +1184,44 @@ export async function load(): Promise<LoadResult> {
     }
   }
   const legacy = r && Object.values(r.entities).some(e => e.station?.queue.some(j => j.reserved === undefined) || e.legacyJobs?.queue.length);
-  const notes = [selected.bad.length ? 'A damaged save copy was quarantined; a valid copy was recovered, but it may be older.' : '', selected.legacyAlternate !== null ? 'An older save copy was preserved; the later same-run snapshot was continued.' : '', !idbReadable || !localReadable ? 'A browser storage copy could not be read and will not be overwritten this session.' : '', m.note || '', legacy ? 'Older queued jobs have no recorded inputs: finish them before cancellation or reclaim; destroyed jobs can be resumed from their recovery bag.' : ''].filter(Boolean);
+  // Say it once per run, not on every boot: the flag is consumed here and persisted by the next save.
+  const retiredNotice = !!r?.migrated?.retiredRecipes && !r.migrated.retiredNoticeShown;
+  const retired = retiredNotice ? r.migrated!.retiredRecipes! : 0;
+  // Item set v2 receipt: how many stacks were swapped for their successor on this load. Shown once, then cleared.
+  const swapped = r?.migrated?.retiredItemsUnseen || 0;
+  if (retiredNotice || swapped) { r!.migrated = { ...r!.migrated!, retiredNoticeShown: true }; delete r!.migrated.retiredItemsUnseen; }
+  const notes = [selected.bad.length ? 'A damaged save copy was quarantined; a valid copy was recovered, but it may be older.' : '', selected.legacyAlternate !== null ? 'An older save copy was preserved; the later same-run snapshot was continued.' : '', !idbReadable || !localReadable ? 'A browser storage copy could not be read and will not be overwritten this session.' : '', m.note || '', legacy ? 'Older queued jobs have no recorded inputs: finish them before cancellation or reclaim; destroyed jobs can be resumed from their recovery bag.' : '', retired ? `Recipe revision: ${retired} retired Fuel Canister formula${retired === 1 ? ' was' : 's were'} removed from your known recipes. Anything already queued or written on paper for it was kept; canisters now come from refining real oil.` : '', swapped ? `Item update: ${swapped} stack${swapped === 1 ? '' : 's'} of retired items ${swapped === 1 ? 'was' : 'were'} exchanged for the replacement (${RETIRED_ITEM_IDS.filter(k => liveItemId(k) !== k).map(k => `${ITEMS[k]?.name ?? k} → ${liveItemPer(k) > 1 ? liveItemPer(k) + ' ' : ''}${ITEMS[liveItemId(k)]?.name ?? liveItemId(k)}`).join(', ')}). Nothing was removed.` : ''].filter(Boolean);
   return { gs: m.gs, note: notes.join(' ') || undefined };
 }
 let writeTail: Promise<unknown> = Promise.resolve();
+/** True once an IndexedDB write of this page load succeeded and none failed since. A light save needs it. */
+let idbHealthy = false;
+// ---- background save writer -------------------------------------------------------------------------------------
+// One small worker owns the IndexedDB transaction of every save, so the game thread never copies a megabyte of text
+// into the database between two frames. Any failure (no Worker, a crash, no answer) retires it for this page load and
+// the write happens on the game thread exactly as before.
+let saveWriter: Worker | null | undefined; let writerSeq = 0;
+const writerWaiting = new Map<number, (status: SaveWriteReply['status'] | null) => void>();
+function retireWriter() { try { saveWriter?.terminate(); } catch { /* */ } saveWriter = null; for (const done of writerWaiting.values()) done(null); writerWaiting.clear(); }
+function writer(): Worker | null {
+  if (saveWriter !== undefined) return saveWriter;
+  try {
+    if (typeof Worker === 'undefined' || typeof indexedDB === 'undefined') return saveWriter = null;
+    const w = new Worker(new URL('./save-writer.worker.ts', import.meta.url), { type: 'module' });
+    w.onmessage = ({ data }: MessageEvent<SaveWriteReply>) => { const done = writerWaiting.get(data.id); if (done) { writerWaiting.delete(data.id); done(data.status); } };
+    w.onerror = () => retireWriter(); w.onmessageerror = () => retireWriter();
+    return saveWriter = w;
+  } catch { return saveWriter = null; }
+}
+/** Null: the background writer could not take this write; the caller writes on the game thread. */
+function writeInBackground(body: { payload: string } | { text: string }): Promise<SaveWriteReply['status'] | null> {
+  const w = writer(); if (!w) return Promise.resolve(null);
+  return new Promise(res => {
+    const id = ++writerSeq; const timer = setTimeout(() => { if (writerWaiting.has(id)) retireWriter(); }, 15000);
+    writerWaiting.set(id, status => { clearTimeout(timer); res(status); });
+    try { w.postMessage({ id, db: DB, store: STORE, key: KEY, ...body } as SaveWriteRequest); } catch { writerWaiting.delete(id); clearTimeout(timer); retireWriter(); res(null); }
+  });
+}
 export type SaveCategory = 'ok' | 'invalid-state' | 'serialize-error' | 'local-write' | 'readback-conflict' | 'idb-init' | 'idb-transaction';
 export interface SaveOutcome {
   ok: boolean; category: SaveCategory; revision: number | null;
@@ -557,15 +1233,45 @@ export interface SaveOutcome {
 let lastOutcome: SaveOutcome | null = null; const warnedSave = new Set<string>();
 export function lastSaveOutcome(): SaveOutcome | null { return lastOutcome; }
 /** Bounded classification of why a game state is not a valid save. Returns a class name, never values from the save. */
+/**
+ * The exact stack invariant `validate` enforces, as a reason string (null = the stack is well formed). Shared by
+ * `validate` and `diagnoseInvalidState` so a refused save names the precise rule that failed instead of returning a
+ * generic 'other' — e.g. a blueprint minted without a recipe meta, a Core with no durability, or a duplicate UID.
+ */
+export function stackInvariant(s: any, uids: Set<string>, beforeNext: (id: string, re: RegExp) => boolean): string | null {
+  if (!obj(s)) return 'not-a-stack';
+  if (typeof s.uid !== 'string' || !s.uid) return 'no-uid';
+  if (!beforeNext(s.uid, /^s([a-z0-9]+)$/)) return `uid-not-before-nextid:${s.uid}`;
+  if (uids.has(s.uid)) return `duplicate-uid:${s.uid}`;
+  if (typeof s.key !== 'string' || !has(ITEMS, s.key)) return 'unknown-item';
+  if (!integer(s.qty) || s.qty < 1) return 'bad-qty';
+  if (s.qty > ITEMS[s.key].max) return `over-max:${s.key}`;
+  if (s.upgrade !== undefined && (s.key !== 'cart_kit' || s.upgrade !== 'freight')) return 'bad-upgrade';
+  if ((s.key === 'keycard' || isAccessCard(s.key)) && s.charge !== undefined && (!integer(s.charge) || s.charge < 1 || s.charge > 100 || s.qty !== 1)) return 'bad-card-charge';
+  if (s.key === 'motorbike_kit' && (!finite(s.dur) || s.dur < 0 || s.dur > BAL.motorbike.maxHp)) return 'bad-motorbike-dur';
+  if (s.owed !== undefined && (!ITEMS[s.key].creatorCore || !obj(s.owed) || !Object.keys(s.owed).length || Object.entries(s.owed).some(([k, v]) => !['energy_basic', 'energy_refined', `essence_${ITEMS[s.key].essence}`].includes(k) || !integer(v) || (v as number) < 1 || (v as number) > 56))) return 'bad-owed';
+  if (s.reserves !== undefined && (!ITEMS[s.key].creatorCore || !obj(s.reserves) || Object.keys(s.reserves).sort().join(',') !== 'basic,refined,signature' || !['basic','refined','signature'].every(k => integer(s.reserves[k]) && s.reserves[k] >= 0 && s.reserves[k] <= ({basic:40,refined:12,signature:4} as any)[k]))) return 'bad-reserves';
+  if (ITEMS[s.key].creatorCore) {
+    if (![1, 2, 3].includes(s.lvl) || !finite(s.dur) || s.dur < 0 || s.dur > CORE_V2.maxDur) return 'core-bad-lvl-or-dur';
+    if (s.reserves !== undefined) return 'core-reserves-in-v2';
+    if (s.cd !== undefined && (!obj(s.cd) || Object.entries(s.cd).some(([k, v]) => !['basic', 'refined', 'signature'].includes(k) || !finite(v) || (v as number) < 0))) return 'core-bad-cd';
+    if (s.upg !== undefined && (!obj(s.upg) || s.upg.to !== s.lvl + 1 || !finite(s.upg.readyAt))) return 'core-bad-upg';
+  } else if (s.lvl !== undefined || s.cd !== undefined || s.upg !== undefined) return 'non-core-with-core-fields';
+  if (s.dur !== undefined && (!finite(s.dur) || s.dur < 0)) return 'bad-dur';
+  if (s.charge !== undefined && (!finite(s.charge) || s.charge < 0)) return 'bad-charge';
+  if (s.production !== undefined && (!obj(s.production) || typeof s.production.jobId!=='string' || !/^(?:j|hj)[a-z0-9]+$/.test(s.production.jobId) || typeof s.production.workerId!=='string' || !/^h[a-z0-9]+$/.test(s.production.workerId))) return 'bad-production-claim';
+  if (s.meta !== undefined && typeof s.meta !== 'string') return 'bad-meta-type';
+  if (s.key === 'blueprint' && (!s.meta || (!has(RECIPES, s.meta) && !hasLegacyDefinition(s.meta)))) return `blueprint-without-recipe:${s.meta ?? 'none'}`;
+  uids.add(s.uid); return null;
+}
+
 export function diagnoseInvalidState(gs: GameState): string {
   const r = gs.run; if (!r) return 'no-run';
   const seen = new Set<string>();
+  const beforeNext = (id: string, re: RegExp) => { const m = re.exec(id); return !m || parseInt(m[1], 36) < r.nextId; };
   for (const c of Object.values(r.custody) as any[]) for (const s of (c?.slots ?? []) as any[]) {
     if (!s) continue;
-    if (!ITEMS[s.key]) return 'unknown-item';
-    if (!Number.isInteger(s.qty) || s.qty < 1) return 'bad-qty';
-    if (s.qty > ITEMS[s.key].max) return `over-max:${s.key}`;
-    if (seen.has(s.uid)) return 'duplicate-uid'; seen.add(s.uid);
+    const why = stackInvariant(s, seen, beforeNext); if (why) return why;
   }
   return 'other';
 }
@@ -573,7 +1279,7 @@ export function diagnoseInvalidState(gs: GameState): string {
  * Local-first save with bounded diagnostics. Validation happens BEFORE any write, so an invalid new state never
  * overwrites the last valid snapshot. localStorage and IndexedDB are both written; the save succeeds if either holds the snapshot.
  */
-export async function saveDetailed(gs: GameState): Promise<SaveOutcome> {
+export async function saveDetailed(gs: GameState, opts: { light?: boolean } = {}): Promise<SaveOutcome> {
   if ((gs as any).__ephemeralInspect) {
     return { ok: true, category: 'ok', revision: gs.revision, localStatus: 'skipped', idbStatus: 'skipped' };
   }
@@ -583,23 +1289,37 @@ export async function saveDetailed(gs: GameState): Promise<SaveOutcome> {
     if (key && !warnedSave.has(key)) { warnedSave.add(key); console.warn(`[save] ${key}`); }   // category only; no payload
     return o;
   };
+  // The one validation of this save (the state text below is produced from the state that just passed it).
   if (!validate(gs)) return record({ ok: false, category: 'invalid-state', revision: null, localStatus: 'skipped', idbStatus: 'skipped', invariant: diagnoseInvalidState(gs) });
-  let text: string;
-  try { text = serializeSnapshot(gs); }
+  let payload: string;
+  try { payload = snapshotPayload(gs); }
   catch { return record({ ok: false, category: 'serialize-error', revision: null, localStatus: 'skipped', idbStatus: 'skipped' }); }
   const revision = gs.revision;
-  let localStatus: SaveOutcome['localStatus'] = 'skipped';
-  if (localReadable) {
-    try { localStorage.setItem(LS, text); localStatus = localStorage.getItem(LS) === text ? 'ok' : 'readback-conflict'; }
-    catch { localStatus = 'local-write'; }
-  }
+  // A light save (the timed autosave while the player is moving or fighting) hands the state text to the background
+  // writer and leaves the game thread at once: the envelope, the checksum and the database transaction happen there.
+  // It is only taken while that database is known to be accepting writes; otherwise this is a full save.
+  const light = !!opts.light && idbReadable && idbHealthy && !!writer();
+  let text: string | undefined;
+  const writeLocal = (): SaveOutcome['localStatus'] => {
+    if (!localReadable) return 'skipped';
+    text ??= wrapSnapshot(payload);
+    try { localStorage.setItem(LS, text); return localStorage.getItem(LS) === text ? 'ok' : 'readback-conflict'; }
+    catch { return 'local-write'; }
+  };
+  let localStatus: SaveOutcome['localStatus'] = light ? 'skipped' : writeLocal();
   const write = async (): Promise<SaveOutcome['idbStatus']> => {
     if (!idbReadable) return 'idb-init';
+    const viaWriter = await writeInBackground(text === undefined ? { payload } : { text });
+    if (viaWriter) return viaWriter;
     const d = await db(); if (!d) return 'idb-init';
-    return await new Promise<SaveOutcome['idbStatus']>(res => { try { const tx = d.transaction(STORE, 'readwrite'); tx.objectStore(STORE).put(text, KEY); tx.oncomplete = () => res('ok'); tx.onerror = () => res('idb-transaction'); tx.onabort = () => res('idb-transaction'); } catch { res('idb-transaction'); } });
+    const stored = text ??= wrapSnapshot(payload);
+    return await new Promise<SaveOutcome['idbStatus']>(res => { try { const tx = d.transaction(STORE, 'readwrite'); tx.objectStore(STORE).put(stored, KEY); tx.oncomplete = () => res('ok'); tx.onerror = () => res('idb-transaction'); tx.onabort = () => res('idb-transaction'); } catch { res('idb-transaction'); } });
   };
   const result = writeTail.then(write, write) as Promise<SaveOutcome['idbStatus']>; writeTail = result;
   const idbStatus: SaveOutcome['idbStatus'] = await result;
+  idbHealthy = idbStatus === 'ok';
+  // A light save whose database write failed still has its state text: keep the old guarantee and store it locally now.
+  if (light && idbStatus !== 'ok') localStatus = writeLocal();
   const ok = localStatus === 'ok' || idbStatus === 'ok';
   if (ok) return record({ ok: true, category: 'ok', revision, localStatus, idbStatus });
   const category: SaveCategory = idbStatus === 'idb-init' || idbStatus === 'idb-transaction' ? idbStatus : localStatus === 'local-write' ? 'local-write' : 'readback-conflict';

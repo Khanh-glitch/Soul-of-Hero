@@ -2,7 +2,7 @@
 // for a map revision. The map supplies semantics; this module never paints terrain,
 // invents POIs or creates special/unique loot. All rates below are TUNABLE.
 import { hash2 } from './core';
-import { SOURCES } from './catalog';
+import { SOURCES, isIndustrialSalvage, isSalvageSource } from './catalog';
 
 export type Biome = 'water'|'sand'|'grass'|'meadow'|'forest'|'marsh'|'hill'|'snow'|'ash'|'toxic'|'road'|'floor'|'wall'|'lava';
 export interface EconomyMap {
@@ -31,8 +31,8 @@ export function validateEconomyMap(m: EconomyMap): string[] {
     const flags=['freshwater','coast','walkable','buildable','cargoPassable','road','protected','industrial'] as const;
     for (let i=0;i<n;i++) {
       if(!biomes.has(m.biome[i])) {e.push(`unknown biome at cell ${i}`);break;}
-      if(!Number.isFinite(m.elevation[i])||!Number.isFinite(m.slope[i])||m.slope[i]<0||![m.moisture[i],m.temperature[i]].every(v=>Number.isFinite(v)&&v>=0&&v<=1)) {e.push(`invalid terrain or climate at cell ${i}`);break;}
-      if(flags.some(k=>m[k][i]!==0&&m[k][i]!==1)) {e.push(`invalid geographic mask at cell ${i}`);break;}
+      if(!Number.isFinite(m.elevation[i])||!Number.isFinite(m.slope[i])||m.slope[i]<0||(!Number.isFinite(m.moisture[i])||m.moisture[i]<0||m.moisture[i]>1||!Number.isFinite(m.temperature[i])||m.temperature[i]<0||m.temperature[i]>1)) {e.push(`invalid terrain or climate at cell ${i}`);break;}
+      if((m.freshwater[i]!==0&&m.freshwater[i]!==1)||(m.coast[i]!==0&&m.coast[i]!==1)||(m.walkable[i]!==0&&m.walkable[i]!==1)||(m.buildable[i]!==0&&m.buildable[i]!==1)||(m.cargoPassable[i]!==0&&m.cargoPassable[i]!==1)||(m.road[i]!==0&&m.road[i]!==1)||(m.protected[i]!==0&&m.protected[i]!==1)||(m.industrial[i]!==0&&m.industrial[i]!==1)) {e.push(`invalid geographic mask at cell ${i}`);break;}
     }
   }
   if(!Array.isArray(m.starts)||!m.starts.length) e.push('at least one authored start required');
@@ -47,44 +47,111 @@ export function reachable(m: EconomyMap, x:number,y:number, maxSteps=Infinity): 
   while(h<t){const i=q[h++],px=i%m.width,py=Math.floor(i/m.width); if(dist[i]>=maxSteps)continue;for(const [dx,dy] of OFFSETS){const nx=px+dx,ny=py+dy;if(nx<0||ny<0||nx>=m.width||ny>=m.height)continue;const j=ny*m.width+nx;if(dist[j]<0&&m.walkable[j]){dist[j]=dist[i]+1;q[t++]=j;}}}return dist;
 }
 
+/** Exact union of unlimited walkability floods from all authored starts. This
+ * query does not need distances: enqueue each reachable cell ONCE, rather than
+ * traversing the same component once per start. Blocked starts contribute none. */
+export function reachableUnion(m:EconomyMap):Uint8Array {
+  const n=m.width*m.height,seen=new Uint8Array(n),q=new Int32Array(n);let head=0,tail=0;
+  for(const s of m.starts){if(s.x<0||s.y<0||s.x>=m.width||s.y>=m.height)continue;const i=s.y*m.width+s.x;if(m.walkable[i]&&!seen[i]){seen[i]=1;q[tail++]=i;}}
+  while(head<tail){const i=q[head++],x=i%m.width,y=Math.floor(i/m.width);
+    for(const [dx,dy]of OFFSETS){const nx=x+dx,ny=y+dy;if(nx<0||ny<0||nx>=m.width||ny>=m.height)continue;const j=ny*m.width+nx;if(!seen[j]&&m.walkable[j]){seen[j]=1;q[tail++]=j;}}
+  }
+  return seen;
+}
+
+/** Source-placement proximity ONLY, never a walking route. The original7x7
+ * stencil only used distances0..3; distances4..6 all rejected roadside salvage.
+ * Propagate Manhattan distance through cells without inventing road access. */
+export function placementRoadDistance(m:EconomyMap,reached:Uint8Array):Uint8Array {
+  const n=m.width*m.height,dist=new Uint8Array(n).fill(99),q=new Int32Array(n);let head=0,tail=0;
+  for(let i=0;i<n;i++)if(m.road[i]&&reached[i]&&m.cargoPassable[i]){dist[i]=0;q[tail++]=i;}
+  while(head<tail){const i=q[head++];if(dist[i]>=3)continue;const x=i%m.width,y=Math.floor(i/m.width);
+    for(const [dx,dy]of OFFSETS){const nx=x+dx,ny=y+dy;if(nx<0||ny<0||nx>=m.width||ny>=m.height)continue;const j=ny*m.width+nx;if(dist[j]===99){dist[j]=dist[i]+1;q[tail++]=j;}}
+  }
+  return dist;
+}
+
 /** Stable independently keyed random streams, with explicit weighted competition per cell.
  * A source's presence does not depend on insertion order in the source catalog. */
-export function compileEconomy(m: EconomyMap): EconomyPlacement {
-  const errors=validateEconomyMap(m); const n=m.width*m.height; if(errors.length) return {sources:[],errors};
-  const reached=new Uint8Array(n); for(const s of m.starts){const d=reachable(m,s.x,s.y);if(d[s.y*m.width+s.x]<0) errors.push(`start ${s.id} is not walkable`);for(let i=0;i<n;i++)if(d[i]>=0)reached[i]=1;}
-  const out:(string|null)[]=Array(n).fill(null), salt=stableHash(`${m.id}/${m.revision}/v3`) ^ m.seed;
-  const nearRoad=(x:number,y:number)=>{let best=99;for(let dy=-3;dy<=3;dy++)for(let dx=-3;dx<=3;dx++){const nx=x+dx,ny=y+dy;if(nx<0||ny<0||nx>=m.width||ny>=m.height)continue;if(m.road[ny*m.width+nx] && reached[ny*m.width+nx] && m.cargoPassable[ny*m.width+nx])best=Math.min(best,Math.abs(dx)+Math.abs(dy));}return best;};
-  for(let y=1;y<m.height-1;y++)for(let x=1;x<m.width-1;x++){
-    const i=y*m.width+x, biome=m.biome[i]; if(!m.walkable[i]||!reached[i]||m.protected[i]||m.road[i]||['water','road','floor','wall','lava'].includes(biome)||m.slope[i]>.6)continue;
-    const roadDist=nearRoad(x,y), cold=m.temperature[i]<.3, warm=m.temperature[i]>.55, moist=m.moisture[i];
-    // All weights are per eligible tile; expected total is proportional to suitable area.
-    const rates:Record<string,number>={};
+/** G1A: roadside split of the legacy salvage share. Same cells win, only the archetype changes. */
+export const G1A_ROADSIDE_WEIGHTS: readonly [string, number][] = [['road_salvage_bale', 60], ['road_relay_wreck', 25], ['road_fuel_rack', 15]];
+export function pickWeighted(weights: readonly [string, number][], u: number): string {
+  let total = 0; for (const [, w] of weights) total += w; let acc = 0;
+  for (const [k, w] of weights) { acc += w / total; if (u < acc) return k; }
+  return weights[weights.length - 1][0];
+}
+/** `rules` 3 = frozen legacy placement (byte-identical, pinned by every existing save's digest).
+ *  `rules` 4 = G1A: the SAME keyed competition, but every cell won by `scrap`/`wreck` becomes one of
+ *  the three industrial salvage archetypes (60/25/15, keyed by global coordinates). No density is added. */
+/** Timber (the most abundant solid, tens of thousands of trees): the only natural solids a G1A salvage node may displace in the blocker competition. */
+export const G1A_YIELDING_TREES: ReadonlySet<string> = new Set(['oak','pine','snowpine','palm','willow','deadtree']);
+const rateTables=new Map<number,readonly (readonly [string,number,number])[]>();
+const BIOME_RATE_INDEX:Record<Biome,number>={water:0,sand:1,grass:2,meadow:3,forest:4,marsh:5,hill:6,snow:7,ash:8,toxic:9,road:10,floor:11,wall:12,lava:13};
+/** The exact legacy insertion order/rate arithmetic, compiled once per physical
+ * biome/climate/road class. Hash key salts are immutable, not new RNG draws. */
+function placementRates(biome:Biome,cold:boolean,warm:boolean,moist:number,nearRoad:boolean,industrial:boolean,coast:boolean){
+ const signature=(BIOME_RATE_INDEX[biome]<<6)|(+cold)|(+warm<<1)|(+ (moist>.5)<<2)|(+nearRoad<<3)|(+industrial<<4)|(+coast<<5);
+ const hit=rateTables.get(signature);if(hit)return hit;
+  const rates:Record<string,number>={};
     if(biome==='forest'){rates[cold?'pine':'oak']=.28; rates.bush=.035;rates.grass=.045;rates.herb=.015;rates.rock=.012;}
     if(biome==='grass'){rates.oak=.045;rates.bush=.04;rates.grass=.075;rates.herb=.01;rates.rock=.02;}
     if(biome==='meadow'){rates.oak=.018;rates.bush=.055;rates.grass=.115;rates.rock=.02;}
     if(biome==='snow'){rates.snowpine=.12;rates.rock=.035;rates.crystal=.018;}
     if(biome==='hill'){rates.rock=.10;rates.iron=.065;rates.coalv=.027;if(cold)rates.crystal=.014;}
-    if(biome==='sand'){if(warm && m.coast[i])rates.palm=.06;rates.rock=.012;if(m.coast[i])rates.salt_shale=.16;}
+    if(biome==='sand'){if(warm && coast)rates.palm=.06;rates.rock=.012;if(coast)rates.salt_shale=.16;}
     if(biome==='marsh'){rates.willow=.06;rates.reed=moist>.5?.14:.07;rates.mushroom=.035;rates.herb=.014;}
     if(biome==='ash'){rates.sulfur=.035;rates.rock=.04;rates.deadtree=.02;rates.coalv=.018;}
     if(biome==='toxic'){rates.deadtree=.02;rates.iron=.008;}
-    if(roadDist>=2&&roadDist<=3){rates.scrap=.075;rates.wreck=.015;}
-    if(m.industrial[i]){rates.scrap=(rates.scrap||0)+.035;rates.wreck=(rates.wreck||0)+.012;}
+    if(nearRoad){rates.scrap=.075;rates.wreck=.015;}
+    if(industrial){rates.scrap=(rates.scrap||0)+.035;rates.wreck=(rates.wreck||0)+.012;}
+ const out=Object.entries(rates).map(([key,p])=>[key,p,stableHash(key)] as const);rateTables.set(signature,out);return out;
+}
+export function compileEconomy(m: EconomyMap, rules: 3 | 4 = 3): EconomyPlacement {
+  const errors=validateEconomyMap(m); const n=m.width*m.height; if(errors.length) return {sources:[],errors};
+  for(const s of m.starts)if(!m.walkable[s.y*m.width+s.x])errors.push(`start ${s.id} is not walkable`);
+  const reached=reachableUnion(m);
+  const out:(string|null)[]=Array(n).fill(null), salt=stableHash(`${m.id}/${m.revision}/v3`) ^ m.seed;
+  const roadDistances=placementRoadDistance(m,reached);
+  const fromWreck=new Uint8Array(n); // G1A-R1: cells the legacy rules gave a (solid) Wreck, as opposed to (walk-over) Roadside Scrap
+  for(let y=1;y<m.height-1;y++)for(let x=1;x<m.width-1;x++){
+    const i=y*m.width+x, biome=m.biome[i]; if(!m.walkable[i]||!reached[i]||m.protected[i]||m.road[i]||['water','road','floor','wall','lava'].includes(biome)||m.slope[i]>.6)continue;
+    const roadDist=roadDistances[i], cold=m.temperature[i]<.3, warm=m.temperature[i]>.55, moist=m.moisture[i];
+    // All weights are per eligible tile; expected total is proportional to suitable area.
+    const rates=placementRates(biome,cold,warm,moist,roadDist>=2&&roadDist<=3,!!m.industrial[i],!!m.coast[i]);
     let choice:string|null=null,best=Infinity;
     const gx=x+(m.origin?.x??0),gy=y+(m.origin?.y??0);
-    for(const [key,p] of Object.entries(rates)){ const u=Math.max(hash2(gx,gy,salt ^ stableHash(key)),1e-9);const score=-Math.log(u)/p;if(score<best){best=score;choice=key;} }
+    for(const [key,p,keyHash] of rates){ const u=Math.max(hash2(gx,gy,salt ^ keyHash),1e-9);const score=-Math.log(u)/p;if(score<best){best=score;choice=key;} }
     if(best<1) out[i]=choice;
+    if(rules===4 && out[i]==='wreck') fromWreck[i]=1;
+    if(rules===4 && (out[i]==='scrap'||out[i]==='wreck')){
+      // The new archetypes are solid: only stand them where all eight neighbours are open ground, so one can never plug a one-tile gap.
+      let open=true; for(let dy=-1;dy<=1&&open;dy++)for(let dx=-1;dx<=1;dx++){ if(!m.walkable[(y+dy)*m.width+x+dx]||m.road[(y+dy)*m.width+x+dx]&&false){open=false;break;} }
+      out[i]=open?pickWeighted(G1A_ROADSIDE_WEIGHTS,hash2(gx,gy,salt ^ 0x61a4)):null;
+    }
   }
+  // G1A-R1: a salvage node must never cost the map a mineral node (rock, ore, crystal ...). Legacy Roadside Scrap was not
+  // solid and never competed; the solid trio does, and with its priority it evicted whatever stood beside it. So:
+  //   * salvage standing where legacy had Scrap is withdrawn when it touches a mineral (the mineral was never contested);
+  //   * salvage standing where legacy had a Wreck contests a touching mineral with the plain legacy priority, i.e. the same
+  //     draw the Wreck had, so the outcome for the mineral is what it was before G1A.
+  // Only timber, the most abundant node by far, always yields to salvage.
+  const contested=new Uint8Array(n);
+  if(rules===4){const mineral=(k:string|null|undefined)=>!!k&&!isIndustrialSalvage(k)&&!!SOURCES[k]?.block&&!G1A_YIELDING_TREES.has(k);
+    const drop:number[]=[];for(let i=0;i<n;i++){if(!isIndustrialSalvage(out[i]))continue;const x=i%m.width,y=Math.floor(i/m.width);
+      if(!OFFSETS.some(([dx,dy])=>{const nx=x+dx,ny=y+dy;return nx>=0&&ny>=0&&nx<m.width&&ny<m.height&&mineral(out[ny*m.width+nx]);}))continue;
+      if(fromWreck[i])contested[i]=1;else drop.push(i);}
+    for(const i of drop)out[i]=null;}
   // Blockers compete using a separate spatial priority, not scan order. This
   // prevents touching solid nodes from forming artificial one-tile walls.
   const blockers:number[]=[];for(let i=0;i<n;i++)if(out[i]&&SOURCES[out[i]!]?.block)blockers.push(i);
   const ox=m.origin?.x??0,oy=m.origin?.y??0;
-  blockers.sort((a,b)=>hash2(ox+(a%m.width),oy+Math.floor(a/m.width),salt ^ 0x275e)-hash2(ox+(b%m.width),oy+Math.floor(b/m.width),salt ^ 0x275e)||a-b);
+  const priorities=new Float64Array(n);for(const a of blockers)priorities[a]=hash2(ox+(a%m.width),oy+Math.floor(a/m.width),salt ^ 0x275e)-(rules===4&&isIndustrialSalvage(out[a])&&!contested[a]?1:0); // G1A: salvage keeps its cell, so the Parts share is not thinned away by neighbouring trees
+  blockers.sort((a,b)=>priorities[a]-priorities[b]||a-b);
   const accepted=new Uint8Array(n);for(const i of blockers){const x=i%m.width,y=Math.floor(i/m.width);if(OFFSETS.some(([dx,dy])=>accepted[(y+dy)*m.width+x+dx]))out[i]=null;else accepted[i]=1;}
   // Remove candidates which became physically isolated by the combined source
   // layout. Never synthesize a fallback source or alter map geometry.
   const pass = new Uint8Array(n); for (let i=0;i<n;i++) pass[i] = +(!!m.walkable[i] && !(out[i] && SOURCES[out[i]!]?.block));
-  const accessible = new Uint8Array(n); for (const start of m.starts) { const d=reachable({...m,walkable:pass},start.x,start.y); for(let i=0;i<n;i++) if(d[i]>=0) accessible[i]=1; }
+  const accessible=reachableUnion({...m,walkable:pass});
   for(let i=0;i<n;i++) if(out[i] && !accessible[i]) { const x=i%m.width,y=Math.floor(i/m.width); if(!OFFSETS.some(([dx,dy])=>x+dx>=0&&y+dy>=0&&x+dx<m.width&&y+dy<m.height&&accessible[(y+dy)*m.width+x+dx])) out[i]=null; }
   return {sources:out,errors};
 }
@@ -100,7 +167,7 @@ export function diagnoseStarts(m: EconomyMap, sources:(string|null)[], steps=30)
     if(![...types].some(k=>['oak','pine','snowpine','palm','willow'].includes(k)))errors.push(`${start.id}: no accessible wood within ${steps} steps`);
     if(!types.has('rock'))errors.push(`${start.id}: no accessible stone within ${steps} steps`);
     if(!types.has('bush')&&!types.has('mushroom'))errors.push(`${start.id}: no accessible plant food within ${steps} steps`);
-    if(!types.has('scrap')&&!types.has('wreck'))errors.push(`${start.id}: no accessible salvage within ${steps} steps`);
+    if(![...types].some(isSalvageSource))errors.push(`${start.id}: no accessible salvage within ${steps} steps`);
     if(!water)errors.push(`${start.id}: no accessible fresh water within ${steps} steps`);
     if(buildable<9)errors.push(`${start.id}: fewer than 9 accessible buildable cells within ${steps} steps`);
   }return errors;

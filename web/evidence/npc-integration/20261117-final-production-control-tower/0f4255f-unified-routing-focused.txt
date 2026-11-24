@@ -1,0 +1,30 @@
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.12 [39m[90m/home/user/Soul-of-Hero/web[39m
+
+[90mstdout[2m | tests/npc-work-counters.test.ts[2m > [22m[2mcounts bounded natural-population work without changing world authority
+[22m[39m{"case":"natural-10s","result":[],"counts":{"worldSlices":263,"plannerActivations":10,"actorPlans":25,"regionCompilations":8,"renderCompilations":0,"routeExpansions":3034,"entityScans":1843},"elapsedMs":5059.599880000001,"actors":286}
+
+ [32m✓[39m tests/npc-work-counters.test.ts [2m([22m[2m1 test[22m[2m)[22m[33m 6705[2mms[22m[39m
+   [33m[2m✓[22m[39m counts bounded natural-population work without changing world authority [33m 6704[2mms[22m[39m
+ [32m✓[39m tests/npc-p0-corrective.test.ts [2m([22m[2m27 tests[22m[2m)[22m[33m 5347[2mms[22m[39m
+     [33m[2m✓[22m[39m P0.1: first tick after startRun does not zero hunger/thirst or down humans [33m 1733[2mms[22m[39m
+     [33m[2m✓[22m[39m needs advancement does not suppress autonomous human movement at the same timestamp [33m 461[2mms[22m[39m
+     [33m[2m✓[22m[39m P0.6: stepHumans runs consume/work/move without corrupting state [33m 1380[2mms[22m[39m
+ [32m✓[39m tests/npc-global-navigation.test.ts [2m([22m[2m10 tests[22m[2m)[22m[33m 3887[2mms[22m[39m
+     [33m[2m✓[22m[39m derived sorted entity views observe direct add/delete/replacement/archive changes immediately [33m 1719[2mms[22m[39m
+     [33m[2m✓[22m[39m walks a real offscreen cardinal route with saved partial tile time and no repeated settlement [33m 334[2mms[22m[39m
+     [33m[2m✓[22m[39m does not restart a proven failed search until physical topology changes [33m 327[2mms[22m[39m
+     [33m[2m✓[22m[39m reads cached distant freshwater through live ice/expiry and pins map placement to the run [33m 1095[2mms[22m[39m
+ [32m✓[39m tests/npc-residential-ownership.test.ts [2m([22m[2m8 tests[22m[2m)[22m[33m 2290[2mms[22m[39m
+     [33m[2m✓[22m[39m cargo moves the same UID once and a full destination restores the original source slot [33m 1717[2mms[22m[39m
+ [32m✓[39m tests/npc-causal-needs.test.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 2240[2mms[22m[39m
+     [33m[2m✓[22m[39m does not impose a minute tick when the next physical threshold is hours away [33m 1614[2mms[22m[39m
+     [33m[2m✓[22m[39m keeps bounded fair reviews for every actor with no eligible action, without removing anyone [33m 323[2mms[22m[39m
+ [32m✓[39m tests/npc-paid-work.test.ts [2m([22m[2m2 tests[22m[2m)[22m[33m 1770[2mms[22m[39m
+   [33m[2m✓[22m[39m cook spends carried canonical inputs and fuel, waits for real station, and collects once across reload [33m 1730[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m6 passed[39m[22m[90m (6)[39m
+[2m      Tests [22m [1m[32m54 passed[39m[22m[90m (54)[39m
+[2m   Start at [22m 04:03:35
+[2m   Duration [22m 30.44s[2m (transform 3.48s, setup 0ms, import 7.42s, tests 22.24s, environment 1ms)[22m
+

@@ -1,0 +1,47 @@
+name: SOH Veyra Spawn Failure Cause Audit
+on:
+  push:
+    branches: [design/veyra-industrial-economy-20261112]
+    paths:
+      - 'web/src/veyra05/spawn-failure-cause.audit.test.ts'
+      - '.github/workflows/veyra-spawn-cause-audit.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  root-cause-diagnostic:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      CI: true
+      SOH_SPAWN_CAUSE_AUDIT: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Install exact dependencies
+        working-directory: web
+        run: npm ci
+      - name: Run diagnostic against physical Veyra windows and four regression starts
+        working-directory: web
+        run: npx --no-install vitest run --fileParallelism=false --testTimeout=600000 src/veyra05/spawn-failure-cause.audit.test.ts
+      - name: Print concise diagnostic
+        if: always()
+        working-directory: web
+        run: |
+          if [ -s evidence/veyra-spawn-cause-audit/manifest.json ]; then
+            node -e "const x=require('./evidence/veyra-spawn-cause-audit/manifest.json'); console.log(JSON.stringify({windows:x.zoneWindows?.map(r=>({name:r.name,water:r.geometry.freshwaterTiles,markers:r.gold.authoredFreshwaterMarkersInside,fallback:r.geometry.fallbackAll40kTriggered})),starts:x.implementationStarts},null,2));"
+          else
+            echo '::error title=Missing spawn diagnostic manifest::No results produced'
+          fi
+      - name: Upload evidence on success or failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: veyra-spawn-cause-${{ github.sha }}-${{ github.run_attempt }}
+          path: web/evidence/veyra-spawn-cause-audit/
+          if-no-files-found: warn
+          retention-days: 30

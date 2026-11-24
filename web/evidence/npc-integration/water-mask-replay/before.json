@@ -1,0 +1,22 @@
+{
+  "scope": "Static potable mask including canonical overlays; elapsed times under shared load, not FPS",
+  "saveSHA": "7b3266b27d4b0b912007674fb4ec480da5dda3d56b0372345a5a62f06703d395",
+  "sourceSHA": "5f79e29cb007a0453aec314d4885589a3ac36e679d9c4c4678d6d3342fbd2e8e",
+  "sites": 68,
+  "passes": [
+    {
+      "queries": 81668,
+      "wet": 1884,
+      "digest": "11b4366823c66769566a3223deee11e83c39a459dc8e105b0a4a2e55be463082",
+      "terrainCompiles": 175,
+      "elapsedMs": 40362.899941
+    },
+    {
+      "queries": 81668,
+      "wet": 1884,
+      "digest": "11b4366823c66769566a3223deee11e83c39a459dc8e105b0a4a2e55be463082",
+      "terrainCompiles": 172,
+      "elapsedMs": 39663.734344000004
+    }
+  ]
+}

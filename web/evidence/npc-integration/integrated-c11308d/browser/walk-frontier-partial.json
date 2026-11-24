@@ -1,0 +1,491 @@
+{
+  "scope": "normal control, read-only saved-map pathfinding aid",
+  "steps": [
+    {
+      "at": 1795148995778,
+      "player": [
+        1954,
+        702
+      ],
+      "actor": "hd",
+      "role": "guard",
+      "gx": 1872,
+      "gy": 543,
+      "route": 158
+    },
+    {
+      "at": 1795149007255,
+      "player": [
+        1951,
+        702
+      ],
+      "actor": "hd",
+      "role": "guard",
+      "gx": 1872,
+      "gy": 543,
+      "route": 155
+    },
+    {
+      "at": 1795149015312,
+      "player": [
+        1948,
+        702
+      ],
+      "actor": "hd",
+      "role": "guard",
+      "gx": 1872,
+      "gy": 543,
+      "route": 152
+    },
+    {
+      "at": 1795149024642,
+      "player": [
+        1944,
+        701
+      ],
+      "actor": "hd",
+      "role": "guard",
+      "gx": 1872,
+      "gy": 543,
+      "route": 147
+    },
+    {
+      "at": 1795149033772,
+      "player": [
+        1943,
+        699
+      ],
+      "actor": "hd",
+      "role": "guard",
+      "gx": 1872,
+      "gy": 543,
+      "route": 193
+    },
+    {
+      "at": 1795149042631,
+      "player": [
+        1941,
+        699
+      ],
+      "actor": "hd",
+      "role": "guard",
+      "gx": 1872,
+      "gy": 543,
+      "route": 191
+    },
+    {
+      "at": 1795149051176,
+      "player": [
+        1937,
+        698
+      ],
+      "actor": "hd",
+      "role": "guard",
+      "gx": 1872,
+      "gy": 543,
+      "route": 186
+    },
+    {
+      "at": 1795149059591,
+      "player": [
+        1933,
+        698
+      ],
+      "actor": "hd",
+      "role": "guard",
+      "gx": 1872,
+      "gy": 543,
+      "route": 182
+    },
+    {
+      "at": 1795149068304,
+      "player": [
+        1932,
+        698
+      ],
+      "actor": "hd",
+      "role": "guard",
+      "gx": 1872,
+      "gy": 543,
+      "route": 181
+    },
+    {
+      "at": 1795149076166,
+      "player": [
+        1932,
+        698
+      ],
+      "actor": "hd",
+      "role": "guard",
+      "gx": 1872,
+      "gy": 543,
+      "route": 181
+    },
+    {
+      "at": 1795149084928,
+      "player": [
+        1932,
+        698
+      ],
+      "actor": "hd",
+      "role": "guard",
+      "gx": 1872,
+      "gy": 543,
+      "route": 181
+    },
+    {
+      "at": 1795149092651,
+      "player": [
+        1932,
+        698
+      ],
+      "actor": "hd",
+      "role": "guard",
+      "gx": 1872,
+      "gy": 543,
+      "route": 181
+    },
+    {
+      "at": 1795149100973,
+      "player": [
+        1932,
+        698
+      ],
+      "actor": "hd",
+      "role": "guard",
+      "gx": 1872,
+      "gy": 543,
+      "route": 181
+    },
+    {
+      "at": 1795149109049,
+      "player": [
+        1932,
+        698
+      ],
+      "actor": "hd",
+      "role": "guard",
+      "gx": 1872,
+      "gy": 543,
+      "route": 181
+    },
+    {
+      "at": 1795149117568,
+      "player": [
+        1932,
+        698
+      ],
+      "actor": "hd",
+      "role": "guard",
+      "gx": 1872,
+      "gy": 543,
+      "route": 181
+    },
+    {
+      "at": 1795149126809,
+      "player": [
+        1932,
+        698
+      ],
+      "actor": "hd",
+      "role": "guard",
+      "gx": 1872,
+      "gy": 543,
+      "route": 181
+    },
+    {
+      "at": 1795149134453,
+      "player": [
+        1932,
+        698
+      ],
+      "actor": "hd",
+      "role": "guard",
+      "gx": 1872,
+      "gy": 543,
+      "route": 181
+    },
+    {
+      "at": 1795149142604,
+      "player": [
+        1932,
+        698
+      ],
+      "actor": "hd",
+      "role": "guard",
+      "gx": 1872,
+      "gy": 543,
+      "route": 181
+    },
+    {
+      "at": 1795149151659,
+      "player": [
+        1932,
+        698
+      ],
+      "actor": "hd",
+      "role": "guard",
+      "gx": 1872,
+      "gy": 543,
+      "route": 181
+    },
+    {
+      "at": 1795149159639,
+      "player": [
+        1932,
+        698
+      ],
+      "actor": "hd",
+      "role": "guard",
+      "gx": 1872,
+      "gy": 543,
+      "route": 181
+    },
+    {
+      "at": 1795149167965,
+      "player": [
+        1932,
+        698
+      ],
+      "actor": "hd",
+      "role": "guard",
+      "gx": 1872,
+      "gy": 543,
+      "route": 181
+    },
+    {
+      "at": 1795149176227,
+      "player": [
+        1932,
+        698
+      ],
+      "actor": "hd",
+      "role": "guard",
+      "gx": 1872,
+      "gy": 543,
+      "route": 181
+    },
+    {
+      "at": 1795149184235,
+      "player": [
+        1932,
+        698
+      ],
+      "actor": "hd",
+      "role": "guard",
+      "gx": 1872,
+      "gy": 543,
+      "route": 181
+    },
+    {
+      "at": 1795149192119,
+      "player": [
+        1932,
+        698
+      ],
+      "actor": "hd",
+      "role": "guard",
+      "gx": 1872,
+      "gy": 543,
+      "route": 181
+    },
+    {
+      "at": 1795149200254,
+      "player": [
+        1932,
+        698
+      ],
+      "actor": "hd",
+      "role": "guard",
+      "gx": 1872,
+      "gy": 543,
+      "route": 181
+    },
+    {
+      "at": 1795149208551,
+      "player": [
+        1932,
+        698
+      ],
+      "actor": "hd",
+      "role": "guard",
+      "gx": 1872,
+      "gy": 543,
+      "route": 181
+    },
+    {
+      "at": 1795149217145,
+      "player": [
+        1932,
+        698
+      ],
+      "actor": "hd",
+      "role": "guard",
+      "gx": 1872,
+      "gy": 543,
+      "route": 181
+    },
+    {
+      "at": 1795149225455,
+      "player": [
+        1932,
+        698
+      ],
+      "actor": "hd",
+      "role": "guard",
+      "gx": 1872,
+      "gy": 543,
+      "route": 181
+    },
+    {
+      "at": 1795149234282,
+      "player": [
+        1932,
+        698
+      ],
+      "actor": "hd",
+      "role": "guard",
+      "gx": 1872,
+      "gy": 543,
+      "route": 181
+    },
+    {
+      "at": 1795149243404,
+      "player": [
+        1932,
+        698
+      ],
+      "actor": "hd",
+      "role": "guard",
+      "gx": 1872,
+      "gy": 543,
+      "route": 181
+    },
+    {
+      "at": 1795149253466,
+      "player": [
+        1932,
+        698
+      ],
+      "actor": "hd",
+      "role": "guard",
+      "gx": 1872,
+      "gy": 543,
+      "route": 181
+    },
+    {
+      "at": 1795149262274,
+      "player": [
+        1932,
+        698
+      ],
+      "actor": "hd",
+      "role": "guard",
+      "gx": 1872,
+      "gy": 543,
+      "route": 181
+    },
+    {
+      "at": 1795149271478,
+      "player": [
+        1932,
+        698
+      ],
+      "actor": "hd",
+      "role": "guard",
+      "gx": 1872,
+      "gy": 543,
+      "route": 181
+    },
+    {
+      "at": 1795149280088,
+      "player": [
+        1932,
+        698
+      ],
+      "actor": "hd",
+      "role": "guard",
+      "gx": 1872,
+      "gy": 543,
+      "route": 181
+    },
+    {
+      "at": 1795149288242,
+      "player": [
+        1932,
+        698
+      ],
+      "actor": "hd",
+      "role": "guard",
+      "gx": 1872,
+      "gy": 543,
+      "route": 181
+    },
+    {
+      "at": 1795149298285,
+      "player": [
+        1932,
+        698
+      ],
+      "actor": "hd",
+      "role": "guard",
+      "gx": 1872,
+      "gy": 543,
+      "route": 181
+    },
+    {
+      "at": 1795149309480,
+      "player": [
+        1932,
+        698
+      ],
+      "actor": "hd",
+      "role": "guard",
+      "gx": 1872,
+      "gy": 543,
+      "route": 181
+    },
+    {
+      "at": 1795149366172,
+      "player": [
+        1932,
+        698
+      ],
+      "actor": "hd",
+      "role": "guard",
+      "gx": 1872,
+      "gy": 543,
+      "route": 181
+    },
+    {
+      "at": 1795149374683,
+      "player": [
+        1932,
+        698
+      ],
+      "actor": "hd",
+      "role": "guard",
+      "gx": 1872,
+      "gy": 543,
+      "route": 181
+    },
+    {
+      "at": 1795149382480,
+      "player": [
+        1932,
+        698
+      ],
+      "actor": "hd",
+      "role": "guard",
+      "gx": 1872,
+      "gy": 543,
+      "route": 181
+    }
+  ],
+  "errors": [],
+  "httpErrors": [],
+  "talk": [],
+  "seed": 1761657985,
+  "run": "run_t4ug01_mwohcvug",
+  "failure": "Error: page.waitForTimeout: Target page, context or browser has been closed"
+}

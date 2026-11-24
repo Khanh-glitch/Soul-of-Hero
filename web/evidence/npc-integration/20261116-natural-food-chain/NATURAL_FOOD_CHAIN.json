@@ -1,0 +1,419 @@
+{
+  "status": "Natural full food chain PASS on 67172c1; final production recovery/performance changes require regression gates. Overall HumanWorld PARTIAL.",
+  "trajectorySourceSha": "67172c12dee91dbf925bdd3678794f987795dc94",
+  "seed": 7606,
+  "actors": 286,
+  "initial": "Normal newGame/startRun; no supplied intent/items/station/output/hunger edit.",
+  "source": {
+    "sourceId": "0:7761295",
+    "tile": [
+      1295,
+      1940,
+      0
+    ],
+    "key": "road_fuel_rack",
+    "canonicalInitialStock": 2,
+    "canonicalInitialHp": 12,
+    "guaranteedPerUnit": [
+      [
+        "tin_can",
+        1
+      ],
+      [
+        "spares",
+        1
+      ]
+    ],
+    "actualAfter10min": {
+      "stock": 0,
+      "hp": 0
+    },
+    "worker": "hw",
+    "workerOccupation": "builder fulfilling actual read recipe request",
+    "toolAt10min": {
+      "uid": "s1d2",
+      "key": "stone_axe",
+      "qty": 1,
+      "dur": 108
+    }
+  },
+  "receipts": [
+    {
+      "id": "r63",
+      "at": 1794729628001,
+      "kind": "human.equipment",
+      "detail": {
+        "actorId": "h11",
+        "uid": "s1dq",
+        "from": "c1do",
+        "into": "weapon"
+      }
+    },
+    {
+      "id": "r1927",
+      "at": 1794729900001,
+      "kind": "human.harvest.select",
+      "detail": "hj349:hw:0:7761295:road_fuel_rack"
+    },
+    {
+      "id": "r1970",
+      "at": 1794729914458.143,
+      "kind": "human.procurement.contribute",
+      "detail": {
+        "requestId": "rq2tw",
+        "workerId": "h11",
+        "fromContainer": "c1do",
+        "from": [
+          {
+            "uid": "s1dr",
+            "qty": 2
+          }
+        ],
+        "intoContainer": "c1c1",
+        "key": "cloth",
+        "qty": 1,
+        "received": [
+          {
+            "uid": "s34j",
+            "qty": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "r2002",
+      "at": 1794729918372.4329,
+      "kind": "human.harvest.output",
+      "detail": {
+        "jobId": "hj349",
+        "sourceId": "0:7761295",
+        "workerId": "hw",
+        "uid": "s34p",
+        "key": "tin_can",
+        "qty": 1
+      }
+    },
+    {
+      "id": "r2003",
+      "at": 1794729918372.4329,
+      "kind": "human.harvest.output",
+      "detail": {
+        "jobId": "hj349",
+        "sourceId": "0:7761295",
+        "workerId": "hw",
+        "uid": "s34q",
+        "key": "spares",
+        "qty": 1
+      }
+    },
+    {
+      "id": "r2116",
+      "at": 1794729934258.1526,
+      "kind": "human.cargo.lineage",
+      "detail": {
+        "containerId": "c1c1",
+        "transferUid": "s34p",
+        "lineage": [
+          {
+            "at": 1794729934258.1526,
+            "jobId": "hj349",
+            "sourceId": "0:7761295",
+            "workerId": "hw",
+            "fromUid": "s34p",
+            "intoUid": "s34p",
+            "qty": 1,
+            "key": "tin_can"
+          }
+        ]
+      }
+    },
+    {
+      "id": "r2118",
+      "at": 1794729934258.1526,
+      "kind": "human.cargo.lineage",
+      "detail": {
+        "containerId": "c1c1",
+        "transferUid": "s34q",
+        "lineage": [
+          {
+            "at": 1794729934258.1526,
+            "jobId": "hj349",
+            "sourceId": "0:7761295",
+            "workerId": "hw",
+            "fromUid": "s34q",
+            "intoUid": "s34q",
+            "qty": 1,
+            "key": "spares"
+          }
+        ]
+      }
+    },
+    {
+      "id": "r3370",
+      "at": 1794730155801,
+      "kind": "human.work.input",
+      "detail": {
+        "workerId": "hu",
+        "orderId": "hw3c3",
+        "containerId": "c1c1",
+        "into": "c1cu",
+        "inputs": [
+          {
+            "uid": "s1c2",
+            "qty": 6,
+            "key": "berries"
+          }
+        ]
+      }
+    },
+    {
+      "id": "r3371",
+      "at": 1794730155801,
+      "kind": "human.work.input",
+      "detail": {
+        "workerId": "hu",
+        "orderId": "hw3c3",
+        "containerId": "c1c1",
+        "into": "c1cu",
+        "inputs": [
+          {
+            "uid": "s34j",
+            "qty": 1,
+            "key": "cloth"
+          }
+        ]
+      }
+    },
+    {
+      "id": "r3372",
+      "at": 1794730155801,
+      "kind": "human.work.input",
+      "detail": {
+        "workerId": "hu",
+        "orderId": "hw3c3",
+        "containerId": "c1c1",
+        "into": "c1cu",
+        "inputs": [
+          {
+            "uid": "s34p",
+            "qty": 1,
+            "key": "tin_can"
+          }
+        ]
+      }
+    },
+    {
+      "id": "r3380",
+      "at": 1794730157001,
+      "kind": "human.harvest.select",
+      "detail": "hj3c6:hw:0:7761295:road_fuel_rack"
+    },
+    {
+      "id": "r3404",
+      "at": 1794730162658.143,
+      "kind": "human.production.pay",
+      "detail": {
+        "workerId": "hu",
+        "jobId": "j3cc",
+        "recipe": "jam",
+        "stationId": "e1ch",
+        "inputs": [
+          {
+            "uid": "s1cw",
+            "key": "berries",
+            "qty": 4,
+            "containerId": "c1cu"
+          },
+          {
+            "uid": "s3c4",
+            "key": "berries",
+            "qty": 6,
+            "containerId": "c1cu"
+          },
+          {
+            "uid": "s34j",
+            "key": "cloth",
+            "qty": 1,
+            "containerId": "c1cu"
+          },
+          {
+            "uid": "s34p",
+            "key": "tin_can",
+            "qty": 1,
+            "containerId": "c1cu"
+          }
+        ],
+        "totalMs": 20000
+      }
+    },
+    {
+      "id": "r3406",
+      "at": 1794730162658.143,
+      "kind": "human.production.fuel",
+      "detail": {
+        "workerId": "hu",
+        "jobId": "j3cc",
+        "stationId": "e1ch",
+        "containerId": "c1ci",
+        "uid": "s3cb",
+        "key": "charcoal",
+        "qty": 1,
+        "burnMs": 55000
+      }
+    },
+    {
+      "id": "r3473",
+      "at": 1794730175829.576,
+      "kind": "human.harvest.output",
+      "detail": {
+        "jobId": "hj3c6",
+        "sourceId": "0:7761295",
+        "workerId": "hw",
+        "uid": "s3cq",
+        "key": "tin_can",
+        "qty": 1
+      }
+    },
+    {
+      "id": "r3474",
+      "at": 1794730175829.576,
+      "kind": "human.harvest.output",
+      "detail": {
+        "jobId": "hj3c6",
+        "sourceId": "0:7761295",
+        "workerId": "hw",
+        "uid": "s3cr",
+        "key": "spares",
+        "qty": 1
+      }
+    },
+    {
+      "id": "r3516",
+      "at": 1794730182658.1663,
+      "kind": "human.production.finish",
+      "detail": {
+        "workerId": "hu",
+        "jobId": "j3cc",
+        "recipe": "jam",
+        "stationId": "e1ch",
+        "totalMs": 20000,
+        "outputs": [
+          {
+            "uid": "s3d0",
+            "key": "jam",
+            "qty": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "r3518",
+      "at": 1794730182658.1663,
+      "kind": "human.production.pickup",
+      "detail": {
+        "workerId": "hu",
+        "uid": "s3d0",
+        "qty": 1,
+        "containerId": "c1cu",
+        "production": {
+          "jobId": "j3cc",
+          "workerId": "hu",
+          "recipe": "jam",
+          "stationId": "e1ch",
+          "inputs": [
+            {
+              "uid": "s1cw",
+              "key": "berries",
+              "qty": 4,
+              "containerId": "c1cu"
+            },
+            {
+              "uid": "s3c4",
+              "key": "berries",
+              "qty": 6,
+              "containerId": "c1cu"
+            },
+            {
+              "uid": "s34j",
+              "key": "cloth",
+              "qty": 1,
+              "containerId": "c1cu"
+            },
+            {
+              "uid": "s34p",
+              "key": "tin_can",
+              "qty": 1,
+              "containerId": "c1cu"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "r3540",
+      "at": 1794730185915.2861,
+      "kind": "human.cargo.lineage",
+      "detail": {
+        "containerId": "c1c1",
+        "transferUid": "s3d0",
+        "lineage": [
+          {
+            "at": 1794730185915.2861,
+            "jobId": "j3cc",
+            "recipe": "jam",
+            "inputs": [
+              {
+                "uid": "s1cw",
+                "key": "berries",
+                "qty": 4,
+                "containerId": "c1cu"
+              },
+              {
+                "uid": "s3c4",
+                "key": "berries",
+                "qty": 6,
+                "containerId": "c1cu"
+              },
+              {
+                "uid": "s34j",
+                "key": "cloth",
+                "qty": 1,
+                "containerId": "c1cu"
+              },
+              {
+                "uid": "s34p",
+                "key": "tin_can",
+                "qty": 1,
+                "containerId": "c1cu"
+              }
+            ],
+            "stationId": "e1ch",
+            "workerId": "hu",
+            "fromUid": "s3d0",
+            "intoUid": "s3d0",
+            "qty": 1,
+            "key": "jam"
+          }
+        ]
+      }
+    }
+  ],
+  "consumer": [
+    {
+      "id": "r56464",
+      "at": 1794764155285.7126,
+      "kind": "human.consume",
+      "detail": "{\"actorId\":\"h10\",\"uid\":\"s3d0\",\"key\":\"jam\",\"containerId\":\"c1c1\",\"qty\":1}"
+    }
+  ],
+  "consumerBeforeHunger": 40.063988092321814,
+  "consumerAfterHunger": 79.71502975898943,
+  "consumerObservationAt": 1794764400000,
+  "consumerRule": "Real biological time; existing humanConsume removed exactly one lawful warehouse UID. Separate-process validate; repeated timestamp and reload once-only assertions PASS.",
+  "limitations": [
+    "Full interruption matrix is not all naturally replayed. Fixtures supplement, not replace, this trajectory.",
+    "No occupation-wide or eight-role/336h/social/Elder/evac/browser acceptance.",
+    "Expanded real gameplay regressed h1 watchdog to exit124; no green claim from the previous idle-heavy hour.",
+    "Latest stock-wait/fuel/physical profession-priority corrections are later than this measured trajectory."
+  ]
+}

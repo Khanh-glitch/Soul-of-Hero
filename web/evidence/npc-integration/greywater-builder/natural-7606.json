@@ -1,0 +1,29 @@
+{
+  "seed": 7606,
+  "start": 1794729600000,
+  "site": "po_greywater",
+  "tile": [
+    1623,
+    1161
+  ],
+  "capacity": 10,
+  "saved": {
+    "at": 44,
+    "job": "hw2tw",
+    "gx": 1622,
+    "gy": 1161,
+    "floor": 0
+  },
+  "withdraw": {
+    "id": "r105",
+    "at": 1794729628758.1484,
+    "kind": "human.work.input",
+    "detail": "{\"workerId\":\"h9\",\"orderId\":\"hw2tw\",\"containerId\":\"c15z\",\"into\":\"c17q\",\"inputs\":[{\"uid\":\"s17t\",\"key\":\"stone\",\"qty\":2}],\"received\":[{\"uid\":\"s17t\",\"key\":\"stone\",\"qty\":2}]}"
+  },
+  "patch": {
+    "id": "r192",
+    "at": 1794729651001.0037,
+    "kind": "human.structure.patch",
+    "detail": "{\"worker\":\"h9\",\"job\":\"hw2tw\",\"site\":\"e2tm\",\"before\":285,\"after\":380,\"inputs\":[{\"slot\":0,\"uid\":\"s17s\",\"key\":\"wood\",\"qty\":1,\"containerId\":\"c17q\"},{\"slot\":2,\"uid\":\"s17t\",\"key\":\"stone\",\"qty\":2,\"containerId\":\"c17q\"}]}"
+  }
+}

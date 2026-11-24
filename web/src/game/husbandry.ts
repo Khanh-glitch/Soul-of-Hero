@@ -73,7 +73,7 @@ export const TAMING_SPECIES: Record<string, { preferredFoods: string[]; feedings
   boar: { preferredFoods: ['animal_feed', 'mushroom', 'crop', 'berries'], feedingsToTame: 2 },
   deer: { preferredFoods: ['animal_feed', 'crop', 'herb', 'berries'], feedingsToTame: 2 },
   hare: { preferredFoods: ['animal_feed', 'crop', 'berries', 'herb'], feedingsToTame: 1 },
-  grouse: { preferredFoods: ['animal_feed', 'seed', 'berries'], feedingsToTame: 1 },
+  grouse: { preferredFoods: ['animal_feed', 'seed_wildberry', 'berries'], feedingsToTame: 1 },
 };
 
 /** Deterministic biological sex (`'f' | 'm'`) derived from actor ID so regional pairs (`:0` / `:1`, `b1` / `b2`) balance naturally. */
@@ -116,7 +116,7 @@ export interface PenInspection {
   capacity: number;
 }
 
-const PEN_WALL_TYPES = new Set(['wall_wood', 'wall_plank', 'wall_stone', 'wall_brick', 'barricade']);
+const PEN_WALL_TYPES = new Set(['wall_wood', 'wall_stone', 'barricade']);
 const PEN_DOOR_TYPES = new Set(['door_wood', 'door_iron', 'door_powered']);
 const MAX_PEN_INTERIOR_TILES = 144;
 

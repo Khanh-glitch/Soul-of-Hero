@@ -5,7 +5,7 @@
 // (tests/mec01-c3-offline-child.test.ts, spawned with node/vitest as a fresh OS process) loads ONLY the on-disk save
 // with the game-own loader, settles, validates, and writes a custody report. The parent never shares memory with it.
 // WHAT IS FIXTURE (labelled, never NATURAL_INPUT): [F1] player placement beside the stations. [F2] raw material
-// grants (wood/stone/ingots/coal/MP/fasteners); the furnace and workbench are built for real by paid actions.
+// grants (wood/stone/ingots/charcoal/spares); the furnace and workbench are built for real by paid actions.
 // [F3] creatures cleared at start.
 // SIM_FIXTURE_MEASUREMENT - the seconds come from the engine's station clock, not a human.
 import { describe, it, expect, afterEach } from 'vitest';
@@ -56,9 +56,10 @@ describe('MEC-01 R2 C3: funded furnace+workbench offline -> separate-process res
     mkdirSync(TDIR, { recursive: true });
     const g = start(); const r = g.run!;
     // Fixture: placement + raw materials. The stations, their fuel, their queues and every consuming action are real.
-    for (const [k, q] of [['wood', 30], ['stone', 22], ['iron_ingot', 8], ['coal', 2], ['mechanical_parts', 4], ['fasteners', 2]] as const)
+    for (const [k, q] of [['wood', 30], ['stone', 22], ['iron_ingot', 8], ['charcoal', 3], ['spares', 7]] as const)
       expect(addItem(r, 'inv', k, q)).toBe(0);
     const spawnTx = Math.floor(r.player.x / TILE), spawnTy = Math.floor(r.player.y / TILE);
+    for (const recipe of ['deploy_furnace','deploy_workbench']) expect(act(g, 'craft', { recipe }).ok,recipe).toBe(true);
     const [fx, fy] = legalTilesNear(g, spawnTx, spawnTy, 'furnace', 1)[0];
     const [bx, by] = legalTilesNear(g, fx + 1, fy, 'workbench', 1)[0];
     // REAL build furnace + workbench (paid, real collision rules)
@@ -68,14 +69,14 @@ describe('MEC-01 R2 C3: funded furnace+workbench offline -> separate-process res
     r.player.x = (bx - 1) * TILE + 8; r.player.y = by * TILE + 8; markDirty();
     expect(act(g, 'build', { struct: 'workbench', tx: bx, ty: by }, START + 2).ok).toBe(true);
     const bench = Object.values(r.entities).find(e => e.kind === 'struct' && e.type === 'workbench')!;
-    // REAL L2 upgrade (consumes 2 MP + 1 iron_ingot) so the gear recipe is legal
+    // REAL L2 upgrade (consumes 4 spares + 2 iron_ingot) so the gear recipe is legal
     expect(act(g, 'upgradeStation', { eid: bench.id }, START + 3).ok).toBe(true);
-    // REAL fuel into the furnace (move with qty, 1 coal) — station never burns Fuel Canisters, coal is fine
-    const coalSlot = r.custody.inv.slots.findIndex(s => s?.key === 'coal');
+    // REAL fuel into the furnace (move with qty, 1 charcoal)
+    const coalSlot = r.custody.inv.slots.findIndex(s => s?.key === 'charcoal');
     expect(act(g, 'move', { from: 'inv', fs: coalSlot, to: furnace.station!.fuelC, ts: 0, qty: 1 } as any, START + 4).ok).toBe(true);
-    // REAL inputs queued at the furnace: 3 iron_ingot + 1 coal -> 2 refined_iron_ingot (paid reservation)
+    // REAL inputs queued at the furnace: 3 iron_ingot + 2 charcoal -> 2 refined_iron_ingot (paid reservation)
     expect(act(g, 'craft', { eid: furnace.id, recipe: 'refined_iron_ingot' }, START + 5).ok).toBe(true);
-    // REAL inputs queued at the bench: mechanical_gear (2 iron_ingot + 2 MP + 1 fastener)
+    // REAL inputs queued at the bench: mechanical_gear (2 iron_ingot + 3 spares)
     expect(act(g, 'craft', { eid: bench.id, recipe: 'mechanical_gear' }, START + 6).ok).toBe(true);
     // Walk away mid-queue: only part of the furnace job elapses before the save.
     stepStations(g, 5_000, START + 6_000);

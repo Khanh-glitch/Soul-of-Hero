@@ -1,0 +1,335 @@
+{
+  "before": {
+    "id": "run_ttcxqm_mwnxst4n",
+    "seed": 1802831566,
+    "at": 1795116150523,
+    "layout": "veyra05-at-832-704",
+    "player": [
+      917,
+      875
+    ],
+    "nearest": [
+      {
+        "actorId": "h4d",
+        "gx": 1101,
+        "gy": 724,
+        "floor": 0,
+        "community": "com:po_typhon",
+        "state": "IDLE",
+        "occupation": "salvager",
+        "packId": "c23m"
+      },
+      {
+        "actorId": "h4c",
+        "gx": 1135,
+        "gy": 717,
+        "floor": 0,
+        "community": "com:po_typhon",
+        "state": "IDLE",
+        "occupation": "guard",
+        "packId": "c23j"
+      },
+      {
+        "actorId": "h1x",
+        "gx": 730,
+        "gy": 1109,
+        "floor": 0,
+        "community": "com:po_westmouth",
+        "state": "IDLE",
+        "occupation": "guard",
+        "packId": "c1ki"
+      },
+      {
+        "actorId": "h2w",
+        "gx": 1169,
+        "gy": 1043,
+        "floor": 0,
+        "community": "com:po_fracquarry",
+        "state": "IDLE",
+        "occupation": "guard",
+        "packId": "c1sj"
+      },
+      {
+        "actorId": "h1z",
+        "gx": 678,
+        "gy": 1088,
+        "floor": 0,
+        "community": "com:po_westmouth",
+        "state": "IDLE",
+        "occupation": "salvager",
+        "packId": "c1kq"
+      }
+    ],
+    "people": 286,
+    "receipts": [
+      {
+        "id": "r2",
+        "seq": 2,
+        "at": 1795116138360,
+        "kind": "human.harvest.select",
+        "detail": "hj2t4:h1:0:4821665:oak"
+      },
+      {
+        "id": "r3",
+        "seq": 3,
+        "at": 1795116140360,
+        "kind": "human.harvest.select",
+        "detail": "hj2t6:h3:0:4749667:grass"
+      },
+      {
+        "id": "r4",
+        "seq": 4,
+        "at": 1795116142693.3462,
+        "kind": "human.door.open",
+        "detail": "h4:0:1659,1164"
+      },
+      {
+        "id": "r5",
+        "seq": 5,
+        "at": 1795116145360,
+        "kind": "human.equipment",
+        "detail": "{\"actorId\":\"h8\",\"uid\":\"s179\",\"from\":\"c177\",\"into\":\"weapon\"}"
+      },
+      {
+        "id": "r6",
+        "seq": 6,
+        "at": 1795116147060,
+        "kind": "human.door.open",
+        "detail": "h3:0:1658,1188"
+      },
+      {
+        "id": "r7",
+        "seq": 7,
+        "at": 1795116148360,
+        "kind": "human.equipment",
+        "detail": "{\"actorId\":\"hb\",\"uid\":\"s180\",\"from\":\"c17y\",\"into\":\"weapon\"}"
+      },
+      {
+        "id": "r8",
+        "seq": 8,
+        "at": 1795116148360,
+        "kind": "human.harvest.select",
+        "detail": "hj2tb:hb:0:2125834:road_relay_wreck"
+      },
+      {
+        "id": "r9",
+        "seq": 9,
+        "at": 1795116149360,
+        "kind": "human.harvest.select",
+        "detail": "hj2tc:hc:0:2217871:road_relay_wreck"
+      },
+      {
+        "id": "r10",
+        "seq": 10,
+        "at": 1795116150360,
+        "kind": "human.harvest.select",
+        "detail": "hj2td:hd:0:1973888:crystal"
+      }
+    ]
+  },
+  "after": {
+    "id": "run_ttcxqm_mwnxst4n",
+    "seed": 1802831566,
+    "at": 1795116170654,
+    "layout": "veyra05-at-832-704",
+    "player": [
+      917,
+      875
+    ],
+    "nearest": [
+      {
+        "actorId": "h4d",
+        "gx": 1101,
+        "gy": 724,
+        "floor": 0,
+        "community": "com:po_typhon",
+        "state": "IDLE",
+        "occupation": "salvager",
+        "packId": "c23m"
+      },
+      {
+        "actorId": "h4c",
+        "gx": 1135,
+        "gy": 717,
+        "floor": 0,
+        "community": "com:po_typhon",
+        "state": "IDLE",
+        "occupation": "guard",
+        "packId": "c23j"
+      },
+      {
+        "actorId": "h1x",
+        "gx": 730,
+        "gy": 1109,
+        "floor": 0,
+        "community": "com:po_westmouth",
+        "state": "IDLE",
+        "occupation": "guard",
+        "packId": "c1ki"
+      },
+      {
+        "actorId": "h2w",
+        "gx": 1169,
+        "gy": 1043,
+        "floor": 0,
+        "community": "com:po_fracquarry",
+        "state": "IDLE",
+        "occupation": "guard",
+        "packId": "c1sj"
+      },
+      {
+        "actorId": "h1z",
+        "gx": 678,
+        "gy": 1088,
+        "floor": 0,
+        "community": "com:po_westmouth",
+        "state": "IDLE",
+        "occupation": "salvager",
+        "packId": "c1kq"
+      }
+    ],
+    "people": 286,
+    "receipts": [
+      {
+        "id": "r67",
+        "seq": 67,
+        "at": 1795116165588.5725,
+        "kind": "human.harvest.output",
+        "detail": "{\"jobId\":\"hj2tn\",\"sourceId\":\"0:2826583\",\"workerId\":\"ho\",\"uid\":\"s2ts\",\"key\":\"fiber\",\"qty\":1}"
+      },
+      {
+        "id": "r68",
+        "seq": 68,
+        "at": 1795116165588.5725,
+        "kind": "human.work",
+        "detail": "ho:harvest:grass:1"
+      },
+      {
+        "id": "r69",
+        "seq": 69,
+        "at": 1795116166788.5803,
+        "kind": "human.cargo.lineage",
+        "detail": "{\"containerId\":\"c17h\",\"transferUid\":\"s2tg\",\"lineage\":[{\"at\":1795116166788.5803,\"jobId\":\"hj2tb\",\"sourceId\":\"0:2125834\",\"workerId\":\"hb\",\"fromUid\":\"s2tg\",\"intoUid\":\"s17i\",\"qty\":2,\"key\":\"spares\"}]}"
+      },
+      {
+        "id": "r70",
+        "seq": 70,
+        "at": 1795116166788.5803,
+        "kind": "human.cargo.deliver",
+        "detail": "hj2tb:hb:s2tg>s2tg:c17h:2"
+      },
+      {
+        "id": "r71",
+        "seq": 71,
+        "at": 1795116166788.5803,
+        "kind": "human.store",
+        "detail": "hb:2"
+      },
+      {
+        "id": "r72",
+        "seq": 72,
+        "at": 1795116166788.5803,
+        "kind": "human.procurement.ration",
+        "detail": "{\"workerId\":\"hb\",\"uid\":\"s17k\",\"from\":\"c17h\",\"into\":\"c17y\",\"qty\":1}"
+      },
+      {
+        "id": "r73",
+        "seq": 73,
+        "at": 1795116166788.5803,
+        "kind": "human.harvest.complete",
+        "detail": "hj2tb:hb:c17h"
+      },
+      {
+        "id": "r74",
+        "seq": 74,
+        "at": 1795116167188.5732,
+        "kind": "human.door.open",
+        "detail": "hj:0:2626,649"
+      },
+      {
+        "id": "r75",
+        "seq": 75,
+        "at": 1795116167688.5776,
+        "kind": "human.cargo.lineage",
+        "detail": "{\"containerId\":\"c18d\",\"transferUid\":\"s2tr\",\"lineage\":[{\"at\":1795116167688.5776,\"jobId\":\"hj2te\",\"sourceId\":\"0:10202366\",\"workerId\":\"he\",\"fromUid\":\"s2tr\",\"intoUid\":\"s18e\",\"qty\":2,\"key\":\"spares\"}]}"
+      },
+      {
+        "id": "r76",
+        "seq": 76,
+        "at": 1795116167688.5776,
+        "kind": "human.cargo.deliver",
+        "detail": "hj2te:he:s2tr>s2tr:c18d:2"
+      },
+      {
+        "id": "r77",
+        "seq": 77,
+        "at": 1795116167688.5776,
+        "kind": "human.store",
+        "detail": "he:2"
+      },
+      {
+        "id": "r78",
+        "seq": 78,
+        "at": 1795116167688.5776,
+        "kind": "human.procurement.ration",
+        "detail": "{\"workerId\":\"he\",\"uid\":\"s18g\",\"from\":\"c18d\",\"into\":\"c18z\",\"qty\":1}"
+      },
+      {
+        "id": "r79",
+        "seq": 79,
+        "at": 1795116167688.5776,
+        "kind": "human.harvest.complete",
+        "detail": "hj2te:he:c18d"
+      },
+      {
+        "id": "r80",
+        "seq": 80,
+        "at": 1795116167802.8599,
+        "kind": "human.work",
+        "detail": "hn:strike:mushroom@2558,701"
+      },
+      {
+        "id": "r81",
+        "seq": 81,
+        "at": 1795116168360,
+        "kind": "human.equipment",
+        "detail": "{\"actorId\":\"hv\",\"uid\":\"s1cd\",\"from\":\"c1cb\",\"into\":\"weapon\"}"
+      },
+      {
+        "id": "r82",
+        "seq": 82,
+        "at": 1795116168702.8599,
+        "kind": "human.harvest",
+        "detail": "hn:mushroom@2558,701:-1"
+      },
+      {
+        "id": "r83",
+        "seq": 83,
+        "at": 1795116168702.8599,
+        "kind": "human.harvest.output",
+        "detail": "{\"jobId\":\"hj2tm\",\"sourceId\":\"0:2806558\",\"workerId\":\"hn\",\"uid\":\"s2tt\",\"key\":\"mushroom\",\"qty\":1}"
+      },
+      {
+        "id": "r84",
+        "seq": 84,
+        "at": 1795116168702.8599,
+        "kind": "human.work",
+        "detail": "hn:harvest:mushroom:1"
+      },
+      {
+        "id": "r85",
+        "seq": 85,
+        "at": 1795116170410.7954,
+        "kind": "human.guard.duty",
+        "detail": "h4:hw2t7:e15x:1"
+      },
+      {
+        "id": "r86",
+        "seq": 86,
+        "at": 1795116170410.7954,
+        "kind": "human.work.commit",
+        "detail": "h4:hw2t7:guard:e15x:"
+      }
+    ]
+  }
+}

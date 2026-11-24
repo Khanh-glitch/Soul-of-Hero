@@ -1,0 +1,303 @@
+{
+  "scope": "Hourly settle from preserved checkpoint; no edited actors, weather or custody. Not a new game or an ending.",
+  "saveSHA256": "903ce9ef0150115ffae25e35c6325d9eaf91a489169844f2827c6ac0ce8d2d22",
+  "fingerprint": {
+    "human-jobs": "def33cae506c9c70578b71ab5ac954159dd5cda46881bc3d15884d2a2a1da33d",
+    "humanworld": "866bcf06225fac2f2c1167642794674bd356c5756fee361366af8e30f06bbbab"
+  },
+  "seed": 7606,
+  "run": "run_5va_mwhjny80",
+  "actor": "h4t",
+  "community": "com:po_glade",
+  "endHour": 61,
+  "hours": [
+    {
+      "hour": 51,
+      "position": [
+        1534,
+        1380,
+        0
+      ],
+      "state": "IDLE",
+      "hp": 95,
+      "thirst": 9.061375767310244,
+      "hunger": 96.5531534593482,
+      "communityStates": {
+        "h4o": "IDLE",
+        "h4p": "IDLE",
+        "h4q": "DEAD",
+        "h4r": "IDLE",
+        "h4s": "IDLE",
+        "h4t": "IDLE",
+        "h4u": "IDLE"
+      },
+      "barrel": null,
+      "water": null
+    },
+    {
+      "hour": 52,
+      "position": [
+        1540,
+        1392,
+        0
+      ],
+      "state": "IDLE",
+      "hp": 95,
+      "thirst": 52.80382368238705,
+      "hunger": 92.3814520694148,
+      "communityStates": {
+        "h4o": "IDLE",
+        "h4p": "IDLE",
+        "h4q": "DEAD",
+        "h4r": "IDLE",
+        "h4s": "IDLE",
+        "h4t": "IDLE",
+        "h4u": "IDLE"
+      },
+      "barrel": "e2e3x",
+      "water": 8,
+      "drinks": [
+        [
+          1794915068538.8757,
+          "h4t:e2e3x:1"
+        ],
+        [
+          1794915138024.5889,
+          "h4t:e2e3x:1"
+        ]
+      ],
+      "firstAppeal": {
+        "id": "r269839",
+        "at": 1794913472938.875,
+        "kind": "human.water.appeal",
+        "detail": "{\"requester\":\"h4t\",\"builder\":\"h4s\",\"from\":{\"gx\":1538,\"gy\":1380,\"floor\":0},\"seenBy\":{\"gx\":1536,\"gy\":1385,\"floor\":0},\"job\":\"hw2e2j\"}"
+      }
+    },
+    {
+      "hour": 53,
+      "position": [
+        1540,
+        1392,
+        0
+      ],
+      "state": "IDLE",
+      "hp": 95,
+      "thirst": 46.55382368238274,
+      "hunger": 88.21478540276188,
+      "communityStates": {
+        "h4o": "IDLE",
+        "h4p": "IDLE",
+        "h4q": "DEAD",
+        "h4r": "IDLE",
+        "h4s": "IDLE",
+        "h4t": "IDLE",
+        "h4u": "IDLE"
+      },
+      "barrel": "e2e3x",
+      "water": 11,
+      "drinks": []
+    },
+    {
+      "hour": 54,
+      "position": [
+        1540,
+        1392,
+        0
+      ],
+      "state": "IDLE",
+      "hp": 95,
+      "thirst": 40.30382368237931,
+      "hunger": 84.0481187361096,
+      "communityStates": {
+        "h4o": "IDLE",
+        "h4p": "IDLE",
+        "h4q": "DEAD",
+        "h4r": "IDLE",
+        "h4s": "IDLE",
+        "h4t": "IDLE",
+        "h4u": "IDLE"
+      },
+      "barrel": "e2e3x",
+      "water": 12,
+      "drinks": []
+    },
+    {
+      "hour": 55,
+      "position": [
+        1541,
+        1394,
+        0
+      ],
+      "state": "IDLE",
+      "hp": 95,
+      "thirst": 59.05092189652463,
+      "hunger": 79.87951754555849,
+      "communityStates": {
+        "h4o": "IDLE",
+        "h4p": "IDLE",
+        "h4q": "DEAD",
+        "h4r": "IDLE",
+        "h4s": "IDLE",
+        "h4t": "IDLE",
+        "h4u": "IDLE"
+      },
+      "barrel": "e2e3x",
+      "water": 12,
+      "drinks": [
+        [
+          1794924223024.5889,
+          "h4t:e2e3x:1"
+        ]
+      ]
+    },
+    {
+      "hour": 56,
+      "position": [
+        1543,
+        1394,
+        0
+      ],
+      "state": "IDLE",
+      "hp": 95,
+      "thirst": 52.799086578591655,
+      "hunger": 75.71162733361908,
+      "communityStates": {
+        "h4o": "IDLE",
+        "h4p": "IDLE",
+        "h4q": "DEAD",
+        "h4r": "IDLE",
+        "h4s": "IDLE",
+        "h4t": "IDLE",
+        "h4u": "IDLE"
+      },
+      "barrel": "e2e3x",
+      "water": 12,
+      "drinks": []
+    },
+    {
+      "hour": 57,
+      "position": [
+        1543,
+        1394,
+        0
+      ],
+      "state": "IDLE",
+      "hp": 95,
+      "thirst": 46.54715205426405,
+      "hunger": 71.54367098408517,
+      "communityStates": {
+        "h4o": "IDLE",
+        "h4p": "IDLE",
+        "h4q": "DEAD",
+        "h4r": "IDLE",
+        "h4s": "IDLE",
+        "h4t": "IDLE",
+        "h4u": "IDLE"
+      },
+      "barrel": "e2e3x",
+      "water": 12,
+      "drinks": []
+    },
+    {
+      "hour": 58,
+      "position": [
+        1543,
+        1394,
+        0
+      ],
+      "state": "IDLE",
+      "hp": 95,
+      "thirst": 40.29521752993975,
+      "hunger": 67.3757146345476,
+      "communityStates": {
+        "h4o": "IDLE",
+        "h4p": "IDLE",
+        "h4q": "DEAD",
+        "h4r": "IDLE",
+        "h4s": "IDLE",
+        "h4t": "IDLE",
+        "h4u": "IDLE"
+      },
+      "barrel": "e2e3x",
+      "water": 12,
+      "drinks": []
+    },
+    {
+      "hour": 59,
+      "position": [
+        1543,
+        1394,
+        0
+      ],
+      "state": "IDLE",
+      "hp": 95,
+      "thirst": 59.042315743658676,
+      "hunger": 63.20711344371294,
+      "communityStates": {
+        "h4o": "IDLE",
+        "h4p": "IDLE",
+        "h4q": "DEAD",
+        "h4r": "IDLE",
+        "h4s": "IDLE",
+        "h4t": "IDLE",
+        "h4u": "IDLE"
+      },
+      "barrel": "e2e3x",
+      "water": 10,
+      "drinks": [
+        [
+          1794938599714.3035,
+          "h4t:e2e3x:1"
+        ]
+      ]
+    },
+    {
+      "hour": 60,
+      "position": [
+        1543,
+        1394,
+        0
+      ],
+      "state": "IDLE",
+      "hp": 95,
+      "thirst": 52.790678838620416,
+      "hunger": 59.03935550702361,
+      "communityStates": {
+        "h4o": "IDLE",
+        "h4p": "IDLE",
+        "h4q": "DEAD",
+        "h4r": "IDLE",
+        "h4s": "IDLE",
+        "h4t": "IDLE",
+        "h4u": "IDLE"
+      },
+      "barrel": "e2e3x",
+      "water": 6,
+      "drinks": []
+    },
+    {
+      "hour": 61,
+      "position": [
+        1543,
+        1394,
+        0
+      ],
+      "state": "IDLE",
+      "hp": 95,
+      "thirst": 46.53874431429096,
+      "hunger": 54.871399157474684,
+      "communityStates": {
+        "h4o": "IDLE",
+        "h4p": "IDLE",
+        "h4q": "DEAD",
+        "h4r": "IDLE",
+        "h4s": "IDLE",
+        "h4t": "IDLE",
+        "h4u": "IDLE"
+      },
+      "barrel": "e2e3x",
+      "water": 12,
+      "drinks": []
+    }
+  ]
+}

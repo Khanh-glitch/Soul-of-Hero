@@ -1,0 +1,11 @@
+## inject {"ok":true,"chars":2046844}
+## continueOffered 1
+t+ 2 While you were away | Resolving the saved island’s food, work and travel. Your original save stays intact until this finishes. |  0%Back to title
+t+ 42 While you were away | Resolving the saved island’s food, work and travel. Your original save stays intact until this finishes. |  18%Back to title
+t+ 82 While you were away | Resolving the saved island’s food, work and travel. Your original save stays intact until this finishes. |  44%Back to title
+t+ 123 While you were away | Resolving the saved island’s food, work and travel. Your original save stays intact until this finishes. |  75%Back to title
+## settled {"entered":true,"wallSeconds":165}
+## evac {"hour":295.004,"playerDead":true,"states":{"IDLE":41,"EVACUATED":6,"DEAD":233,"ON_VESSEL":3,"WORKING":3},"trips":[{"id":"evac:po_evac_west","phase":"SERVICE_ENDED","round":2,"boarded":[],"departAtH":289.68,"arriveAtH":293.68},{"id":"evac:po_evac_south","phase":"BOARDING","round":1,"boarded":[],"departAtH":null,"arriveAtH":null},{"id":"evac:po_evac_hook","phase":"BOARDING","round":1,"boarded":["h5f","h1h","h2f"],"departAtH":null,"arriveAtH":null}],"evacuated":["h2","h7","h8","h2l","h4u","h4w"],"receipts":[]}
+## screenText "0 | 100 | 23 | 0 | 77 | VEYRA · U=0.5 | marsh | 19:25 | Day 13 / 14 | WAKING | CLEAR | next RAIN | secured 0 | Journey [J] | Notes [N] | Return | SFX | ☰ | FALLEN ON THE ISLAND · SECTOR (37, 121) | You have fallen | Death does not end this run. Cause: exposure while offline. Your belongings remain in the bag recorded by this death. | DROPPED IN GROUND BAG | Location: (37, 121) | 3 stacks present now | SAFE & NEXT STEP | Profile-Secured Cash: 0 | Preferred wake: Safe Landing Site | Prepare, then find this recorded bag on Map [M]. | Recovering breath… | Rise & Recover Gear | RETURN CHRONICLE · 7.0 H AWAY | CRITICAL | 2 CRITICAL | 1 ALERTS | ✕ | Away 7.0 h. 24709 timed events recorded; observed"
+## errors {"errors":[],"failed":[],"bad":[]}
+## verdict "PASS"

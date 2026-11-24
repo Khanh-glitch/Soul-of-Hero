@@ -1,0 +1,10 @@
+# Hai kết quả cứu hộ trong cùng run — kiểm kỹ thuật, không phải chơi tự nhiên
+
+`run_5va_mwhjny80`, seed 7606: `tests/npc-dual-rescue-same-run.test.ts` thật sự chạy và PASS (chuỗi “NOT RUN” trong tên test là nhãn lịch sử). [Ledger](dual-ledger.json) và [K8](k8.json) lấy từ một lần chạy nối tiếp qua script `capture-ledger.mjs`, quan sát cùng object run. Không ghép hai save.
+
+1. Mở lịch tàu bằng offset thời gian trong test. Fixture đặt **3** người Greywater ngay bến west; không chứng minh họ đi bộ tới bến. Cả ba có ghế, cargo UID và receipt lên/đi/đến. Departure round 1 đến sau 4h: h1/h2/h3 = EVACUATED. Bến west (684,1150) hold c2r7, hull còn 84; south (2356,2170) c2ry, hook (2784,738) c2sp đều tồn tại nhưng không khởi hành trong lần này.
+2. Bỏ offset rồi đi qua authority `advanceElderPressure` từng giờ từ h312 đến h336. Sáu nguồn Surtur, Typhon, Aion, Atlas, Argus, Anubis: mỗi nguồn có 6 CONTACT trong bảng `elders`, với lair/tile xuất phát, đích, thời điểm và tác động. 36 event, không pending. Tổng theo contact: 36 lượt affected humans, 4 downed; không suy ra 36 người khác nhau. Counter guard interposed/ammo ở mẫu này không dương: không coi là chứng minh cả làng chống trả.
+3. h4c (Typhon) và h5x (Necropolis) có threat/wave thật, còn sống sau assault trong khi 3 người Greywater đã đến bờ. `3 EVACUATED + 279 SURVIVED_ON_ISLAND + 2 DEAD + 2 UNRESOLVED = 286`. Không phải cả 279 đều bị đánh trực tiếp: luật cuối run dùng h336 + tất cả wave đã resolve. Có 2 người không thể kết luận.
+4. Gọi `endRun(...,'expired',wall)`, assert `gs.run === null`, history đúng `human-history-v1` và đúng toàn bộ số trên. New Game kế tiếp `run_5vb_mx1jtwbt`: custody mới, **0 departure**, **0 outcome đã gán**. `engineering/serial.txt`: kiểm lịch sử riêng về cash giữ/khoá, reset cash vật lý và recipe cùng ca từ chối. Kiểm engine, chưa quan sát màn kết thúc trong trình duyệt.
+
+Còn thiếu: chơi đủ interval tự nhiên có metabolism/nguồn/giành vật tư, quay cả đường người lên bến, defense và run 2 bằng input thường. Không gọi fixture giờ cuối là endurance 336h.

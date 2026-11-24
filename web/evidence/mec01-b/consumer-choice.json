@@ -1,5 +1,5 @@
 {
-  "note": "B: two real consumer choices executed for the crafted gear (vehicle_drive_geared / industrial_pick_geared); pipe covered in the sibling tests (vehicle_frame_piped / iron_plate). One stack, one outcome — UIDs never duplicated.",
+  "note": "B: two real consumer choices executed for the crafted gear (vehicle_drive_geared / industrial_pick_geared); the only craft sink a pipe feeds is the piped frame since PA1 retired the invented iron_plate sink, and recovery runs through the recycler route X:pipe-v3. One stack, one outcome — UIDs never duplicated.",
   "seed": 4242,
   "sourcesRead": [
     {
@@ -46,12 +46,13 @@
     "industrial_pick_geared"
   ],
   "pipeConsumersProvenInSiblingTests": [
-    "vehicle_frame_piped",
-    "iron_plate"
+    "vehicle_frame_piped"
   ],
+  "pipeSinkRetiredByPa1": "iron_plate",
+  "pipeRecoveryRoute": "X:pipe-v3",
   "uiDs": {
-    "gear": "s8o",
-    "industrialPick": "s8q"
+    "gear": "s8r",
+    "industrialPick": "s8t"
   },
   "contractValid": true,
   "b01GrammarStillResolves": true,

@@ -1,0 +1,191 @@
+[
+ {
+  "shot": "blue-1-door-refused-no-card-no-power.png",
+  "gate": "veyra.g1b:gate:po_meridian:room_blue",
+  "prompt": {
+   "kind": "door",
+   "label": "Sealed door · Blue Card required · circuit dead · fuel the generator",
+   "eid": "ewv"
+  },
+  "toasts": [
+   "✕Sealed: the door circuit is dead. Fuel the generator outside with 1 Fuel Canister.",
+   "✕Sealed: the door circuit is dead. Fuel the generator outside with 1 Fuel Canister.",
+   "✕"
+  ],
+  "inv": [
+   "knifex1 dur300",
+   "water_flaskx1 ch2",
+   "berriesx3"
+  ],
+  "saveValid": true
+ },
+ {
+  "shot": "blue-2-blue-card-taken-at-freight-yard.png",
+  "fixture": "veyra.g1b:card:blue",
+  "inv": [
+   "knifex1 dur300",
+   "water_flaskx1 ch2",
+   "berriesx3",
+   "blue_cardx1 ch3"
+  ],
+  "receipts": [
+   "g1b.search veyra.g1b:card:blue",
+   "move blue_cardx1 cv8->inv",
+   "g1b.card.taken veyra.g1b:card:blue"
+  ],
+  "saveValid": true
+ },
+ {
+  "shot": "blue-3-door-refused-card-but-dead-circuit.png",
+  "prompt": {
+   "kind": "door",
+   "label": "Sealed door · Blue Card · 3 uses · circuit dead · fuel the generator",
+   "eid": "eyp"
+  },
+  "toasts": [
+   "✕Sealed: the door circuit is dead. Fuel the generator outside with 1 Fuel Canister.",
+   "✕Sealed: the door circuit is dead. Fuel the generator outside with 1 Fuel Canister.",
+   "✕"
+  ],
+  "saveValid": true
+ },
+ {
+  "qaGrant": "fuel_can x1",
+  "left": 0
+ },
+ {
+  "shot": "blue-4-generator-fuelled.png",
+  "prompt": {
+   "kind": "g1b:gen",
+   "label": "Circuit generator · add 1 Fuel Canister",
+   "eid": "evj"
+  },
+  "entity": {
+   "eid": "evj",
+   "live": true,
+   "floor": 0,
+   "state": "closed",
+   "cycle": 0,
+   "poweredUntil": 1794795687616,
+   "stock": []
+  },
+  "toasts": [
+   "✓Generator running for 180 seconds.",
+   "✓Generator running for 180 seconds.",
+   "✓"
+  ],
+  "receipts": [
+   "move blue_cardx1 cv8->inv",
+   "g1b.card.taken veyra.g1b:card:blue",
+   "g1b.power veyra.g1b:gen:po_meridian:until=1794795687616"
+  ],
+  "inv": [
+   "knifex1 dur300",
+   "water_flaskx1 ch2",
+   "berriesx3",
+   "blue_cardx1 ch3"
+  ],
+  "saveValid": true
+ },
+ {
+  "shot": "blue-5-door-open-card-use-spent.png",
+  "prompt": {
+   "kind": "door",
+   "label": "Sealed door · Blue Card · 3 uses · circuit live",
+   "eid": "eys"
+  },
+  "toasts": [
+   "✓Blue Card accepted.",
+   "✓Blue Card accepted.",
+   "✓"
+  ],
+  "receipts": [
+   "g1b.card.taken veyra.g1b:card:blue",
+   "g1b.power veyra.g1b:gen:po_meridian:until=1794795687616",
+   "g1b.door.open veyra.g1b:gate:po_meridian:room_blue:sv9:remaining=2"
+  ],
+  "inv": [
+   "knifex1 dur300",
+   "water_flaskx1 ch2",
+   "berriesx3",
+   "blue_cardx1 ch2"
+  ],
+  "saveValid": true
+ },
+ {
+  "shot": "blue-6-inside-the-blue-room-walked-in.png",
+  "playerGlobalTile": [
+   2255,
+   1361
+  ],
+  "door": [
+   2249,
+   1361
+  ],
+  "walkedWith": "KeyD",
+  "saveValid": true
+ },
+ {
+  "shot": "blue-7-blue-room-chest-opened.png",
+  "source": "veyra.g1b:po_meridian:medical_high:01",
+  "chestsBehindThisDoor": [
+   "veyra.g1b:po_meridian:medical_high:01 [storey 0]",
+   "veyra.g1b:po_meridian:room_blue:01 [storey 0]",
+   "veyra.g1b:po_meridian:room_blue:02 [storey 0]",
+   "veyra.g1b:po_meridian:room_blue:03 [storey 0]",
+   "veyra.g1b:po_meridian:room_blue:04 [storey 0]",
+   "veyra.g1b:po_meridian:room_blue:05 [storey 0]",
+   "veyra.g1b:po_meridian:room_blue:06 [storey 0]",
+   "veyra.g1b:po_meridian:medical_high:f1.platform.01 [storey 1]"
+  ],
+  "entity": {
+   "eid": "e3a",
+   "live": true,
+   "floor": 0,
+   "state": "opened",
+   "cycle": 0,
+   "stock": [
+    "bandagex5",
+    "antiradx1",
+    "medkitx4",
+    "herbx5"
+   ]
+  },
+  "icons": {
+   "atlas157": 9,
+   "drawn": [],
+   "sizes": [
+    "16x16/32",
+    "8x8/32"
+   ],
+   "rendering": [
+    "pixelated"
+   ]
+  },
+  "saveValid": true
+ },
+ {
+  "shot": "blue-8-upper-storey-inside-the-gate.png",
+  "source": "veyra.g1b:po_meridian:medical_high:f1.platform.01",
+  "stair": {
+   "x": 2254,
+   "y": 1361,
+   "tx": 2254,
+   "ty": 1361,
+   "from": 0,
+   "to": 1,
+   "label": "observation ladder · upper access"
+  },
+  "floorNow": 1,
+  "prompt": {
+   "kind": "g1b:chest",
+   "label": "Open High Medical Case",
+   "eid": "eoi"
+  },
+  "note": "the stair starts inside the sealed room: tests/g1b-gates.test.ts proves it cannot be reached with the door shut",
+  "saveValid": true
+ },
+ {
+  "pageErrors": []
+ }
+]

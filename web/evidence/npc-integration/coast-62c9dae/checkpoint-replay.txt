@@ -1,0 +1,71 @@
+
+ RUN  v4.1.12 /tmp/soh-measured-62c9dae4d9a5f01f2ae440aef60c882849c50b69/web
+
+stdout | tests/npc-rain-catchment.test.ts > a dry coast builds an initially empty barrel from actual store and pack lots
+TIDECAMP_RAIN {"start":1794949200000,"builtAt":1794949490926.625,"treatment":{"worker":"h6e","patient":"h6f","job":"hw2y4i","seen":{"gx":334,"gy":1068,"floor":0},"at":{"gx":334,"gy":1068,"floor":0},"hpBefore":25,"hpAfter":55,"inputs":[{"slot":0,"uid":"s2i5","key":"herb","qty":1,"containerId":"c2i3"}]},"construction":{"actor":"h6f","entity":"e2yav","kit":"s2yau","inputs":[{"slot":0,"uid":"s2ia","key":"wood","qty":4,"containerId":"c2i8"},{"slot":3,"uid":"s2ya0","key":"wood","qty":4,"containerId":"c2i8"},{"slot":4,"uid":"s2ya1","key":"fiber","qty":3,"containerId":"c2i8"}],"twistedRope":true},"firstObservedDrink":{"id":"r325032","seq":325032,"at":1794952662267.3123,"kind":"human.barrel.drink","detail":"h6b:e2yav:1"},"remainingWater":4.000000063975288}
+
+ ❯ tests/npc-rain-catchment.test.ts (3 tests | 2 failed) 344242ms
+   ✓ charges the whole pack recipe, or its same rope paid in fiber 2ms
+   × refuses an unpaid build and only the first body at the last serving can drink (position and water fixtures) 41674ms
+   × a dry coast builds an initially empty barrel from actual store and pack lots 302505ms
+stdout | tests/npc-subsistence.test.ts > Westbank scavenger picks a real meal instead of waiting to starve beside a bush
+{"actor":"h1m","before":{"food":3.9983918126084506,"stock":3,"dur":298},"after":{"food":43.43493695064969,"stock":0},"eats":[{"actorId":"h1m","uid":"swxk","key":"berries","containerId":"c1i3","qty":1},{"actorId":"h1m","uid":"swyb","key":"berries","containerId":"c1i3","qty":1},{"actorId":"h1m","uid":"swz9","key":"berries","containerId":"c1i3","qty":1},{"actorId":"h1m","uid":"sx07","key":"berries","containerId":"c1i3","qty":1},{"actorId":"h1m","uid":"sx17","key":"berries","containerId":"c1i3","qty":1}]}
+
+ ❯ tests/npc-subsistence.test.ts (2 tests | 2 failed) 314719ms
+   × Westbank scavenger picks a real meal instead of waiting to starve beside a bush 218917ms
+   × a personal meal uses two physical hand strikes; distant, full and depleted attempts release nothing 95800ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/npc-rain-catchment.test.ts > refuses an unpaid build and only the first body at the last serving can drink (position and water fixtures)
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/npc-rain-catchment.test.ts:13:1
+     11|  expect(barrelBill(true)).toEqual([['wood',8],['fiber',3]]);
+     12| });
+     13| it('refuses an unpaid build and only the first body at the last servin…
+       | ^
+     14|  setActiveLayout('veyra05-world');const g=newGame(),now=Date.UTC(2026,…
+     15|  const r=g.run!,hw=r.humanWorld!,c=hw.communities['com:po_tidecamp'],h…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  tests/npc-rain-catchment.test.ts > a dry coast builds an initially empty barrel from actual store and pack lots
+Error: Test timed out in 300000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/npc-rain-catchment.test.ts:25:16
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  tests/npc-subsistence.test.ts > Westbank scavenger picks a real meal instead of waiting to starve beside a bush
+Error: Test timed out in 120000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/npc-subsistence.test.ts:10:17
+      8| // Actual pre-fix first-day checkpoint; never inject stock, position o…
+      9| const saved=process.env.SOH_SUBSISTENCE_H24;
+     10| it.skipIf(!saved)('Westbank scavenger picks a real meal instead of wai…
+       |                 ^
+     11|  const gs=selectSnapshots([readFileSync(saved!,'utf8')]).gs!,r=gs.run!…
+     12|  expect(setActiveLayout(r.layoutId!)).toBe(true);expect(h.hunger).toBe…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  tests/npc-subsistence.test.ts > a personal meal uses two physical hand strikes; distant, full and depleted attempts release nothing
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/npc-subsistence.test.ts:25:1
+     23| import {humanNavigation} from '../src/game/human-navigation';
+     24| import {T0} from './helpers/g1b-kit';
+     25| it('a personal meal uses two physical hand strikes; distant, full and …
+       | ^
+     26|  setActiveLayout('veyra05-world');const gs=newGame();expect(startRun(g…
+     27|  const r=gs.run!,hw=r.humanWorld!,h=hw.people.h1m,x=1828,y=1831;const …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  4 failed | 1 passed (5)
+   Start at  18:41:02
+   Duration  708.67s (transform 32.10s, setup 0ms, import 44.47s, tests 658.96s, environment 0ms)

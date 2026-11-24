@@ -1,0 +1,57 @@
+{
+ "seed": 4242,
+ "layout": "veyra05-at-1280-1280",
+ "hits": [
+  {
+   "kind": "scrap",
+   "gx": 1462,
+   "gy": 1307,
+   "hp": 5,
+   "stock": 3
+  },
+  {
+   "kind": "wreck",
+   "gx": 1540,
+   "gy": 1384,
+   "hp": 21,
+   "stock": 6
+  }
+ ],
+ "layoutAtSave": "veyra05-at-1408-1280",
+ "sourceMap": {
+  "id": "veyra05",
+  "revision": 1,
+  "seed": 2026,
+  "rules": 3,
+  "digest": "40886697",
+  "mapDigest": "d81b6b3c",
+  "veyra": {
+   "sourceCommit": "74062a5baf2731451fad9638c4243c7459ce8e24",
+   "sourceDigest": "e3259eb30016f93ab0883c6dc3656f0ec1b9d47a85dc78fd90a56e0185765e63",
+   "originAu": [
+    704,
+    640
+   ],
+   "unitsPerTile": 0.5,
+   "frameAu": [
+    2000,
+    1400
+   ],
+   "projection": "cell-centre-v1",
+   "worldRevision": "WMP-04R1",
+   "sceneId": "veyra05-at-1408-1280",
+   "beforeLayoutId": null,
+   "analysisCellAu": 8,
+   "geometrySource": "GOLD_LR01_AUTHORED_POLYGONS_AND_CENTRELINES__UNCHANGED",
+   "biomeSource": "WMP04R1_BIOME_EFFECTIVE_R1",
+   "activeRevisionDigest": "57195f7d842ce524d0bda566a140ffba67f2a6f8563830b8c1030bc583224f15"
+  }
+ },
+ "spares": 2,
+ "legacyDigests": {
+  "1536,1088": "dce94165",
+  "1024,1024": "2eeedeb2",
+  "2048,1536": "376544c6"
+ },
+ "note": "Written by the code at baseline 3f80bf4f (pre-G1A) through a real New Game bot run. hits[] = state of the two damaged salvage sources as stored in the save payload."
+}

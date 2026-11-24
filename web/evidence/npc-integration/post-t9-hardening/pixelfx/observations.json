@@ -1,0 +1,889 @@
+{
+  "errors": [],
+  "requests": [],
+  "saves": [
+    {
+      "stage": "01-departure",
+      "id": "run_t1dxhr_mwobewdy",
+      "seed": 1755848655,
+      "layout": "veyra05-at-1344-704",
+      "at": 1795139021835,
+      "origin": [
+        672,
+        352
+      ],
+      "local": [
+        32,
+        113
+      ],
+      "people": 286,
+      "jobs": [
+        {
+          "actor": "h4",
+          "role": "builder",
+          "location": [
+            1614,
+            1161,
+            0
+          ],
+          "community": "com:po_greywater",
+          "pack": "c16p",
+          "state": "MOVING",
+          "job": {
+            "id": "hj2t4",
+            "sourceId": "0:4605625",
+            "gx": 1625,
+            "gy": 1151,
+            "floor": 0,
+            "key": "oak",
+            "phase": "delivery",
+            "startedAt": 1795139007023,
+            "storeId": "e15x"
+          },
+          "output": {
+            "s2tl": 1
+          }
+        },
+        {
+          "actor": "h6",
+          "role": "gardener",
+          "location": [
+            1639,
+            1203,
+            0
+          ],
+          "community": "com:po_greywater",
+          "pack": "c16y",
+          "state": "MOVING",
+          "block": "Checking physical route (768 cells examined; no travel claimed).",
+          "job": {
+            "id": "hj2tk",
+            "sourceId": "0:4813665",
+            "gx": 1665,
+            "gy": 1203,
+            "floor": 0,
+            "key": "grass",
+            "phase": "source",
+            "startedAt": 1795139009023
+          }
+        },
+        {
+          "actor": "hb",
+          "role": "engineer",
+          "location": [
+            1837,
+            518,
+            0
+          ],
+          "community": "com:po_academy",
+          "pack": "c17z",
+          "state": "MOVING",
+          "job": {
+            "id": "hj2tt",
+            "sourceId": "0:2077833",
+            "gx": 1833,
+            "gy": 519,
+            "floor": 0,
+            "key": "crystal",
+            "phase": "delivery",
+            "startedAt": 1795139014023,
+            "storeId": "e17s"
+          },
+          "output": {
+            "s2tx": 1
+          }
+        },
+        {
+          "actor": "hh",
+          "role": "salvager",
+          "location": [
+            2364,
+            2583,
+            0
+          ],
+          "community": "com:po_ironmine",
+          "pack": "c19d",
+          "state": "MOVING",
+          "job": {
+            "id": "hj2tw",
+            "sourceId": "0:10374364",
+            "gx": 2364,
+            "gy": 2593,
+            "floor": 0,
+            "key": "road_salvage_bale",
+            "phase": "source",
+            "startedAt": 1795139020023
+          }
+        },
+        {
+          "actor": "h2c",
+          "role": "salvager",
+          "location": [
+            1432,
+            861,
+            0
+          ],
+          "community": "com:po_falls",
+          "pack": "c1o3",
+          "state": "MOVING",
+          "job": {
+            "id": "hj2tg",
+            "sourceId": "0:3581428",
+            "gx": 1428,
+            "gy": 895,
+            "floor": 0,
+            "key": "road_relay_wreck",
+            "phase": "delivery",
+            "startedAt": 1795139008023,
+            "storeId": "e1o2"
+          },
+          "output": {
+            "s2tr": 2
+          }
+        },
+        {
+          "actor": "h2d",
+          "role": "engineer",
+          "location": [
+            1423,
+            880,
+            0
+          ],
+          "community": "com:po_falls",
+          "pack": "c1o9",
+          "state": "MOVING",
+          "job": {
+            "id": "hj2th",
+            "sourceId": "0:3573412",
+            "gx": 1412,
+            "gy": 893,
+            "floor": 0,
+            "key": "road_relay_wreck",
+            "phase": "delivery",
+            "startedAt": 1795139008023,
+            "storeId": "e1o2"
+          },
+          "output": {
+            "s2ts": 2
+          }
+        },
+        {
+          "actor": "h2f",
+          "role": "mechanic",
+          "location": [
+            1470,
+            884,
+            0
+          ],
+          "community": "com:po_falls",
+          "pack": "c1oj",
+          "state": "WORKING",
+          "block": "Checking physical route (256 cells examined; no travel claimed).",
+          "job": {
+            "id": "hj2tj",
+            "sourceId": "0:3541470",
+            "gx": 1470,
+            "gy": 885,
+            "floor": 0,
+            "key": "road_fuel_rack",
+            "phase": "source",
+            "startedAt": 1795139008023
+          }
+        }
+      ]
+    },
+    {
+      "stage": "02-return",
+      "id": "run_t1dxhr_mwobewdy",
+      "seed": 1755848655,
+      "layout": "veyra05-at-1344-704",
+      "at": 1795139172531,
+      "origin": [
+        672,
+        352
+      ],
+      "local": [
+        32,
+        113
+      ],
+      "people": 286,
+      "jobs": [
+        {
+          "actor": "h6",
+          "role": "gardener",
+          "location": [
+            1587,
+            1163,
+            0
+          ],
+          "community": "com:po_greywater",
+          "pack": "c16y",
+          "state": "IDLE",
+          "job": {
+            "id": "hj2tk",
+            "sourceId": "0:4813665",
+            "gx": 1665,
+            "gy": 1203,
+            "floor": 0,
+            "key": "grass",
+            "phase": "delivery",
+            "startedAt": 1795139009023,
+            "storeId": "e15x"
+          },
+          "output": {
+            "s2uc": 1
+          }
+        },
+        {
+          "actor": "hb",
+          "role": "engineer",
+          "location": [
+            1844,
+            504,
+            0
+          ],
+          "community": "com:po_academy",
+          "pack": "c17z",
+          "state": "IDLE",
+          "block": "Reached output store is full; cargo remains in my pack.",
+          "job": {
+            "id": "hj2tt",
+            "sourceId": "0:2077833",
+            "gx": 1833,
+            "gy": 519,
+            "floor": 0,
+            "key": "crystal",
+            "phase": "delivery",
+            "startedAt": 1795139014023,
+            "storeId": "e17s"
+          },
+          "output": {
+            "s2tx": 1
+          }
+        },
+        {
+          "actor": "hv",
+          "role": "salvager",
+          "location": [
+            1311,
+            1945,
+            0
+          ],
+          "community": "com:po_oasis",
+          "pack": "c1cc",
+          "state": "IDLE",
+          "job": {
+            "id": "hj2ub",
+            "sourceId": "0:8001362",
+            "gx": 1362,
+            "gy": 2000,
+            "floor": 0,
+            "key": "road_relay_wreck",
+            "phase": "delivery",
+            "startedAt": 1795139034023,
+            "storeId": "e1bq"
+          },
+          "output": {
+            "s2uh": 2
+          }
+        },
+        {
+          "actor": "h1b",
+          "role": "cook",
+          "location": [
+            3167,
+            1751,
+            0
+          ],
+          "community": "com:po_cindercamp",
+          "pack": "c1f4",
+          "state": "IDLE",
+          "job": {
+            "id": "hj2ur",
+            "sourceId": "0:7303227",
+            "gx": 3227,
+            "gy": 1825,
+            "floor": 0,
+            "key": "mushroom",
+            "phase": "delivery",
+            "startedAt": 1795139050023,
+            "storeId": "e1di"
+          },
+          "output": {
+            "s2vk": 1
+          }
+        },
+        {
+          "actor": "h2i",
+          "role": "mechanic",
+          "location": [
+            1707,
+            1987,
+            0
+          ],
+          "community": "com:po_oldpump",
+          "pack": "c1pa",
+          "state": "DOWNED",
+          "block": "No available community responder with medicine.",
+          "job": {
+            "id": "hj2w7",
+            "sourceId": "0:7953707",
+            "gx": 1707,
+            "gy": 1988,
+            "floor": 0,
+            "key": "road_salvage_bale",
+            "phase": "delivery",
+            "startedAt": 1795139089023
+          },
+          "output": {
+            "s2wf": 2
+          }
+        },
+        {
+          "actor": "h2k",
+          "role": "salvager",
+          "location": [
+            1533,
+            1368,
+            0
+          ],
+          "community": "com:po_sawaion",
+          "pack": "c1pv",
+          "state": "DOWNED",
+          "block": "No available community responder with medicine.",
+          "job": {
+            "id": "hj2wa",
+            "sourceId": "0:5473532",
+            "gx": 1532,
+            "gy": 1368,
+            "floor": 0,
+            "key": "road_salvage_bale",
+            "phase": "delivery",
+            "startedAt": 1795139091023
+          },
+          "output": {
+            "s2wu": 2
+          }
+        },
+        {
+          "actor": "h2z",
+          "role": "engineer",
+          "location": [
+            1207,
+            1018,
+            0
+          ],
+          "community": "com:po_fracquarry",
+          "pack": "c1sx",
+          "state": "DOWNED",
+          "block": "No available community responder with medicine.",
+          "job": {
+            "id": "hj2wt",
+            "sourceId": "0:4073208",
+            "gx": 1208,
+            "gy": 1018,
+            "floor": 0,
+            "key": "crystal",
+            "phase": "delivery",
+            "startedAt": 1795139106023
+          },
+          "output": {
+            "s2x4": 1
+          }
+        },
+        {
+          "actor": "h33",
+          "role": "engineer",
+          "location": [
+            1011,
+            1262,
+            0
+          ],
+          "community": "com:po_greyquarry",
+          "pack": "c1tt",
+          "state": "IDLE",
+          "block": "Reached output store is full; cargo remains in my pack.",
+          "job": {
+            "id": "hj2wy",
+            "sourceId": "0:5297053",
+            "gx": 1053,
+            "gy": 1324,
+            "floor": 0,
+            "key": "iron",
+            "phase": "delivery",
+            "startedAt": 1795139110023,
+            "storeId": "e1tc"
+          },
+          "output": {
+            "s2x9": 1
+          }
+        },
+        {
+          "actor": "h34",
+          "role": "engineer",
+          "location": [
+            3295,
+            1510,
+            0
+          ],
+          "community": "com:po_obsq",
+          "pack": "c1ua",
+          "state": "IDLE",
+          "block": "Reached output store is full; cargo remains in my pack.",
+          "job": {
+            "id": "hj2wz",
+            "sourceId": "0:6083258",
+            "gx": 3258,
+            "gy": 1520,
+            "floor": 0,
+            "key": "sulfur",
+            "phase": "delivery",
+            "startedAt": 1795139111023,
+            "storeId": "e1u8"
+          },
+          "output": {
+            "s2xg": 1
+          }
+        },
+        {
+          "actor": "h37",
+          "role": "mechanic",
+          "location": [
+            3296,
+            1511,
+            0
+          ],
+          "community": "com:po_obsq",
+          "pack": "c1up",
+          "state": "IDLE",
+          "block": "Reached output store is full; cargo remains in my pack.",
+          "job": {
+            "id": "hj2x5",
+            "sourceId": "0:6331288",
+            "gx": 3288,
+            "gy": 1582,
+            "floor": 0,
+            "key": "coalv",
+            "phase": "delivery",
+            "startedAt": 1795139114023,
+            "storeId": "e1u8"
+          },
+          "output": {
+            "s2xa": 1
+          }
+        },
+        {
+          "actor": "h3l",
+          "role": "salvager",
+          "location": [
+            2211,
+            1472,
+            0
+          ],
+          "community": "com:po_siloc",
+          "pack": "c1xr",
+          "state": "IDLE",
+          "block": "Checking physical route (1024 cells examined; no travel claimed).",
+          "job": {
+            "id": "hj2xo",
+            "sourceId": "0:5886211",
+            "gx": 2211,
+            "gy": 1471,
+            "floor": 0,
+            "key": "road_fuel_rack",
+            "phase": "delivery",
+            "startedAt": 1795139128023,
+            "storeId": "e1xl"
+          },
+          "output": {
+            "s2yy": 1,
+            "s2yz": 1
+          }
+        },
+        {
+          "actor": "h3x",
+          "role": "salvager",
+          "location": [
+            2046,
+            441,
+            0
+          ],
+          "community": "com:po_archive",
+          "pack": "c209",
+          "state": "MOVING",
+          "job": {
+            "id": "hj2y9",
+            "sourceId": "0:1714048",
+            "gx": 2048,
+            "gy": 428,
+            "floor": 0,
+            "key": "road_relay_wreck",
+            "phase": "delivery",
+            "startedAt": 1795139140023,
+            "storeId": "e1zy"
+          },
+          "output": {
+            "s2zc": 2
+          }
+        },
+        {
+          "actor": "h4b",
+          "role": "engineer",
+          "location": [
+            1398,
+            599,
+            0
+          ],
+          "community": "com:po_kestrel",
+          "pack": "c237",
+          "state": "IDLE",
+          "job": {
+            "id": "hj2yo",
+            "sourceId": "0:2465387",
+            "gx": 1387,
+            "gy": 616,
+            "floor": 0,
+            "key": "road_salvage_bale",
+            "phase": "delivery",
+            "startedAt": 1795139154023,
+            "storeId": "e22q"
+          },
+          "output": {
+            "s2yv": 2
+          }
+        },
+        {
+          "actor": "h4g",
+          "role": "mechanic",
+          "location": [
+            1833,
+            1315,
+            0
+          ],
+          "community": "com:po_confluence",
+          "pack": "c24b",
+          "state": "MOVING",
+          "job": {
+            "id": "hj2yt",
+            "sourceId": "0:5305844",
+            "gx": 1844,
+            "gy": 1326,
+            "floor": 0,
+            "key": "road_fuel_rack",
+            "phase": "delivery",
+            "startedAt": 1795139159023,
+            "storeId": "e23z"
+          },
+          "output": {
+            "s2z7": 1,
+            "s2z8": 1
+          }
+        },
+        {
+          "actor": "h4i",
+          "role": "builder",
+          "location": [
+            1620,
+            1492,
+            0
+          ],
+          "community": "com:po_ranger",
+          "pack": "c24v",
+          "state": "MOVING",
+          "job": {
+            "id": "hj2yw",
+            "sourceId": "0:5981621",
+            "gx": 1621,
+            "gy": 1495,
+            "floor": 0,
+            "key": "oak",
+            "phase": "delivery",
+            "startedAt": 1795139161023,
+            "storeId": "e24p"
+          },
+          "output": {
+            "s2ze": 1
+          }
+        },
+        {
+          "actor": "h4k",
+          "role": "gardener",
+          "location": [
+            1620,
+            1494,
+            0
+          ],
+          "community": "com:po_ranger",
+          "pack": "c253",
+          "state": "WORKING",
+          "job": {
+            "id": "hj2z1",
+            "sourceId": "0:5981620",
+            "gx": 1620,
+            "gy": 1495,
+            "floor": 0,
+            "key": "bush",
+            "phase": "source",
+            "startedAt": 1795139163023
+          }
+        },
+        {
+          "actor": "h4l",
+          "role": "salvager",
+          "location": [
+            1588,
+            1502,
+            0
+          ],
+          "community": "com:po_ranger",
+          "pack": "c257",
+          "state": "MOVING",
+          "job": {
+            "id": "hj2z2",
+            "sourceId": "0:6001604",
+            "gx": 1604,
+            "gy": 1500,
+            "floor": 0,
+            "key": "road_salvage_bale",
+            "phase": "delivery",
+            "startedAt": 1795139164023,
+            "storeId": "e24p"
+          },
+          "output": {
+            "s2za": 2
+          }
+        },
+        {
+          "actor": "h4n",
+          "role": "mechanic",
+          "location": [
+            1604,
+            1499,
+            0
+          ],
+          "community": "com:po_ranger",
+          "pack": "c25i",
+          "state": "WORKING",
+          "job": {
+            "id": "hj2z5",
+            "sourceId": "0:5993604",
+            "gx": 1604,
+            "gy": 1498,
+            "floor": 0,
+            "key": "road_salvage_bale",
+            "phase": "source",
+            "startedAt": 1795139166023
+          }
+        },
+        {
+          "actor": "h4q",
+          "role": "gardener",
+          "location": [
+            1568,
+            1423,
+            0
+          ],
+          "community": "com:po_glade",
+          "pack": "c267",
+          "state": "MOVING",
+          "job": {
+            "id": "hj2zb",
+            "sourceId": "0:5709568",
+            "gx": 1568,
+            "gy": 1427,
+            "floor": 0,
+            "key": "grass",
+            "phase": "source",
+            "startedAt": 1795139169023
+          }
+        },
+        {
+          "actor": "h4s",
+          "role": "builder",
+          "location": [
+            1567,
+            1414,
+            0
+          ],
+          "community": "com:po_glade",
+          "pack": "c26g",
+          "state": "MOVING",
+          "job": {
+            "id": "hj2zd",
+            "sourceId": "0:5709567",
+            "gx": 1567,
+            "gy": 1427,
+            "floor": 0,
+            "key": "oak",
+            "phase": "source",
+            "startedAt": 1795139171023
+          }
+        }
+      ]
+    }
+  ],
+  "closedMs": 90056,
+  "followed": [
+    {
+      "jobId": "hj2t4",
+      "source": "0:4605625",
+      "worker": "h4",
+      "pack": "c16p",
+      "carried": [],
+      "landed": [
+        {
+          "at": 1795139031080.1438,
+          "jobId": "hj2t4",
+          "sourceId": "0:4605625",
+          "workerId": "h4",
+          "fromUid": "s2tl",
+          "intoUid": "s2tl",
+          "qty": 1,
+          "key": "wood",
+          "stillInStore": "c15m"
+        }
+      ],
+      "afterState": "IDLE"
+    },
+    {
+      "jobId": "hj2tk",
+      "source": "0:4813665",
+      "worker": "h6",
+      "pack": "c16y",
+      "carried": [
+        {
+          "uid": "s2uc",
+          "key": "fiber",
+          "qty": 1,
+          "production": {
+            "jobId": "hj2tk",
+            "workerId": "h6"
+          }
+        }
+      ],
+      "landed": [],
+      "afterJob": "hj2tk",
+      "afterState": "IDLE"
+    },
+    {
+      "jobId": "hj2tt",
+      "source": "0:2077833",
+      "worker": "hb",
+      "pack": "c17z",
+      "carried": [
+        {
+          "uid": "s2tx",
+          "key": "crystal",
+          "qty": 1,
+          "production": {
+            "jobId": "hj2tt",
+            "workerId": "hb"
+          }
+        }
+      ],
+      "landed": [],
+      "block": "Reached output store is full; cargo remains in my pack.",
+      "afterJob": "hj2tt",
+      "afterState": "IDLE"
+    },
+    {
+      "jobId": "hj2tw",
+      "source": "0:10374364",
+      "worker": "hh",
+      "pack": "c19d",
+      "carried": [],
+      "landed": [
+        {
+          "at": 1795139041248.4226,
+          "jobId": "hj2tw",
+          "sourceId": "0:10374364",
+          "workerId": "hh",
+          "fromUid": "s2u4",
+          "intoUid": "s18e",
+          "qty": 2,
+          "key": "spares",
+          "stillInStore": "c18d"
+        }
+      ],
+      "afterState": "IDLE"
+    },
+    {
+      "jobId": "hj2tg",
+      "source": "0:3581428",
+      "worker": "h2c",
+      "pack": "c1o3",
+      "carried": [],
+      "landed": [
+        {
+          "at": 1795139028994.43,
+          "jobId": "hj2tg",
+          "sourceId": "0:3581428",
+          "workerId": "h2c",
+          "fromUid": "s2tr",
+          "intoUid": "s1ns",
+          "qty": 2,
+          "key": "spares",
+          "stillInStore": "c1nr"
+        }
+      ],
+      "afterState": "IDLE"
+    },
+    {
+      "jobId": "hj2th",
+      "source": "0:3573412",
+      "worker": "h2d",
+      "pack": "c1o9",
+      "carried": [],
+      "landed": [
+        {
+          "at": 1795139034956.3718,
+          "jobId": "hj2th",
+          "sourceId": "0:3573412",
+          "workerId": "h2d",
+          "fromUid": "s2ts",
+          "intoUid": "s2ts",
+          "qty": 2,
+          "key": "spares",
+          "stillInStore": "c1nr"
+        }
+      ],
+      "block": "Known source is depleted",
+      "afterState": "IDLE"
+    },
+    {
+      "jobId": "hj2tj",
+      "source": "0:3541470",
+      "worker": "h2f",
+      "pack": "c1oj",
+      "carried": [],
+      "landed": [
+        {
+          "at": 1795139055473.802,
+          "jobId": "hj2tj",
+          "sourceId": "0:3541470",
+          "workerId": "h2f",
+          "fromUid": "s2u0",
+          "intoUid": "s1ns",
+          "qty": 1,
+          "key": "spares",
+          "stillInStore": "c1nr"
+        },
+        {
+          "at": 1795139061480.1467,
+          "jobId": "hj2tj",
+          "sourceId": "0:3541470",
+          "workerId": "h2f",
+          "fromUid": "s2tz",
+          "intoUid": "s2tz",
+          "qty": 1,
+          "key": "tin_can",
+          "stillInStore": "c1nr"
+        }
+      ],
+      "block": "Known source is depleted",
+      "afterState": "IDLE"
+    }
+  ],
+  "observedDelivery": true,
+  "observedOutput": true
+}

@@ -1,0 +1,96 @@
+title SOUL OF HERO
+fourteen days · one island · the end of the world
+New run
+Full-Gear QA Sandbox [F9]
+Profile & history
+Creat
+choice CHOOSE YOUR ADVENTURER
+Adventurer ♀
+Survival knife, a half-full flask, a few berries. No Core, no map, no orders.
+Advent
+landing 100
+100
+85
+85
+100
+VEYRA · U=0.5
+marsh
+AU 944,421 · F0
+07:18
+Day 1 / 14
+CALM
+CLEAR
+next RAIN
+secured 0
+Journey [J]
+Notes
+inventory 100
+100
+85
+85
+100
+VEYRA · U=0.5
+marsh
+07:20
+Day 1 / 14
+CALM
+CLEAR
+next RAIN
+secured 0
+Journey [J]
+Notes [N]
+SFX
+☰
+SURVIV
+recipes 100
+100
+85
+85
+100
+VEYRA · U=0.5
+marsh
+07:21
+Day 1 / 14
+CALM
+CLEAR
+next RAIN
+secured 0
+Journey [J]
+Notes [N]
+SFX
+☰
+SURVIV
+build 100
+100
+85
+85
+100
+VEYRA · U=0.5
+marsh
+AU 944,421 · F0
+07:23
+Day 1 / 14
+CALM
+CLEAR
+next RAIN
+secured 0
+Journey [J]
+Notes
+map 100
+100
+85
+85
+100
+VEYRA · U=0.5
+marsh
+07:24
+Day 1 / 14
+CALM
+CLEAR
+next RAIN
+secured 0
+Journey [J]
+Notes [N]
+SFX
+☰
+FIELD

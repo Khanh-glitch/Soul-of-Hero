@@ -1,0 +1,830 @@
+{
+ "note": "ENGINE BOT (not a human, not a browser). Real New Game per run, starting pack only, no grants. Same script for every column; the bot sees salvage only within 28 tiles and searches blind otherwise. Goals: 10 Parts (Research Table 6 + Workbench L2 4), 33 Parts (first industrial step of the oil route), 60 and 120 Parts (bench L3, generator, gears and pipes beyond it). Limit 30 game-minutes. SOH_PROVISIONAL.",
+ "runs": [
+  {
+   "seed": 103,
+   "kind": "favourable (salvage a few steps from spawn)",
+   "legacy": {
+    "layout": "veyra05-at-1728-1664",
+    "salvageAtStart": {
+     "within28": 4,
+     "within60": 25,
+     "inWindow": 88
+    },
+    "stoneAxe": {
+     "made": true,
+     "atMinute": 0.6,
+     "walkedTiles": 101
+    },
+    "harvestToolAtMinute0": "knife (starting pack)",
+    "stop": "reached 120 Parts",
+    "minutes": 2.5,
+    "walkedTiles": 258,
+    "nodesHarvested": 23,
+    "nodesByKind": {
+     "scrap": 20,
+     "wreck": 3
+    },
+    "parts": 120,
+    "partsPerNode": 5.22,
+    "partsPer100Tiles": 46.6,
+    "partsPerMinuteAfterAxe": 63.52,
+    "reached": {
+     "10": {
+      "minute": 0.7,
+      "walkedTiles": 116,
+      "nodes": 3
+     },
+     "33": {
+      "minute": 1,
+      "walkedTiles": 129,
+      "nodes": 6
+     },
+     "60": {
+      "minute": 1.4,
+      "walkedTiles": 151,
+      "nodes": 11
+     },
+     "120": {
+      "minute": 2.5,
+      "walkedTiles": 258,
+      "nodes": 23
+     }
+    },
+    "carried": {
+     "spares": 120,
+     "tin_can": 39,
+     "needle_tube": 6,
+     "metal_pipe": 1,
+     "iron_plate": 2,
+     "electronic_parts": 4,
+     "electric_resistor": 7
+    },
+    "tools": {
+     "knife": {
+      "start": 300,
+      "end": 9,
+      "of": 300
+     },
+     "stoneAxe": {
+      "end": 180,
+      "of": 180
+     },
+     "stoneAxesMade": 1,
+     "timesNoWorkingTool": 0
+    },
+    "pack": {
+     "timesFull": 0,
+     "leftOnGround": {},
+     "maxSlotsUsed": 17,
+     "of": 24,
+     "maxKg": 57.1,
+     "limitKg": 60
+    },
+    "search": {
+     "walkedBlindLegs": 0,
+     "farthestNodeFromSpawn": 102,
+     "salvageStillStandingInCurrentWindow": 35,
+     "salvageLeftWithin28OfSpawn": 3
+    },
+    "swingsThatNeverConnected": {},
+    "survival": {
+     "bandagesUsed": 0,
+     "hp": 100,
+     "hunger": 79,
+     "thirst": 76,
+     "dead": false
+    }
+   },
+   "committed": {
+    "layout": "veyra05-at-1792-1600",
+    "salvageAtStart": {
+     "within28": 4,
+     "within60": 22,
+     "inWindow": 73
+    },
+    "stoneAxe": {
+     "made": true,
+     "atMinute": 0.6,
+     "walkedTiles": 101
+    },
+    "harvestToolAtMinute0": "knife (starting pack)",
+    "stop": "reached 120 Parts",
+    "minutes": 5.9,
+    "walkedTiles": 881,
+    "nodesHarvested": 45,
+    "nodesByKind": {
+     "road_salvage_bale": 27,
+     "road_fuel_rack": 6,
+     "road_relay_wreck": 12
+    },
+    "parts": 122,
+    "partsPerNode": 2.71,
+    "partsPer100Tiles": 13.9,
+    "partsPerMinuteAfterAxe": 23.05,
+    "reached": {
+     "10": {
+      "minute": 0.8,
+      "walkedTiles": 129,
+      "nodes": 4
+     },
+     "33": {
+      "minute": 1.2,
+      "walkedTiles": 175,
+      "nodes": 12
+     },
+     "60": {
+      "minute": 1.9,
+      "walkedTiles": 268,
+      "nodes": 23
+     },
+     "120": {
+      "minute": 5.9,
+      "walkedTiles": 881,
+      "nodes": 45
+     }
+    },
+    "carried": {
+     "spares": 122,
+     "tin_can": 33,
+     "needle_tube": 7,
+     "metal_pipe": 2,
+     "iron_plate": 5,
+     "electronic_parts": 5,
+     "electric_resistor": 2,
+     "mechanical_gear": 3,
+     "fuel_can": 1
+    },
+    "tools": {
+     "knife": {
+      "start": 300,
+      "end": 58,
+      "of": 300
+     },
+     "stoneAxe": {
+      "end": 76,
+      "of": 180
+     },
+     "stoneAxesMade": 1,
+     "timesNoWorkingTool": 0
+    },
+    "pack": {
+     "timesFull": 0,
+     "leftOnGround": {},
+     "maxSlotsUsed": 21,
+     "of": 24,
+     "maxKg": 73.3,
+     "limitKg": 60
+    },
+    "search": {
+     "walkedBlindLegs": 4,
+     "farthestNodeFromSpawn": 132,
+     "salvageStillStandingInCurrentWindow": 78,
+     "salvageLeftWithin28OfSpawn": 3
+    },
+    "swingsThatNeverConnected": {},
+    "survival": {
+     "bandagesUsed": 0,
+     "hp": 100,
+     "hunger": 71,
+     "thirst": 64,
+     "dead": false
+    }
+   },
+   "r1": {
+    "layout": "veyra05-at-1728-1664",
+    "salvageAtStart": {
+     "within28": 4,
+     "within60": 22,
+     "inWindow": 73
+    },
+    "stoneAxe": {
+     "made": true,
+     "atMinute": 0.6,
+     "walkedTiles": 101
+    },
+    "harvestToolAtMinute0": "knife (starting pack)",
+    "stop": "reached 120 Parts",
+    "minutes": 1.9,
+    "walkedTiles": 268,
+    "nodesHarvested": 23,
+    "nodesByKind": {
+     "road_salvage_bale": 13,
+     "road_fuel_rack": 3,
+     "road_relay_wreck": 7
+    },
+    "parts": 124,
+    "partsPerNode": 5.39,
+    "partsPer100Tiles": 46.3,
+    "partsPerMinuteAfterAxe": 95.64,
+    "reached": {
+     "10": {
+      "minute": 0.7,
+      "walkedTiles": 116,
+      "nodes": 2
+     },
+     "33": {
+      "minute": 0.9,
+      "walkedTiles": 140,
+      "nodes": 7
+     },
+     "60": {
+      "minute": 1.1,
+      "walkedTiles": 169,
+      "nodes": 11
+     },
+     "120": {
+      "minute": 1.9,
+      "walkedTiles": 268,
+      "nodes": 23
+     }
+    },
+    "carried": {
+     "spares": 124,
+     "tin_can": 20,
+     "needle_tube": 5,
+     "metal_pipe": 2,
+     "iron_plate": 3,
+     "electronic_parts": 7,
+     "electric_resistor": 6,
+     "mechanical_gear": 2
+    },
+    "tools": {
+     "knife": {
+      "start": 300,
+      "end": 133,
+      "of": 300
+     },
+     "stoneAxe": {
+      "end": 180,
+      "of": 180
+     },
+     "stoneAxesMade": 1,
+     "timesNoWorkingTool": 0
+    },
+    "pack": {
+     "timesFull": 0,
+     "leftOnGround": {},
+     "maxSlotsUsed": 18,
+     "of": 24,
+     "maxKg": 60.8,
+     "limitKg": 60
+    },
+    "search": {
+     "walkedBlindLegs": 0,
+     "farthestNodeFromSpawn": 114,
+     "salvageStillStandingInCurrentWindow": 28,
+     "salvageLeftWithin28OfSpawn": 3
+    },
+    "swingsThatNeverConnected": {},
+    "survival": {
+     "bandagesUsed": 0,
+     "hp": 100,
+     "hunger": 80,
+     "thirst": 78,
+     "dead": false
+    }
+   }
+  },
+  {
+   "seed": 102,
+   "kind": "average (first salvage about 14 tiles away)",
+   "legacy": {
+    "layout": "veyra05-at-2048-1664",
+    "salvageAtStart": {
+     "within28": 5,
+     "within60": 6,
+     "inWindow": 22
+    },
+    "stoneAxe": {
+     "made": true,
+     "atMinute": 0.2,
+     "walkedTiles": 4
+    },
+    "harvestToolAtMinute0": "knife (starting pack)",
+    "stop": "reached 120 Parts",
+    "minutes": 21.6,
+    "walkedTiles": 4088,
+    "nodesHarvested": 25,
+    "nodesByKind": {
+     "scrap": 23,
+     "wreck": 2
+    },
+    "parts": 121,
+    "partsPerNode": 4.84,
+    "partsPer100Tiles": 3,
+    "partsPerMinuteAfterAxe": 5.67,
+    "reached": {
+     "10": {
+      "minute": 0.5,
+      "walkedTiles": 19,
+      "nodes": 2
+     },
+     "33": {
+      "minute": 4,
+      "walkedTiles": 700,
+      "nodes": 6
+     },
+     "60": {
+      "minute": 11,
+      "walkedTiles": 2122,
+      "nodes": 13
+     },
+     "120": {
+      "minute": 21.6,
+      "walkedTiles": 4088,
+      "nodes": 25
+     }
+    },
+    "carried": {
+     "spares": 121,
+     "tin_can": 32,
+     "needle_tube": 11,
+     "iron_plate": 3,
+     "electronic_parts": 1,
+     "electric_resistor": 3,
+     "fuel_can": 1
+    },
+    "tools": {
+     "knife": {
+      "start": 300,
+      "end": 20,
+      "of": 300
+     },
+     "stoneAxe": {
+      "end": 151,
+      "of": 180
+     },
+     "stoneAxesMade": 1,
+     "timesNoWorkingTool": 0
+    },
+    "pack": {
+     "timesFull": 0,
+     "leftOnGround": {},
+     "maxSlotsUsed": 19,
+     "of": 24,
+     "maxKg": 64.9,
+     "limitKg": 60
+    },
+    "search": {
+     "walkedBlindLegs": 24,
+     "farthestNodeFromSpawn": 251,
+     "salvageStillStandingInCurrentWindow": 36,
+     "salvageLeftWithin28OfSpawn": 0
+    },
+    "swingsThatNeverConnected": {},
+    "survival": {
+     "bandagesUsed": 0,
+     "hp": 68,
+     "hunger": 57,
+     "thirst": 87,
+     "dead": false
+    }
+   },
+   "committed": {
+    "layout": "veyra05-at-2048-1664",
+    "salvageAtStart": {
+     "within28": 4,
+     "within60": 5,
+     "inWindow": 20
+    },
+    "stoneAxe": {
+     "made": true,
+     "atMinute": 0.2,
+     "walkedTiles": 4
+    },
+    "harvestToolAtMinute0": "knife (starting pack)",
+    "stop": "searched 24 legs without seeing salvage",
+    "minutes": 25.6,
+    "walkedTiles": 4990,
+    "nodesHarvested": 12,
+    "nodesByKind": {
+     "road_relay_wreck": 5,
+     "road_salvage_bale": 7
+    },
+    "parts": 37,
+    "partsPerNode": 3.08,
+    "partsPer100Tiles": 0.7,
+    "partsPerMinuteAfterAxe": 1.46,
+    "reached": {
+     "10": {
+      "minute": 0.5,
+      "walkedTiles": 35,
+      "nodes": 4
+     },
+     "33": {
+      "minute": 4.2,
+      "walkedTiles": 722,
+      "nodes": 11
+     },
+     "60": null,
+     "120": null
+    },
+    "carried": {
+     "spares": 37,
+     "tin_can": 6,
+     "needle_tube": 4,
+     "electronic_parts": 1,
+     "electric_resistor": 1,
+     "mechanical_gear": 1
+    },
+    "tools": {
+     "knife": {
+      "start": 300,
+      "end": 199,
+      "of": 300
+     },
+     "stoneAxe": {
+      "end": 149,
+      "of": 180
+     },
+     "stoneAxesMade": 1,
+     "timesNoWorkingTool": 0
+    },
+    "pack": {
+     "timesFull": 0,
+     "leftOnGround": {},
+     "maxSlotsUsed": 17,
+     "of": 24,
+     "maxKg": 31.1,
+     "limitKg": 60
+    },
+    "search": {
+     "walkedBlindLegs": 24,
+     "farthestNodeFromSpawn": 337,
+     "salvageStillStandingInCurrentWindow": 30,
+     "salvageLeftWithin28OfSpawn": 0
+    },
+    "swingsThatNeverConnected": {},
+    "survival": {
+     "bandagesUsed": 0,
+     "hp": 5,
+     "hunger": 48,
+     "thirst": 80,
+     "dead": false
+    }
+   },
+   "r1": {
+    "layout": "veyra05-at-2048-1664",
+    "salvageAtStart": {
+     "within28": 4,
+     "within60": 5,
+     "inWindow": 20
+    },
+    "stoneAxe": {
+     "made": true,
+     "atMinute": 0.2,
+     "walkedTiles": 4
+    },
+    "harvestToolAtMinute0": "knife (starting pack)",
+    "stop": "searched 24 legs without seeing salvage",
+    "minutes": 26.1,
+    "walkedTiles": 5135,
+    "nodesHarvested": 12,
+    "nodesByKind": {
+     "road_relay_wreck": 5,
+     "road_salvage_bale": 7
+    },
+    "parts": 74,
+    "partsPerNode": 6.17,
+    "partsPer100Tiles": 1.4,
+    "partsPerMinuteAfterAxe": 2.86,
+    "reached": {
+     "10": {
+      "minute": 0.4,
+      "walkedTiles": 19,
+      "nodes": 2
+     },
+     "33": {
+      "minute": 3.9,
+      "walkedTiles": 708,
+      "nodes": 6
+     },
+     "60": {
+      "minute": 4.1,
+      "walkedTiles": 720,
+      "nodes": 10
+     },
+     "120": null
+    },
+    "carried": {
+     "spares": 74,
+     "tin_can": 5,
+     "needle_tube": 2,
+     "metal_pipe": 2,
+     "iron_plate": 1,
+     "electronic_parts": 2,
+     "electric_resistor": 3,
+     "mechanical_gear": 5
+    },
+    "tools": {
+     "knife": {
+      "start": 300,
+      "end": 199,
+      "of": 300
+     },
+     "stoneAxe": {
+      "end": 158,
+      "of": 180
+     },
+     "stoneAxesMade": 1,
+     "timesNoWorkingTool": 0
+    },
+    "pack": {
+     "timesFull": 0,
+     "leftOnGround": {},
+     "maxSlotsUsed": 18,
+     "of": 24,
+     "maxKg": 43.9,
+     "limitKg": 60
+    },
+    "search": {
+     "walkedBlindLegs": 24,
+     "farthestNodeFromSpawn": 337,
+     "salvageStillStandingInCurrentWindow": 30,
+     "salvageLeftWithin28OfSpawn": 0
+    },
+    "swingsThatNeverConnected": {},
+    "survival": {
+     "bandagesUsed": 0,
+     "hp": 71,
+     "hunger": 62,
+     "thirst": 82,
+     "dead": false
+    }
+   }
+  },
+  {
+   "seed": 112,
+   "kind": "unfavourable (first salvage about 56 tiles away)",
+   "legacy": {
+    "layout": "veyra05-at-1792-384",
+    "salvageAtStart": {
+     "within28": 0,
+     "within60": 0,
+     "inWindow": 60
+    },
+    "stoneAxe": {
+     "made": true,
+     "atMinute": 0.6,
+     "walkedTiles": 88
+    },
+    "harvestToolAtMinute0": "knife (starting pack)",
+    "stop": "stopped: player died at 4.9 min (hunger 73, thirst 68)",
+    "minutes": 4.9,
+    "walkedTiles": 745,
+    "nodesHarvested": 25,
+    "nodesByKind": {
+     "scrap": 23,
+     "wreck": 2
+    },
+    "parts": 0,
+    "partsPerNode": 0,
+    "partsPer100Tiles": 0,
+    "partsPerMinuteAfterAxe": 0,
+    "reached": {
+     "10": {
+      "minute": 2.2,
+      "walkedTiles": 439,
+      "nodes": 3
+     },
+     "33": {
+      "minute": 2.6,
+      "walkedTiles": 460,
+      "nodes": 9
+     },
+     "60": {
+      "minute": 3.1,
+      "walkedTiles": 490,
+      "nodes": 14
+     },
+     "120": null
+    },
+    "carried": {},
+    "tools": {
+     "knife": {
+      "start": 300,
+      "end": null,
+      "of": 300
+     },
+     "stoneAxe": {
+      "end": null,
+      "of": 180
+     },
+     "stoneAxesMade": 1,
+     "timesNoWorkingTool": 0
+    },
+    "pack": {
+     "timesFull": 0,
+     "leftOnGround": {},
+     "maxSlotsUsed": 15,
+     "of": 24,
+     "maxKg": 54.6,
+     "limitKg": 60
+    },
+    "search": {
+     "walkedBlindLegs": 5,
+     "farthestNodeFromSpawn": 122,
+     "salvageStillStandingInCurrentWindow": 32,
+     "salvageLeftWithin28OfSpawn": 0
+    },
+    "swingsThatNeverConnected": {},
+    "survival": {
+     "bandagesUsed": 0,
+     "hp": 0,
+     "hunger": 73,
+     "thirst": 68,
+     "dead": true
+    }
+   },
+   "committed": {
+    "layout": "veyra05-at-1728-448",
+    "salvageAtStart": {
+     "within28": 0,
+     "within60": 1,
+     "inWindow": 49
+    },
+    "stoneAxe": {
+     "made": true,
+     "atMinute": 0.6,
+     "walkedTiles": 88
+    },
+    "harvestToolAtMinute0": "knife (starting pack)",
+    "stop": "reached 120 Parts",
+    "minutes": 14.1,
+    "walkedTiles": 2450,
+    "nodesHarvested": 45,
+    "nodesByKind": {
+     "road_salvage_bale": 27,
+     "road_relay_wreck": 11,
+     "road_fuel_rack": 7
+    },
+    "parts": 120,
+    "partsPerNode": 2.67,
+    "partsPer100Tiles": 4.9,
+    "partsPerMinuteAfterAxe": 8.92,
+    "reached": {
+     "10": {
+      "minute": 1.8,
+      "walkedTiles": 349,
+      "nodes": 4
+     },
+     "33": {
+      "minute": 2.6,
+      "walkedTiles": 506,
+      "nodes": 12
+     },
+     "60": {
+      "minute": 3.3,
+      "walkedTiles": 594,
+      "nodes": 22
+     },
+     "120": {
+      "minute": 14.1,
+      "walkedTiles": 2450,
+      "nodes": 45
+     }
+    },
+    "carried": {
+     "spares": 120,
+     "tin_can": 36,
+     "needle_tube": 7,
+     "metal_pipe": 8,
+     "iron_plate": 4,
+     "electronic_parts": 4,
+     "electric_resistor": 2,
+     "mechanical_gear": 1
+    },
+    "tools": {
+     "knife": {
+      "start": 300,
+      "end": 58,
+      "of": 300
+     },
+     "stoneAxe": {
+      "end": 87,
+      "of": 180
+     },
+     "stoneAxesMade": 1,
+     "timesNoWorkingTool": 0
+    },
+    "pack": {
+     "timesFull": 0,
+     "leftOnGround": {},
+     "maxSlotsUsed": 20,
+     "of": 24,
+     "maxKg": 79.8,
+     "limitKg": 60
+    },
+    "search": {
+     "walkedBlindLegs": 14,
+     "farthestNodeFromSpawn": 157,
+     "salvageStillStandingInCurrentWindow": 18,
+     "salvageLeftWithin28OfSpawn": 0
+    },
+    "swingsThatNeverConnected": {},
+    "survival": {
+     "bandagesUsed": 0,
+     "hp": 51,
+     "hunger": 51,
+     "thirst": 85,
+     "dead": false
+    }
+   },
+   "r1": {
+    "layout": "veyra05-at-1792-384",
+    "salvageAtStart": {
+     "within28": 0,
+     "within60": 1,
+     "inWindow": 49
+    },
+    "stoneAxe": {
+     "made": true,
+     "atMinute": 0.6,
+     "walkedTiles": 88
+    },
+    "harvestToolAtMinute0": "knife (starting pack)",
+    "stop": "reached 120 Parts",
+    "minutes": 3.3,
+    "walkedTiles": 594,
+    "nodesHarvested": 22,
+    "nodesByKind": {
+     "road_salvage_bale": 14,
+     "road_relay_wreck": 6,
+     "road_fuel_rack": 2
+    },
+    "parts": 124,
+    "partsPerNode": 5.64,
+    "partsPer100Tiles": 20.9,
+    "partsPerMinuteAfterAxe": 45.73,
+    "reached": {
+     "10": {
+      "minute": 0.8,
+      "walkedTiles": 119,
+      "nodes": 2
+     },
+     "33": {
+      "minute": 2.4,
+      "walkedTiles": 486,
+      "nodes": 7
+     },
+     "60": {
+      "minute": 2.5,
+      "walkedTiles": 504,
+      "nodes": 11
+     },
+     "120": {
+      "minute": 3.3,
+      "walkedTiles": 594,
+      "nodes": 22
+     }
+    },
+    "carried": {
+     "spares": 124,
+     "tin_can": 14,
+     "needle_tube": 3,
+     "metal_pipe": 3,
+     "iron_plate": 1,
+     "electronic_parts": 2,
+     "electric_resistor": 6,
+     "mechanical_gear": 3
+    },
+    "tools": {
+     "knife": {
+      "start": 300,
+      "end": 145,
+      "of": 300
+     },
+     "stoneAxe": {
+      "end": 173,
+      "of": 180
+     },
+     "stoneAxesMade": 1,
+     "timesNoWorkingTool": 0
+    },
+    "pack": {
+     "timesFull": 0,
+     "leftOnGround": {},
+     "maxSlotsUsed": 17,
+     "of": 24,
+     "maxKg": 61,
+     "limitKg": 60
+    },
+    "search": {
+     "walkedBlindLegs": 4,
+     "farthestNodeFromSpawn": 100,
+     "salvageStillStandingInCurrentWindow": 28,
+     "salvageLeftWithin28OfSpawn": 0
+    },
+    "swingsThatNeverConnected": {},
+    "survival": {
+     "bandagesUsed": 0,
+     "hp": 88,
+     "hunger": 77,
+     "thirst": 73,
+     "dead": false
+    }
+   }
+  }
+ ]
+}

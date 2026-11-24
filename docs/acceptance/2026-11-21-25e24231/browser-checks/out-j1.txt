@@ -1,0 +1,12 @@
+## start ["1:wood_clubx1/d120","2:water_flaskx1","3:berriesx3"]
+## walk [[54,false,null],[55,true,null],[56,false,"Drink fresh water"],[57,false,null],[58,true,null],[59,true,null]]
+## tree null
+## clubOnTree {"inv":["1:wood_clubx1/d116","2:water_flaskx1","3:berriesx3"],"last":["harvest willow@40,76 -1"]}
+## broke true
+## afterBreak {"inv":["1:wood_clubx1/d0","2:water_flaskx1","3:berriesx3","5:fiberx1"],"last":["pickup fiberx1","stimulus.emit melee:647.0745192335203,1237.563466294308","tool.break wood_club:s1"]}
+## swingBrokenClub " A carried tool is near breaking or broken. Craft a replacement [C] or repair it at your Workbench [E] with the listed materials. "
+## targetWithFists null
+## fists {"slot":4,"message":" Too slow with this — an axe would fell it. ","woodBefore":[],"woodAfter":[],"last":["stimulus.emit melee:647.0745192335203,1237.563466294308","stimulus.emit melee:647.0745192335203,1237.563466294308","stimulus.emit melee:647.0745192335203,1237.563466294308"]}
+## craftPanel "100 | 100 | 70 | 62 | 87 | VEYRA · U=0.5 | marsh | 13:33 | Day 1 / 14 | CALM | CLEAR | next CLOUD | secured 0 | Journey [J] | Notes [N] | SFX | ☰ | SURVIVOR | drag | move | Enter | pick/place | Esc | cancel | 1-8 | hotbar | ✕ | Esc | ◀ | North | ▶ | -0% | +0 | 0 | 0 | 2 | /60 | INVENTORY | 4/24 | Sort Pack | QUICKBAR · 1–8 | PROTECTED | 1 | ! | 2 | 2⚡ | 3 | 3 | 4 | 5 | 6 | 7 | 8 | BACKPACK · 0/16 | LMB | pick · place | RMB | use | ⇧ | quick move | All | Tools | Gear | Food & Med | Materials | Cores | Stations | Devices | work now | 73 · 41 undiscovered | 2 | 8 | 12 | 4 | 2 | 2 | 2 | 2 | 2 | 2 | 3 | 8 | 2 | 2 | 6 | ◆ Work now | ▤ Can queue · waits | × Missing requirement | Fruit Juice | Pressed berries. Mostly a drink. | 3 | /3 | ▶ | ×1 | By hand | ⏱ 2s | Craft | ◆ Make now | Craft from your pack"
+## craftButtons ["Craft"]
+## errors {"errors":[],"failed":[],"bad":[]}

@@ -1,0 +1,98 @@
+END SEARCH_LIMIT h2f salvager 0:1428,841 > 0:684,1150 96256 100856
+END FOUND h2 mechanic 0:1597,1180 > 0:684,1150 35539 31905 steps 966
+END FOUND h1h mechanic 0:2465,732 > 0:2784,738 5685 5543 steps 336
+END FOUND h4o mechanic 0:1542,1389 > 0:684,1150 60737 63995 steps 1096
+END FOUND h8 medic 0:1590,1140 > 0:684,1150 33399 31500 steps 959
+END SEARCH_LIMIT h4m cook 0:1572,1507 > 0:684,1150 96256 103018
+END FOUND h5f salvager 0:2302,895 > 0:2784,738 35055 37473 steps 638
+HOUR 289 alive 52 DEC {"seek_berth|I will try to reach the berth.":12,"none":11,"stay|I would rather remain on the island.":14,"stay|I can still defend this place.":13,"seek_berth|I need a passage out; I cannot weather another attack here.":2}
+  EV ["human.evac.intent h2:evac:po_evac_west:966","human.evac.intent h1h:evac:po_evac_hook:336","human.board h1h:evac:po_evac_hook:seat0:4uids","human.board h2:evac:po_evac_west:seat0:4uids","human.evac.intent h4o:evac:po_evac_west:1096","human.evac.intent h8:evac:po_evac_west:959","human.board h4o:evac:po_evac_west:seat1:3uids","human.board h8:evac:po_evac_west:seat2:2uids","human.evac.intent h5f:evac:po_evac_hook:638","human.board h5f:evac:po_evac_hook:seat1:5uids"]
+  NAV {"peak":160232,"droppedByRank":{"0":1},"cellsByRank":{"0":38213}} pending 0 cells 0 top []
+  TRIP evac:po_evac_west BOARDING manifest h2,h4o,h8 / 6 dockIn_h 35.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 
+  TRIP evac:po_evac_south BOARDING manifest  / 6 dockIn_h 35.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 
+  TRIP evac:po_evac_hook BOARDING manifest h1h,h5f / 6 dockIn_h 35.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 
+END FOUND h4u cook 0:1548,1383 > 0:684,1150 65991 69004 steps 1096
+END NO_PATH h6v cook 0:286,1674 > 0:684,1150 35543 33684
+END FOUND h4s builder 0:1542,1390 > 0:684,1150 62082 65004 steps 1099
+END FOUND h1 cook 0:1583,1139 > 0:684,1150 32741 30908 steps 951
+END FOUND h2f salvager 0:1428,841 > 0:2784,738 79403 69202 steps 1476
+HOUR 290 alive 52 DEC {"seek_berth|I will try to reach the berth.":19,"stay|I would rather remain on the island.":17,"stay|I can still defend this place.":13,"seek_berth|I need a passage out; I cannot weather another attack here.":3}
+  EV ["human.evac.intent h4u:evac:po_evac_west:1096","human.board h4u:evac:po_evac_west:seat3:3uids","human.evac.intent h4s:evac:po_evac_west:1099","human.evac.intent h1:evac:po_evac_west:951","human.board h4s:evac:po_evac_west:seat4:2uids","human.board h1:evac:po_evac_west:seat5:2uids","evac.provision evac:po_evac_west:1:h2:c2r9:s2ra:s2rb","evac.depart evac:po_evac_west:round1:6/6:arrive@1795786060000","human.evac.intent h2f:evac:po_evac_hook:1476"]
+  NAV {"peak":160288,"droppedByRank":{"0":2},"cellsByRank":{"0":48438}} pending 0 cells 0 top []
+  TRIP evac:po_evac_west IN_TRANSIT manifest h2,h4o,h8,h4u,h4s,h1 / 6 dockIn_h 34.0 hold berriesx3 water_flaskx3 sparesx2 hull 100 fail 
+  TRIP evac:po_evac_south BOARDING manifest  / 6 dockIn_h 34.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 
+  TRIP evac:po_evac_hook BOARDING manifest h1h,h5f / 6 dockIn_h 34.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 
+END SEARCH_LIMIT h4t medic 0:1541,1389 > 0:2356,2170 96256 102997
+END SEARCH_LIMIT h2l engineer 0:1459,1304 > 0:2356,2170 96256 102197
+END NO_PATH h6h salvager 0:334,1074 > 0:2784,738 55774 50574
+END SEARCH_LIMIT h4m cook 0:1572,1507 > 0:2356,2170 96256 101161
+END SEARCH_LIMIT h2l engineer 0:1459,1304 > 0:2784,738 96256 104482
+HOUR 291 alive 52 DEC {"seek_berth|I will try to reach the berth.":19,"stay|I would rather remain on the island.":17,"stay|I can still defend this place.":13,"seek_berth|I need a passage out; I cannot weather another attack here.":3}
+  EV ["human.board h2f:evac:po_evac_hook:seat2:4uids"]
+  NAV {"peak":160288,"droppedByRank":{"0":5},"cellsByRank":{"0":67866}} pending 0 cells 0 top []
+  TRIP evac:po_evac_west IN_TRANSIT manifest h2,h4o,h8,h4u,h4s,h1 / 6 dockIn_h 33.0 hold berriesx3 water_flaskx3 sparesx2 hull 96 fail 
+  TRIP evac:po_evac_south BOARDING manifest  / 6 dockIn_h 33.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 
+  TRIP evac:po_evac_hook BOARDING manifest h1h,h5f,h2f / 6 dockIn_h 33.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 
+END SEARCH_LIMIT h4t medic 0:1543,1391 > 0:2356,2170 96256 103075
+END NO_PATH h6v cook 0:286,1674 > 0:2356,2170 40884 33684
+END SEARCH_LIMIT h7 cook 0:1580,1141 > 0:2784,738 96256 104039
+HOUR 292 alive 52 DEC {"seek_berth|I will try to reach the berth.":19,"stay|I would rather remain on the island.":17,"stay|I can still defend this place.":13,"seek_berth|I need a passage out; I cannot weather another attack here.":3}
+  EV []
+  NAV {"peak":160288,"droppedByRank":{"0":5},"cellsByRank":{"0":67866}} pending 0 cells 0 top []
+  TRIP evac:po_evac_west IN_TRANSIT manifest h2,h4o,h8,h4u,h4s,h1 / 6 dockIn_h 32.0 hold berriesx3 water_flaskx3 sparesx2 hull 92 fail 
+  TRIP evac:po_evac_south BOARDING manifest  / 6 dockIn_h 32.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 
+  TRIP evac:po_evac_hook BOARDING manifest h1h,h5f,h2f / 6 dockIn_h 32.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 
+END SEARCH_LIMIT h4i medic 0:1581,1502 > 0:2356,2170 96256 101615
+END SEARCH_LIMIT h4h gardener 0:1577,1501 > 0:2356,2170 96256 102796
+END NO_PATH h6g mechanic 0:334,1073 > 0:2784,738 55911 50574
+END SEARCH_LIMIT h4h gardener 0:1577,1504 > 0:2356,2170 96256 101481
+HOUR 293 alive 52 DEC {"seek_berth|I will try to reach the berth.":19,"stay|I would rather remain on the island.":17,"stay|I can still defend this place.":13,"seek_berth|I need a passage out; I cannot weather another attack here.":3}
+  EV []
+  NAV {"peak":160288,"droppedByRank":{"0":6},"cellsByRank":{"0":72011}} pending 0 cells 0 top []
+  TRIP evac:po_evac_west IN_TRANSIT manifest h2,h4o,h8,h4u,h4s,h1 / 6 dockIn_h 31.0 hold berriesx3 water_flaskx3 sparesx2 hull 88 fail 
+  TRIP evac:po_evac_south BOARDING manifest  / 6 dockIn_h 31.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 
+  TRIP evac:po_evac_hook BOARDING manifest h1h,h5f,h2f / 6 dockIn_h 31.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 
+END SEARCH_LIMIT h9 builder 0:1584,1140 > 0:2784,738 96256 102625
+END NO_PATH h6p salvager 0:286,1672 > 0:2356,2170 40587 33684
+END SEARCH_LIMIT h4h gardener 0:1581,1502 > 0:2356,2170 96256 101615
+END SEARCH_LIMIT h4t medic 0:1542,1389 > 0:2356,2170 96256 102251
+HOUR 294 alive 46 DEC {"stay|I would rather remain on the island.":17,"stay|I can still defend this place.":13,"seek_berth|I will try to reach the berth.":15,"seek_berth|I need a passage out; I cannot weather another attack here.":1}
+  EV ["human.evac.arrive h2:evac:po_evac_west:round1:4uids","human.evac.arrive h4o:evac:po_evac_west:round1:3uids","human.evac.arrive h8:evac:po_evac_west:round1:2uids","human.evac.arrive h4u:evac:po_evac_west:round1:3uids","human.evac.arrive h4s:evac:po_evac_west:round1:2uids","human.evac.arrive h1:evac:po_evac_west:round1:2uids","evac.arrive evac:po_evac_west:round1:6","evac.service.end evac:po_evac_west"]
+  NAV {"peak":160288,"droppedByRank":{"0":6},"cellsByRank":{"0":72011}} pending 0 cells 0 top []
+  TRIP evac:po_evac_west SERVICE_ENDED manifest  / 6 dockIn_h - hold berriesx3 water_flaskx3 sparesx2 hull 84 fail 
+  TRIP evac:po_evac_south BOARDING manifest  / 6 dockIn_h 30.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 
+  TRIP evac:po_evac_hook BOARDING manifest h1h,h5f,h2f / 6 dockIn_h 30.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 
+END SEARCH_LIMIT h9 builder 0:1585,1138 > 0:2784,738 96256 104342
+END NO_PATH h6h salvager 0:336,1074 > 0:2784,738 55746 50574
+HOUR 295 alive 46 DEC {"stay|I would rather remain on the island.":17,"stay|I can still defend this place.":13,"seek_berth|I will try to reach the berth.":15,"seek_berth|I need a passage out; I cannot weather another attack here.":1}
+  EV []
+  NAV {"peak":160288,"droppedByRank":{"0":6},"cellsByRank":{"0":72011}} pending 0 cells 0 top []
+  TRIP evac:po_evac_west SERVICE_ENDED manifest  / 6 dockIn_h - hold berriesx3 water_flaskx3 sparesx2 hull 84 fail 
+  TRIP evac:po_evac_south BOARDING manifest  / 6 dockIn_h 29.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 
+  TRIP evac:po_evac_hook BOARDING manifest h1h,h5f,h2f / 6 dockIn_h 29.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 
+END SEARCH_LIMIT h9 builder 0:1583,1139 > 0:2784,738 96000 102239
+END SEARCH_LIMIT h4m cook 0:1576,1505 > 0:2356,2170 96256 103330
+END SEARCH_LIMIT h9 builder 0:1581,1142 > 0:2784,738 96256 101660
+HOUR 296 alive 46 DEC {"stay|I would rather remain on the island.":17,"stay|I can still defend this place.":13,"seek_berth|I will try to reach the berth.":15,"seek_berth|I need a passage out; I cannot weather another attack here.":1}
+  EV []
+  NAV {"peak":160288,"droppedByRank":{"0":7},"cellsByRank":{"0":76121}} pending 0 cells 0 top []
+  TRIP evac:po_evac_west SERVICE_ENDED manifest  / 6 dockIn_h - hold berriesx3 water_flaskx3 sparesx2 hull 84 fail 
+  TRIP evac:po_evac_south BOARDING manifest  / 6 dockIn_h 28.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 
+  TRIP evac:po_evac_hook BOARDING manifest h1h,h5f,h2f / 6 dockIn_h 28.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 
+END SEARCH_LIMIT h4i medic 0:1576,1503 > 0:2356,2170 96256 101913
+END NO_PATH h6p salvager 0:286,1672 > 0:2784,738 35067 33684
+HOUR 297 alive 45 DEC {"stay|I would rather remain on the island.":17,"stay|I can still defend this place.":13,"seek_berth|I will try to reach the berth.":14,"seek_berth|I need a passage out; I cannot weather another attack here.":1}
+  EV ["human.evac.release h2f:downed at the berth","human.death h2f:starvation"]
+  NAV {"peak":160288,"droppedByRank":{"0":7},"cellsByRank":{"0":76121}} pending 0 cells 0 top []
+  TRIP evac:po_evac_west SERVICE_ENDED manifest  / 6 dockIn_h - hold berriesx3 water_flaskx3 sparesx2 hull 84 fail 
+  TRIP evac:po_evac_south BOARDING manifest  / 6 dockIn_h 27.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 
+  TRIP evac:po_evac_hook BOARDING manifest h1h,h5f / 6 dockIn_h 27.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 
+END SEARCH_LIMIT h4t medic 0:1542,1391 > 0:2356,2170 96256 102854
+END SEARCH_LIMIT h4i medic 0:1580,1501 > 0:2356,2170 96256 102003
+END NO_PATH h6h salvager 0:337,1071 > 0:2784,738 55480 50574
+HOUR 298 alive 43 DEC {"stay|I would rather remain on the island.":17,"stay|I can still defend this place.":13,"seek_berth|I will try to reach the berth.":12,"seek_berth|I need a passage out; I cannot weather another attack here.":1}
+  EV ["human.evac.release h1h:downed at the berth","human.death h1h:starvation","human.evac.release h5f:downed at the berth","human.death h5f:starvation"]
+  NAV {"peak":160288,"droppedByRank":{"0":7},"cellsByRank":{"0":76121}} pending 0 cells 0 top []
+  TRIP evac:po_evac_west SERVICE_ENDED manifest  / 6 dockIn_h - hold berriesx3 water_flaskx3 sparesx2 hull 84 fail 
+  TRIP evac:po_evac_south BOARDING manifest  / 6 dockIn_h 26.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 
+  TRIP evac:po_evac_hook BOARDING manifest  / 6 dockIn_h 26.0 hold berriesx4 water_flaskx4 sparesx2 hull 100 fail 
