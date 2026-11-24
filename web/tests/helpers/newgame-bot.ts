@@ -24,6 +24,9 @@ export class Bot {
   /** Veyra streams a 200x200 window and re-bases local tile coordinates when the player nears its edge. The bot keeps
    *  every target in GLOBAL tiles and re-plans after a shift. */
   started = new Set<string>(); toolsRemade = 0; repairs = 0;
+  /** Tool wear ledger (read-only bookkeeping): durability points spent per tool, by what the swing was spent on
+   *  (the material of the source being worked, `fight`, or `other`); tools made by hand or bench; tools worn to zero. */
+  toolWear: Record<string, Record<string, number>> = {}; toolsCrafted: Record<string, number> = {}; toolsBroken: Record<string, number> = {}; wearFor = 'other'; fightNow = false;
   drinks = 0; resided = 0; stashed = 0; bandages = 0; hunts = 0; refuels = 0; fightTicks = 0; shifts = 0; private origin: [number, number] = [0, 0];
   failures: Record<string, number> = {}; private fail(why: string) { this.failures[why] = (this.failures[why] || 0) + 1; }
   /** GLOBAL tiles the bot must not build on (e.g. the seep it intends to pump). */
@@ -56,14 +59,19 @@ export class Bot {
       // Self-defence: a creature that is hunting the bot and is close gets fought, on foot, with the best blade carried.
       const foe = this.r.creatures.filter(c => (c as any).hp > 0 && c.state !== 'dead' && (c.state === 'chase' || c.state === 'tell' || c.state === 'attack' || c.state === 'recover') && Math.hypot(c.x - this.p.x, c.y - this.p.y) < 44).sort((x, y) => Math.hypot(x.x - this.p.x, x.y - this.p.y) - Math.hypot(y.x - this.p.x, y.y - this.p.y))[0];
       if (foe) {
-        this.hold(this.weapon()); const dx = foe.x - this.p.x, dy = foe.y - this.p.y, far = Math.hypot(dx, dy) > 15; this.fightTicks++;
+        this.hold(this.weapon()); const dx = foe.x - this.p.x, dy = foe.y - this.p.y, far = Math.hypot(dx, dy) > 15; this.fightTicks++; this.fightNow = true;
         input = { ...this.idle(), left: far && dx < -3, right: far && dx > 3, up: far && dy < -3, down: far && dy > 3, mx: foe.x, my: foe.y, attack: true, attackPressed: !this.p.action } as Input;
       }
     }
     // A hurt player binds the wound with a carried bandage (ordinary `useItem`).
     if (this.p.hp > 0 && this.p.hp < 50 && !this.p.action) { const s = this.slotOf('bandage'); if (s >= 0 && this.act('useItem', { slot: s }).ok) this.bandages++; }
     const hp0 = this.p.hp, alive = new Map(this.r.creatures.map(c => [c.id, c.type] as const));
+    const dur0 = new Map<string, number>(); for (const st of C(this.r, 'inv').slots) if (st && st.dur !== undefined) dur0.set(st.uid, st.dur);
     this.now += DT; tick(this.gs, input, DT, this.now); this.ticks++;
+    for (const st of C(this.r, 'inv').slots) { if (!st || st.dur === undefined) continue; const was = dur0.get(st.uid); if (was === undefined || st.dur >= was) continue;
+      const why = this.fightNow ? 'fight' : this.wearFor; const row = (this.toolWear[st.key] ??= {}); row[why] = +((row[why] || 0) + (was - st.dur)).toFixed(3);
+      if (was > 0 && st.dur <= 0) this.toolsBroken[st.key] = (this.toolsBroken[st.key] || 0) + 1; }
+    this.fightNow = false;
     const o = windowOrigin(this.r); if (o[0] !== this.origin[0] || o[1] !== this.origin[1]) { this.origin = o; this.shifts++; }
     if (this.p.hp < hp0) this.damageTaken += hp0 - this.p.hp;
     for (const [id, type] of alive) { const c = this.r.creatures.find(x => x.id === id); if (c && (c.state === 'dead' || (c as any).hp <= 0) && !this.deadSeen.has(id)) { this.deadSeen.add(id); this.kills[type] = (this.kills[type] || 0) + 1; } }
@@ -180,6 +188,10 @@ export class Bot {
   }
   /** Swing the best carried tool at one source until it is empty; pick up what falls. */
   harvestOne(s: { tx: number; ty: number; key: string }): boolean {
+    const prev = this.wearFor; this.wearFor = sourceAt(this.r, s.tx, s.ty, this.now)?.def.mat ?? 'other';
+    try { return this.harvestOne0(s); } finally { this.wearFor = prev; }
+  }
+  private harvestOne0(s: { tx: number; ty: number; key: string }): boolean {
     const src0 = sourceAt(this.r, s.tx, s.ty, this.now); if (!src0 || src0.stock <= 0) return false;
     const tool = this.toolFor(src0.def); if (!tool) return false;
     const [gx, gy] = this.toGlobal(s.tx, s.ty);
@@ -234,7 +246,7 @@ export class Bot {
     this.must('useItem', { slot: bp }); if (!this.r.knowledge.recipes.includes(recipe)) throw new BotStop(`${recipe} was not learned`);
   }
   eat(key: string): boolean { const i = this.slotOf(key); if (i < 0) return false; const rc = this.act('useItem', { slot: i }); if (rc.ok) this.ate[key] = (this.ate[key] || 0) + 1; return rc.ok; }
-  craft(recipe: string, eid?: string) { return this.must('craft', eid ? { recipe, eid } : { recipe }); }
+  craft(recipe: string, eid?: string) { const out = RECIPES[recipe]?.out; if (out && ITEMS[out]?.dur) this.toolsCrafted[out] = (this.toolsCrafted[out] || 0) + 1; return this.must('craft', eid ? { recipe, eid } : { recipe }); }
   /** Hand-craft the packed device, then place it on a free tile beside the bot. Returns the placed entity. */
   place(struct: string): Entity {
     const keep = this.keepClear.map(g => this.toLocal(g[0], g[1]).join(','));
@@ -311,6 +323,6 @@ export class Bot {
   }
   /** Walk back to a placed structure. Its local tile is re-read every try: the engine re-bases it on a window shift. */
   goToEntity(e: Entity): boolean { for (let k = 0; k < 4; k++) { const live = this.r.entities[e.id]; if (!live) return false; if (this.goNear(live.tx!, live.ty!)) return true; } return false; }
-  summary() { return { seed: this.seed, minutes: +this.minutes().toFixed(1), ticks: this.ticks, hp: Math.round(this.p.hp), hunger: Math.round(this.p.hunger), thirst: Math.round(this.p.thirst), drinks: this.drinks, toolsRemade: this.toolsRemade, toolRepairs: this.repairs, nodesStruckFromAnotherSide: this.resided, stacksStashed: this.stashed, bandages: this.bandages, hunts: this.hunts, refuels: this.refuels, fightSeconds: Math.round(this.fightTicks * DT / 1000), shifts: this.shifts, damageTaken: Math.round(this.damageTaken), failures: this.failures, ate: this.ate, kills: this.kills }; }
+  summary() { return { seed: this.seed, minutes: +this.minutes().toFixed(1), ticks: this.ticks, hp: Math.round(this.p.hp), hunger: Math.round(this.p.hunger), thirst: Math.round(this.p.thirst), drinks: this.drinks, toolsRemade: this.toolsRemade, toolRepairs: this.repairs, toolsCrafted: this.toolsCrafted, toolsBroken: this.toolsBroken, toolWear: this.toolWear, nodesStruckFromAnotherSide: this.resided, stacksStashed: this.stashed, bandages: this.bandages, hunts: this.hunts, refuels: this.refuels, fightSeconds: Math.round(this.fightTicks * DT / 1000), shifts: this.shifts, damageTaken: Math.round(this.damageTaken), failures: this.failures, ate: this.ate, kills: this.kills }; }
 }
 export const recipeBill = (id: string) => RECIPES[id].ins.map(([k, q]) => `${q} ${ITEMS[k].name}`).join(' + ');

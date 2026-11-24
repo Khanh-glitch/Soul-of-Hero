@@ -12,7 +12,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { HOUR, TILE, WW, type Entity, type GameState } from '../src/game/core';
 import { ITEMS, RECIPES, SOURCES, qualityTierFor, stationBurnable } from '../src/game/catalog';
 import { C, addItem, countItem, dispatch, harvestHit, killPlayer, markDirty, mkContainer, mkStack, newGame, sourceAt, startRun, stepStations } from '../src/game/engine';
-import { G1B_CHESTS, G1B_SITES, g1bRoll } from '../src/game/g1b';
+import { G1B_CHESTS, G1B_SITES, g1bBonusRowIsVoid, g1bRoll } from '../src/game/g1b';
 import { serializeSnapshot, validate } from '../src/game/persist';
 import { getWorld, setActiveLayout } from '../src/game/world';
 import { ITEM_RETIREMENT, ITEM_SET_VERSION, isRetiredLive, liveItemId, liveRecipeId } from '../src/game/final-item-set';
@@ -103,17 +103,33 @@ describe('ruling 2 — no pickaxe: the axe line does the work', () => {
     expect(swings).toBe(Math.ceil(def.hp / power));
     expect(ground() - before, 'every unit of the source lands on the ground, no more').toBe(def.stock * def.yields[0][1]);
   });
-  it('a loot chest whose frozen table still rolls an Iron Pickaxe hands out an Iron Axe', () => {
+  it('a loot chest whose frozen table still names the Iron Pickaxe pays nothing for that roll; the Iron Axe keeps its approved odds', () => {
     // The approved chest contract (v1) names `iron_pick` in eight bonus pools and cannot be edited without a new contract.
-    expect(Object.values(G1B_CHESTS).filter(c => c.bonus.some(row => row.item === 'iron_pick')).map(c => c.id).sort())
-      .toEqual(['military_low', 'supply_damaged', 'supply_high', 'supply_low', 'supply_mid', 'toolbox_damaged', 'toolbox_high', 'toolbox_low']);
-    const gs = veyra(), r = gs.run!; let hit: { sid: string; cycle: number } | null = null;
-    search: for (const sid of Object.keys(G1B_SITES)) for (let cycle = 0; cycle < 12; cycle++) {
-      if (g1bRoll(r.id, sid, cycle, k => ITEMS[liveItemId(k)]?.max ?? 1).stacks.some(st => st.key === 'iron_pick')) { hit = { sid, cycle }; break search; }
+    // Creator ruling 2026-11-24 (option 2): paying that row with an Iron Axe would double the Iron Axe's approved odds,
+    // so the roll pays nothing and every other row keeps exactly the odds the Creator approved.
+    const eight = Object.values(G1B_CHESTS).filter(c => c.bonus.some(row => row.item === 'iron_pick'));
+    expect(eight.map(c => c.id).sort()).toEqual(['military_low', 'supply_damaged', 'supply_high', 'supply_low', 'supply_mid', 'toolbox_damaged', 'toolbox_high', 'toolbox_low']);
+    // the void rule names exactly those eight rows and nothing else in any of the 16 chests
+    const voided: string[] = [];
+    for (const c of Object.values(G1B_CHESTS)) { for (const row of c.bonus) if (g1bBonusRowIsVoid(c.bonus, row)) voided.push(`${c.id}|${row.item}`); for (const row of [...c.anchor, ...c.regular]) expect(liveItemId(row.item), `${c.id} ${row.item}`).toBe(row.item); }
+    expect(voided.sort()).toEqual(eight.map(c => `${c.id}|iron_pick`).sort());
+    const max = (k: string) => ITEMS[liveItemId(k)]?.max ?? 1, N = 30000, tol = (p: number) => 4 * Math.sqrt(p * (1 - p) / N);
+    for (const def of eight) {
+      const sid = Object.keys(G1B_SITES).find(id => G1B_SITES[id].variant === def.id)!; expect(sid, def.id).toBeTruthy();
+      for (const pool of [def.anchor, def.regular]) expect(pool.some(row => row.item === 'iron_axe'), `${def.id}: the Iron Axe comes only from the bonus pool`).toBe(false);
+      const W = def.bonus.reduce((n, row) => n + row.weight, 0), w = (item: string) => def.bonus.find(row => row.item === item)!.weight;
+      const approvedAxe = def.bonus_probability_pct / 100 * w('iron_axe') / W, doubled = def.bonus_probability_pct / 100 * (w('iron_axe') + w('iron_pick')) / W;
+      let axe = 0, pick = 0, bonus = 0;
+      for (let i = 0; i < N; i++) { const { stacks } = g1bRoll('cr98-mc-' + i, sid, 0, max); for (const st of stacks) { if (st.key === 'iron_pick') pick++; if (st.key === 'iron_axe') axe += st.qty; } if (stacks.some(st => st.from === 'bonus')) bonus++; }
+      expect(pick, `${def.id}: no roll names the pick any more`).toBe(0);
+      expect(Math.abs(axe / N - approvedAxe), `${def.id}: Iron Axe ${(axe / N * 100).toFixed(2)} % vs approved ${(approvedAxe * 100).toFixed(2)} %`).toBeLessThan(tol(approvedAxe));
+      expect(Math.abs(axe / N - doubled), `${def.id}: positive control, the doubled rate is outside the tolerance`).toBeGreaterThan(tol(doubled));
+      // the chest shows a bonus less often by exactly the pick's share (a bonus that merged into another stack is not visible, hence the bound)
+      const live = def.bonus_probability_pct / 100 * (W - w('iron_pick')) / W;
+      expect(bonus / N, `${def.id}: bonus shown ${(bonus / N * 100).toFixed(2)} % vs ${(live * 100).toFixed(2)} %`).toBeLessThanOrEqual(live + tol(live));
     }
-    expect(hit, 'this run has a chest roll that names the pick (positive control)').toBeTruthy();
-    const rolled = g1bRoll(r.id, hit!.sid, hit!.cycle, k => ITEMS[liveItemId(k)]?.max ?? 1).stacks.filter(st => st.key === 'iron_pick');
-    for (const st of rolled) { const stack = mkStack(r, st.key, st.qty); expect(stack).toMatchObject({ key: 'iron_axe', qty: 1, dur: ITEMS.iron_axe.dur }); }
+    // a pick already lying in an old save's chest is still the player's: it becomes an Iron Axe (next test)
+    expect(mkStack(veyra().run!, 'iron_pick', 1)).toMatchObject({ key: 'iron_axe', qty: 1, dur: ITEMS.iron_axe.dur });
   });
   it('an old save: picks in the pack, in a chest and in a resident\'s hand all become the same-tier axe, same stack, same wear', () => {
     const gs = greywater(), r = gs.run!, chest = mkContainer(r, 'chest', 6);

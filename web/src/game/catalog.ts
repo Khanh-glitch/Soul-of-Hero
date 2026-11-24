@@ -84,6 +84,7 @@ export const ITEMS: Record<string, ItemDef> = {
   // Its one consumer, the Plank Wall, was removed on 2026-11-23 (see RETIRED_STRUCTURES), which left nothing that spent a Plank.
   // Creator delegation on build 98ee24ac: a Plank is now fuel. It burns for exactly as long as the 2 Wood it is sawn from
   // (2 x 20 s) at half their weight, so sawing packs fuel for hauling and a dropped or stored Plank is never dead weight.
+  // The Creator approved the 40 s on 2026-11-24.
   plank: I({ name: 'Plank', cat: 'res', icon: 'plank', c1: '#b98a52', c2: '#e0b878', w: 1, max: 60, desc: 'Sawn board. Burns as long as the 2 Wood it was sawn from, at half the weight.', fuel: 40 }),
   stone: I({ name: 'Stone', cat: 'res', icon: 'stone', c1: '#7d8088', c2: '#b9bcc4', w: 1.2, max: 60, desc: 'Rough stone. Foundations, furnaces, tools.' }),
   fiber: I({ name: 'Plant Fiber', cat: 'res', icon: 'fiber', c1: '#5d8a3a', c2: '#a5d65e', w: 0.2, max: 80, desc: 'Grass and reed fiber. Rope, thatch, bandages.', fuel: 4 }),
@@ -500,7 +501,8 @@ export const RECIPES: Record<string, Recipe> = {
   // Item Ontology V2 P4 (rev 3): one Machine Part becomes one Metal Blade. Rev 2 frozen in recipe-migration.ts.
   industrial_axe: { out: 'industrial_axe', qty: 1, ins: [['iron_axe', 1], ['metal_blade', 1], ['refined_iron_ingot', 2], ['metal_pipe', 1]], station: 'workbench', stationLevel: 2, secs: 25, tier: 2, rev: 5 },
   // Recipe revision 7: the Salvager Pick's starter-known Parts route moves to the axe with the rest of the pickaxe's work,
-  // so a found Mechanical Gear still has a tool to go into (the Motorbike kit is its other consumer). SOH_PROVISIONAL bill:
+  // so a found Mechanical Gear still has a tool to go into (the Motorbike kit is its other consumer). SOH_PROVISIONAL bill
+  // (no Last Island figure; the Creator approved these numbers on 2026-11-24):
   // a Gear and 2 Parts stand in for the Pipe and ONE of the two Refined Iron; the Blade stays because an axe cuts. One Refined
   // Iron has to stay: the recycler's v4 row pays a Salvager Axe in full condition one Refined Iron, and a route that held none
   // would turn plain iron into refined metal (industrial-proof.ts).

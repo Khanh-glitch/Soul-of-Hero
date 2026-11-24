@@ -30,7 +30,8 @@ describe('G1B approved contract', () => {
 
   // Approved contract v1 predates the pickaxe retirement (Creator ruling on build 98ee24ac) and still names `iron_pick`
   // in eight bonus pools. The contract is frozen: opened chests store their roll against its revision, so a row cannot be
-  // edited without a new approved contract. The engine issues the same-tier Iron Axe instead (mkStack -> liveItemId).
+  // edited without a new approved contract. Creator ruling 2026-11-24: a bonus roll that lands on that row pays nothing
+  // (`g1bBonusRowIsVoid`), so the Iron Axe row beside it keeps its approved odds instead of being counted twice.
   // The exception is pinned by name, so any OTHER retired id in the table still fails here.
   const RETIRED_IN_CONTRACT: Record<string, string> = { iron_pick: 'iron_axe' };
   it('every item a chest can issue is a live catalog item; no Field Core, no Essence, nothing retired except the pinned Iron Pickaxe row', () => {

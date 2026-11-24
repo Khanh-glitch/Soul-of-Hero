@@ -263,7 +263,7 @@ const patientTile=(p:HumanRecord)=>({gx:p.gx,gy:p.gy,floor:p.floor});
  *  their feet as thirsty as before, to fall again minutes later. A bleeding patient still needs the bleeding stopped. */
 /** Creator delegation (ruling on build 98ee24ac): a person brought round with water used to stand up with whatever was
  *  left, under 1 HP. They now stand with at least this much. It is below the 30 a dose of medicine gives and below the
- *  30 that ends `needsFollowup`, so a medic still owes them a real dose. */
+ *  30 that ends `needsFollowup`, so a medic still owes them a real dose. The Creator approved 10 on 2026-11-24. */
 export const WATER_REVIVE_HP=10;
 export function downedByThirst(h:HumanRecord):boolean {return h.state==='DOWNED'&&h.thirst<1&&!h.wounds.some(w=>w.bleeding&&!w.treated);}
 /** The first thing in a responder's own pack that they could drink themselves, and so can hand to a patient. */

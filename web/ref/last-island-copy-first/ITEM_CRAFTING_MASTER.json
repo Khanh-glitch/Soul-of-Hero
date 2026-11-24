@@ -15173,7 +15173,7 @@
    "kind": "BILL",
    "before": "industrial_pick_geared: Iron Pickaxe + 1 Refined Iron + 1 Gear + 2 Parts",
    "after": "Iron Axe + 1 Blade + 1 Refined Iron + 1 Gear + 2 Parts",
-   "evidence": "SOH_PROVISIONAL. No LI figure. Keeps a starter-known Gear route to the top tool after the pick left. The Blade matches the main Salvager Axe bill; the Refined Iron is what the recycler pays back for a full-condition Salvager Axe.",
+   "evidence": "SOH_PROVISIONAL, approved by the Creator on 2026-11-24. No LI figure. Keeps a starter-known Gear route to the top tool after the pick left. The Blade matches the main Salvager Axe bill; the Refined Iron is what the recycler pays back for a full-condition Salvager Axe.",
    "consequence": "Mechanical Gear keeps three recipe consumers. The recycler returns no more than the route holds.",
    "status": "IMPLEMENTED"
   },

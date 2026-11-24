@@ -20,6 +20,7 @@
 //    not teach: a ready-made piece the player can place or use at once, which
 //    points at something deeper to explore. `opens` says in one line what that
 //    is; the ledger prints it under the bundle.
+//    The Creator approved the six early bundles as listed on 2026-11-24.
 //
 // Authority rules
 //  · Progress lives in `r.handbook` (run-authoritative, saved with the run).

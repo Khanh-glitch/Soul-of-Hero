@@ -11,6 +11,7 @@
 import contract from '../../evidence/g1b/approved/g1b-approved-runtime-contract-v1.json';
 import { G1B_BASE_SOURCE_SITES, G1B_GATES, G1B_FIXTURES, type G1bSourceSite, type G1bGate, type G1bFixture } from './g1b-sources.generated';
 import { G1B_ECOLOGY_SOURCES, G1B_LAYOUT_REVISION } from './g1b-ecology.generated';
+import { liveItemId } from './final-item-set';
 /** Every chest source of the run: the 130 round-1 ids (unchanged ids and tiles) followed by the room / floor / road ecology. */
 const G1B_SOURCE_SITES: readonly G1bSourceSite[] = Object.freeze([...G1B_BASE_SOURCE_SITES, ...G1B_ECOLOGY_SOURCES]);
 
@@ -68,6 +69,17 @@ export function g1bCoreOutcomes(site: string, variant: string): G1bCoreOutcome[]
   return out;
 }
 
+/**
+ * Creator ruling 2026-11-24 (chest fix, option 2). The approved table predates the pickaxe retirement and still names
+ * the Iron Pickaxe in eight bonus pools, each of which also has an Iron Axe row. Paying the retired row with its
+ * successor would count the Iron Axe twice (supply_damaged: 4 % approved -> 8 %). So a bonus roll that lands on a
+ * retired row whose successor is already a row of the same pool pays nothing: every other row keeps exactly its
+ * approved odds, the chest shows a bonus less often by the retired row's share, and the frozen contract is not edited.
+ * The three bonus random numbers are still drawn, so the rest of the roll is the one it always was.
+ */
+export function g1bBonusRowIsVoid(pool: readonly G1bPoolRow[], row: G1bPoolRow): boolean {
+  const live = liveItemId(row.item); return live !== row.item && pool.some(r => r !== row && r.item === live);
+}
 const pick = (rows: G1bPoolRow[], u: number): G1bPoolRow => { const total = rows.reduce((a, r) => a + r.weight, 0); let x = u * total; for (const r of rows) { x -= r.weight; if (x < 0) return r; } return rows[rows.length - 1]; };
 const qtyOf = (row: G1bPoolRow, u: number) => row.qty[0] + Math.floor(u * (row.qty[1] - row.qty[0] + 1));
 
@@ -89,7 +101,7 @@ export function g1bRoll(runId: string, sid: string, cycle: number, stackMax: (ke
   const a = pick(def.anchor, rnd()); add(a.item, qtyOf(a, rnd()), 'anchor');
   for (let i = 0; i < def.regular_draws; i++) { const r = pick(def.regular, rnd()); add(r.item, qtyOf(r, rnd()), 'regular'); }
   const bu = rnd(), bp = rnd(), bq = rnd();
-  if (def.bonus.length && bu * 100 < def.bonus_probability_pct) { const b = pick(def.bonus, bp); add(b.item, qtyOf(b, bq), 'bonus'); }
+  if (def.bonus.length && bu * 100 < def.bonus_probability_pct) { const b = pick(def.bonus, bp); if (!g1bBonusRowIsVoid(def.bonus, b)) add(b.item, qtyOf(b, bq), 'bonus'); }
   let x = rnd() * 100;
   for (const o of g1bCoreOutcomes(site.site, site.variant)) { x -= o.pct; if (x < 0) { stacks.push({ key: o.core, qty: 1, level: o.level, from: 'core' }); break; } }
   return { seed, stacks };
