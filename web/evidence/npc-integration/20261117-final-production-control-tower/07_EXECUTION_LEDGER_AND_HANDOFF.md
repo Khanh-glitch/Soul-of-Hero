@@ -625,3 +625,16 @@ Trên cùng commit: hai lượt typecheck và build sạch; chạy bền 336 gi�
 Chưa kiểm: rìu đập quặng trên trình duyệt; file lưu cũ có cuốc trên trình duyệt; luật người trên tàu ăn uống trong lượt chạy bền (ở mốc giờ 312 và 324 không ai đang chờ trên tàu); cân bằng độ bền của rìu khi làm ba việc. Bốn việc "Cần Creator quyết" của mục trước đã có quyết định; còn lại là duyệt các con số do agent chọn ở trên.
 
 Đây chưa phải chữ ký cho 13 cổng.
+
+### Tám câu trả lời của Creator: rương, các con số đã duyệt, phép đo rìu, gộp PR (2026-11-24)
+
+Creator trả lời tám việc treo của mục trước. (1) Rương ra Iron Axe gấp đôi: sửa theo **cách 2**. Tôi đã viết sai ở lượt trước rằng xoá dòng cuốc thì Iron Axe về mức cũ; xoá dòng làm mọi món còn lại tăng. Đã gửi lại bảng hai cách, Creator chọn cách 2: lần quay quà thêm trúng dòng Iron Pickaxe **không phát gì**. Mọi món còn lại giữ đúng tỉ lệ đã duyệt; tám loại rương ít có quà thêm hơn đúng bằng phần của cuốc (ví dụ `supply_damaged` 10 % → 6 %). Hợp đồng rương đã đóng băng không bị sửa. (2)–(5) Duyệt như đề xuất: công thức Salvager Axe (geared), sáu gói sổ tay, 10 máu khi được cứu bằng nước, Ván cháy 40 giây. (6) Bến nam: chấp nhận tạm, tìm đường giữa các vùng làm ở đợt sau, **chưa làm**. (7) Đo rìu trước khi quyết độ bền. (8) Chạy lại đủ hồi quy, xanh thì gộp PR #65.
+
+Phép đo rìu (cùng con bot, tuyến dầu, seed 7; `98ee24ac` còn cuốc so với mã mới): độ bền công cụ đá tiêu 752 → 642; chế thêm 1 rìu + 1 cuốc → 1 rìu; sửa 3 → 3; gãy 1 → 1; vứt đồ vì túi đầy 1 → 3 lần; tới lò lớn 38,7 → 40,0 phút. Một seed, một tuyến, hai bot không giống hệt nhau. Tôi đề nghị giữ độ bền 180; **Creator chưa quyết**. Số liệu gốc: `docs/acceptance/2026-11-21-25e24231/axe-wear/`.
+
+Mã game `384b35ad`: hai lượt typecheck và build sạch; chạy bền 336 giờ seed 7606 cổng 15/15, sơ tán 6 / sống sót 46 / chết 234, trùng lượt trên `224d5d7a` ở cả 336 giờ (luật rương chỉ chạy khi người chơi mở rương). Hồi quy 266 tệp: **266 tệp, 0 tệp đỏ**: 1.611 bài đạt, 0 trượt (13 tệp chỉ có bài phải bật tay, như các lượt trước). Hai tệp chạy dài (`g1b-lifecycle`, `ecosystem-full`) bị bộ chạy của tôi ngắt ở phút 15 trong lượt đầu vì tôi đặt giới hạn quá ngắn; chạy lại với giới hạn dài hơn thì đạt (17 và 16 phút). Trình duyệt trên bản dựng mới: `p1` (sổ tay, rìu lấy gỗ, nút bỏ cuộc) đạt; `o1` (rìu lấy gỗ, đá, tinh thể; tỉnh dậy được phát Stone Axe) đạt. ZIP đóng lại: 64.364.555 byte, SHA256 `5327ee6ed82810ebcbe0e51bc2e27a38540f5fd31408ff55abb12d3b26a74396`.
+
+Chưa kiểm: mở rương trên trình duyệt sau khi sửa; rìu đập mạch sắt trên trình duyệt; các món nợ trình duyệt của mục trước còn nguyên.
+
+Đây chưa phải chữ ký cho 13 cổng. Creator cho gộp PR #65 với điều kiện hồi quy xanh; 13 cổng vẫn chưa ký.
+

@@ -727,7 +727,7 @@ Mỗi chương có thêm dòng **"Opens: …" / "Mở ra: …"**. Sáu chương 
 | `tests/arena1-round2-newgame-routes.test.ts` (1 bài) | Con bot đi tuyến dầu vẫn chế Stone Pickaxe, engine từ chối | Bot chỉ dùng rìu; xem ghi chú dưới | 4 đạt |
 
   - Chạy lại riêng: bốn tệp trên cùng `creator-rulings-98ee24ac` (53 đạt) và `g1a-industrial-salvage`, tệp dùng chung bộ trợ giúp của bot (15 đạt). Tổng 68 đạt, 0 trượt. **Tôi chưa chạy lại cả 266 tệp sau các sửa này**; các sửa chỉ nằm trong bài kiểm thử, một tệp trợ giúp và một tệp CSV tham chiếu.
-  - **Rương quà (hệ quả thật trong game):** tám loại rương (`supply_damaged`, `supply_low`, `supply_mid`, `supply_high`, `toolbox_damaged`, `toolbox_low`, `toolbox_high`, `military_low`) có dòng quà thêm "Iron Pickaxe". Nay lần quay đó phát **Iron Axe**. Các rương này vì thế có hai dòng cùng ra Iron Axe, tức Iron Axe rơi khoảng gấp đôi trước (theo bảng tỉ lệ của hợp đồng: `supply_damaged` 4 % → 8 % mỗi lần mở, `toolbox_high` 11,8 % → 23,6 %). Tôi không sửa tỉ lệ, vì hợp đồng rương là thứ Creator đã duyệt. Có một bài kiểm thử mới canh việc này.
+  - **Rương quà (hệ quả thật trong game):** tám loại rương (`supply_damaged`, `supply_low`, `supply_mid`, `supply_high`, `toolbox_damaged`, `toolbox_low`, `toolbox_high`, `military_low`) có dòng quà thêm "Iron Pickaxe". Nay lần quay đó phát **Iron Axe**. Các rương này vì thế có hai dòng cùng ra Iron Axe, tức Iron Axe rơi khoảng gấp đôi trước (theo bảng tỉ lệ của hợp đồng: `supply_damaged` 4 % → 8 % mỗi lần mở, `toolbox_high` 11,8 % → 23,6 %). Tôi không sửa tỉ lệ, vì hợp đồng rương là thứ Creator đã duyệt. **Đã xử lý ngày 24/11 theo quyết định của Creator, xem mục kế.**
   - **Con bot tuyến dầu (điều nó cho thấy về cân bằng):** để qua được, bot phải (a) vứt rìu đá gãy xuống đất khi đã có cái lành, và (b) vứt đồ thừa khi túi đầy 24 ô trước khi nhận bản vẽ, chế dây, nhận thang. Không khẳng định nào bị nới. Lý do: một dòng công cụ làm ba việc nên rìu đá mòn nhanh hơn, rìu gãy chiếm ô túi. Lượt qua mất 546 giây máy so với khoảng 370 trước đây. Đây là một lượt chạy của một con bot, không phải số đo cân bằng.
 - **Chạy bền:** lượt trước (`ff678df9`) là sơ tán 6, sống sót 32, chết 248. Hai lượt khác nhau từ giờ đầu. Sống sót tăng 14; tôi **không tách được** phần nào là do luật nào. Sáu người rời đảo trên tàu tây: h5v, h4x, h2l, h7, h4o, h4m. Bến nam và bến Hook không có chuyến nào, như lượt trước. **File lưu lớn nhất 4,22 MB** (lượt trước 3,97 MB; mức của localStorage là 5 MB).
 - **Luật "người trên tàu ăn uống" chưa được lượt chạy bền thử:** ở các mốc lưu giờ 312 và 324 không có ai đang chờ trên tàu. Luật này mới có bài kiểm thử tự động.
@@ -742,3 +742,89 @@ Mỗi chương có thêm dòng **"Opens: …" / "Mở ra: …"**. Sáu chương 
 - `web/reports/mec01-five-chain-benchmark.{json,md}` trong repo là bản cũ: bài kiểm thử tự viết lại hai tệp này mỗi lần chạy và tôi không commit bản mới, vì bản trong repo vốn đã lệch ở những chỗ không liên quan trước đợt này.
 - Chưa có số đo nào về cân bằng: rìu giờ làm ba việc bằng một thanh độ bền; tôi chưa đo người chơi tốn bao nhiêu rìu so với trước.
 - Mọi món nợ ở các mục trước (cảnh B, C, D, F, I; sổ tay chương 3–11 chơi tay; Elder bơi; "Step ashore"; đi bộ tới bến; `npc-mere-playtest.mjs`) còn nguyên.
+
+## Tám câu trả lời của Creator ngày 24/11 — mã game `384b35ad`
+
+### Creator quyết gì
+
+| Việc | Creator chọn | Đã làm |
+|---|---|---|
+| 1. Rương ra Iron Axe gấp đôi | Sửa; sau khi xem bảng tỉ lệ chọn **cách 2** | Lần quay trúng dòng cuốc không phát gì (dưới) |
+| 2. Công thức Salvager Axe (geared) | Duyệt | Ghi vào mã và bảng thiết kế |
+| 3. Sáu gói quà sổ tay | Duyệt cả sáu | Ghi vào mã |
+| 4. Được cứu bằng nước: 10 máu | Duyệt | Ghi vào mã |
+| 5. Ván cháy 40 giây | Duyệt | Ghi vào mã |
+| 6. Bến nam không tới được | Chấp nhận tạm, làm ở đợt sau | Ghi tại hằng số; **chưa làm** |
+| 7. Độ bền rìu đá | Đo trước rồi mới quyết | Đã đo (dưới); **chờ Creator quyết** |
+| 8. Gộp PR #65 | Chạy lại đủ hồi quy, xanh thì gộp | Hồi quy xanh (dưới); PR được gộp ngay sau commit tài liệu này |
+
+### 1. Rương: lần quay trúng dòng cuốc không phát gì
+
+- **Tôi đã viết sai ở lượt trước.** Tôi nói xoá dòng cuốc thì "Iron Axe về mức cũ, các món khác ra nhiều hơn một chút". Hai vế không cùng đúng được: rương chọn quà thêm theo trọng số, xoá một dòng thì mọi món còn lại, kể cả Iron Axe, đều tăng. Tôi gửi lại bảng với hai cách làm thật; Creator chọn cách 2.
+- **Luật:** rương quay quà thêm như cũ. Nếu trúng dòng Iron Pickaxe thì lần đó **không có quà thêm**. Mọi món còn lại giữ đúng tỉ lệ Creator đã duyệt; rương ít có quà thêm hơn đúng bằng phần của cuốc.
+- Tệp hợp đồng đã đóng băng **không bị sửa**. Phần còn lại của lần quay (món chính, món thường, Core) không đổi một số nào.
+- Cuốc đã nằm sẵn trong rương của file lưu cũ vẫn thành Iron Axe như trước: đó là đồ của người chơi.
+
+Tỉ lệ Iron Axe mỗi lần mở rương:
+
+| Rương | Đã duyệt | Trên `c829a57f` | Nay | Xác suất có quà thêm (duyệt → nay) |
+|---|---|---|---|---|
+| `supply_damaged` | 4,0 % | 8,0 % | 4,0 % | 10 % → 6 % |
+| `supply_low` | 5,3 % | 10,7 % | 5,3 % | 16 % → 10,7 % |
+| `supply_mid` | 6,3 % | 12,5 % | 6,3 % | 25 % → 18,8 % |
+| `supply_high` | 10,0 % | 15,0 % | 10,0 % | 35 % → 30 % |
+| `toolbox_damaged` | 4,3 % | 8,6 % | 4,3 % | 15 % → 10,7 % |
+| `toolbox_low` | 9,0 % | 18,0 % | 9,0 % | 30 % → 21 % |
+| `toolbox_high` | 11,8 % | 23,6 % | 11,8 % | 65 % → 53,2 % |
+| `military_low` | 10,0 % | 20,0 % | 10,0 % | 50 % → 40 % |
+
+- **Đã kiểm:** bài kiểm thử quay 30.000 lần cho mỗi loại trong tám rương: không lần nào ra cuốc; tỉ lệ Iron Axe khớp mức đã duyệt; mức gấp đôi cũ nằm ngoài sai số (để chắc phép đo phân biệt được hai mức). Luật "không phát" chỉ trúng đúng tám dòng cuốc, không dòng nào khác trong 16 loại rương.
+- **Chưa kiểm:** chưa mở rương nào trên trình duyệt sau khi sửa.
+
+### 7. Phép đo rìu đá
+
+**Cách đo.** Cùng một con bot đi cùng tuyến dầu (ván mới, seed 7, từ bờ biển tới lò lớn và quần giáp sắt), một lần trên `98ee24ac` (còn cuốc) và một lần trên mã mới. Bot ghi lại mỗi điểm độ bền bị trừ, của công cụ nào, vào việc gì. Số liệu gốc: `axe-wear/`.
+
+| | Trước (`98ee24ac`, rìu + cuốc) | Sau (`384b35ad`, chỉ rìu) |
+|---|---|---|
+| Công cụ đá phải chế thêm (ngoài rìu khởi đầu) | 1 rìu + 1 cuốc | 1 rìu |
+| Độ bền công cụ đá đã tiêu | **752** (rìu 574 + cuốc 178) | **642** |
+| … vào gỗ | 357 | 383 |
+| … vào đá | 90 (36 bằng rìu yếu, 54 bằng cuốc) | 54 |
+| … vào quặng | 124 | 136 |
+| … vào cây bụi, lau sậy | 170 | 51 |
+| Công cụ đá mòn tới 0 | 1 | 1 |
+| Số lần sửa ở bàn chế (1 đá + 1 gỗ mỗi lần) | 3 | 3 |
+| Lần "không có công cụ dùng được" | 7 | 0 |
+| Lần phải vứt đồ vì túi đầy | 1 | 3 |
+| Tới lúc đặt lò lớn | 38,7 phút | 40,0 phút |
+| Hết tuyến | 60,1 phút | 75,5 phút |
+
+- **Điều phép đo cho thấy:** trên tuyến này, một dòng rìu **không** tốn công cụ hơn. Tổng độ bền tiêu ít hơn (642 so với 752), chế ít hơn một món, số lần sửa và số món gãy bằng nhau. Lý do: trước đây rìu yếu vẫn bị đem ra đập đá, và mỗi công cụ có thanh độ bền riêng nên không dùng hết.
+- **Cái giá thấy được là ô túi và thời gian**, không phải độ bền: bot phải vứt đồ ba lần thay vì một, và tới lò lớn chậm hơn 1,3 phút.
+- **15 phút chậm ở chặng cuối tôi không quy được cho rìu.** Chặng đó là đi săn lấy da (27 lượt săn so với 14); thú xuất hiện khác nhau giữa hai lượt.
+- **Giới hạn của phép đo:** một seed, một tuyến, một con bot biết trước bản đồ. Hai lượt không dùng cùng một bot hoàn toàn: bot mới mang một rìu dự phòng và biết vứt rìu gãy. Phần cây bụi chuyển từ rìu sang gậy và giáo ở lượt sau (gậy 94 → 229, giáo 43 → 183), nên con số 642 có một phần là do bot đổi công cụ, không phải do luật.
+- **Tôi đề nghị giữ 180.** Phép đo không cho lý do để tăng. Việc này vẫn do Creator quyết.
+
+### Đã kiểm trên `384b35ad`
+
+| Hạng mục | Kết quả |
+|---|---|
+| `typecheck`, `typecheck:tests`, `build` | Sạch |
+| Hồi quy 266 tệp | **266 tệp, 0 tệp đỏ**: 1.611 bài đạt, 0 trượt (13 tệp chỉ có bài phải bật tay, như các lượt trước). Hai tệp chạy dài (`g1b-lifecycle`, `ecosystem-full`) bị bộ chạy của tôi ngắt ở phút 15 trong lượt đầu vì tôi đặt giới hạn quá ngắn; chạy lại với giới hạn dài hơn thì đạt (17 và 16 phút) |
+| Chạy bền 336 giờ, seed 7606, không người chơi | Cổng chiến dịch **15/15**; sơ tán 6, sống sót 46, chết 234. **Giống lượt trên `224d5d7a` từng giờ một** (336/336 giờ trùng dấu vân tay) |
+| Trình duyệt, ván mới: sổ tay 11 chương, rìu lấy gỗ, nút bỏ cuộc (`p1`) | Đạt |
+| Trình duyệt, ván mới: rìu lấy gỗ, đá và tinh thể; gục rồi tỉnh dậy được phát Stone Axe (`o1`, cái chết được dựng sẵn) | Đạt |
+
+- **Chạy bền:** luật rương chỉ chạy khi người chơi mở rương, và lượt chạy bền không có người chơi. Kết quả trùng lượt trước ở cả 336 giờ xác nhận lần sửa này không đụng tới đời sống cư dân. File lưu lớn nhất vẫn 4,22 MB.
+- **Trình duyệt `p1`:** lượt đầu trên bản dựng mới hết 25 phút giới hạn khi đang đi mò tìm đá (lượt đi là đi mù). Lượt lưu lại chỉ đòi gặp cây: đủ 11 chương sổ tay, chặt thông ra gỗ, "No" giữ nguyên túi, "Give up & wake" tỉnh dậy với một Stone Axe, túi rơi đủ 4 món, tự lưu thành công, không lỗi trang.
+- **Trình duyệt `o1`:** lần này rìu đá đập một mạch tinh thể ra 3 tinh thể và một tảng đá ra đá. Đây là lần đầu rìu đập một nguồn loại quặng trên trình duyệt; **mạch sắt thì vẫn chưa gặp**.
+- **ZIP phát hành** đóng lại từ bản dựng của `384b35ad`: 64.364.555 byte, 220 tệp, SHA256 `5327ee6ed82810ebcbe0e51bc2e27a38540f5fd31408ff55abb12d3b26a74396`.
+
+### Chưa kiểm / còn nợ
+
+- Chưa mở rương nào trên trình duyệt sau khi sửa luật rương.
+- Bến nam: chưa làm, theo quyết định của Creator.
+- Mọi món nợ ở mục trước còn nguyên (rìu đập mạch sắt trên trình duyệt; file lưu cũ có cuốc; nhận gói sổ tay bằng cách làm xong chương; bỏ cuộc khi đã có giường; bảng Esc chỉ có tiếng Anh; `j1`…`n1` chưa chạy lại; cảnh B, C, D, F, I; sổ tay chương 3–11 chơi tay; Elder bơi; "Step ashore"; đi bộ tới bến).
+- 13 cổng của tháp điều khiển chưa ký.
+
