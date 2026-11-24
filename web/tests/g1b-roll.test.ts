@@ -28,12 +28,21 @@ describe('G1B approved contract', () => {
     expect(zones).toEqual({ POI: 85, ROAD: 26, CARD_ROOM: 19 });
   });
 
-  it('every item a chest can issue is a live catalog item; no Field Core, no Essence, nothing retired', () => {
+  // Approved contract v1 predates the pickaxe retirement (Creator ruling on build 98ee24ac) and still names `iron_pick`
+  // in eight bonus pools. The contract is frozen: opened chests store their roll against its revision, so a row cannot be
+  // edited without a new approved contract. The engine issues the same-tier Iron Axe instead (mkStack -> liveItemId).
+  // The exception is pinned by name, so any OTHER retired id in the table still fails here.
+  const RETIRED_IN_CONTRACT: Record<string, string> = { iron_pick: 'iron_axe' };
+  it('every item a chest can issue is a live catalog item; no Field Core, no Essence, nothing retired except the pinned Iron Pickaxe row', () => {
+    const retiredNamed = new Set<string>();
     for (const c of Object.values(G1B_CHESTS)) for (const r of [...c.anchor, ...c.regular, ...c.bonus]) {
-      expect(ITEMS[r.item], `${c.id} → ${r.item}`).toBeTruthy(); expect(liveItemId(r.item), r.item).toBe(r.item);
-      expect(ITEMS[r.item].core, r.item).toBeFalsy(); expect(r.item.startsWith('essence_'), r.item).toBe(false); expect(ITEMS[r.item].creatorCore, `${r.item} must come only from the Core outcome`).toBeFalsy();
+      expect(ITEMS[r.item], `${c.id} → ${r.item}`).toBeTruthy();
+      const live = liveItemId(r.item);
+      if (live !== r.item) { retiredNamed.add(r.item); expect(live, r.item).toBe(RETIRED_IN_CONTRACT[r.item]); expect(ITEMS[live], live).toBeTruthy(); expect(r.qty, 'one tool, like the axe it becomes').toEqual([1, 1]); }
+      expect(ITEMS[live].core, r.item).toBeFalsy(); expect(live.startsWith('essence_'), r.item).toBe(false); expect(ITEMS[live].creatorCore, `${r.item} must come only from the Core outcome`).toBeFalsy();
       expect(r.qty[0]).toBeGreaterThanOrEqual(1); expect(r.qty[1]).toBeGreaterThanOrEqual(r.qty[0]); expect(r.weight).toBeGreaterThan(0);
     }
+    expect([...retiredNamed], 'the only retired id the frozen table names').toEqual(['iron_pick']);
     for (const id of CORES) expect(ITEMS[id]?.creatorCore, id).toBeTruthy();
     expect(CORES.size).toBe(7);
   });
@@ -76,7 +85,7 @@ describe('G1B approved contract', () => {
   it('source authority: the seven chest Cores are BOTH (crafted or found) and every issued item may legally come from the world', () => {
     for (const id of CORES) expect((ITEM_DESIGN as any)[id][0], id).toBe('BOTH');
     // every other issued item already carries the acquire policy the approved table states (no silent source-authority drift)
-    for (const row of C.itemOdds as any[]) { const cur = (ITEM_DESIGN as any)[row.item_id]?.[0]; expect(['BOTH', 'WORLD_ONLY'], `${row.item_id} is ${cur}: a chest may not issue a craft-only item`).toContain(cur); if (!CORES.has(row.item_id)) expect(cur, row.item_id).toBe(row.policy_current_or_proposed); }
+    for (const row of C.itemOdds as any[]) { const cur = (ITEM_DESIGN as any)[liveItemId(row.item_id)]?.[0]; expect(['BOTH', 'WORLD_ONLY'], `${row.item_id} is ${cur}: a chest may not issue a craft-only item`).toContain(cur); if (!CORES.has(row.item_id)) expect(cur, row.item_id).toBe(row.policy_current_or_proposed); }
   });
 });
 

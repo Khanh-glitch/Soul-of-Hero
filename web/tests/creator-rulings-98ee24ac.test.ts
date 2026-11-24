@@ -11,7 +11,8 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import { HOUR, TILE, WW, type Entity, type GameState } from '../src/game/core';
 import { ITEMS, RECIPES, SOURCES, qualityTierFor, stationBurnable } from '../src/game/catalog';
-import { C, addItem, countItem, dispatch, harvestHit, killPlayer, markDirty, mkContainer, newGame, sourceAt, startRun, stepStations } from '../src/game/engine';
+import { C, addItem, countItem, dispatch, harvestHit, killPlayer, markDirty, mkContainer, mkStack, newGame, sourceAt, startRun, stepStations } from '../src/game/engine';
+import { G1B_CHESTS, G1B_SITES, g1bRoll } from '../src/game/g1b';
 import { serializeSnapshot, validate } from '../src/game/persist';
 import { getWorld, setActiveLayout } from '../src/game/world';
 import { ITEM_RETIREMENT, ITEM_SET_VERSION, isRetiredLive, liveItemId, liveRecipeId } from '../src/game/final-item-set';
@@ -101,6 +102,18 @@ describe('ruling 2 — no pickaxe: the axe line does the work', () => {
     while (sourceAt(r, tx, ty, T0)!.stock > 0 && swings < 200) { expect(harvestHit(gs, tx, ty, ITEMS[axe].power!, T0 + swings * 500, tx * TILE, ty * TILE, { extraction: 'playerTool', tool: axe }).result).toBe('yield'); swings++; }
     expect(swings).toBe(Math.ceil(def.hp / power));
     expect(ground() - before, 'every unit of the source lands on the ground, no more').toBe(def.stock * def.yields[0][1]);
+  });
+  it('a loot chest whose frozen table still rolls an Iron Pickaxe hands out an Iron Axe', () => {
+    // The approved chest contract (v1) names `iron_pick` in eight bonus pools and cannot be edited without a new contract.
+    expect(Object.values(G1B_CHESTS).filter(c => c.bonus.some(row => row.item === 'iron_pick')).map(c => c.id).sort())
+      .toEqual(['military_low', 'supply_damaged', 'supply_high', 'supply_low', 'supply_mid', 'toolbox_damaged', 'toolbox_high', 'toolbox_low']);
+    const gs = veyra(), r = gs.run!; let hit: { sid: string; cycle: number } | null = null;
+    search: for (const sid of Object.keys(G1B_SITES)) for (let cycle = 0; cycle < 12; cycle++) {
+      if (g1bRoll(r.id, sid, cycle, k => ITEMS[liveItemId(k)]?.max ?? 1).stacks.some(st => st.key === 'iron_pick')) { hit = { sid, cycle }; break search; }
+    }
+    expect(hit, 'this run has a chest roll that names the pick (positive control)').toBeTruthy();
+    const rolled = g1bRoll(r.id, hit!.sid, hit!.cycle, k => ITEMS[liveItemId(k)]?.max ?? 1).stacks.filter(st => st.key === 'iron_pick');
+    for (const st of rolled) { const stack = mkStack(r, st.key, st.qty); expect(stack).toMatchObject({ key: 'iron_axe', qty: 1, dur: ITEMS.iron_axe.dur }); }
   });
   it('an old save: picks in the pack, in a chest and in a resident\'s hand all become the same-tier axe, same stack, same wear', () => {
     const gs = greywater(), r = gs.run!, chest = mkContainer(r, 'chest', 6);

@@ -1,4 +1,4 @@
-# Browser checks on the production build (`d00d7791`; `o1` on `ff678df9`)
+# Browser checks on the production build (`d00d7791`; `o1` on `ff678df9`; `p1` on `224d5d7a`)
 
 Results are written up in the last section of `../TIEN_DO_SUA_LOI.md`.
 
@@ -16,10 +16,16 @@ Paths inside the scripts point at the workbench `/home/user/acc` (saves, output 
 | `k2-evac-player.mjs` | same save; the player's position rewritten to carry them to the west berth (the game slides its own window 22 times); date moved twice | "Continue", "Rise", E on the beacon, "Request a Seat", "Board the Vessel", the two returns | `out-k2.txt` |
 | `l1-fight.mjs` | the player placed about 4 tiles from the nearest hostile creature | walking, swinging, the creature's attacks | `out-l1.txt` |
 | `n1-elder-sea.mjs` | hour-312 save of run 13; date set 6.5 h or 14.5 h later; player carried next to an Elder | "Continue", "Enter the Island", "Rise"; the Elder's behaviour | `out-n1-*.txt` |
-| `o1-starter-axe.mjs` (on `ff678df9`) | the death: health, hunger and thirst set to almost zero so the game's own tick kills the player | new run, walking, swinging the Stone Axe, "Rise" | `out-o1.txt` |
+| `o1-starter-axe.mjs` (on `ff678df9`, rerun on `224d5d7a`) | the death: health, hunger and thirst set to almost zero so the game's own tick kills the player | new run, walking, swinging the Stone Axe, "Rise" | `out-o1.txt`, `out-o1-224d5d7a.txt` |
+| `p1-rulings.mjs` (on `224d5d7a`) | nothing | new run, the handbook (all 11 chapters), a blind walk swinging the Stone Axe at whatever blocks the way, Esc menu, "Stuck? Give up…", "No", "Give up & wake" | `out-p1.txt` |
 
-`shots/` holds eleven of the screenshots. The campaign saves themselves (2–4 MB each) are not in the repository.
+`shots/` holds fifteen of the screenshots. The campaign saves themselves (2–4 MB each) are not in the repository.
 
 Script faults met on the way (not game faults): a staged stack needs a base-36 uid from `run.nextId`, otherwise every later
 save is refused; after a reload with a large save, "Continue" appears only after "Raising the island…" ends; creature types
 differ per new run, so `l1` takes the first type present from a preference list.
+
+`p1` was run four times. Runs 1 and 2 had a script fault: closing the handbook with repeated Esc left the menu open, so
+the walk never started (run 1 ran into the script's time limit, run 2 reported no harvest). Run 3, with that fixed, hit
+the time limit while the 336-hour campaign was using the machine. Run 4 (alone on the machine, 97 s) is the saved result.
+The walk is blind, so what it meets differs per run: run 4 met an oak and a rock, no ore vein.

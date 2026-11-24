@@ -611,3 +611,17 @@ Commit chứa mục này còn sửa ngày ghi sai trong hai dòng chú thích c�
 
 Đây chưa phải chữ ký cho 13 cổng.
 
+
+### Bốn quyết định của Creator trên `98ee24ac`: nút bỏ cuộc, bỏ cuốc, gói sổ tay, các việc giao agent quyết (2026-11-23)
+
+Mã game `224d5d7ae103463217937de4f314335710cca060` (nhánh `arena/0f6091f9-soul-of-hero`). `web/releases/Soul-of-Hero-Web.zip`: 64.366.643 byte, 220 tệp, SHA256 `b51f072d4b46d77d25816aad2d90ef1ed2d8e8486b19737453e74fbb995e319a`, đóng từ `web/dist` của cùng commit. Gói trước (`20df92bc…d94c`, từ `ff678df9`) đã bị thay.
+
+Creator quyết: (1) thêm nút bỏ cuộc cho người chơi bị kẹt; (2) bỏ cuốc theo Last Island, rìu làm việc của cuốc; (3) mỗi chương sổ tay tặng gói khởi đầu và nói rõ nó mở ra gì; (4) các việc còn treo giao agent tự quyết.
+
+Đã làm: intent `giveUp` (giá bằng một lần chết: túi rơi tại chỗ, tỉnh dậy ở giường của mình hoặc bờ an toàn với một Stone Axe). Bộ vật phẩm v4, công thức revision 7: ba cuốc và đường bánh răng của Salvager Pick bị bỏ, còn 111 công thức; mỗi rìu mang đúng sức đá / quặng / đồ ven đường của cuốc cùng cấp; file lưu cũ đổi cuốc thành rìu cùng cấp ở túi, rương và tay cư dân; việc chế dang dở trả rìu. Công thức mới `industrial_axe_geared` là SOH_PROVISIONAL, **Creator chưa duyệt con số**. Sáu chương đầu của sổ tay có gói mới (agent chọn món, **Creator chưa duyệt**). Agent quyết: Ván là chất đốt 40 giây; người trên tàu ăn uống từ túi mình khi tàu còn đón khách; được cứu bằng nước đứng dậy với ít nhất 10 máu; giới hạn tìm đường tới bến giữ 96.000 ô (ghi tại hằng số trong `navigation-save.ts`; bến nam vẫn không tới được).
+
+Trên cùng commit: hai lượt typecheck và build sạch; chạy bền 336 giờ seed 7606: cổng chiến dịch 15/15, sơ tán 6, sống sót 46, chết 234 (lượt trước 6 / 32 / 248; khác nhau từ giờ đầu; không tách được nguyên nhân), file lưu lớn nhất 4,22 MB. Hồi quy 266 tệp: lượt chạy trên `224d5d7a` có 3 tệp đỏ (4 bài trượt, 1.606 bài đạt), cả ba do bài kiểm thử hoặc tệp tham chiếu còn theo luật có cuốc (`g1b-roll`, `item-ontology-v2-li-historical`, `arena1-round2-newgame-routes`); đã sửa bài kiểm thử, sinh lại một dòng CSV tham chiếu, không đổi mã game, rồi chạy lại riêng các tệp đó cùng tệp dùng chung bộ trợ giúp: 68 đạt, 0 trượt. **Chưa chạy lại cả 266 tệp sau khi sửa.** Hệ quả tìm ra: hợp đồng rương đã đóng băng còn ghi `iron_pick` ở tám bảng quà thêm; engine phát Iron Axe cho lần quay đó. Trình duyệt trên bản dựng thật (`p1-rulings.mjs`, không dựng sẵn): sổ tay 11 chương có gói và dòng "Opens:", Stone Axe lấy gỗ và đá, nút bỏ cuộc chạy đúng, tự lưu sau đó thành công.
+
+Chưa kiểm: rìu đập quặng trên trình duyệt; file lưu cũ có cuốc trên trình duyệt; luật người trên tàu ăn uống trong lượt chạy bền (ở mốc giờ 312 và 324 không ai đang chờ trên tàu); cân bằng độ bền của rìu khi làm ba việc. Bốn việc "Cần Creator quyết" của mục trước đã có quyết định; còn lại là duyệt các con số do agent chọn ở trên.
+
+Đây chưa phải chữ ký cho 13 cổng.

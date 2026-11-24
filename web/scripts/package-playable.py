@@ -47,8 +47,12 @@ Không cần npm, không cần mạng. Giữ cửa sổ máy chủ mở khi chơ
 New run → chọn nhân vật → Begin the 14 days. Di chuyển WASD hoặc phím mũi tên;
 chuột trái để hành động, E tương tác, I túi đồ, M bản đồ. Esc → Save & quit to title.
 Lượt mới cầm sẵn Stone Axe (rìu đá) ở ô 1. Đứng sát cây hoặc tảng đá, đặt con trỏ
-vào mục tiêu rồi đánh để lấy gỗ hoặc đá. Mỗi lần gục rồi tỉnh dậy bạn lại có một
-Stone Axe mới. Động vật không lần theo dấu chân.
+vào mục tiêu rồi đánh để lấy gỗ, đá hoặc quặng: rìu làm cả ba việc, game không còn
+cuốc. Mỗi lần gục rồi tỉnh dậy bạn lại có một Stone Axe mới. Nếu bị kẹt không ra
+được: Esc → “Stuck? Give up & wake somewhere safe…” (đồ đang mang nằm lại trong túi
+tại chỗ, bạn tỉnh dậy ở giường của mình hoặc một bờ biển an toàn).
+Phím J mở sổ tay: mỗi chương ghi rõ gói đồ được tặng và nó mở ra việc gì.
+Động vật không lần theo dấu chân.
 Khi gặp NPC, chọn việc muốn làm ở “What do you want to do?”. Trong Talk, chọn câu
 hỏi rồi nhấn Ask question. Hỏi về việc đi cùng không phải là mời gia nhập.
 

@@ -642,3 +642,103 @@ Cách tôi làm tệp đó xanh lại: cho bot chơi đúng luật mới, tức 
 - Trên trình duyệt chưa thử: Gậy gỗ đập đồ ven đường; rìu đập quặng; câu báo mới khi dùng sai công cụ. Ba việc này mới có bài kiểm thử tự động.
 - Các lượt trình duyệt ở mục trước (`j1`…`n1`) chạy trên `d00d7791`, chưa chạy lại trên mã mới. Riêng `j1` (kẹt với Gậy gỗ) không còn đúng với ván mới.
 - Sổ tay vẫn tặng thêm một Stone Axe ở chương Landfall; giờ thành rìu dự phòng. Chưa hỏi Creator có giữ không.
+
+## Bốn quyết định của Creator trên bản `98ee24ac` — mã game `224d5d7a`
+
+### Creator quyết gì
+
+1. **Thêm nút bỏ cuộc**: người chơi bị kẹt được tỉnh dậy ở chỗ an toàn mà không phải chờ chết.
+2. **Bỏ cuốc, theo Last Island**: rìu làm luôn việc của cuốc.
+3. **Sổ tay**: mỗi chương tặng một gói đồ khởi đầu và nói rõ gói đó mở ra việc gì.
+4. **Các việc còn treo giao cho agent tự quyết**: Ván (Plank), người chờ trên tàu, máu sau khi được cứu bằng nước, giới hạn tìm đường tới bến.
+
+### 1. Nút bỏ cuộc
+
+- Esc → **"Stuck? Give up & wake somewhere safe…"** → hỏi lại một lần ("Give up & wake" / "No").
+- Giá phải trả **bằng đúng một lần chết**: mọi thứ đang mang nằm lại trong túi tại chỗ; người chơi tỉnh dậy ở giường rơm của mình nếu có, không thì ở một bờ an toàn, với một Stone Axe mới. Ván chơi tiếp tục, đồng hồ không dừng.
+- Không có nút này khi đang ở trên tàu ngoài biển, và khi đã gục (lúc đó đã có nút "Rise").
+- Dùng bao nhiêu lần cũng được. Tôi **không** đặt giới hạn hay thời gian chờ: giá của nó đã là mất chỗ đứng và phải quay lại lấy túi.
+
+### 2. Không còn cuốc
+
+| Rìu | Gỗ | Đá | Quặng | Đồ ven đường | Độ bền |
+|---|---|---|---|---|---|
+| Stone Axe | 3 | 3 (trước 1) | 2 (trước 1) | 2 | 180 |
+| Iron Axe | 6 | 6 (trước 2) | 5 (trước 2) | 4 | 400 |
+| Salvager Axe | 9 | 9 (trước 3) | 8 (trước 3) | 7 | 500 |
+
+- Số đá, quặng, đồ ven đường của mỗi rìu **là đúng số của cuốc cùng cấp**. Tôi không nghĩ ra số mới.
+- Quặng sắt giàu (Rich Iron Ore) trước cần Iron Pickaxe trở lên; nay cần Iron Axe trở lên. Tỉ lệ rơi giữ nguyên (8 % và 12 %).
+- **Bốn công thức bị bỏ**: Stone Pickaxe, Iron Pickaxe, Salvager Pick, và đường bánh răng của Salvager Pick. Còn **111 công thức** (trước 114).
+- **Một công thức mới, số do tôi chọn (SOH_PROVISIONAL), Creator chưa duyệt:** "Salvager Axe (geared)" = Iron Axe + 1 Metal Blade + 1 Refined Iron + 1 Mechanical Gear + 2 Parts. Lý do có nó: đường bánh răng của cuốc là một trong ba công thức dùng Mechanical Gear và ai cũng biết sẵn; bỏ hẳn thì Gear mất một chỗ dùng. Lý do có 1 Refined Iron: máy tái chế trả 1 Refined Iron cho một Salvager Axe còn nguyên; công thức không chứa món đó thì thành cách đẻ ra Refined Iron.
+- Thương nhân bán Iron Axe (giá 12) thay cho Iron Pickaxe. Thợ máy và kỹ sư trong làng cầm Stone Axe.
+- Câu báo khi công cụ quá yếu: "Too hard for this — an axe would break it."
+
+**File lưu cũ:**
+
+- Cuốc trong túi, trong rương **và trong tay cư dân** thành rìu cùng cấp: vẫn là món đó (cùng mã), cùng tỉ lệ độ bền; cuốc đã gãy thành rìu gãy.
+- Việc chế cuốc đang chạy dở ở bàn chế vẫn chạy hết và trả ra rìu, đúng một lần.
+- Công thức cuốc bị gỡ khỏi danh sách đã học; ai biết đường bánh răng của cuốc thì biết đường bánh răng của rìu.
+- Ba dòng cuốc vẫn nằm trong bảng vật phẩm (ghi là đã bỏ) để file lưu cũ đọc được; bảng tái chế vẫn giữ dòng cuốc cho việc tái chế đang chạy dở.
+
+### 3. Sổ tay
+
+Mỗi chương có thêm dòng **"Opens: …" / "Mở ra: …"**. Sáu chương đầu đổi gói quà thành gói mở đường; năm chương sau giữ nguyên.
+
+| Chương | Gói mới | Mở ra |
+|---|---|---|
+| Landfall | Wood Club, Territory Cabinet, Campfire, 4 Roast Meat | vũ khí và đồ đập ven đường; dựng trại riêng |
+| Hearth & Wall | Workbench, Wood Chest, Straw Bed, 2 Torch | bàn chế đặt được ngay; giường là chỗ tỉnh dậy |
+| Fire & Iron | Research Table, 6 Iron Ingot, 10 Charcoal, 4 Rope | nghiên cứu công thức |
+| Paper & Parts | Garden Plot, 4 Sunroot Seed, 12 Parts, 4 Electronic Parts | trồng trọt |
+| Field & Flock | 2 Taming Lead, Feed & Water Trough, Trail Canteen, 3 Wild Berry Seed | thuần thú |
+| Beyond the Treeline | Hand Cart, Trail Pack, 4 Bandage | kéo xe, đi xa |
+
+- Landfall không còn tặng thêm Stone Axe (người chơi đã có sẵn một cái); bước đầu đổi thành "Gather with your axe".
+- **Các gói này do tôi chọn, Creator chưa duyệt từng món.** Tôi chưa đo chúng làm ván chơi dễ đi bao nhiêu.
+
+### 4. Bốn việc Creator giao tôi tự quyết
+
+| Việc | Tôi quyết | Vì sao |
+|---|---|---|
+| Ván (Plank) không ai dùng | **Ván là chất đốt 40 giây**, bằng đúng 2 Gỗ làm ra nó | Không đổi công thức, không đổi đồ rơi, không cần chuyển file lưu |
+| Người đã lên tàu không ăn uống | **Ăn uống từ túi của chính mình**, chỉ trong lúc tàu còn đón khách | Không với tới kho làng từ trên tàu; sau khi tàu rời bến thì không đụng gì nữa |
+| Được cứu bằng nước đứng dậy với < 1 máu | **Đứng dậy với ít nhất 10 máu** | Dưới mức 30 nên thầy thuốc vẫn phải tới chữa thật |
+| Giới hạn tìm đường tới bến | **Giữ 96.000 ô** | Xem dưới |
+
+- **Ván:** lần thử đầu của tôi là bỏ việc xẻ ván và cho tách Ván lại thành Gỗ. Cách đó khiến Gỗ (nguyên liệu thô) có công thức, phạm vào luật thiết kế có bài kiểm thử canh, nên tôi bỏ.
+- **Giới hạn 96.000:** tôi không tăng nữa. Số đo cũ: áp 96.000 cho mọi đường đi làm giờ đầu chậm 30–40 %; cho 400.000 thì một lượt tìm giữ 200–400 nghìn ô trong bộ nhớ và trong file lưu (file lưu vốn đã gần mức 5 MB). **Cái giá, vẫn còn nguyên:** bến nào cần xét quá 96.000 ô mới tới được (đã biết: bến nam) thì cư dân không tới được. Con số to hơn không chữa được; cần một cách tìm đường khác giữa các vùng, và việc đó **chưa làm**. Quyết định được ghi ngay tại hằng số trong `navigation-save.ts`.
+
+### Đã kiểm trên `224d5d7a`
+
+| Hạng mục | Kết quả |
+|---|---|
+| `typecheck`, `typecheck:tests`, `build` | Sạch |
+| Hồi quy 266 tệp | Lượt chạy trên `224d5d7a`: **3 tệp đỏ** (4 bài trượt, 1.606 bài đạt; 13 tệp chỉ có bài phải bật tay). Cả ba là bài kiểm thử hoặc tệp tham chiếu còn theo luật có cuốc; đã sửa và **chạy lại riêng các tệp đó: 68 đạt, 0 trượt**. Chưa chạy lại cả 266 tệp sau khi sửa (xem dưới) |
+| Chạy bền 336 giờ, seed 7606, không người chơi | Cổng chiến dịch **15/15**; sơ tán 6, sống sót 46, chết 234 |
+| Trình duyệt, bản dựng thật (`p1-rulings.mjs`, không dựng sẵn gì) | Đạt |
+
+- **Hồi quy: ba tệp đỏ và cách sửa.** Lượt chạy đủ 266 tệp trên `224d5d7a` ra 3 tệp đỏ. Không tệp nào chỉ ra lỗi trong mã game; tôi không đổi `web/src` sau `224d5d7a`.
+
+| Tệp đỏ | Vì sao đỏ | Đã sửa thế nào | Chạy lại |
+|---|---|---|---|
+| `tests/g1b-roll.test.ts` (2 bài) | Hợp đồng rương đã duyệt và đóng băng vẫn ghi `iron_pick` | Không đụng hợp đồng. Bài kiểm thử ghi rõ một ngoại lệ duy nhất này và kiểm món thật được phát | 9 đạt |
+| `tests/item-ontology-v2-li-historical.test.ts` (1 bài) | Một tệp CSV tham chiếu do máy sinh còn chữ "pick quality" | Sinh lại tệp; đổi đúng một dòng | 22 đạt |
+| `tests/arena1-round2-newgame-routes.test.ts` (1 bài) | Con bot đi tuyến dầu vẫn chế Stone Pickaxe, engine từ chối | Bot chỉ dùng rìu; xem ghi chú dưới | 4 đạt |
+
+  - Chạy lại riêng: bốn tệp trên cùng `creator-rulings-98ee24ac` (53 đạt) và `g1a-industrial-salvage`, tệp dùng chung bộ trợ giúp của bot (15 đạt). Tổng 68 đạt, 0 trượt. **Tôi chưa chạy lại cả 266 tệp sau các sửa này**; các sửa chỉ nằm trong bài kiểm thử, một tệp trợ giúp và một tệp CSV tham chiếu.
+  - **Rương quà (hệ quả thật trong game):** tám loại rương (`supply_damaged`, `supply_low`, `supply_mid`, `supply_high`, `toolbox_damaged`, `toolbox_low`, `toolbox_high`, `military_low`) có dòng quà thêm "Iron Pickaxe". Nay lần quay đó phát **Iron Axe**. Các rương này vì thế có hai dòng cùng ra Iron Axe, tức Iron Axe rơi khoảng gấp đôi trước (theo bảng tỉ lệ của hợp đồng: `supply_damaged` 4 % → 8 % mỗi lần mở, `toolbox_high` 11,8 % → 23,6 %). Tôi không sửa tỉ lệ, vì hợp đồng rương là thứ Creator đã duyệt. Có một bài kiểm thử mới canh việc này.
+  - **Con bot tuyến dầu (điều nó cho thấy về cân bằng):** để qua được, bot phải (a) vứt rìu đá gãy xuống đất khi đã có cái lành, và (b) vứt đồ thừa khi túi đầy 24 ô trước khi nhận bản vẽ, chế dây, nhận thang. Không khẳng định nào bị nới. Lý do: một dòng công cụ làm ba việc nên rìu đá mòn nhanh hơn, rìu gãy chiếm ô túi. Lượt qua mất 546 giây máy so với khoảng 370 trước đây. Đây là một lượt chạy của một con bot, không phải số đo cân bằng.
+- **Chạy bền:** lượt trước (`ff678df9`) là sơ tán 6, sống sót 32, chết 248. Hai lượt khác nhau từ giờ đầu. Sống sót tăng 14; tôi **không tách được** phần nào là do luật nào. Sáu người rời đảo trên tàu tây: h5v, h4x, h2l, h7, h4o, h4m. Bến nam và bến Hook không có chuyến nào, như lượt trước. **File lưu lớn nhất 4,22 MB** (lượt trước 3,97 MB; mức của localStorage là 5 MB).
+- **Luật "người trên tàu ăn uống" chưa được lượt chạy bền thử:** ở các mốc lưu giờ 312 và 324 không có ai đang chờ trên tàu. Luật này mới có bài kiểm thử tự động.
+- **Trình duyệt** (ván mới, phím và chuột thật): túi khởi đầu có Stone Axe, không có cuốc. Sổ tay hiện đủ 11 chương, chương nào cũng có gói quà và dòng "Opens:". Rìu đá chặt sồi ra gỗ và **đập đá tảng ra 5 đá**. Mở Esc, bấm nút bỏ cuộc, bấm "No": không có gì đổi. Bấm lại rồi "Give up & wake": nhân vật tỉnh dậy cách đó 679 điểm ảnh, 60 máu, túi chỉ có một Stone Axe mới; túi rơi tại chỗ cũ chứa đúng 5 món đã mang (rìu cũ độ bền 167, 8 gỗ, 5 đá, bình nước, 3 quả mọng); lượt tự lưu sau đó thành công; không có lỗi trang. **Lượt đi không gặp mạch quặng nào**, nên rìu đập quặng mới có bài kiểm thử tự động.
+- **Bài kiểm thử mới** (`tests/creator-rulings-98ee24ac.test.ts`, 18 bài): rương quay ra Iron Pickaxe thì phát Iron Axe; bỏ cuộc (túi rơi đủ món, từ chối khi đã gục, dùng ba lần liền); sức của ba rìu và số nhát để đập hết đá tảng, mạch sắt; file lưu cũ có cuốc ở túi, rương, tay cư dân; việc chế cuốc dang dở trả rìu; Ván cháy 40 giây; người trên tàu ăn từ túi mình, túi rỗng thì nhịn, tàu rời bến thì không ăn; được cứu bằng nước đứng dậy với 10 máu và vẫn cần thầy thuốc.
+- **Bài kiểm thử cũ phải sửa theo luật mới:** 25 tệp và một tệp trợ giúp của bot (23 tệp trong `224d5d7a`, thêm ba tệp sau lượt hồi quy). Phần lớn là đổi cuốc thành rìu. Hai chỗ đáng nói: (a) bài kiểm của thầy thuốc trước khẳng định "nước không hồi máu, bệnh nhân còn 1 máu", nay là 10; (b) bảng "máy tái chế trả quá tay" của ba bảng tái chế cũ đã đóng băng có danh sách món đổi theo, vì giá chế của Salvager Axe đổi. Bảng tái chế đang dùng (v4) vẫn không trả quá tay món nào.
+
+### Chưa kiểm / còn nợ
+
+- Trên trình duyệt chưa thử: rìu đập quặng; mở file lưu cũ có cuốc; nhận gói quà sổ tay bằng cách làm xong chương; bỏ cuộc khi đã có giường; nút bỏ cuộc bằng tiếng Việt (**chữ trên nút chỉ có tiếng Anh**, như cả bảng Esc).
+- Các lượt trình duyệt `j1`…`n1` chưa chạy lại trên mã mới. Riêng `o1` (ván mới có Stone Axe, lấy gỗ và đá, gục rồi tỉnh dậy được phát Stone Axe; cái chết được dựng sẵn) đã chạy lại trên `224d5d7a`: đạt (`browser-checks/out-o1-224d5d7a.txt`).
+- `web/reports/mec01-five-chain-benchmark.{json,md}` trong repo là bản cũ: bài kiểm thử tự viết lại hai tệp này mỗi lần chạy và tôi không commit bản mới, vì bản trong repo vốn đã lệch ở những chỗ không liên quan trước đợt này.
+- Chưa có số đo nào về cân bằng: rìu giờ làm ba việc bằng một thanh độ bền; tôi chưa đo người chơi tốn bao nhiêu rìu so với trước.
+- Mọi món nợ ở các mục trước (cảnh B, C, D, F, I; sổ tay chương 3–11 chơi tay; Elder bơi; "Step ashore"; đi bộ tới bến; `npc-mere-playtest.mjs`) còn nguyên.

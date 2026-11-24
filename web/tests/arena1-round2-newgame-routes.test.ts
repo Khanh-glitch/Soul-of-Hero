@@ -42,19 +42,23 @@ function stoke(b: Bot, id: string, home: [number, number]) {
 }
 /** Keep the bot alive the way a player would: drink at fresh water, eat what is carried, forage when the pack is empty. */
 function care(b: Bot, camp?: { fire: string; g: [number, number] }) {
-  // Stone tools wear out (a pick lasts roughly half an hour of this route). Replace them by hand, as at the start.
+  // Stone tools wear out. Replace them by hand, as at the start. (Recipe revision 7: there is no pickaxe; the Stone Axe
+  // takes wood, stone and ore, so the one tool line is all the bot keeps.)
   // The run no longer starts with a knife (the starter is the Wood Club) and neither recipe ever asked for one. Since
   // G1A the axe is also spent on salvage, and the Wood Club is worn out within the first two minutes: an axe that
   // breaks with no wood in the pack leaves nothing to fell a tree with. So, like a player, the bot makes the next
   // tool while the old one still has a few swings left instead of waiting for it to break.
   const sound = (tool: string) => C(b.r, 'inv').slots.some(s => s?.key === tool && (s.dur === undefined || s.dur > (ITEMS[tool].dur ?? 0) * 0.15));
-  for (const tool of ['stone_axe', 'stone_pick']) if (b.started.has(tool) && !sound(tool) && !b.working(tool.replace('stone', 'iron'))) {
+  for (const tool of ['stone_axe']) if (b.started.has(tool) && !sound(tool) && !b.working(tool.replace('stone', 'iron'))) {
     const bill = RECIPES[tool].ins; for (const [k, q] of bill) if (k !== 'rope' && b.inv(k) < q) b.gather(k, q, k === 'wood' ? TREES : ['rock'], 6);
     if (b.inv('rope') < 1) { if (b.inv('fiber') < 3) b.gather('fiber', 3, ['reed', 'grass'], 6); if (b.inv('fiber') >= 3) b.craft('rope'); }
     const spent = !b.working(tool);
     if (bill.every(([k, q]) => b.inv(k) >= q)) { b.craft(tool); b.toolsRemade++; b.note(`remade ${tool} (the old one ${spent ? 'wore out' : 'was nearly worn out'})`); }
   }
-  for (const tool of ['stone_axe', 'stone_pick']) if (b.working(tool)) b.started.add(tool);
+  for (const tool of ['stone_axe']) if (b.working(tool)) b.started.add(tool);
+  // One tool line now does every job, so axes wear out faster and the broken ones would fill the 24-slot pack. Like a
+  // player, the bot leaves a broken Stone Axe on the ground once a working one is carried.
+  if (b.working('stone_axe') && C(b.r, 'inv').slots.some(s => s?.key === 'stone_axe' && s.dur !== undefined && s.dur <= 0)) b.dropJunk(['stone_axe'], undefined, s => s.dur !== undefined && s.dur <= 0);
   // wounds: keep three bandages (4 fiber each, by hand) and bind up to 80 hp; a spear out-reaches the knife
   if (b.inv('bandage') < 4 || b.p.hp < 80) { const want = 5 + Math.ceil(Math.max(0, 80 - b.p.hp) / 18); if (b.inv('fiber') < (want - b.inv('bandage')) * 4) b.gather('fiber', (want - b.inv('bandage')) * 4, ['reed', 'grass'], 12); while (b.inv('bandage') < want && b.inv('fiber') >= 4) b.craft('bandage'); for (let k = 0; k < 6 && b.p.hp < 80 && b.inv('bandage') > 0; k++) { b.must('useItem', { slot: b.slotOf('bandage') }); b.wait(400); } }
   if (b.inv('wood_spear') < 1 && b.inv('stone_axe') > 0) { if (b.inv('fiber') < 3) b.gather('fiber', 3, ['reed', 'grass'], 6); if (b.inv('wood') < 4) b.gather('wood', 4, ['tree', 'pine', 'jungle', 'deadtree'], 4); if (b.inv('fiber') >= 3 && b.inv('wood') >= 4) { b.craft('rope'); b.craft('wood_spear'); } }
@@ -102,10 +106,10 @@ describe('ARENA 1 round 2 — New-Game routes on Veyra (engine bot, no grants)',
       b.gather('wood', 12, TREES); b.gather('stone', 3, ['rock']); back();
       const fire = b.place('campfire'); b.fuel(fire, 'wood'); const camp = { fire: fire.id, g: home };
       b.gather('fiber', 6, ['reed', 'grass']); b.craft('rope'); b.craft('rope');
-      b.gather('wood', 6, TREES); b.gather('stone', 7, ['rock']); b.craft('stone_pick'); b.craft('stone_axe');
+      b.gather('wood', 6, TREES); b.gather('stone', 7, ['rock']); b.craft('stone_axe');   // one spare beside the starter axe; there is no pick to make any more
       b.gather('stone', 18, ['rock']); b.gather('wood', 14, TREES); back();
       const furnace = b.place('furnace'); b.fuel(furnace, 'wood');
-      done(stageName, { tools: ['stone_pick', 'stone_axe'] }); care(b, camp);
+      done(stageName, { tools: ['stone_axe', 'stone_axe (spare)'] }); care(b, camp);
 
       // ---- 3. iron: 22 ingots are needed by everything below
       stageName = 'iron ore -> 22 ingots';
@@ -196,7 +200,7 @@ describe('ARENA 1 round 2 — New-Game routes on Veyra (engine bot, no grants)',
     // Each is attempted on its own and recorded PROVEN / NOT_PROVEN with the engine's refusal. They never mask the
     // base route above.
     const ext: Stage[] = []; const ids = (b as any)._ids as { fire: string; furnace: string; table: string; bench: string; home: [number, number]; seep: [number, number] } | undefined;
-    const attempt = (stage: string, fn: () => unknown) => { try { const detail = fn(); ext.push({ stage, status: 'PROVEN', atMinute: +b.minutes().toFixed(1), detail }); } catch (e) { if (e instanceof BotStop) ext.push({ stage, status: 'NOT_PROVEN', atMinute: +b.minutes().toFixed(1), detail: e.message }); else throw e; } };
+    const attempt = (stage: string, fn: () => unknown) => { try { const detail = fn(); ext.push({ stage, status: 'PROVEN', atMinute: +b.minutes().toFixed(1), detail }); } catch (e) { if (e instanceof BotStop) ext.push({ stage, status: 'NOT_PROVEN', atMinute: +b.minutes().toFixed(1), detail: e.message + ' | pack: ' + C(b.r, 'inv').slots.map(x => x ? x.key + 'x' + x.qty + (x.dur !== undefined ? '/d' + x.dur : '') : '-').join(' ') }); else throw e; } };
     if (!stop && ids) {
       const camp = { fire: ids.fire, g: ids.home };
       const smelt = (recipe: string, n: number) => { for (let left = n; left > 0;) { stoke(b, ids.furnace, ids.home); const f = b.at(ids.furnace, ids.home); const k = Math.min(6, left); for (let q = 0; q < k; q++) b.craft(recipe, f.id); if (!b.runStation(f)) throw new BotStop('furnace stalled'); left -= k; } };
@@ -218,12 +222,17 @@ describe('ARENA 1 round 2 — New-Game routes on Veyra (engine bot, no grants)',
 
       // The pack is 24 slots / 60 kg. A second hour of play needs storage: two Wood Chests (8 wood each) at camp.
       const chests: string[] = [];
+      // By-products this route never uses. Which of them the bot is carrying depends on what the roadside and the grass
+      // happened to shed on this timeline, and a full pack refuses a blueprint, a rope or a chest kit alike. A player
+      // makes room by leaving them on the ground; so does the bot, and only when no slot is free.
+      const JUNK = ['tin_can', 'needle_tube', 'sulfur', 'herb', 'seed_bitterleaf', 'seed_sunroot', 'seed_wildberry', 'animal_fat'];
+      const room = () => { if (!C(b.r, 'inv').slots.some(s => !s)) b.dropJunk(JUNK); };
       const unload = (keep: string[], toolsToo = false) => {
         const KEEP = ['water_flask', 'bandage', 'berries', 'cooked_meat', 'grilled_mushroom', 'wood', 'fiber', ...keep];
         if (chests.length < 2) { b.gather('wood', b.inv('wood') + 16, TREES);
           // The chest kit needs one free slot, and the spare axe made above now takes the one that used to be empty.
           // Same remedy as at the roadside: leave the by-products this route never uses on the ground.
-          if (!C(b.r, 'inv').slots.some(s => !s)) b.dropJunk(['tin_can', 'needle_tube', 'sulfur', 'herb']);
+          room();
           b.at(ids.table, ids.home); while (chests.length < 2) chests.push(b.place('chest_small').id); }
         let n = 0; for (const id of chests) n += b.stash(b.at(id, ids.home), KEEP, toolsToo); return n;
       };
@@ -239,12 +248,12 @@ describe('ARENA 1 round 2 — New-Game routes on Veyra (engine bot, no grants)',
       care(b, camp);
 
       attempt('Wooden Ladder: study, craft, lean on a cliff, cross on foot', () => {
-        service(); need('spares', BAL.research.directedSparesCost, SALVAGE);
-        b.study(b.at(ids.table, ids.home), 'wooden_ladder');
+        service(); need('spares', BAL.research.directedSparesCost, SALVAGE); room();
+        b.study(b.at(ids.table, ids.home), 'wooden_ladder'); room();
         // G1A-R1: `need` ends with first aid, which may turn the fibre just picked into bandages when the bot arrives hurt (it did, on the
         // R1 timeline). Pick again until three are actually carried; the Rope bill and every assertion are unchanged.
         for (let k = 0; k < 3 && (k === 0 || b.inv('fiber') < 3); k++) need('fiber', 3, ['reed', 'grass']);
-        b.craft('rope'); need('wood', 12, TREES); bench(['wooden_ladder']); expect(b.inv('wooden_ladder')).toBe(1);
+        b.craft('rope'); need('wood', 12, TREES); room(); bench(['wooden_ladder']); expect(b.inv('wooden_ladder')).toBe(1);
         // every (stand tile, cliff tile, far tile) triple in the window where the cliff is exactly one tile thick
         let g0 = blockGrid(b.r); const open = (x: number, y: number) => x > 1 && y > 1 && x < WW - 2 && y < WH - 2 && (g0[y * WW + x] === 0 || g0[y * WW + x] === 4);
         let px = 0, py = 0; const faces: { s: [number, number]; c: [number, number]; f: [number, number]; d: number }[] = []; let cliffTiles = 0; const looked: unknown[] = [];
@@ -279,13 +288,13 @@ describe('ARENA 1 round 2 — New-Game routes on Veyra (engine bot, no grants)',
         b.study(b.at(ids.table, ids.home), 'large_furnace');
         charcoal(8); smelt('refined_iron_ingot', 2); bench(['iron_plate', 'iron_plate']);
         // The pack bill weighs 59.2 kg against a 60 kg carry limit: 36 stone alone is 43.2 kg. The bot does what a
-        // player must: leaves everything but the pick in the chests, hauls the stone, then swaps the pick for the metal.
+        // player must: leaves everything but the axe in the chests, hauls the stone, then swaps the stone for the metal.
         const billKg = RECIPES.large_furnace.ins.reduce((n, [k, q]) => n + ITEMS[k].w * q, 0);
-        service(); unload(['stone_pick', 'stone', 'knife'], true); care(b, camp);
+        service(); unload(['stone_axe', 'stone', 'knife'], true); care(b, camp);
         need('stone', 36, ['rock']);
         unload(['stone', 'knife'], true); for (const id of chests) b.withdraw(b.at(id, ids.home), ['iron_ingot', 'iron_plate', 'charcoal']);
         bench(['large_furnace']); expect(b.inv('large_furnace')).toBe(1);
-        for (const id of chests) b.withdraw(b.at(id, ids.home), ['stone_pick', 'stone_axe', 'knife', 'wood_spear', 'iron_ore']);
+        for (const id of chests) b.withdraw(b.at(id, ids.home), ['stone_axe', 'knife', 'wood_spear', 'iron_ore']);
         b.at(ids.bench, ids.seep); const big = b.place('large_furnace'); need('iron_ore', 2, ['iron', 'coalv']); stoke(b, big.id, ids.seep);
         const lf = b.at(big.id, ids.seep); const t0 = b.now; b.craft('iron_ingot', lf.id); if (!b.runStation(lf)) throw new BotStop('large furnace stalled');
         return { smeltSeconds: +((b.now - t0) / 1000).toFixed(1), ordinaryFurnaceSeconds: RECIPES.iron_ingot.secs, packBillKg: +billKg.toFixed(1), carryLimitKg: carryLimit(b.r), packKg: ITEMS.large_furnace.w };
@@ -293,7 +302,7 @@ describe('ARENA 1 round 2 — New-Game routes on Veyra (engine bot, no grants)',
       care(b, camp);
 
       attempt('Iron Plate Pants: study, hunt hide, sew, wear', () => {
-        for (const id of chests) b.withdraw(b.at(id, ids.home), ['stone_pick', 'stone_axe', 'knife', 'wood_spear']);
+        for (const id of chests) b.withdraw(b.at(id, ids.home), ['stone_axe', 'knife', 'wood_spear']);
         service(); unload(['spares', 'iron_ore', 'iron_ingot', 'refined_iron_ingot', 'iron_plate', 'charcoal', 'hide', 'cloth', 'needle_thread']); care(b, camp);
         need('spares', BAL.research.directedSparesCost * 2 + 2, SALVAGE);
         const table = () => b.at(ids.table, ids.home); b.study(table(), 'needle_thread'); b.study(table(), 'iron_plate_pants');
