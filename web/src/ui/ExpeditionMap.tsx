@@ -68,6 +68,13 @@ function bearingLabel(dx: number, dy: number): string {
   return `${Math.round(d)}t ${dirs[idx]}`;
 }
 
+/**
+ * The continent overview marks only the player's own bag. Every 'bag' entity used to get the red mark, which put
+ * a dot on each survivor store and corpse on the continent, charted or not: about 66 marks on a fresh run.
+ */
+export const isOwnBag = (e: { kind?: string; label?: string; owner?: unknown; parcel?: unknown }): boolean =>
+  e.kind === 'bag' && e.label === 'Your bag' && !e.owner && !e.parcel;
+
 function discoveredBounds(r: RunState): { minX: number; maxX: number; minY: number; maxY: number; pct: number } {
   let minX = WW, maxX = 0, minY = WH, maxY = 0, count = 0;
   for (let y = 0; y < 50; y++) {
@@ -207,7 +214,7 @@ function renderContinentChart(
   for (const e of Object.values(r.entities)) {
     if (!onActiveFloor(r, e)) continue;
     if (e.type === 'claim') dot(ox + e.tx!, oy + e.ty!, '#8fd45a', 4);
-    if (e.kind === 'bag') dot(ox + e.x / TILE, oy + e.y / TILE, '#ff8e7a', 3);
+    if (isOwnBag(e)) dot(ox + e.x / TILE, oy + e.y / TILE, '#ff8e7a', 3);
     if (e.kind === 'cart' || e.kind === 'vehicle') dot(ox + e.x / TILE, oy + e.y / TILE, '#7fd8ff', 3);
   }
   if (r.veyraOffscreenEntities) {
@@ -215,7 +222,7 @@ function renderContinentChart(
       const gtx = oe.tx !== undefined ? oe.tx : oe.x / TILE;
       const gty = oe.ty !== undefined ? oe.ty : oe.y / TILE;
       if (oe.type === 'claim') dot(gtx, gty, '#8fd45a', 4);
-      if (oe.kind === 'bag') dot(gtx, gty, '#ff8e7a', 3);
+      if (isOwnBag(oe)) dot(gtx, gty, '#ff8e7a', 3);
       if (oe.kind === 'cart' || oe.kind === 'vehicle') dot(gtx, gty, '#7fd8ff', 3);
     }
   }
@@ -713,7 +720,7 @@ export function ExpeditionMap({ api, onTeleportSelect, teleportTarget, qaSession
             <i style={{ color: '#8fd45a' }}>■</i>Cab
             <i style={{ color: '#ff8e7a' }}>✕</i>Bag
           </span>
-          <span className="map-key">{marks.length}/18</span>
+          <span className="map-key" title="Notes you have left on the chart, out of 18">{marks.length}/18</span>
         </div>
       </div>
 

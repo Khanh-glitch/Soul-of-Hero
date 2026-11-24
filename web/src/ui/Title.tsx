@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { VIEW_W, VIEW_H, type GameState } from '../game/core';
 import { getArt } from '../game/art';
 import { getMapCanvas, resetRenderCaches } from '../game/render';
@@ -10,6 +10,7 @@ import { QA_BUILD } from '../game/build-flags';
 import { QA_PRESETS, type QaPresetId } from '../game/qa-sandbox';
 import { computeStageFit } from '../visual/direction';
 import { useVisualPrefs } from './hud';
+import { getLang, setLang, subscribeLang } from '../game/i18n';
 
 const CLASSIC_REGIONS = [
   { id: 0, label: 'South Cove' },
@@ -81,9 +82,14 @@ export default function Title({
   const click = () => { initAudio(); sfx({ type: 'ui' }); };
   const activeRegions = selectedLayout === U05_WORLD_LAYOUT_ID ? [] : CLASSIC_REGIONS;
 
+  const lang = useSyncExternalStore(subscribeLang, getLang, getLang);
   return <div style={{ position: 'fixed', inset: 0, background: '#05040a' }}>
     <div className="stage" style={{ transform: `translate(${s.x}px, ${s.y}px) scale(${s.k})` }}>
       <Backdrop layout={selectedLayout} />
+      <div className="absolute" data-notr style={{ right: 6, top: 6, display: 'flex', gap: 2, zIndex: 5 }} role="group" aria-label="Language / Ngôn ngữ">
+        <button className={`btn sm ${lang === 'en' ? 'gold' : ''}`} aria-pressed={lang === 'en'} onClick={() => setLang('en')}>English</button>
+        <button className={`btn sm ${lang === 'vi' ? 'gold' : ''}`} aria-pressed={lang === 'vi'} onClick={() => setLang('vi')}>Tiếng Việt</button>
+      </div>
       {summary ? <div className="panel absolute fadein" style={{ left: 120, top: 24, width: 400, maxHeight:312, overflowY:'auto', padding: 10 }}>
         <div className="lbl" style={{ fontSize: 8, color: 'var(--muted)', letterSpacing: 1 }}>RUN CHRONICLE · 14-DAY CYCLE CONCLUDED</div>
         <div className="title-font" style={{ fontSize: 22, color: summary.ending === 'evacuated' ? 'var(--info)' : summary.ending === 'expired' ? 'var(--bad)' : 'var(--paper)' }}>
@@ -99,7 +105,7 @@ export default function Title({
           <div className="console-col">
             <div className="console-h" style={{ color: 'var(--bad)' }}>Reset with the Island</div>
             <div className="lbl" style={{ fontSize: 9, color: 'var(--muted)', lineHeight: 1.25 }}>
-              All run-local gear, Creator Cores, learned recipes, shelter, vehicles, cargo &amp; unsecured cash have been wiped.
+              All gear from this run, Creator Cores, learned recipes, shelter, vehicles, cargo &amp; unsecured cash have been wiped.
             </div>
           </div>
         </div>
@@ -121,10 +127,10 @@ export default function Title({
           <button className="btn" style={{ fontSize: 15, width: 210 }} disabled={!!run} title={run ? 'Finish (evacuate/abandon) your current run first' : ''} onClick={() => { click(); setActiveLayout(selectedLayout); resetRenderCaches(); setMode('select'); }}>New run</button>
           {onStartQa && <button className="btn gold" style={{ fontSize: 13, width: 210 }} onClick={() => { click(); setMode('qa'); }}>Full-Gear QA Sandbox [F9]</button>}
           <button className="btn" style={{ fontSize: 13, width: 210 }} onClick={() => { click(); setMode('history'); }}>Profile &amp; history</button>
-          {onInspect && <button className="btn ghost" style={{ fontSize: 11, width: 210, color: '#9ae0ff' }} onClick={() => { click(); onInspect(); }}>Creator Inspector · 81 POIs</button>}
+          {onInspect && <button className="btn ghost" style={{ fontSize: 11, width: 210, color: '#9ae0ff' }} onClick={() => { click(); onInspect(); }}>Creator Inspector · world viewer</button>}
           <div style={{ fontSize: 11, color: 'var(--paper)', marginTop: 2, textShadow: '1px 1px 0 #000' }}>Secured Ragnarok cash: <b style={{ color: 'var(--info)' }}>{pf.securedCash}</b> · Runs: {pf.history.length}</div>
           {note && <div style={{ fontSize: 10, color: 'var(--warn)', maxWidth: 380, textAlign: 'center' }}>{note}</div>}
-          <div style={{ fontSize: 9, color: 'var(--muted)', position: 'absolute', top: 214 }}>Offline · single-player · saves locally in this browser (LOCAL/UNVERIFIED)</div>
+          <div style={{ fontSize: 9, color: 'var(--muted)', position: 'absolute', top: 214 }}>Offline · single-player · saves in this browser only</div>
         </div>}
         {mode === 'qa' && onStartQa && <div className="panel absolute fadein" style={{ left: 70, top: 24, width: 500, padding: 8 }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
@@ -164,7 +170,7 @@ export default function Title({
           </div>}
           <div style={{ fontSize: 10, color: '#e8dcc8', marginTop: 2 }}>
             {selectedLayout === U05_WORLD_LAYOUT_ID
-              ? <><b style={{ color: '#ffe27a' }}>VEYRA · Unified World</b> · 4000×2800 tiles (1 tile = 0.5 AU) · 81 POIs, livestock husbandry, 4 side bosses &amp; 6 Primordials.</>
+              ? <><b style={{ color: '#ffe27a' }}>VEYRA</b> · one open world: 81 places to find, animals to raise, 4 side bosses and 6 Primordials.</>
               : <><b style={{ color: '#9ae0ff' }}>Classic Island (R12)</b> · 200×200 tiles · classic 6-Elder island &amp; R12 industrial baseline.</>}
           </div>
           <div style={{ fontSize: 11, marginTop: 5, color: '#ffd98a' }}>{selectedLayout === U05_WORLD_LAYOUT_ID ? 'Starting location' : 'Landing region'}</div>
@@ -173,12 +179,12 @@ export default function Title({
             {activeRegions.map(rg => <button key={rg.id} className={`btn ${region === rg.id ? 'gold' : 'ghost'}`} style={{ fontSize: 10 }} onClick={() => { click(); setRegion(rg.id); }}>{rg.label}</button>)}
           </div>
           <div style={{ fontSize: 10, color: '#cfc2dc', minHeight: 20, marginTop: 3 }}>
-            {region === null ? 'Seeded random landing across source-verified mainland cells. No fixed four-region quota or starter shelter; offshore starts await proven sea transport.' : `Seeded safe landing in ${activeRegions[region]?.label}. Reachable wood, stone, food and fresh water.`}
+            {region === null ? 'You land at a random safe spot on the mainland. There is no starter shelter.' : `Seeded safe landing in ${activeRegions[region]?.label}. Reachable wood, stone, food and fresh water.`}
           </div>
           <div className="flex justify-between items-center" style={{ marginTop: 6 }}><button className="btn ghost" onClick={() => setMode('menu')}>Back</button><button className="btn gold" style={{ fontSize: 16, padding: '4px 16px' }} onClick={() => { click(); onStart(hero, region, selectedLayout); }}>Begin the 14 days</button></div>
         </div>}
         {mode === 'history' && <div className="panel absolute fadein" style={{ left: 100, top: 96, width: 440, padding: 8 }}>
-          <div className="panel-h">Profile <span className="tag" style={{ color: '#ff9a7a', marginLeft: 4 }}>LOCAL/UNVERIFIED — browser-stored, not a global leaderboard</span></div>
+          <div className="panel-h">Profile <span className="tag" style={{ color: '#ff9a7a', marginLeft: 4 }}>Saved in this browser · not a global leaderboard</span></div>
           <div style={{ fontSize: 12, marginTop: 3 }}>Secured Ragnarok cash: <b style={{ color: '#9ae0ff' }}>{pf.securedCash}</b> — the only value that crosses runs.</div>
           <div style={{ fontSize: 11, color: '#ffd98a', marginTop: 4 }}>Achievements</div>
           <div className="flex flex-wrap gap-x-3" style={{ fontSize: 10 }}>{Object.entries(ACHIEVEMENTS).map(([k, a]) => <span key={k} style={{ color: pf.achievements[k] ? '#ffe27a' : '#9a8cab' }}>{pf.achievements[k] ? '★' : '☆'} {a.name}</span>)}</div>

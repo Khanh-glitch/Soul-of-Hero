@@ -9,6 +9,8 @@ import { getWorld, ZONES } from '../game/world';
 import { WW } from '../game/core';
 import { Slot, Icon } from './common';
 import { getPrefs, setPrefs, subscribePrefs, DIRECTIONS, DEFAULT_DIRECTION, type DirectionId } from '../visual/direction';
+import { getLang, setLang, subscribeLang } from '../game/i18n';
+import { fullscreenSupported, toggleFullscreen, useFullscreen } from './ScreenFit';
 
 // ---------------------------------------------------------------------------
 // pixel glyphs — 7x7 rect art, same grid language as the world sprites
@@ -68,6 +70,8 @@ export function UrgentAlerts({ r, cold }: { r: RunState; cold: boolean }) {
   const alerts: { id: string; glyph: string; label: string; fix: string; col: string }[] = [];
   if (p.hp < 28) alerts.push({ id: 'hp', glyph: 'hp', label: 'LOW HP', fix: 'heal / retreat', col: 'var(--bad)' });
   if (cold) alerts.push({ id: 'cold', glyph: 'wr', label: 'FREEZING', fix: 'fire / shelter', col: '#ff8a66' });
+  // warmth already low but the air is not freezing right now: the small warmth number alone was easy to miss
+  else if (p.warmth < 20) alerts.push({ id: 'cold', glyph: 'wr', label: 'COLD', fix: 'fire / warm gear', col: '#ff8a66' });
   if (p.thirst < 18) alerts.push({ id: 'h2o', glyph: 'h2o', label: 'DEHYDRATED', fix: 'drink [E / 1-8]', col: 'var(--info)' });
   if (p.hunger < 18) alerts.push({ id: 'fd', glyph: 'fd', label: 'STARVING', fix: 'eat food', col: 'var(--food)' });
   if (p.rad >= 25) alerts.push({ id: 'rad', glyph: 'rad', label: 'RADIATION', fix: 'leave ash / mask', col: '#a8d040' });
@@ -84,7 +88,8 @@ export function UrgentAlerts({ r, cold }: { r: RunState; cold: boolean }) {
   </div>;
 }
 
-export function Vitals({ r, now }: { r: RunState; now: number }) {
+/** `slim`: health and stamina only, so the plate ends above a panel that opens at the top of the stage. */
+export function Vitals({ r, now, slim = false }: { r: RunState; now: number; slim?: boolean }) {
   const p = r.player;
   const hpGhost = useRef(1); const [ghost, setGhost] = useState(1);
   useEffect(() => {
@@ -100,7 +105,7 @@ export function Vitals({ r, now }: { r: RunState; now: number }) {
     <Gauge k="hp" v={p.hp} max={BAL.player.maxHp} col="var(--hp)" w={74} big ghost={ghost} />
     <div style={{ height: 2 }} />
     <Gauge k="st" v={p.stamina} max={BAL.player.maxStamina} col="var(--stam)" w={74} />
-    <div style={{ display: 'flex', gap: 4, marginTop: 3 }}>
+    {!slim && <><div style={{ display: 'flex', gap: 4, marginTop: 3 }}>
       <MiniStat k="fd" v={p.hunger} col="var(--food)" />
       <MiniStat k="h2o" v={p.thirst} col="var(--water)" />
       <MiniStat k="wr" v={p.warmth} col="var(--warm)" />
@@ -109,12 +114,12 @@ export function Vitals({ r, now }: { r: RunState; now: number }) {
     <div className="rule" style={{ margin: '3px 0 2px' }} />
     <div className="lbl" style={{ fontSize: 8, display: 'flex', alignItems: 'center', gap: 3, color: p.sheltered ? 'var(--good)' : 'var(--muted)' }}>
       {p.sheltered && <Glyph k="home" c="var(--good)" s={7} />}
-      <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.sheltered ? 'Sheltered' : zone}</span>
+      <span title={p.sheltered ? undefined : zone} style={{ overflow: 'hidden', overflowWrap: 'anywhere', lineHeight: '9px' }}>{p.sheltered ? 'Sheltered' : zone}</span>
       {surf && <span style={{ color: '#63737c', marginLeft: 'auto' }}>{surf}</span>}
     </div>
     {over && <div className="lbl" style={{ fontSize: 8, color: 'var(--warn)', display: 'flex', gap: 3, alignItems: 'center' }}>
       <Glyph k="weight" c="var(--warn)" s={7} />Overloaded {w.toFixed(0)}/{lim}kg · slowed
-    </div>}
+    </div>}</>}
   </div>;
 }
 function MiniStat({ k, v, col }: { k: string; v: number; col: string }) {
@@ -134,7 +139,7 @@ function MiniStat({ k, v, col }: { k: string; v: number; col: string }) {
 // world clock — day arc, phase, weather now/next, run budget
 // ---------------------------------------------------------------------------
 const WGLYPH: Record<string, string> = { clear: 'CLEAR', cloudy: 'CLOUD', rain: 'RAIN', storm: 'STORM', fog: 'FOG' };
-export function WorldClock({ r, now, secured }: { r: RunState; now: number; secured: number }) {
+export function WorldClock({ r, now, secured, slim = false }: { r: RunState; now: number; secured: number; slim?: boolean }) {
   const ph = phaseOf(r, now); const hrs = runHours(r, now); const day = Math.floor(hrs / 24) + 1;
   const dtm = dayTime(r, now); const w = weatherAt(r, now);
   const slot = Math.floor((now - r.startedAt + r.qaOffset) / (BAL.weather.slotMinutes * 60000));
@@ -158,7 +163,7 @@ export function WorldClock({ r, now, secured }: { r: RunState; now: number; secu
       </div>
       <span className="chip" style={{ color: phaseCol, marginLeft: 'auto' }}>{ph === 'calm' ? 'CALM' : ph === 'danger' ? 'WAKING' : 'RAGNAROK'}</span>
     </div>
-    <div className="rule" style={{ margin: '3px 0 2px' }} />
+    {!slim && <><div className="rule" style={{ margin: '3px 0 2px' }} />
     <div className="lbl" style={{ fontSize: 8, display: 'flex', justifyContent: 'space-between', color: 'var(--muted)' }}>
       <span style={{ color: w === 'storm' ? 'var(--info)' : 'var(--paper)' }}>{WGLYPH[w]}</span>
       <span>next {WGLYPH[next]}</span>
@@ -169,7 +174,7 @@ export function WorldClock({ r, now, secured }: { r: RunState; now: number; secu
     <div className="lbl" style={{ fontSize: 8, marginTop: 2, display: 'flex', justifyContent: 'space-between' }}>
       <span style={{ color: 'var(--info)' }}>secured {secured}</span>
       {held > 0 && <span style={{ color: 'var(--brassLit)' }}>carried {held}</span>}
-    </div>
+    </div></>}
   </div>;
 }
 
@@ -203,12 +208,12 @@ function HeldInfo({ s, r }: { s: Stack | null; r: RunState }) {
     </div>
     {core ? (() => { const v = coreReadout(s, Date.now()); const col = ['var(--paper)', 'var(--info)', 'var(--brassLit)'];
       return <div className="core-readout" role="group" data-testid="core-readout" aria-label={`Creator Core level ${v.lvl}, durability ${v.dur} of ${v.maxDur}`}>
-        <span title={`Level ${v.lvl} of 3`} style={{ color: 'var(--brassLit)' }}><b>Lv</b><strong>{v.lvl}</strong></span>
+        <span title={`Level ${v.lvl} of 3`} style={{ color: 'var(--brassLit)' }}><b data-notr>Lv</b><strong>{v.lvl}</strong></span>
         {v.modes.map((m, i) => { const ammo = coreAmmo(m.mode, d.essence); const n = Math.min(...ammo.map(([k, q]) => Math.floor(countItem(r, 'inv', k) / q)));
           return <span key={m.key} className={!m.unlocked || n === 0 ? 'empty' : ''} style={{ color: m.unlocked ? col[i] : 'var(--muted)' }}
             title={m.unlocked ? `${m.key}: ${ammo.map(([k, q]) => `${q} ${ITEMS[k]?.name ?? k}`).join(' + ')} per cast · ${n} casts in pack${m.cdLeftMs ? ` · ready in ${(m.cdLeftMs / 1000).toFixed(1)}s` : ''}` : `${m.key} unlocks at Lv${m.needLvl}`}>
-            <b>{m.key}</b><strong>{!m.unlocked ? `Lv${m.needLvl}` : m.cdLeftMs > 0 ? `${Math.ceil(m.cdLeftMs / 1000)}s` : n}</strong></span>; })}
-        <span title={`Durability ${v.dur}/${v.maxDur}`} style={{ color: v.dur <= 0 ? 'var(--bad)' : v.dur < 75 ? 'var(--warn)' : 'var(--good)' }}><b>Dur</b><strong>{v.dur}</strong></span>
+            <b data-notr>{m.key}</b><strong>{!m.unlocked ? `Lv${m.needLvl}` : m.cdLeftMs > 0 ? `${Math.ceil(m.cdLeftMs / 1000)}s` : n}</strong></span>; })}
+        <span title={`Durability ${v.dur}/${v.maxDur}`} style={{ color: v.dur <= 0 ? 'var(--bad)' : v.dur < 75 ? 'var(--warn)' : 'var(--good)' }}><b data-notr>Dur</b><strong>{v.dur}</strong></span>
       </div>; })()
       : d.core ? <div className="lbl" style={{ fontSize: 8, color: s.charge ? 'var(--info)' : 'var(--bad)' }}>FIELD CORE · {s.charge}/{d.charge}⚡ · LMB cast</div>
         : d.food ? <div className="lbl" style={{ fontSize: 8, color: 'var(--good)' }}>LMB / RMB consume</div>
@@ -281,9 +286,11 @@ export function RigStatus({ r }: { r: RunState }) {
 // ---------------------------------------------------------------------------
 // art direction + audio console (reachable from Esc → Presentation)
 // ---------------------------------------------------------------------------
-type PresentationTab = 'display' | 'sound' | 'look';
+type PresentationTab = 'display' | 'controls' | 'sound' | 'look';
 export function PresentationPanel() {
   const p = useVisualPrefs();
+  const lang = React.useSyncExternalStore(subscribeLang, getLang, getLang);
+  const fs = useFullscreen();
   // Three short pages instead of one 555px column in a 306px box: every control is at most one click away
   // and nothing sits below a fold that the panel gave no hint of.
   const [tab, setTab] = useState<PresentationTab>('display');
@@ -300,22 +307,42 @@ export function PresentationPanel() {
     <div style={{ display: 'flex', gap: 3, flexWrap: 'wrap' }}>{children}</div>
   </>;
   return <div>
+    <div style={{ display: 'flex', gap: 3, alignItems: 'center', marginBottom: 4 }} data-notr role="group" aria-label="Language / Ngôn ngữ">
+      <span className="lbl" style={{ fontSize: 9, color: 'var(--muted)', flex: 1, whiteSpace: 'nowrap' }}>Language</span>
+      <button className={`btn sm ${lang === 'en' ? 'gold' : ''}`} aria-pressed={lang === 'en'} onClick={() => setLang('en')}>English</button>
+      <button className={`btn sm ${lang === 'vi' ? 'gold' : ''}`} aria-pressed={lang === 'vi'} onClick={() => setLang('vi')}>Tiếng Việt</button>
+    </div>
     <div role="tablist" aria-label="Presentation settings" style={{ display: 'flex', gap: 3, marginBottom: 4 }}>
-      {([['display', 'Display'], ['sound', 'Sound'], ['look', 'Look']] as const).map(([id, lbl]) =>
+      {([['display', 'Display'], ['controls', 'Controls'], ['sound', 'Sound'], ['look', 'Look']] as const).map(([id, lbl]) =>
         <button key={id} role="tab" aria-selected={tab === id} className={`btn sm ${tab === id ? 'gold' : ''}`} style={{ flex: 1 }} onClick={() => setTab(id)}>{lbl}</button>)}
     </div>
-    {tab === 'display' && <div role="tabpanel">
+    {tab === 'controls' && <div role="tabpanel">
       {group('Inventory layout', <>
         {([['auto', 'Auto'], ['pc', 'PC · 2 columns'], ['mobile', 'Mobile · 2 tabs']] as const).map(([id, lbl]) => (
           <button key={id} className={`btn sm ${(p.uiLayout ?? 'auto') === id ? 'gold' : ''}`} aria-pressed={(p.uiLayout ?? 'auto') === id} onClick={() => setPrefs({ uiLayout: id })}>{lbl}</button>
         ))}
       </>)}
+      {group('Touch controls', <>
+        {([['auto', 'Auto'], ['on', 'Always'], ['off', 'Never']] as const).map(([id, lbl]) => (
+          <button key={id} className={`btn sm ${(p.touchControls ?? 'auto') === id ? 'gold' : ''}`} aria-pressed={(p.touchControls ?? 'auto') === id} onClick={() => setPrefs({ touchControls: id })}>{lbl}</button>
+        ))}
+      </>)}
+      <div className="lbl" style={{ fontSize: 8, color: 'var(--muted)', marginTop: 3, lineHeight: '9px' }}>Touch: drag on the left to walk. Hit, Use and Roll are on the right. Tap the world to swing there.</div>
+      <div className="lbl" style={{ fontSize: 8, color: 'var(--muted)', marginTop: 5, lineHeight: '9px' }}>Keyboard: WASD move · E use · Space roll · I pack · C craft · B build · M map · J journey · N notes · Tab skills · Esc menu</div>
+    </div>}
+    {tab === 'display' && <div role="tabpanel">
       {group('Screen scale', <>
         {([['fit', 'Fit window'], ['integer', 'Whole pixels (1×, 2×, 3×)']] as const).map(([id, lbl]) => (
           <button key={id} className={`btn sm ${(p.stageScale ?? 'fit') === id ? 'gold' : ''}`} aria-pressed={(p.stageScale ?? 'fit') === id} onClick={() => setPrefs({ stageScale: id })}>{lbl}</button>
         ))}
       </>)}
       <div className="lbl" style={{ fontSize: 8, color: 'var(--muted)', marginTop: 2, lineHeight: '9px' }}>Whole pixels is sharper but can leave a border; in a small window it makes everything smaller.</div>
+      {fullscreenSupported() && <div style={{ marginTop: 4 }}><button className={`btn sm ${fs ? 'gold' : ''}`} aria-pressed={fs} onClick={() => { void toggleFullscreen(); }}>{fs ? 'Leave full screen' : 'Full screen'}</button></div>}
+      {group('HUD size', <>
+        {([['auto', 'Auto'], [1, '100%'], [1.25, '125%'], [1.5, '150%']] as const).map(([id, lbl]) => (
+          <button key={String(id)} className={`btn sm ${(p.hudScale ?? 'auto') === id ? 'gold' : ''}`} aria-pressed={(p.hudScale ?? 'auto') === id} onClick={() => setPrefs({ hudScale: id })}>{lbl}</button>
+        ))}
+      </>)}
       {group('Comfort', <>
         <button className={`btn sm ${p.reduceFlash ? 'gold' : ''}`} aria-pressed={p.reduceFlash} onClick={() => setPrefs({ reduceFlash: !p.reduceFlash })}>Reduce flashes {p.reduceFlash ? 'ON' : 'OFF'}</button>
         <button className={`btn sm ${p.highContrastHud ? 'gold' : ''}`} aria-pressed={p.highContrastHud} onClick={() => setPrefs({ highContrastHud: !p.highContrastHud })}>Solid HUD {p.highContrastHud ? 'ON' : 'OFF'}</button>

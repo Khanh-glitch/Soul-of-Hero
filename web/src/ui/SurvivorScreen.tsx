@@ -150,7 +150,7 @@ export function SurvivorScreen({
           <div className="sv-stats">
             <span className="stat" title={`Damage reduction (cap ${Math.round(ARMOR_CAP * 100)}%)${worn.steady ? ` · legs: -${Math.round(worn.steady * 100)}% knock-back` : ''}${worn.ground ? ` · boots: -${Math.round(worn.ground * 100)}% ground damage` : ''}`}><Glyph k="hp" c="var(--good)" s={7} />{Math.round(Math.min(ARMOR_CAP, armor) * 100) > 0 ? '-' : ''}{Math.round(Math.min(ARMOR_CAP, armor) * 100)}%{worn.steady ? ` L${Math.round(worn.steady * 100)}` : ''}{worn.ground ? ` F${Math.round(worn.ground * 100)}` : ''}</span>
             <span className="stat" title="Warmth from clothing"><Glyph k="wr" c="var(--warm)" s={7} />+{warm}</span>
-            <span className="stat" title="Unsecured coins / profile-secured"><Icon k="rcash" size={8} />{have('rcash')}<i className="sep" />{api.gs.profile.securedCash}</span>
+            <span className="stat" title="Coins carried (not yet secured) / coins secured"><Icon k="rcash" size={8} />{have('rcash')}<i className="sep" />{api.gs.profile.securedCash}</span>
             <div className="sv-load" title={`Load ${w.toFixed(1)} / ${lim} kg`}>
               <Glyph k="weight" c={w > lim ? 'var(--bad)' : 'var(--muted)'} s={7} />
               <div className="track"><i style={{ width: `${load * 100}%`, background: w > lim ? 'var(--bad)' : load > 0.8 ? 'var(--warn)' : 'var(--good)' }} /></div>

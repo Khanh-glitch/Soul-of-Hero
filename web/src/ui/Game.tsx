@@ -33,7 +33,8 @@ import { autosaveDecision, AUTOSAVE_MIN_MS, AUTOSAVE_STILL_MS } from '../game/au
 import { Slot, Bar, Icon, Mark, mkIntent, type Api, type PanelState } from './common';
 import { Vitals, UrgentAlerts, WorldClock, Hotbar, RigStatus, ThreatBar, PresentationPanel, useVisualPrefs, Glyph } from './hud';
 import { setListener, setEnvironment, machineState, setMood, tickMusic, stopAllMachines } from '../game/audio';
-import { getPrefs, setPrefs, applyCssTheme, computeStageFit } from '../visual/direction';
+import { getPrefs, setPrefs, applyCssTheme, computeStageFit, isTouchDevice, resolveHudScale } from '../visual/direction';
+import { TouchControls, TouchScreens, type TouchApi } from './TouchControls';
 import { HomeStatusCard } from './HomeStatus';
 import { thermalStatusView } from '../game/thermal';
 import { nearestHomeStructure, homeStatus } from '../game/engine';
@@ -54,7 +55,7 @@ import { triggerQaEvent, qaCycleBikeState, type QaPresetId } from '../game/qa-sa
 import { ElderBossHUD, RagnarokStrip, CoreReserveStrip, AirdropCard, DeathRecoveryOverlay, QaSandboxDrawer } from './EventExperiences';
 import { ExperienceStage, FieldPickupLayer, EventFeed, type FieldPickup, type FeedLine } from './ExperienceStage';
 import { SurvivorScreen } from './SurvivorScreen';
-import { BuildBar, BUILD_KIT, BUILD_PAGES, type BuildTool } from './BuildBar';
+import { BuildBar, BUILD_KIT, BUILD_PAGES, type BuildTool, placeHint } from './BuildBar';
 import { clearSlotInteraction, getHoverSlot, getKeyboardPick, DragGhost } from './dragSlots';
 import { loadJourney, flushJourney, ingestJourney, resolveTrack, rerollDaily, recordWorldMoment, markChronicleSeen, lessonState, type JourneyStore, type JourneyEvent, type TrackRef, type QuickJumpTarget } from '../game/journey';
 import { directCues, standingIssues, ragnarokCinematic, eldersWakeCinematic, type Flare, type Cinematic, type Issue } from '../game/attention';
@@ -121,6 +122,7 @@ export default function Game({
   const heldFlares = useRef<Omit<Flare, 'born'>[]>([]);
   const [cines, setCines] = useState<Cinematic[]>([]);
   const [peek, setPeek] = useState(false);
+  const [hurtBehindPanel, setHurtBehindPanel] = useState(0);
   const [issues, setIssues] = useState<Issue[]>([]);
   const [snoozed, setSnoozed] = useState<Record<string, string>>({});
   const anchorCache = useRef<{ t: number; key: string; v: { x: number; y: number; label: string } | null }>({ t: 0, key: '', v: null });
@@ -180,6 +182,7 @@ export default function Game({
   const [coreAim, setCoreAim] = useState<null | { mode: 'refined' | 'signature'; uid: string; code: string }>(null);
   const spiritTarget=useRef<null | {uid:string;x:number;y:number}>(null);
   const coreAimRef = useRef(coreAim); coreAimRef.current = coreAim;
+  const touchAim = useRef<{ x: number; y: number } | null>(null); // stick direction: the character aims where it walks
   const mouse = useRef({ x: 320, y: 180 }); const target = useRef<Interact | null>(null); const hitstop = useRef(0);
   const idleAcc = useRef(0); // presentation only: lets the score fall silent while gathering
   const panelRef = useRef(panel); panelRef.current = panel; const buildRef = useRef(buildType); buildRef.current = buildType; const reclaimRef = useRef(reclaim); reclaimRef.current = reclaim; const repairRef = useRef(repairMode); repairRef.current = repairMode; const upgradeRef = useRef(upgradeMode); upgradeRef.current = upgradeMode;
@@ -501,6 +504,7 @@ export default function Game({
       // Cap animation/input physics only; tick catches up autonomous wall time from lastSimAt.
       raf = requestAnimationFrame(loop); const dt = Math.min(50, t - last); last = t; const now = Date.now();
       if (!gs.run) { if (!ended) { ended = true; if (!qaMode) save(gs); onRunEnd(); } return; }
+      { const ta = touchAim.current, tp = gs.run?.player; if (ta && tp) mouse.current = { x: tp.x - Math.round(cam.x) + ta.x * 56, y: tp.y - Math.round(cam.y) + ta.y * 56 }; }
       const i = inp.current; i.mx = mouse.current.x + Math.round(cam.x); i.my = mouse.current.y + Math.round(cam.y); i.viewX=Math.round(cam.x); i.viewY=Math.round(cam.y);
       let simDt = dt; if (hitstop.current > 0) { hitstop.current -= dt; simDt = dt * 0.08; }
       const phaseBefore = phaseOf(gs.run, now);
@@ -618,6 +622,7 @@ export default function Game({
     initAudio(); const r = gs.run; if (!r || playerAtSea(r)) return; onMouseMove(e);
     if (e.button === 2) { setBuildMode(false); coreAimRef.current=null;setCoreAim(null);inp.current.skill=undefined;inp.current.cancel = true; setBuildType(null); setReclaim(false); setRepairMode(false); setUpgradeMode(false); return; }
     if (e.button !== 0) return;
+    if ((e as any).nativeEvent) touchAim.current = null; // a real click or tap aims by itself; only the Hit button keeps the stick aim
     if (panel || coreAimRef.current) return;
     const wx = mouse.current.x + Math.round(cam.x), wy = mouse.current.y + Math.round(cam.y); const tx = Math.floor(wx / 16), ty = Math.floor(wy / 16);
     if (buildType) { const res = act('build', { struct: buildType, tx, ty }); if (res.ok && buildType === 'escrow') setBuildType(null); return; }
@@ -639,6 +644,31 @@ export default function Game({
     inp.current.attackPressed = true; inp.current.attack = true;
   };
   const onMouseUp = () => { inp.current.attack = false; };
+
+  // ---- touch: the stick and buttons fill the same Input and send the same key codes as mouse and keyboard ----
+  const [sawTouch, setSawTouch] = useState(false);
+  useEffect(() => { const f = () => setSawTouch(true); window.addEventListener('touchstart', f, { once: true, passive: true }); return () => window.removeEventListener('touchstart', f); }, []);
+  const touchOn = vp.touchControls === 'on' || ((vp.touchControls ?? 'auto') === 'auto' && (sawTouch || isTouchDevice()));
+  const touchApi: TouchApi = {
+    onStick: d => {
+      const i = inp.current;
+      if (!d || panelRef.current) { i.up = i.down = i.left = i.right = false; return; }
+      i.left = d.x < -0.38; i.right = d.x > 0.38; i.up = d.y < -0.38; i.down = d.y > 0.38;
+      touchAim.current = d;
+    },
+    onAttack: down => {
+      if (!down) { onMouseUp(); return; }
+      const r0 = gs.run; if (!r0) return; const pl = r0.player;
+      // aim assist: a thumb cannot point the way a mouse does, so Hit turns to the nearest creature within reach
+      let best: { x: number; y: number } | null = null, bd = 72;
+      for (const m of r0.creatures) { if (m.state === 'dead' || ((m as any).floor ?? 0) !== activeFloor(r0)) continue; const d = Math.hypot(m.x - pl.x, m.y - pl.y); if (d < bd) { bd = d; best = { x: (m.x - pl.x) / Math.max(d, 1e-6), y: (m.y - pl.y) / Math.max(d, 1e-6) }; } }
+      if (best) touchAim.current = best;
+      const ta = touchAim.current ?? { x: Math.cos(pl.aim), y: Math.sin(pl.aim) };
+      const sx = pl.x - Math.round(cam.x) + ta.x * 56, sy = pl.y - Math.round(cam.y) + ta.y * 56;
+      onMouseDown({ button: 0, shiftKey: false, clientX: offRef.current.x + sx * scaleRef.current, clientY: offRef.current.y + sy * scaleRef.current } as unknown as React.MouseEvent);
+    },
+    onKey: code => { initAudio(); window.dispatchEvent(new KeyboardEvent('keydown', { code })); window.dispatchEvent(new KeyboardEvent('keyup', { code })); },
+  };
 
   // Automated Vehicle Choreography Demo for QA Lab [F9]:
   // approach -> mount -> accelerate -> steer -> stop -> dismount
@@ -734,6 +764,17 @@ export default function Game({
   const trackView = r ? resolveTrack(journey, hrs, { nearSurvivor: nearSurvivorRef.current, ragnarok: r.achievements.includes('ragnarok') }) : null;
   // A suggestion that has actually been displayed counts as "seen" (never as progress).
   useEffect(() => { if (trackView?.ref.type === 'lesson' && lessonState(journeyRef.current, trackView.ref.id).status === 'unseen') { const id = trackView.ref.id; setJourney({ ...journeyRef.current, lessons: { ...journeyRef.current.lessons, [id]: { ...lessonState(journeyRef.current, id), status: 'seen' } } }); } }, [trackView?.ref.id]);
+  // The world never pauses (it also runs while the player is away), so a panel must not hide an attack:
+  // losing health behind an open panel raises a warning the panel cannot cover.
+  const hpSeen = useRef<number | null>(null); const hurtWarnAt = useRef(0);
+  useEffect(() => {
+    const pl = r?.player; if (!pl) return;
+    const prev = hpSeen.current; hpSeen.current = pl.hp;
+    if (prev === null || pl.dead || !panelRef.current || pl.hp > prev - 0.5) return;
+    const t = Date.now(); if (t - hurtWarnAt.current < 6000) return;
+    hurtWarnAt.current = t; setHurtBehindPanel(t);
+    toast('You are losing health. The world does not stop while this is open: press Esc.', 'bad');
+  });
   if (!r || !fieldEval) return <div className="stage" />;
   const p = r.player, ph = phaseOf(r, now); const day = Math.floor(hrs / 24) + 1;
   const dtm = dayTime(r, now); const clock = `${String(Math.floor(dtm * 24)).padStart(2, '0')}:${String(Math.floor((dtm * 24 % 1) * 60)).padStart(2, '0')}`;
@@ -784,7 +825,7 @@ export default function Game({
   const homeAtRisk = nearHome && (() => { const n = nearestHomeStructure(r, Math.floor(p.x / 16), Math.floor(p.y / 16), 6)!; const st = homeStatus(r).structures.find(x => x.id === n.id); return !!st && (st.state !== 'funded' || st.damaged); })();
   const contextCard: 'heat' | 'home' | null = panel || combatFocus || p.dead || qaOpen ? null
     : buildMode ? (nearHome ? 'home' : null)
-      : heatUrgent ? 'heat' : nearHome && (homeAtRisk) ? 'home' : null;
+      : heatUrgent ? 'heat' : nearHome && (homeAtRisk) && !touchOn ? 'home' : null;
   const rigBottom = bike || cart ? 74 : 32;
   const updateFieldStore = (patch: Partial<FieldNoteStore>) => {
     setFieldNoteStore(cur => writeFieldNoteStore(r, qaMode, { ...cur, ...patch }));
@@ -810,24 +851,29 @@ export default function Game({
 
   const voyage = playerVoyage(r);
   return <div style={{ position: 'fixed', inset: 0, cursor: buildType || reclaim || repairMode || upgradeMode ? 'cell' : 'crosshair' }} onMouseMove={onMouseMove} onMouseDown={onMouseDown} onMouseUp={onMouseUp} onContextMenu={e => e.preventDefault()}>
-    <div ref={stageRef} className="stage" style={{ transform: `translate(${off.x}px, ${off.y}px) scale(${scale})` }}>
+    <div ref={stageRef} className={`stage ${touchOn ? 'stage--touch' : ''}`} style={{ transform: `translate(${off.x}px, ${off.y}px) scale(${scale})`, '--hud-zoom': resolveHudScale(scale, vp, touchOn) } as React.CSSProperties}>
       <canvas ref={cvRef} className="px" width={VIEW_W} height={VIEW_H} style={{ width: VIEW_W, height: VIEW_H, imageRendering: 'pixelated' }} />
       {voyage ? <VoyageView trip={voyage} at={r.clock.lastSimAt} onMenu={()=>setPanel({kind:'menu'})} /> : <>
+      {touchOn && !p.dead && !qaOpen && <TouchControls api={touchApi} panelOpen={!!panel} building={buildMode || !!buildType || reclaim || repairMode || upgradeMode} useLabel={tgt?.label ?? (nearStair ? nearStair.stair.label : null)} />}
       {criticalEdge && <div className={`danger-vignette ${vp.reduceFlash ? 'soft' : ''}`} aria-hidden="true" />}
+      {panel && now - hurtBehindPanel < 2400 && <div className={`hurt-edge ${vp.reduceFlash ? 'soft' : ''}`} aria-hidden="true" />}
 
       {/* TOP-LEFT COLUMN: Vitals + Urgent Danger Rail + Thermal Context Card */}
-      <div className="hud hud-col hud-col--left" style={{ left: 4, top: 4 }} onMouseDown={e => e.stopPropagation()}>
-        <Vitals r={r} now={now} />
-        {isVeyra05 && !fullScreen && (() => { const [ax, ay] = playerGlobalAu(r); return <div className="chip" style={{ color: 'var(--info)', alignSelf: 'flex-start' }}>AU {ax.toFixed(0)},{ay.toFixed(0)} · F{activeFloor(r)}{veyraWw && activeFloor(r) !== 0 ? ` · ${zone}` : ''}</div>; })()}
+      {/* A panel opens at the top of the stage: the two plates slim down to the strip above it, and a full-screen
+          panel replaces the HUD altogether (its own toast rail and the red edge still report danger). */}
+      <div className="hud hud-col hud-col--left" style={{ left: 4, top: 4, visibility: fullScreen ? 'hidden' : undefined }} onMouseDown={e => e.stopPropagation()}>
+        <Vitals r={r} now={now} slim={!!panel} />
+        {touchOn && !panel && !p.dead && !qaOpen && <TouchScreens api={touchApi} building={buildMode || !!buildType || reclaim || repairMode || upgradeMode} />}
+        {isVeyra05 && !fullScreen && (() => { const [ax, ay] = playerGlobalAu(r); return <div className="chip" style={{ color: 'var(--info)', alignSelf: 'flex-start' }} title="Your position on the continent. The chart [M] uses the same numbers.">AU {ax.toFixed(0)}, {ay.toFixed(0)}{activeFloor(r) !== 0 ? ` · Floor ${activeFloor(r)}` : ''}{veyraWw && activeFloor(r) !== 0 ? ` · ${zone}` : ''}</div>; })()}
         {!fullScreen && <UrgentAlerts r={r} cold={thermal.cold} />}
         {!fullScreen && !p.dead && <IssueRail issues={shownIssues} px={p.x} py={p.y} compact={combatFocus} onSnooze={i => setSnoozed(sn => ({ ...sn, [i.id]: i.sig }))} />}
         {contextCard === 'heat' && <ThermalStatusCard r={r} now={now} inline />}
       </div>
 
       {/* TOP-RIGHT COLUMN: Clock + Quick Controls + Ragnarok + Digest / Home / Field Notes */}
-      <div className="hud hud-col hud-col--right" style={{ right: 4, top: 4 }} onMouseDown={e => e.stopPropagation()}>
-        <WorldClock r={r} now={now} secured={gs.profile.securedCash} />
-        <div style={{ display: 'flex', gap: 3, alignItems: 'center' }}>
+      <div className="hud hud-col hud-col--right" style={{ right: 4, top: 4, visibility: fullScreen ? 'hidden' : undefined }} onMouseDown={e => e.stopPropagation()}>
+        <WorldClock r={r} now={now} secured={gs.profile.securedCash} slim={!!panel} />
+        <div style={{ display: panel ? 'none' : 'flex', gap: 3, alignItems: 'center' }}>
           {ph === 'calm' && hrs > 230 && <span className="chip pulse" style={{ color: 'var(--warn)' }}>RAGNAROK IN {(264 - hrs).toFixed(1)}h</span>}
           {!panel && !buildMode && contacts.length > 0 && <select aria-label="Nearby survivors" value="" className="btn sm" style={{maxWidth:120}} onChange={e => { if (e.target.value) setPanel({kind:'human', actorId:e.target.value}); }}>
             <option value="" disabled>Survivors ({contacts.length})</option>
@@ -845,7 +891,7 @@ export default function Game({
         {!panel && !qaOpen && returnDigest && <ReturnDigest report={returnDigest} onExpand={() => { setPanel({ kind: 'report', lines: [], report: returnDigest }); setReturnDigest(null); }} onDismiss={() => setReturnDigest(null)} />}
         {contextCard === 'home' && <HomeStatusCard r={r} px={p.x} py={p.y} inline />}
         {wmVisible && !panel && <Waymark view={trackView} mode={wmMode} store={journey} stamp={activeStamp} blocked={blocked} lang={lang} onToggle={() => setPeek(v => !v)} onUntrack={() => track(null)} onOpenJournal={() => setPanel({ kind: 'journey' })} onJump={handleJump} />}
-        {!panel && !buildMode && !combatFocus && !qaOpen && !returnDigest && contextCard !== 'home' && fieldEval.active && !activeStamp && wmMode !== 'open' && !(trackView && ['first_landfall', 'pack_and_craft'].includes(fieldEval.active.id)) && (
+        {!panel && !buildMode && !combatFocus && !qaOpen && !returnDigest && !touchOn && contextCard !== 'home' && fieldEval.active && !activeStamp && wmMode !== 'open' && !(trackView && ['first_landfall', 'pack_and_craft'].includes(fieldEval.active.id)) && (
           <FieldNoteCard
             note={fieldEval.active}
             onDismiss={id => updateFieldStore({ dismissed: [...fieldNoteStore.dismissed, id] })}
@@ -879,14 +925,15 @@ export default function Game({
 
       {/* interaction prompt */}
       {(tgt || nearStair || nearAnimal) && ts && !panel && !buildMode && <div className="prompt absolute" style={{ left: Math.max(60, Math.min(VIEW_W - 60, Math.round(ts.x))), top: Math.round(ts.y) - 34, transform: 'translateX(-50%)', pointerEvents: 'none' }}>
-        <span className="key">{bike || tgt || nearStair ? 'F' : 'T'}</span>
+        {/* E interacts unless a Creator Core is in hand (then E casts); F always interacts. Show the key the handbook teaches whenever it works. */}
+        <span className="key">{bike ? 'F' : tgt || nearStair ? (ITEMS[activeStack(r)?.key || '']?.creatorCore ? 'F' : 'E') : 'T'}</span>
         {tgt ? tgt.label : nearStair ? nearStair.stair.label : (() => { const sexSym = (nearAnimal!.husbandry?.sex ?? deterministicAnimalSex(nearAnimal!.id)) === 'f' ? '♀' : '♂'; const spName = CREATURES[nearAnimal!.type]?.name || nearAnimal!.type; return nearAnimal!.husbandry?.tamed ? `${nearAnimal!.husbandry.following ? 'Release' : 'Lead'} ${sexSym} ${nearAnimal!.husbandry.stage === 'juvenile' ? 'Juvenile ' : ''}${spName} (${nearAnimal!.husbandry.penned ? 'Penned' : 'Open'} · FD ${Math.round(nearAnimal!.husbandry.hunger)}%) · [Shift+T] Butcher` : `Feed ${spName} (${sexSym})`; })()}
         {tgt && nearStair && <span> · [Alt+F] {nearStair.stair.label}</span>}
         {targetHp && <span style={{ color: 'var(--warn)' }}>{targetHp}</span>}
       </div>}
 
       {/* build helper */}
-      {!buildMode && (buildType || reclaim || repairMode || upgradeMode) && <div className="panel absolute" style={{ left: 145, bottom: 38, width: 350, padding: '3px 6px', fontSize: 11, textAlign: 'center',lineHeight:1.1 }} onMouseDown={e => e.stopPropagation()}>{buildType ? <><b style={{color:'#ffd98a'}}>Place {STRUCTS[buildType].name}</b> · {(STRUCTS[buildType].item ? [[STRUCTS[buildType].item!,1] as [string,number]] : STRUCTS[buildType].cost).map(([k,q])=>`${ITEMS[k].name} ${countItem(r,'inv',k)}/${q}`).join(' · ')}<br/><span style={{color:placementReason?'#ff9a8a':'#9ae0a0'}}>{placementReason||(buildType==='claim'?'Placement allowed':claimAt(r,hoverX,hoverY)?`Placement allowed · cabinet coverage ${territoryForecast(r,claimAt(r,hoverX,hoverY)!).funded?'funded':'unfunded'}`:`Placement allowed · unprotected, decays in ~${BAL.territory.unprotectedCollapseHours}h`)} · RMB/Esc stop</span></> : <><b>{upgradeMode?'Upgrade':repairMode?'Repair':'Dismantle'}</b> · G layer: {editLayer} · RMB/Esc stop<br/>{hover ? <span>{STRUCTS[hover.type!].name} · HP {Math.ceil(hover.hp||0)}/{hover.maxHp} · {hover.owner && hover.owner!=='player'?'not owned':'owned'}{upgradeMode && STRUCTURE_UPGRADES[hover.type!] ? ` → ${STRUCTS[STRUCTURE_UPGRADES[hover.type!]].name}: ${STRUCTS[STRUCTURE_UPGRADES[hover.type!]].cost.map(([k,q])=>`${ITEMS[k].name} ${countItem(r,'inv',k)}/${q}`).join(', ')}` : ''}{repairMode ? ` · Repair: ${STRUCTS[hover.type!].cost.map(([k,q])=>`${ITEMS[k].name} ${countItem(r,'inv',k)}/${Math.max(1,Math.ceil(q/4))}`).join(', ')}` : ''}{reclaim ? ` · Refund: ${STRUCTS[hover.type!].item ? ITEMS[STRUCTS[hover.type!].item!].name : STRUCTS[hover.type!].cost.map(([k,q])=>`${ITEMS[k].name} ${Math.floor(q*BAL.economy.reclaimRefund)}`).join(', ')}` : ''}</span> : 'Point at a structure; click to act.'}</>}</div>}
+      {!buildMode && (buildType || reclaim || repairMode || upgradeMode) && <div className="panel absolute" style={{ left: 145, bottom: 38, width: 350, padding: '3px 6px', fontSize: 11, textAlign: 'center',lineHeight:1.1 }} onMouseDown={e => e.stopPropagation()}>{buildType ? <><b style={{color:'#ffd98a'}}>Place {STRUCTS[buildType].name}</b> · {(STRUCTS[buildType].item ? [[STRUCTS[buildType].item!,1] as [string,number]] : STRUCTS[buildType].cost).map(([k,q])=>`${ITEMS[k].name} ${countItem(r,'inv',k)}/${q}`).join(' · ')}<br/><span style={{color:placementReason?'#ff9a8a':'#9ae0a0'}}>{placementReason ? placeHint(placementReason) : (buildType==='claim'?'Placement allowed':claimAt(r,hoverX,hoverY)?`Placement allowed · cabinet coverage ${territoryForecast(r,claimAt(r,hoverX,hoverY)!).funded?'funded':'unfunded'}`:`Placement allowed · unprotected, decays in ~${BAL.territory.unprotectedCollapseHours}h`)} · RMB/Esc stop</span></> : <><b>{upgradeMode?'Upgrade':repairMode?'Repair':'Dismantle'}</b> · G layer: {editLayer} · RMB/Esc stop<br/>{hover ? <span>{STRUCTS[hover.type!].name} · HP {Math.ceil(hover.hp||0)}/{hover.maxHp} · {hover.owner && hover.owner!=='player'?'not owned':'owned'}{upgradeMode && STRUCTURE_UPGRADES[hover.type!] ? ` → ${STRUCTS[STRUCTURE_UPGRADES[hover.type!]].name}: ${STRUCTS[STRUCTURE_UPGRADES[hover.type!]].cost.map(([k,q])=>`${ITEMS[k].name} ${countItem(r,'inv',k)}/${q}`).join(', ')}` : ''}{repairMode ? ` · Repair: ${STRUCTS[hover.type!].cost.map(([k,q])=>`${ITEMS[k].name} ${countItem(r,'inv',k)}/${Math.max(1,Math.ceil(q/4))}`).join(', ')}` : ''}{reclaim ? ` · Refund: ${STRUCTS[hover.type!].item ? ITEMS[STRUCTS[hover.type!].item!].name : STRUCTS[hover.type!].cost.map(([k,q])=>`${ITEMS[k].name} ${Math.floor(q*BAL.economy.reclaimRefund)}`).join(', ')}` : ''}</span> : 'Point at a structure; click to act.'}</>}</div>}
 
       {/* cargo + bottom-left event feed */}
       {(bike || cart) && !fullScreen && <div className="hud" style={{ left: 4, bottom: 32 }} onMouseDown={e => e.stopPropagation()}><RigStatus r={r} /></div>}
@@ -901,7 +948,7 @@ export default function Game({
         {!fullScreen && !!toasts.filter(t => now - t.t < 3200).length && <div className="toast-rail" style={{ pointerEvents: 'none' }}>{toasts.filter(t => now - t.t < 3200).map(t => <div key={t.id} className={`toast toastin ${t.tone === 'bad' ? 'bad' : t.tone === 'ok' ? 'ok' : ''}`}><span className="toast__mark">{t.tone === 'bad' ? '✕' : t.tone === 'ok' ? '✓' : '•'}</span><span>{t.text}</span></div>)}</div>}
         {!buildMode && !panel && coreAim && <CoreReserveStrip r={r} />}
         {buildMode ? <BuildBar gs={gs} tool={buildTool} onPick={applyTool} hoverX={hoverX} hoverY={hoverY} />
-          : !panel && <Hotbar r={r} onPick={i => { p.active = i; sfx({ type: 'ui' }); rerender(); }} onUse={i => act('useItem', { slot: i })} onOpenPack={() => { fieldActionsRef.current.add('survivor'); setPanel({ kind: 'inv' }); sfx({ type: 'ui' }); }} />}
+          : !panel && !p.dead && <Hotbar r={r} onPick={i => { p.active = i; sfx({ type: 'ui' }); rerender(); }} onUse={i => act('useItem', { slot: i })} onOpenPack={() => { fieldActionsRef.current.add('survivor'); setPanel({ kind: 'inv' }); sfx({ type: 'ui' }); }} />}
       </div>
 
       {/* panels */}

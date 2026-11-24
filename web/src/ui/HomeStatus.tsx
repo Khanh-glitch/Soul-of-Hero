@@ -65,6 +65,18 @@ export function HomeStatusCard({ r, px, py, hidden, inline = false }: { r: RunSt
   );
 }
 
+/**
+ * Upkeep rate in words a player can plan with: whole items per day, or one item every few days.
+ * Between two round answers it names the dearer one, so the cabinet never runs dry sooner than the label says.
+ */
+export function upkeepRateLabel(perDay: number, name: string): string {
+  if (!(perDay > 0)) return `no ${name}`;
+  const days = Math.floor(1 / perDay + 0.25);
+  if (days >= 2) return `1 ${name} every ${days} days`;
+  const n = perDay >= 10 ? Math.round(perDay) : Math.max(1, Math.round(perDay * 10) / 10);
+  return `${n} ${name} a day`;
+}
+
 /** Legible cabinet readout used inside the Cabinet panel: state, stock, credit, rates and per-building risk. */
 export function CabinetReadout({ r, eid }: { r: RunState; eid: string }) {
   const status = homeStatus(r);
@@ -72,14 +84,14 @@ export function CabinetReadout({ r, eid }: { r: RunState; eid: string }) {
   if (!c) return null;
   const mine = status.structures.filter(s => s.cabinetId === eid && s.id !== eid);
   const shown = [...mine].sort((a, b) => (a.hoursToCollapse ?? 1e9) - (b.hoursToCollapse ?? 1e9)).slice(0, 8);
-  const rates = Object.entries(c.per24h).map(([k, v]) => `${v.toFixed(2)} ${ITEMS[k].name}`).join(' · ') || 'none';
+  const rates = Object.entries(c.per24h).map(([k, v]) => upkeepRateLabel(v, ITEMS[k].name)).join(' · ') || 'none';
   const color = c.state === 'funded' ? '#9ae0a0' : c.state === 'low' ? '#e8c060' : c.state === 'unfunded' ? '#ff9a8a' : '#b8a8c8';
   return (
     <div data-testid="cabinet-readout" style={{ fontSize: 10, lineHeight: 1.25 }}>
       <div><b style={{ color }}>{CABINET_STATE_LABEL[c.state]}</b> · {c.external} covered · 25-tile coverage, nearest Cabinet assigned{c.selfOnly ? ' · Cabinet pays only its own upkeep' : ''}</div>
       <div>Physical stock: {stockList(c.stock)}</div>
-      <div>Prepaid credit: {stockList(Object.fromEntries(Object.entries(c.prepaid).map(([k, q]) => [k, Math.round(q * 100) / 100])), 'none')}</div>
-      <div>Upkeep per 24h: {rates}{c.state === 'funded' || c.state === 'low' ? ` · lasts ${hoursLabel(c.hours)}` : ''}</div>
+      <div title="Material the Cabinet has already taken from its stock and not yet used up.">Paid ahead: {stockList(Object.fromEntries(Object.entries(c.prepaid).map(([k, q]) => [k, Math.round(q * 10) / 10]).filter(([, q]) => (q as number) > 0)), 'none')}</div>
+      <div>Upkeep: {rates}{c.state === 'funded' || c.state === 'low' ? ` · lasts ${hoursLabel(c.hours)}` : ''}</div>
       {shown.length === 0 && <div style={{ color: '#b8a8c8' }}>No structures in range yet.</div>}
       {shown.map(s => (
         <div key={s.id} data-state={s.state} style={{ display: 'flex', gap: 4, color: s.state === 'funded' ? (s.damaged ? '#ffd98a' : '#cfc2dc') : '#ffae89' }}>

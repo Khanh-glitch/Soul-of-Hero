@@ -184,7 +184,7 @@ function DailyLeft({ gs, store, onClaimRequisition, lang }: { gs: GameState; sto
       const h = i === 6 ? { date: d.date, points: d.points, milestones: d.milestones } : store.history[5 - i];
       return <span key={i} className={`week__day m${h?.milestones.length ?? 0}`} title={h ? `${h.date}: ${h.points} pts` : 'no record'}><i />{h ? h.date.slice(8) : '·'}</span>;
     })}</div>
-    <p className="fine">{T('UTC midnight reset. Missed days cost nothing; supply requisitions issue run-local field supplies to your pack (Secured Cash comes only from Ragnarok Escrow).', 'Đặt lại lúc nửa đêm UTC. Bỏ lỡ ngày không mất gì; tiếp tế là đồ dùng trong lượt chơi, đưa thẳng vào balo (Secured Cash chỉ đến từ Ragnarok Escrow).', lang)}</p>
+    <p className="fine">{T('UTC midnight reset. Missed days cost nothing; supply requisitions put field supplies for this run into your pack (Secured Cash comes only from Ragnarok Escrow).', 'Đặt lại lúc nửa đêm UTC. Bỏ lỡ ngày không mất gì; tiếp tế là đồ dùng trong lượt chơi, đưa thẳng vào balo (Secured Cash chỉ đến từ Ragnarok Escrow).', lang)}</p>
   </div>;
 }
 
@@ -230,7 +230,7 @@ function Constellation({ gs, lang }: { gs: GameState; lang: Lang }) {
         <em>{rec ? `${new Date(rec.at).toLocaleDateString()}${thisRun ? T(' · this run', ' · lượt này', lang) : ''}` : meta?.hint}</em>
       </div>;
     })}</div>
-    <p className="fine">{T('Run score', 'Điểm lượt chơi', lang)} {run?.score ?? 0} · LOCAL/UNVERIFIED</p>
+    <p className="fine">{T('Run score', 'Điểm lượt chơi', lang)} {run?.score ?? 0} · {T('this browser only', 'chỉ trên máy này', lang)}</p>
   </div>;
 }
 

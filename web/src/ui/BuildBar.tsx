@@ -12,6 +12,9 @@ export const BUILD_KIT = PA1_BASE_GEOMETRY;
 export type BuildTool = typeof BUILD_KIT[number] | 'upgrade' | 'repair' | 'reclaim';
 const KEYS = ['1', '2', '3', '4', '5', '6', '7', '8'] as const;
 
+/** The engine's placement refusal, worded for the build bar. "Too far away" alone read like an error before anything was placed. */
+export const placeHint = (reason: string): string => reason === 'Too far away.' ? 'aim closer: you build within 4 tiles of yourself' : reason.replace(/\.$/, '');
+
 export function BuildBar({ gs, tool, onPick, hoverX, hoverY }: {
   gs:GameState; tool:BuildTool; onPick:(t:BuildTool)=>void; hoverX:number; hoverY:number;
 }) {
@@ -35,7 +38,7 @@ export function BuildBar({ gs, tool, onPick, hoverX, hoverY }: {
         <Icon k={i} size={10}/>{have(i)}/{n}
       </span>)}
       <i className="sep"/>
-      <span className="buildbar__reason">{reason?reason.replace(/\.$/,''):'click to place · no inventory item'}</span>
+      <span className="buildbar__reason">{reason?placeHint(reason):'click to place · no inventory item'}</span>
     </div>}
     {!d && <div className="buildbar__status ok"><b>{tool==='upgrade'?'Upgrade':tool==='repair'?'Repair':'Dismantle'}</b>
       <span className="buildbar__reason">point at a placed structure · G layer · cabinet required for upgrades</span>

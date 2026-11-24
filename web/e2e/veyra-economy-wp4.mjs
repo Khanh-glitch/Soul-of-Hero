@@ -149,7 +149,7 @@ try {
         await takeShot(page, 'A', '03-character-select');
         await page.getByRole('button', { name: 'Begin the 14 days', exact: true }).click();
 
-        const auLocator = page.locator('.chip').filter({ hasText: /^AU .* · F0$/ }).first();
+        const auLocator = page.locator('.chip').filter({ hasText: /^AU -?\d+, -?\d+$/ }).first();
         await auLocator.waitFor({ timeout: 25000 });
         await page.waitForTimeout(1000);
         await assertCanvasAndViewport(page, `${tag}:spawn`, [w, h]);
@@ -266,7 +266,7 @@ try {
         await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 45000 });
         await page.getByRole('button', { name: /^Continue —/ }).click();
         await closeReturnIfVisible(page);
-        await page.locator('.chip').filter({ hasText: /^AU .* · F0$/ }).first().waitFor({ timeout: 20000 });
+        await page.locator('.chip').filter({ hasText: /^AU -?\d+, -?\d+$/ }).first().waitFor({ timeout: 20000 });
         await page.waitForTimeout(500);
         await page.keyboard.press('KeyE');
         const sel = page.getByLabel('Recycler item');
@@ -292,7 +292,7 @@ try {
         await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 45000 });
         await page.getByRole('button', { name: /^Continue —/ }).click();
         await closeReturnIfVisible(page);
-        await page.locator('.chip').filter({ hasText: /^AU .* · F0$/ }).first().waitFor({ timeout: 20000 });
+        await page.locator('.chip').filter({ hasText: /^AU -?\d+, -?\d+$/ }).first().waitFor({ timeout: 20000 });
         await page.waitForTimeout(500);
         await assertCanvasAndViewport(page, `${tag}:base-outside`, [w, h]);
         await takeShot(page, 'B', '13-built-base-outside');
@@ -326,13 +326,13 @@ try {
         await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 45000 });
         await page.getByRole('button', { name: /^Continue —/ }).click();
         await closeReturnIfVisible(page);
-        await page.locator('.chip').filter({ hasText: /^AU .* · F-1/ }).first().waitFor({ timeout: 20000 });
+        await page.locator('.chip').filter({ hasText: /^AU .* · Floor -1/ }).first().waitFor({ timeout: 20000 });
         await page.waitForTimeout(600);
         await assertCanvasAndViewport(page, `${tag}:floor-minus1`, [w, h]);
         await takeShot(page, 'B', '16-floor-minus1');
 
         await page.keyboard.press('KeyE');
-        await page.locator('.chip').filter({ hasText: /^AU .* · F0$/ }).first().waitFor({ timeout: 10000 });
+        await page.locator('.chip').filter({ hasText: /^AU -?\d+, -?\d+$/ }).first().waitFor({ timeout: 10000 });
         await page.waitForTimeout(500);
         await assertCanvasAndViewport(page, `${tag}:floor-return-0`, [w, h]);
         await takeShot(page, 'B', '17-floor-return-0');

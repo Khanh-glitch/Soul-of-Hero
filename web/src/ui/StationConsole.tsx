@@ -225,7 +225,7 @@ export function StationConsole({ api, eid, initialTab = 'make' }: { api: Api; ei
     {/* ---- pack strip: physical transfer, no remote access ---- */}
     <div className="rule" style={{ margin: '4px 0 3px' }} />
     <div className="console-h">Pack · click an item to load it here</div>
-    <div className="scroll" style={{ display: 'flex', gap: 2, flexWrap: 'wrap', maxHeight: 24, overflowY: 'auto' }}>
+    <div className="scroll" style={{ display: 'flex', gap: 2, flexWrap: 'wrap', maxHeight: 44, overflowY: 'auto' }}>
       {C(r, 'inv').slots.map((s, i) => <Slot key={i} s={s} hotkey={i < 8 ? String(i + 1) : undefined}
         onClick={() => { if (!s) return; if (fuelled && stationBurnable(s.key)) transferFuel(i); else api.act('useItem', { slot: i }); }} />)}
     </div>

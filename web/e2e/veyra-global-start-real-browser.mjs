@@ -41,7 +41,7 @@ try{
  await page.getByRole('button',{name:'New run',exact:true}).click();
  await page.getByRole('button',{name:'VEYRA · Unified World',exact:true}).click();
  await page.getByRole('button',{name:'Random safe region'}).waitFor();
- assert.equal(await page.getByText(/Seeded random landing across source-verified mainland cells/).count(),1);
+ assert.equal(await page.getByText(/You land at a random safe spot on the mainland/).count(),1);
  await shot('01-menu');
  await page.getByRole('button',{name:'Begin the 14 days',exact:true}).click();
  await page.waitForFunction(()=>{
