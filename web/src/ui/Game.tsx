@@ -938,7 +938,7 @@ export default function Game({
       {/* cargo + bottom-left event feed */}
       {(bike || cart) && !fullScreen && <div className="hud" style={{ left: 4, bottom: 32 }} onMouseDown={e => e.stopPropagation()}><RigStatus r={r} /></div>}
       {!fullScreen && !qaOpen && <EventFeed lines={feed} bottom={rigBottom} />}
-      {!panel && !feed.length && <div className="absolute log-fallback" style={{ left: 4, bottom: rigBottom }}>{r.log.slice(-2).map((l, i) => { const age = now - l.t; if (age > 7500) return null; return <div key={i} className="logline" style={{ opacity: Math.max(0, 1 - age / 7500), color: l.tone === 'gold' ? 'var(--brassLit)' : l.tone === 'red' ? 'var(--bad)' : l.tone === 'blue' ? 'var(--info)' : 'var(--paper)' }}>{l.msg}</div>; })}</div>}
+      {!panel && !feed.length && <div className="absolute log-fallback" style={{ left: 4, bottom: `calc(${rigBottom}px * var(--hud-zoom, 1))` }}>{r.log.slice(-2).map((l, i) => { const age = now - l.t; if (age > 7500) return null; return <div key={i} className="logline" style={{ opacity: Math.max(0, 1 - age / 7500), color: l.tone === 'gold' ? 'var(--brassLit)' : l.tone === 'red' ? 'var(--bad)' : l.tone === 'blue' ? 'var(--info)' : 'var(--paper)' }}>{l.msg}</div>; })}</div>}
 
       {/* full-screen toast rail (when a modal covers the bottom hotbar) */}
       {fullScreen && <div className="absolute toast-rail" style={{ left: 0, right: 0, top: 26, pointerEvents: 'none', zIndex: 60 }}>{toasts.filter(t => now - t.t < 3200).map(t => <div key={t.id} className={`toast toastin ${t.tone === 'bad' ? 'bad' : t.tone === 'ok' ? 'ok' : ''}`}><span className="toast__mark">{t.tone === 'bad' ? '✕' : t.tone === 'ok' ? '✓' : '•'}</span><span>{t.text}</span></div>)}</div>}

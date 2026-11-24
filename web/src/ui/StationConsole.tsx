@@ -109,10 +109,10 @@ export function StationConsole({ api, eid, initialTab = 'make' }: { api: Api; ei
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
         <StatusLamp tone={stateTone} shape={state === 'NO FUEL' ? 'diamond' : 'round'} label={state} />
         {fuelled && <span className="lbl" style={{ fontSize: 8, color: burning ? 'var(--food)' : 'var(--muted)', display: 'inline-flex', gap: 3, alignItems: 'center' }}>
-          <Glyph k="wr" c={burning ? 'var(--food)' : '#4c5a63'} s={7} />{((st.burn ?? 0) / 1000).toFixed(0)}s burn
+          <Glyph k="wr" c={burning ? 'var(--food)' : '#4c5a63'} s={7} />{`${((st.burn ?? 0) / 1000).toFixed(0)}s burn`}
         </span>}
         <span className="lbl" style={{ fontSize: 8, color: 'var(--muted)', marginLeft: 'auto' }}>
-          HP {Math.round(e.hp ?? 0)}/{e.maxHp}
+          {`Durability ${Math.round(e.hp ?? 0)}/${e.maxHp}`}
         </span>
       </div>
       {state === 'NO FUEL' && <div className="station-action" role="status">Add burnable fuel below. The reserved job is paused.</div>}
@@ -190,7 +190,7 @@ export function StationConsole({ api, eid, initialTab = 'make' }: { api: Api; ei
               <span className="lbl" style={{ fontSize: 9, color: 'var(--brassLit)' }}>{outs.map(([k, qn]) => `${qn} ${ITEMS[k].name}`).join(' + ')}</span>
             </div>
             <CostChips ins={rc.ins} have={have} />
-            <div className="lbl" style={{ fontSize: 8, color: 'var(--muted)', marginTop: 3 }}>{rc.secs}s at the station{rc.stationLevel ? ` · level ${rc.stationLevel}` : ''}</div>
+            <div className="lbl" style={{ fontSize: 8, color: 'var(--muted)', marginTop: 3 }}>{`${rc.secs}s at the station${rc.stationLevel ? ` · level ${rc.stationLevel}` : ''}`}</div>
             <button className="btn gold sm" style={{ width: '100%', marginTop: 4 }} disabled={!readiness.canSubmit}
               onClick={() => api.act('craft', { recipe: sel, eid })}>
               {readiness.state === 'waiting' ? 'Queue · will wait' : 'Queue job'}
@@ -263,7 +263,7 @@ function ResearchList({ api, eid, e, q, setQ }: { api: Api; eid: string; e: Enti
       const rc = RECIPES[k]; const can = !full && spares >= B.directedSparesCost;
       return <div key={k} className={`recipe-row ${can ? '' : 'no'}`} style={{ cursor: 'default' }}>
         <Icon k={rc.out} size={12} />
-        <span className="lbl" style={{ fontSize: 9, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{ITEMS[rc.out].name}</span>
+        <span className="lbl" title={ITEMS[rc.out].name} style={{ fontSize: 9, flex: 1, minWidth: 0, lineHeight: 1.1, overflowWrap: 'anywhere' }}>{ITEMS[rc.out].name}</span>
         <button className="btn sm" disabled={!can} title={full ? 'Queue full' : !can ? `Need ${B.directedSparesCost - spares} more Parts` : 'Reserve Parts for this research'} onClick={() => api.act('research', { mode: 'directed', recipe: k, eid })}>Study</button>
       </div>;
     })}

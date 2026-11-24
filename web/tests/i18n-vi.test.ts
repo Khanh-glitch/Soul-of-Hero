@@ -25,7 +25,9 @@ describe('Vietnamese phrase book', () => {
     for (const table of [ITEMS, STRUCTS, CREATURES] as Record<string, { name?: string }>[]) for (const v of Object.values(table)) if (v.name) names.add(v.name);
     // Words that are both an ordinary interface word and a catalog name. Listed so the overlap is a decision, not an accident.
     const shared = new Set(['Water']);
-    const clash = viExactKeys().filter(k => names.has(k) && !shared.has(k));
+    // the book also answers in any letter case, so the comparison ignores case too
+    const lower = new Set([...names].map(n => n.toLowerCase()));
+    const clash = viExactKeys().filter(k => lower.has(k.toLowerCase()) && !shared.has(k));
     expect(clash).toEqual([]);
     for (const n of ['Stone Axe', 'Workbench', 'Fuel Canister', 'Territory Cabinet']) expect(translateVi(n)).toBeNull();
   });

@@ -305,7 +305,7 @@ export function ContainerPanel({ api, eid }: { api: Api; eid: string }) {
         {e.kind === 'recycler' && st && <RecyclerBody api={api} eid={eid} />}
         {st && e.kind !== 'recycler' && kind !== 'research' && <StationBody api={api} eid={eid} />}
         {st && kind === 'research' && <ResearchBody api={api} eid={eid} />}
-        {e.kind === 'struct' && <div style={{ marginTop: 6, fontSize: 10, color: '#8a7a9a' }}>HP {Math.round(e.hp!)}/{e.maxHp} {owned(e) && <button className="btn ghost" style={{ marginLeft: 6 }} onClick={() => { api.act('reclaim', { eid }); api.open(null); }}>Reclaim</button>}</div>}
+        {e.kind === 'struct' && <div style={{ marginTop: 6, fontSize: 10, color: '#8a7a9a' }}>{`Durability ${Math.round(e.hp!)}/${e.maxHp}`} {owned(e) && <button className="btn ghost" style={{ marginLeft: 6 }} onClick={() => { api.act('reclaim', { eid }); api.open(null); }}>Reclaim</button>}</div>}
       </div>
     </Panel>
     {!compact && <InventoryPanel api={api} quickTo={quickTo} top={54} />}

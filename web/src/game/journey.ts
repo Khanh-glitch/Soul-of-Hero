@@ -100,7 +100,7 @@ const DAILY_VI: Record<string, { title: string; how: string }> = {
   quarry: { title: 'Phá đá và quặng', how: 'Tảng đá, mạch sắt và vỉa than.' },
   forage: { title: 'Hái lượm nơi hoang dã', how: 'Bụi quả mọng và cây dại.' },
   variety: { title: 'Thu hoạch 3 loại nguồn', how: 'Cây, đá, quặng, cây dại — khác loài mới tính.' },
-  handcraft: { title: 'Chế đồ bằng tay 3 lần', how: 'Survivor [C] — công thức nào cũng được.' },
+  handcraft: { title: 'Chế đồ bằng tay 3 lần', how: 'Bảng Nhân vật [C] — công thức nào cũng được.' },
   recipes: { title: 'Chế 2 công thức khác nhau', how: 'Cần đa dạng, không cần số lượng.' },
   mend: { title: 'Sửa trang bị đã mòn', how: 'Sửa một món ở Workbench.' },
   raise: { title: 'Dựng 5 công trình', how: 'Mỗi cái phải đứng trên một ô mới.' },

@@ -89,6 +89,9 @@ export function UrgentAlerts({ r, cold }: { r: RunState; cold: boolean }) {
 }
 
 /** `slim`: health and stamina only, so the plate ends above a panel that opens at the top of the stage. */
+/** The open world has one technical zone name ("VEYRA · U=0.5"); players see the name of the land. */
+export const displayZone = (name: string | undefined): string => !name ? '' : /^VEYRA · /.test(name) ? 'Veyra' : name;
+
 export function Vitals({ r, now, slim = false }: { r: RunState; now: number; slim?: boolean }) {
   const p = r.player;
   const hpGhost = useRef(1); const [ghost, setGhost] = useState(1);
@@ -97,7 +100,7 @@ export function Vitals({ r, now, slim = false }: { r: RunState; now: number; sli
     if (f < hpGhost.current) { setGhost(hpGhost.current); const t = setTimeout(() => { hpGhost.current = f; setGhost(f); }, 420); return () => clearTimeout(t); }
     hpGhost.current = f; setGhost(f);
   }, [p.hp]);
-  const zone = (getWorld().zoneNames || ZONES)[getWorld().zone[Math.floor(p.y / 16) * WW + Math.floor(p.x / 16)]];
+  const zone = displayZone((getWorld().zoneNames || ZONES)[getWorld().zone[Math.floor(p.y / 16) * WW + Math.floor(p.x / 16)]]);
   const surf = SPEED_KEY[effTile(r, Math.floor(p.x / 16), Math.floor(p.y / 16))] || '';
   const w = invWeight(r), lim = carryLimit(r); const over = w > lim;
   void now;

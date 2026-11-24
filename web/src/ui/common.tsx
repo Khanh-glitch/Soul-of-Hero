@@ -66,7 +66,7 @@ export function Mark({ ch, s = 7 }: { ch: '✕' | '☰'; s?: number }) {
 }
 export function Panel({ title, children, style, onClose, className = '', testId }: { title: React.ReactNode; children: React.ReactNode; style?: React.CSSProperties; onClose?: () => void; className?: string; testId?: string }) {
   return <div className={`panel absolute fadein ${className}`} data-testid={testId} style={{ padding: 6, ...style }} onMouseDown={e => e.stopPropagation()} onContextMenu={e => e.preventDefault()}>
-    <div className="flex items-center justify-between" style={{ marginBottom: 4 }}><div className="panel-h">{title}</div>{onClose && <button className="btn ghost" aria-label="Close panel" style={{ padding: '2px 4px', fontSize: 11, position: 'relative', lineHeight: 0 }} onClick={onClose}><Mark ch="✕" /></button>}</div>
+    <div className="flex items-center justify-between" style={{ marginBottom: 4 }}><div className="panel-h">{title}</div>{onClose && <button className="btn ghost panel-x" aria-label="Close panel" style={{ padding: '2px 4px', fontSize: 11, position: 'relative', lineHeight: 0 }} onClick={onClose}><Mark ch="✕" /></button>}</div>
     {children}
   </div>;
 }

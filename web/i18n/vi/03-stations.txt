@@ -70,7 +70,6 @@ Station at {n}, level {n} => Trạm tại {1}, cấp {2}
 LV {n} => CẤP {1}
 · HP {n} => · Độ bền {1}
 HP => Máu
-Research table => Bàn nghiên cứu
 Directed study · => Nghiên cứu theo hướng ·
 Reserve Parts for this research => Giữ Parts cho nghiên cứu này
 Take a blueprint, then use it in the pack to learn it. => Lấy bản vẽ, rồi dùng nó trong túi đồ để học.

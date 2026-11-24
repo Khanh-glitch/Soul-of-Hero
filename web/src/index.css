@@ -240,7 +240,7 @@ img.px { image-rendering: pixelated; image-rendering: crisp-edges; }
 .lamp.diamond { transform: rotate(45deg); }
 
 /* log + toasts */
-.logline { font-size: 10px; line-height: 1.15; text-shadow: 0 1px 0 #000, 0 0 4px #000; }
+.logline { font-size: 10px; line-height: 1.15; text-shadow: 0 1px 0 #000, 0 0 4px #000; width: fit-content; max-width: 100%; padding: 1px 4px; background: rgba(8,11,15,.66); border-radius: 2px; }
 .toast {
   font-family: var(--f-lbl); font-size: 10px; padding: 3px 8px 4px;
   background: linear-gradient(180deg, rgba(20,24,29,.96), rgba(8,11,14,.96));
@@ -976,16 +976,16 @@ div.map-row--mark { flex-direction: row; align-items: center; padding: 0; }
 .touch-stick i { position: absolute; left: 19px; top: 19px; width: 22px; height: 22px; border-radius: 50%; background: rgba(244,208,137,.75); box-shadow: 0 0 0 1px #05070a; }
 .touch-stick--rest { left: 56px; bottom: 16px; top: auto; margin: 0 0 0 -30px; opacity: .45; }
 /* The pad sits above the hotbar and the screen buttons under the vitals plate: both plates grow with the HUD zoom. */
-.touch-pad { position: absolute; right: 6px; bottom: calc(37px * var(--hud-zoom, 1) + 3px); width: 118px; height: 96px; z-index: 30; pointer-events: none; }
+.touch-pad { position: absolute; right: 6px; bottom: calc(37px * var(--hud-zoom, 1) + 3px); width: 118px; height: 104px; z-index: 30; pointer-events: none; }
 .touch-side { display: flex; gap: 3px; }
 .touch-btn { position: absolute; pointer-events: auto; touch-action: none; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent;
   font-family: var(--f-lbl); font-size: 9px; color: var(--paper); background: rgba(10,14,18,.62); border: 0; border-radius: 50%;
   box-shadow: inset 0 0 0 1px rgba(233,223,198,.55), 0 1px 0 #000; display: flex; align-items: center; justify-content: center; padding: 0; }
 .touch-btn:active, .touch-btn.on { background: rgba(200,150,60,.8); color: #1a1206; }
 .touch-btn--hit { right: 0; bottom: 0; width: 52px; height: 52px; font-size: 11px; box-shadow: inset 0 0 0 2px var(--brassLit), 0 1px 0 #000; }
-.touch-btn--use { right: 58px; bottom: 2px; width: 40px; height: 40px; }
+.touch-btn--use { right: 58px; bottom: 2px; width: 44px; height: 44px; }
 .touch-btn--use.ready { box-shadow: inset 0 0 0 2px var(--good), 0 0 6px var(--good); color: #fff; }
-.touch-btn--roll { right: 6px; bottom: 58px; width: 38px; height: 38px; }
+.touch-btn--roll { right: 4px; bottom: 58px; width: 44px; height: 44px; }
 .touch-btn--sm { position: static; width: 38px; height: 26px; border-radius: 3px; }
 
 /* ============================ SCREEN FIT (real pixels, outside the scaled stage) ============================ */
@@ -1004,5 +1004,6 @@ div.map-row--mark { flex-direction: row; align-items: center; padding: 0; }
 .hurt-edge { position: absolute; inset: 0; pointer-events: none; z-index: 70; box-shadow: inset 0 0 0 3px var(--bad), inset 0 0 40px rgba(226,84,60,.55); animation: critpulse .6s ease-in-out 4; }
 .hurt-edge.soft { animation: none; }
 /* fingers need a larger target than the 9px close mark */
-.stage--touch .panel button[aria-label="Close panel"] { min-width: 26px; min-height: 22px; }
+.stage--touch .panel-x { min-width: 28px; min-height: 24px; }
+.stage--touch .sv-x { min-height: 22px; padding: 2px 8px; }
 .stage--touch .btn.sm { min-height: 16px; }
