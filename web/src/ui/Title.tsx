@@ -181,10 +181,10 @@ export default function Title({
           <div className="panel-h">Profile <span className="tag" style={{ color: '#ff9a7a', marginLeft: 4 }}>LOCAL/UNVERIFIED — browser-stored, not a global leaderboard</span></div>
           <div style={{ fontSize: 12, marginTop: 3 }}>Secured Ragnarok cash: <b style={{ color: '#9ae0ff' }}>{pf.securedCash}</b> — the only value that crosses runs.</div>
           <div style={{ fontSize: 11, color: '#ffd98a', marginTop: 4 }}>Achievements</div>
-          <div className="flex flex-wrap gap-x-3" style={{ fontSize: 10 }}>{Object.entries(ACHIEVEMENTS).map(([k, a]) => <span key={k} style={{ color: pf.achievements[k] ? '#ffe27a' : '#5a4a6a' }}>{pf.achievements[k] ? '★' : '☆'} {a.name}</span>)}</div>
+          <div className="flex flex-wrap gap-x-3" style={{ fontSize: 10 }}>{Object.entries(ACHIEVEMENTS).map(([k, a]) => <span key={k} style={{ color: pf.achievements[k] ? '#ffe27a' : '#9a8cab' }}>{pf.achievements[k] ? '★' : '☆'} {a.name}</span>)}</div>
           <div style={{ fontSize: 11, color: '#ffd98a', marginTop: 4 }}>Run history</div>
           <div className="scroll" style={{ maxHeight: 110, overflowY: 'auto', fontSize: 10 }}>{pf.history.length === 0 && <div style={{ color: '#8a7a9a' }}>No finished runs yet.</div>}{pf.history.map(h => { const o = census(h.runId); return <div key={h.runId + h.endedAt} style={{ borderBottom: '1px solid #2a2034' }}><div className="flex gap-2"><span style={{ width: 70 }}>{new Date(h.endedAt).toLocaleDateString()}</span><span style={{ width: 70, color: h.ending === 'evacuated' ? '#9ae0ff' : '#cfc2dc' }}>{h.ending}</span><span style={{ width: 60 }}>score {h.score}</span><span style={{ width: 70 }}>deposit {h.deposited}</span><span>stones {h.stones}</span>{h.qa && <span style={{ color: '#ff9a7a' }}>QA</span>}</div>{o && <div>Evacuated {o.evacuated} · Survived {o.survived} · Died {o.dead} · Unknown {o.unresolved}</div>}</div>; })}</div>
-          <button className="btn ghost" style={{ marginTop: 6 }} onClick={() => setMode('menu')}>Back</button>
+          <button className="btn" style={{ marginTop: 6 }} onClick={() => setMode('menu')}>Back</button>
         </div>}
       </>}
     </div>

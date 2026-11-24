@@ -3,6 +3,30 @@
 @import "@fontsource/pixelify-sans/400.css";
 @import "@fontsource/pixelify-sans/700.css";
 
+/* Readable numerals. Pixelify Sans draws 5 like S and 7 like 1, so "85" read as "8S" on every label.
+   The digits 0-9 of the label face are taken from VT323 (already bundled); size-adjust matches its smaller
+   body to the Pixelify cap height. Letters are untouched.
+   One rule per weight, on purpose: a single face declared as the range `400 700` wins the weight match on its own
+   and pushes every letter of the regular weight out to the system fallback font. */
+@font-face {
+  font-family: 'Pixelify Sans'; font-style: normal; font-display: swap; font-weight: 400;
+  src: url('../node_modules/@fontsource/vt323/files/vt323-latin-400-normal.woff2') format('woff2');
+  unicode-range: U+30-39; size-adjust: 125%;
+}
+@font-face {
+  font-family: 'Pixelify Sans'; font-style: normal; font-display: swap; font-weight: 700;
+  src: url('../node_modules/@fontsource/vt323/files/vt323-latin-400-normal.woff2') format('woff2');
+  unicode-range: U+30-39; size-adjust: 125%;
+}
+
+/* Symbols neither pixel font has (arrows, stars, ♀ ♂, weather and tool signs: 52 in all, 5 KB). They used to come
+   from the player's system fonts and showed as empty boxes where the system had none. The file is a subset of
+   Noto Sans Symbols / Symbols 2 / Math (OFL, see src/fonts/OFL-Noto.txt), rebuilt by scripts/make-symbol-font.py.
+   It is registered under both UI family names so every existing font stack picks it up. */
+@font-face { font-family: 'VT323'; font-style: normal; font-display: swap; font-weight: 400; src: url('./fonts/soh-symbols.woff2') format('woff2'); unicode-range: U+2190-2192,U+2194,U+21BB,U+21D2,U+21E7,U+2208,U+220B,U+221E,U+222A,U+2248,U+224B,U+2264-2265,U+23F1,U+2500,U+2550,U+25A0,U+25A3-25A4,U+25B2,U+25B6,U+25C0,U+25C6,U+25CE-25CF,U+2600-2602,U+2605-2606,U+2623,U+2630,U+2640,U+2642,U+2663,U+2668,U+2692,U+2694,U+2699,U+26A0-26A1,U+2702,U+2713,U+2715,U+2725,U+2744,U+2756,U+2922,U+2B06,U+1F512; }
+@font-face { font-family: 'Pixelify Sans'; font-style: normal; font-display: swap; font-weight: 400; src: url('./fonts/soh-symbols.woff2') format('woff2'); unicode-range: U+2190-2192,U+2194,U+21BB,U+21D2,U+21E7,U+2208,U+220B,U+221E,U+222A,U+2248,U+224B,U+2264-2265,U+23F1,U+2500,U+2550,U+25A0,U+25A3-25A4,U+25B2,U+25B6,U+25C0,U+25C6,U+25CE-25CF,U+2600-2602,U+2605-2606,U+2623,U+2630,U+2640,U+2642,U+2663,U+2668,U+2692,U+2694,U+2699,U+26A0-26A1,U+2702,U+2713,U+2715,U+2725,U+2744,U+2756,U+2922,U+2B06,U+1F512; }
+@font-face { font-family: 'Pixelify Sans'; font-style: normal; font-display: swap; font-weight: 700; src: url('./fonts/soh-symbols.woff2') format('woff2'); unicode-range: U+2190-2192,U+2194,U+21BB,U+21D2,U+21E7,U+2208,U+220B,U+221E,U+222A,U+2248,U+224B,U+2264-2265,U+23F1,U+2500,U+2550,U+25A0,U+25A3-25A4,U+25B2,U+25B6,U+25C0,U+25C6,U+25CE-25CF,U+2600-2602,U+2605-2606,U+2623,U+2630,U+2640,U+2642,U+2663,U+2668,U+2692,U+2694,U+2699,U+26A0-26A1,U+2702,U+2713,U+2715,U+2725,U+2744,U+2756,U+2922,U+2B06,U+1F512; }
+
 /* ==========================================================================
    SOUL OF HEROES — VISUAL ARENA design system  ("Ashfall")
    Chassis: Arcane Industrial. Cold oxidised iron, teal shadow, brass hardware,
@@ -24,6 +48,9 @@ body {
   font-family: 'VT323', monospace; color: var(--paper);
   -webkit-font-smoothing: none; user-select: none;
 }
+/* No ligatures: the Pixelify "fi" ligature reads as a capital A ("find" looked like "And", "filter" like "Alter").
+   Form controls reset font-variant through the UA `font` shorthand, hence the universal selector. */
+*, *::placeholder { font-variant-ligatures: none; }
 canvas { image-rendering: pixelated; image-rendering: crisp-edges; display: block; }
 img.px { image-rendering: pixelated; image-rendering: crisp-edges; }
 .stage { position: absolute; left: 0; top: 0; width: 640px; height: 360px; transform-origin: 0 0; overflow: hidden; }
@@ -213,6 +240,10 @@ img.px { image-rendering: pixelated; image-rendering: crisp-edges; }
 /* direction switcher */
 .dirbtn { text-align: left; padding: 5px 7px; cursor: pointer; background: rgba(5,7,10,.5); box-shadow: inset 0 0 0 1px var(--edge); }
 .dirbtn.on { box-shadow: inset 0 0 0 1px var(--brassLit), 0 0 10px rgba(200,150,60,.25); background: rgba(200,150,60,.1); }
+/* checkbox in the artifact's own language (the browser default was a bare white square on the dark panel) */
+input[type=checkbox] { -webkit-appearance: none; appearance: none; width: 9px; height: 9px; margin: 0 3px 0 0; vertical-align: -1px; background: #05070a; box-shadow: inset 0 0 0 1px var(--edgeLit); cursor: pointer; }
+input[type=checkbox]:checked { background: linear-gradient(180deg, var(--brassLit), var(--brass)); box-shadow: inset 0 0 0 1px #05070a, inset 0 0 0 2px var(--brassLit); }
+input[type=checkbox]:focus-visible, input[type=range]:focus-visible { outline: 1px solid var(--brassLit); outline-offset: 1px; }
 input[type=range] { -webkit-appearance: none; appearance: none; height: 8px; background: transparent; cursor: pointer; }
 input[type=range]::-webkit-slider-runnable-track { height: 4px; background: #05070a; box-shadow: inset 0 0 0 1px var(--edge); }
 input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 8px; height: 12px; margin-top: -4px; background: linear-gradient(180deg, var(--brassLit), var(--brass)); box-shadow: 0 1px 0 #05070a; }

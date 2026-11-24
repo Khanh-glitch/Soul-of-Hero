@@ -30,7 +30,7 @@ import { sfx, setAmbience, initAudio, setVolume } from '../game/audio';
 import { save, saveSync, saveDetailed, lastSaveOutcome } from '../game/persist';
 import { prebuildRegions, regionPrebuildStats } from '../veyra05/region-prebuild';
 import { autosaveDecision, AUTOSAVE_MIN_MS, AUTOSAVE_STILL_MS } from '../game/autosave-policy';
-import { Slot, Bar, Icon, mkIntent, type Api, type PanelState } from './common';
+import { Slot, Bar, Icon, Mark, mkIntent, type Api, type PanelState } from './common';
 import { Vitals, UrgentAlerts, WorldClock, Hotbar, RigStatus, ThreatBar, PresentationPanel, useVisualPrefs, Glyph } from './hud';
 import { setListener, setEnvironment, machineState, setMood, tickMusic, stopAllMachines } from '../game/audio';
 import { getPrefs, setPrefs, applyCssTheme, computeStageFit } from '../visual/direction';
@@ -385,7 +385,12 @@ export default function Game({
       initAudio(); const r = gs.run; if (!r) return;
       if (playerAtSea(r)) { if (e.code === 'Escape') setPanel(current=>current ? null : {kind:'menu'}); return; }
       if (keyMap[e.code]) { if (!panelRef.current) (inp.current as any)[keyMap[e.code]] = true; e.preventDefault(); return; }
-      if (e.code === 'Tab') { e.preventDefault(); toggle('skills'); return; }
+      if (e.code === 'Tab') {
+        // The Survivor screen promises keyboard use ("Enter pick/place"); its slots are focusable, so Tab must reach them.
+        // Everywhere else Tab still toggles the Skills panel.
+        const k = panelRef.current?.kind; if (k === 'inv' || k === 'craft') return;
+        e.preventDefault(); toggle('skills'); return;
+      }
       if (e.code === 'F9') {
         if (!QA_BUILD) return;                 // the player build has no QA lab behind any key
         e.preventDefault();
@@ -834,7 +839,7 @@ export default function Game({
           {returnHistory.length > 0 && <button className="btn sm" title="Review offline return chronicle" onClick={() => { setReturnDigest(null); setPanel(pp => pp?.kind === 'report' ? null : { kind: 'report', lines: [], report: returnHistory[0].report }); }}>Return</button>}
           <button className="btn sm" title="Mute everything" onClick={() => { const m = !getPrefs().muted; setPrefs({ muted: m }); setVolume(gs.profile.settings.volume, m || gs.profile.settings.muted); }}
             style={{ color: vp.muted ? 'var(--bad)' : 'var(--muted)' }}>{vp.muted ? 'OFF' : 'SFX'}</button>
-          <button className="btn sm" title="Menu, offline forecast & presentation [Esc]" onClick={() => setPanel(pp => pp?.kind === 'menu' ? null : { kind: 'menu' })}>☰</button>
+          <button className="btn sm" title="Menu, offline forecast & presentation [Esc]" style={{ position: 'relative' }} onClick={() => setPanel(pp => pp?.kind === 'menu' ? null : { kind: 'menu' })}><Mark ch="☰" /></button>
         </div>
         {!panel && !combatFocus && <RagnarokStrip r={r} now={now} secured={gs.profile.securedCash} />}
         {!panel && !qaOpen && returnDigest && <ReturnDigest report={returnDigest} onExpand={() => { setPanel({ kind: 'report', lines: [], report: returnDigest }); setReturnDigest(null); }} onDismiss={() => setReturnDigest(null)} />}

@@ -4,6 +4,7 @@
 |---|---|---|---|---|
 | @fontsource/vt323 (VT323 by Peter Hull) | 5.2.5 | SIL OFL 1.1 | UI pixel font (includes the Vietnamese glyph subset). Bundled locally, no CDN. | https://github.com/fontsource/font-files |
 | @fontsource/pixelify-sans (Pixelify Sans by Stefie Justprince) | 5.2.5 | SIL OFL 1.1 | Title and heading font | https://github.com/fontsource/font-files |
+| Noto Sans Symbols, Noto Sans Symbols 2, Noto Sans Math (The Noto Project Authors) | @fontsource 5.x | SIL OFL 1.1 | 52 symbol glyphs (arrows, stars, signs) that the two pixel fonts lack, subset into `src/fonts/soh-symbols.woff2` (5 KB) by `scripts/make-symbol-font.py`. Licence text: `src/fonts/OFL-Noto.txt`. | https://github.com/notofonts/symbols |
 | React / React DOM | 19.2.6 | MIT | UI | https://react.dev |
 | Vite, Tailwind CSS, vite-plugin-singlefile | see package.json | MIT | Build and styling | — |
 | vitest | 3.2.4 | MIT | Tests (dev only) | https://github.com/vitest-dev/vitest |

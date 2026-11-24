@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { BAL, type Entity } from '../game/core';
 import { ITEMS, RECIPES, STRUCTS, isRecipeKnown, permitsDirectedResearch, CORE_STUDY, stationBurnable } from '../game/catalog';
 import { C, countItem, recipeOutputs, spaceFor, oilAvailability, OIL_TEXT } from '../game/engine';
-import { Panel, Slot, Icon, type Api } from './common';
+import { Panel, Slot, Icon, Mark, type Api } from './common';
 import { Glyph } from './hud';
 import { craftReadiness } from '../game/action-readiness';
 import { recoveryFits } from '../game/recycler';
@@ -131,7 +131,7 @@ export function StationConsole({ api, eid, initialTab = 'make' }: { api: Api; ei
           <Icon k={job.recipe.startsWith('R:') ? 'blueprint' : RECIPES[job.recipe]?.out || 'gear'} size={11} />
           <span className="lbl" style={{ fontSize: 9 }}>{job.recipe.startsWith('R:') ? `Study: ${ITEMS[RECIPES[job.recipe.slice(2)]?.out]?.name ?? '?'}` : ITEMS[RECIPES[job.recipe]?.out]?.name ?? job.recipe}</span>
           <span className="lbl" style={{ fontSize: 8, marginLeft: 'auto', color: running ? 'var(--info)' : 'var(--bad)' }}>{Math.ceil(job.left / 1000)}s{running ? '' : ' · held'}</span>
-          <button className="btn ghost sm" disabled={!!job.workerId} onClick={() => api.act('cancelJob', { eid, jobId: job.id })} title={job.workerId ? "Reserved by worker" : "Cancel — reserved inputs are returned"}>✕</button>
+          <button className="btn ghost sm" disabled={!!job.workerId} onClick={() => api.act('cancelJob', { eid, jobId: job.id })} title={job.workerId ? "Reserved by worker" : "Cancel — reserved inputs are returned"} style={{ position: 'relative' }}><Mark ch="✕" /></button>
         </div>
       </div>}
       {st.queue.length > 1 && <div className="lbl" style={{ fontSize: 8, color: 'var(--muted)', marginTop: 2 }}>+{st.queue.length - 1} more queued</div>}

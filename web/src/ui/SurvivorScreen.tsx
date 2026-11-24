@@ -5,7 +5,7 @@ import { C, countItem, invWeight, carryLimit, recipeOutputs } from '../game/engi
 import { craftReadiness, structurePreparation, type CraftReadiness } from '../game/action-readiness';
 import { getArt } from '../game/art';
 import { drawAdventurer } from '../game/avatar-presentation';
-import { Icon, iconUrl, type Api } from './common';
+import { Icon, Mark, iconUrl, type Api } from './common';
 import { Glyph, useVisualPrefs } from './hud';
 import { resolveUiLayout } from '../visual/direction';
 import { DSlot, DGrid, KeyboardMoveBanner } from './dragSlots';
@@ -125,8 +125,8 @@ export function SurvivorScreen({
   return <div className="sv" data-layout={uiLayout} data-compact-view={compactView} onMouseDown={e => e.stopPropagation()} onContextMenu={e => e.preventDefault()}>
     <div className="sv-top">
       <div className="sv-title">SURVIVOR</div>
-      <span className="sv-hint"><span className="key">drag</span>move <span className="key">Enter</span>pick/place <span className="key">Esc</span>cancel <span className="key">1-8</span>hotbar</span>
-      <button className="btn ghost sm sv-x" onClick={() => api.open(null)}>✕ <span className="key" style={{ marginLeft: 3 }}>Esc</span></button>
+      <span className="sv-hint"><span className="key">drag</span>move <span className="key">Tab</span>next <span className="key">Enter</span>pick/place <span className="key">Esc</span>cancel <span className="key">1-8</span>hotbar</span>
+      <button className="btn ghost sm sv-x" style={{ position: 'relative' }} onClick={() => api.open(null)}><Mark ch="✕" /> <span className="key" style={{ marginLeft: 3 }}>Esc</span></button>
     </div>
     <div className="sv-compact-nav" role="group" aria-label="Survivor view">
       <button type="button" className={compactView === 'pack' ? 'active' : ''} aria-pressed={compactView === 'pack'} onClick={() => setCompactView('pack')}>
@@ -148,7 +148,7 @@ export function SurvivorScreen({
           </div>
           <Doll r={r} />
           <div className="sv-stats">
-            <span className="stat" title={`Damage reduction (cap ${Math.round(ARMOR_CAP * 100)}%)${worn.steady ? ` · legs: -${Math.round(worn.steady * 100)}% knock-back` : ''}${worn.ground ? ` · boots: -${Math.round(worn.ground * 100)}% ground damage` : ''}`}><Glyph k="hp" c="var(--good)" s={7} />-{Math.round(Math.min(ARMOR_CAP, armor) * 100)}%{worn.steady ? ` L${Math.round(worn.steady * 100)}` : ''}{worn.ground ? ` F${Math.round(worn.ground * 100)}` : ''}</span>
+            <span className="stat" title={`Damage reduction (cap ${Math.round(ARMOR_CAP * 100)}%)${worn.steady ? ` · legs: -${Math.round(worn.steady * 100)}% knock-back` : ''}${worn.ground ? ` · boots: -${Math.round(worn.ground * 100)}% ground damage` : ''}`}><Glyph k="hp" c="var(--good)" s={7} />{Math.round(Math.min(ARMOR_CAP, armor) * 100) > 0 ? '-' : ''}{Math.round(Math.min(ARMOR_CAP, armor) * 100)}%{worn.steady ? ` L${Math.round(worn.steady * 100)}` : ''}{worn.ground ? ` F${Math.round(worn.ground * 100)}` : ''}</span>
             <span className="stat" title="Warmth from clothing"><Glyph k="wr" c="var(--warm)" s={7} />+{warm}</span>
             <span className="stat" title="Unsecured coins / profile-secured"><Icon k="rcash" size={8} />{have('rcash')}<i className="sep" />{api.gs.profile.securedCash}</span>
             <div className="sv-load" title={`Load ${w.toFixed(1)} / ${lim} kg`}>

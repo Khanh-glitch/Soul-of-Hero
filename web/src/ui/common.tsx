@@ -49,14 +49,29 @@ export function Slot({ s, sel, active, onClick, onContext, hotkey, title, slotIn
     {s && s.dur !== undefined && (d?.dur || d?.creatorCore) && (() => { const f = s.dur / (d.creatorCore ? 300 : d.dur!); return <span className="dur"><i style={{ width: `${f * 100}%`, background: f < 0.25 ? '#ff5a3a' : f < 0.5 ? '#e8b23c' : '#7aff6a' }} /></span>; })()}
   </div>;
 }
+/** Pixel-drawn control marks. The UI fonts carry no ✕ or ☰, so as text these depended on whatever symbol font the
+ *  player's system had (an empty box where it had none). The character stays in the DOM, visually hidden, for readers
+ *  and for scripts that find the button by its text. */
+const MARKS: Record<string, string[]> = {
+  '✕': ['x.....x', '.x...x.', '..x.x..', '...x...', '..x.x..', '.x...x.', 'x.....x'],
+  '☰': ['.......', 'xxxxxxx', '.......', 'xxxxxxx', '.......', 'xxxxxxx', '.......'],
+};
+export function Mark({ ch, s = 7 }: { ch: '✕' | '☰'; s?: number }) {
+  return <>
+    <svg width={s} height={s} viewBox="0 0 7 7" shapeRendering="crispEdges" style={{ display: 'inline-block', verticalAlign: 'middle', flex: 'none' }} aria-hidden>
+      {MARKS[ch].flatMap((r, y) => [...r].map((c, x) => c === 'x' ? <rect key={`${x}-${y}`} x={x} y={y} width={1} height={1} fill="currentColor" /> : null))}
+    </svg>
+    <span style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clipPath: 'inset(50%)', whiteSpace: 'nowrap' }}>{ch}</span>
+  </>;
+}
 export function Panel({ title, children, style, onClose, className = '', testId }: { title: React.ReactNode; children: React.ReactNode; style?: React.CSSProperties; onClose?: () => void; className?: string; testId?: string }) {
   return <div className={`panel absolute fadein ${className}`} data-testid={testId} style={{ padding: 6, ...style }} onMouseDown={e => e.stopPropagation()} onContextMenu={e => e.preventDefault()}>
-    <div className="flex items-center justify-between" style={{ marginBottom: 4 }}><div className="panel-h">{title}</div>{onClose && <button className="btn ghost" aria-label="Close panel" style={{ padding: '0 4px', fontSize: 11 }} onClick={onClose}>✕</button>}</div>
+    <div className="flex items-center justify-between" style={{ marginBottom: 4 }}><div className="panel-h">{title}</div>{onClose && <button className="btn ghost" aria-label="Close panel" style={{ padding: '2px 4px', fontSize: 11, position: 'relative', lineHeight: 0 }} onClick={onClose}><Mark ch="✕" /></button>}</div>
     {children}
   </div>;
 }
 export function Bar({ v, max, col, w = 70, label }: { v: number; max: number; col: string; w?: number; label?: string }) {
-  return <div className="bar" style={{ width: w }} title={label}><i style={{ width: `${Math.max(0, Math.min(1, v / max)) * 100}%`, background: `linear-gradient(${col}, ${col}cc)` }} /></div>;
+  return <div className="bar" style={{ width: w }} title={label}><i style={{ width: `${Math.max(0, Math.min(1, v / max)) * 100}%`, background: `linear-gradient(rgba(5,7,10,0), rgba(5,7,10,.2)), ${col}` }} /></div>;
 }
 export function Cost({ ins, have }: { ins: [string, number][]; have: (k: string) => number }) {
   return <span className="inline-flex flex-wrap gap-x-2">{ins.filter(([, q]) => q > 0).map(([k, q]) => <span key={k} title={`${ITEMS[k].name}: ${have(k)}/${q}`} className="inline-flex items-center gap-0.5" style={{ color: have(k) >= q ? '#bfe8a8' : '#ff8a7a' }}><Icon k={k} size={10} />{have(k)}/{q}</span>)}</span>;
