@@ -6,13 +6,14 @@
 // ============================================================================
 
 import { BAL, HOUR, TILE, WW, WH, T, type Entity, type GameState, type RunState } from './core';
-import { ITEMS, RECIPES, STRUCTS, ELDERS, ALWAYS_KNOWN_RECIPES } from './catalog';
-import { newGame, startRun, mkStack, mkContainer, addItem, C, markDirty, receipt, pushLog, dispatch, effTile, refreshTerritoryLinks } from './engine';
+import { ITEMS, RECIPES, STRUCTS, ELDERS, PRIMORDIAL_ELDERS, LEGACY_TO_PRIMORDIAL_ELDER, lookupElderDef, ALWAYS_KNOWN_RECIPES, type ElderDef } from './catalog';
+import { newGame, startRun, mkStack, mkContainer, addItem, C, markDirty, receipt, pushLog, dispatch, effTile, refreshTerritoryLinks, blockedAt, sourceAt } from './engine';
 import { FX, HAZ } from './sim';
 import { buildOfflineReturn, captureReturnSnapshot, type OfflineReturnV1 } from './return-report';
 import { getWorld, setActiveLayout } from './world';
 import { vehicleClear, vehicleExitPoint } from './motorbike';
 import { setVfxTestKit } from './vfx/testkit';
+import { supportsAirdrops } from './airdrop';
 import { U05_WORLD_LAYOUT_ID, isVeyra05Layout } from '../veyra05/scenes';
 import { getWindowWorld } from '../veyra05/window';
 import { syncFloor } from '../veyra05/floors';
@@ -40,8 +41,8 @@ export interface QaPresetMeta {
 export const QA_PRESETS: QaPresetMeta[] = [
   { id: 'full_gear', title: 'Full-Gear World · All Systems', tag: 'ALL-IN-ONE', desc: 'Full Core loadout, top gear, furnished home, live stations, research, garden, freight, vendor & test wildlife.' },
   { id: 'cores', title: 'All 7 Creator Cores + 4 Elemental', tag: 'CORES & VFX', desc: 'Every Core fully loaded (Basic/Refined/Signature) + sparring targets.' },
-  { id: 'vfx_showcase', title: 'VFX Choreography Showcase · 68 Skills', tag: 'PIXELFX', desc: 'Veyra world + all 7 Creator Cores · F6 summons side boss · F7 heals & reloads · F8 Spirit warp.' },
-  { id: 'elders', title: 'Six Elder Boss Arena', tag: 'BOSSES', desc: 'Fight any of the 6 Elders; direct phase/defeat controls are marked staged previews.' },
+  { id: 'vfx_showcase', title: 'VFX Choreography Showcase · 68 Skills', tag: 'PIXELFX', desc: 'All 7 Creator Cores · F6 summons side boss · F7 heals & reloads · F8 Spirit warp.' },
+  { id: 'elders', title: 'Six Elder Boss Arena', tag: 'BOSSES', desc: 'Fight any of the 6 Primordial Elders of Veyra; direct phase/defeat controls are marked staged previews.' },
   { id: 'industry', title: 'Home, Power & Industrial Compound', tag: 'INDUSTRY', desc: 'Sheltered cabin, Cabinet, Lv3 Bench, Furnace, Refinery, Research, Garden, Generator & Turret.' },
   { id: 'vehicle', title: 'Utility Motorbike & Freight Convoy', tag: 'VEHICLE', desc: 'Fueled & lubricated motorbike, Hand Cart, Paid Parcel & automated drive demo.' },
   { id: 'offline_return', title: 'Offline Return · Engine Replay', tag: 'REAL SETTLE', desc: 'Run the engine settlement against real queued jobs, fuel, crops, home and receipts; no hand-authored report rows.' },
@@ -85,21 +86,167 @@ function placeStruct(r: RunState, type: string, tx: number, ty: number, extra: P
   return e;
 }
 
-/** Find an open dry tile near (cx, cy) for placing test structures/vehicles cleanly. */
-function findOpenTile(r: RunState, cx: number, cy: number, radius = 6): { tx: number; ty: number } {
-  const occupied = new Set(Object.values(r.entities).map(e => `${Math.floor(e.x / TILE)},${Math.floor(e.y / TILE)}`));
-  for (let rad = 1; rad <= radius; rad++) {
-    for (let dy = -rad; dy <= rad; dy++) {
-      for (let dx = -rad; dx <= rad; dx++) {
-        const tx = cx + dx, ty = cy + dy;
-        if (tx < 4 || ty < 4 || tx >= WW - 4 || ty >= WH - 4) continue;
-        if (occupied.has(`${tx},${ty}`)) continue;
-        const t = effTile(r, tx, ty);
-        if ([T.GRASS, T.MEADOW, T.ROAD, T.SAND, T.FLOOR, T.ASH, T.SNOW].includes(t)) return { tx, ty };
-      }
+/** Ground the real `build` intent would accept (engine placement rules) with nothing standing on it.
+ *  VEYRA's spawn ground is mostly HILL and SNOW between trees and rocks, so the test fixtures ask the
+ *  same question the engine asks instead of assuming a flat meadow around the player. */
+const QA_NO_BUILD: number[] = [T.DEEP, T.SHALLOW, T.RIVER, T.CLIFF, T.PWALL, T.LAVA, T.FLOOR, T.ICE, T.ROAD, T.BRIDGE];
+/** Terrain and map-mask half of the engine's placement rule: what no amount of clearing changes. */
+function qaTerrainOk(r: RunState, tx: number, ty: number): boolean {
+  if (tx < 4 || ty < 4 || tx >= WW - 4 || ty >= WH - 4) return false;
+  if (QA_NO_BUILD.includes(effTile(r, tx, ty))) return false;
+  const w = getWorld(), i = ty * WW + tx;
+  if (w.economyMap.protected[i] || w.accessCorridors?.mask[i]) return false;
+  if ((w.packageContract || w.enforceMasks) && !w.economyMap.buildable[i]) return false;
+  return true;
+}
+function qaGroundOk(r: RunState, tx: number, ty: number, occupied?: Set<string>): boolean {
+  if (!qaTerrainOk(r, tx, ty) || blockedAt(r, tx, ty)) return false;
+  const src = sourceAt(r, tx, ty); if (src && src.stock > 0) return false;
+  return !(occupied ?? qaOccupied(r)).has(`${tx},${ty}`);
+}
+function qaOccupied(r: RunState): Set<string> {
+  return new Set(Object.values(r.entities).map(e => `${Math.floor(e.x / TILE)},${Math.floor(e.y / TILE)}`));
+}
+
+/** Tiles the player can walk to from (sx, sy) without leaving a box of `box` tiles around it. */
+function qaWalkable(r: RunState, sx: number, sy: number, box: number, alsoBlocked = -1): Set<number> {
+  const seen = new Set<number>([sy * WW + sx]); const queue: number[] = [sx, sy];
+  for (let q = 0; q < queue.length; q += 2) {
+    const x = queue[q], y = queue[q + 1];
+    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]] as const) {
+      const nx = x + dx, ny = y + dy, k = ny * WW + nx;
+      if (k === alsoBlocked || seen.has(k) || Math.abs(nx - sx) > box || Math.abs(ny - sy) > box || blockedAt(r, nx, ny)) continue;
+      seen.add(k); queue.push(nx, ny);
     }
   }
-  return { tx: cx + 2, ty: cy };
+  return seen;
+}
+
+/** Find an open tile near (cx, cy) for placing test structures/vehicles cleanly, nearest first. */
+function findOpenTile(r: RunState, cx: number, cy: number, radius = 6): { tx: number; ty: number } {
+  markDirty();
+  const occupied = qaOccupied(r);
+  const ptx = Math.floor(r.player.x / TILE), pty = Math.floor(r.player.y / TILE);
+  // Only ground the player can actually walk to: a chest behind a ridge is of no use to a tester.
+  const box = Math.max(Math.abs(cx - ptx), Math.abs(cy - pty)) + radius + 8;
+  const reach = qaWalkable(r, ptx, pty, box);
+  // Whatever is put down blocks its tile. A tile that is the only way out of where the player stands
+  // (the lane between the house and the machines, say) is skipped: the fixture must not wall the tester in.
+  const keepsWayOpen = (tx: number, ty: number) => qaWalkable(r, ptx, pty, box, ty * WW + tx).size >= (reach.size - 1) * 0.9;
+  let best: { tx: number; ty: number } | null = null, bestD = Infinity;
+  // The search widens past `radius` rather than fall back to an unchecked tile inside a rock or a tree.
+  for (let rad = 0; rad <= radius + 6 && !best; rad++) {
+    for (let dy = -rad; dy <= rad; dy++) for (let dx = -rad; dx <= rad; dx++) {
+      if (Math.max(Math.abs(dx), Math.abs(dy)) !== rad) continue;
+      const tx = cx + dx, ty = cy + dy;
+      if (tx === ptx && ty === pty) continue;
+      if (!reach.has(ty * WW + tx) || !qaGroundOk(r, tx, ty, occupied)) continue;
+      const d = dx * dx + dy * dy;
+      if (d < bestD && keepsWayOpen(tx, ty)) { bestD = d; best = { tx, ty }; }
+    }
+  }
+  return best ?? { tx: cx + 2, ty: cy };
+}
+
+/** Top-left tile of the nearest w x h rectangle of open ground around (cx, cy), or null if the
+ *  loaded window has none within `reach` tiles.
+ *
+ *  With `clear`, a tile whose only obstacle is a harvestable source (grass, bush, tree, rock) counts as
+ *  usable and the chosen rectangle is then harvested out, exactly the state a player leaves after
+ *  clearing a building plot: VEYRA has no bare 13 x 8 field near a landing, and the engine refuses a
+ *  structure on a stocked source ("Clear the ... first"). Cliffs, water, solid scenery, roads, protected
+ *  ground and anything already standing there are never cleared. */
+function findOpenSite(r: RunState, cx: number, cy: number, w: number, h: number, reach = 40, clear = false): { tx: number; ty: number } | null {
+  const hard = new Set<number>();
+  for (let attempt = 0; attempt < 8; attempt++) {
+    markDirty();
+    const occupied = qaOccupied(r);
+    const ok = new Map<number, boolean>();
+    const tileOk = (tx: number, ty: number) => {
+      const k = ty * WW + tx; let v = ok.get(k);
+      if (v === undefined) {
+        if (!clear) v = qaGroundOk(r, tx, ty, occupied);
+        else {
+          const src = sourceAt(r, tx, ty); const stocked = !!src && src.stock > 0;
+          v = !hard.has(k) && qaTerrainOk(r, tx, ty) && !occupied.has(`${tx},${ty}`) && (stocked || !blockedAt(r, tx, ty));
+        }
+        ok.set(k, v);
+      }
+      return v;
+    };
+    const fits = (x0: number, y0: number) => { for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) if (!tileOk(x0 + x, y0 + y)) return false; return true; };
+    let best: { tx: number; ty: number } | null = null, bestD = Infinity;
+    for (let rad = 0; rad <= reach; rad++) {
+      for (let dy = -rad; dy <= rad; dy++) for (let dx = -rad; dx <= rad; dx++) {
+        if (Math.max(Math.abs(dx), Math.abs(dy)) !== rad) continue;
+        const x0 = cx + dx, y0 = cy + dy;
+        if (!fits(x0, y0)) continue;
+        const d = dx * dx + dy * dy;
+        if (d < bestD) { bestD = d; best = { tx: x0, ty: y0 }; }
+      }
+      // Rings further out are all at least `rad + 1` away, so they cannot beat a closer hit.
+      if (best && (rad + 1) * (rad + 1) > bestD) break;
+    }
+    const hit = best as { tx: number; ty: number } | null;
+    if (!hit || !clear) return hit;
+    const now = r.clock.lastSimAt;
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+      const src = sourceAt(r, hit.tx + x, hit.ty + y);
+      if (src && src.stock > 0) r.sources[src.i] = { stock: 0, hp: 0, ...(src.def.regrow ? { regrowFrom: now, regrowAcc: 0 } : {}) };
+    }
+    markDirty();
+    // Solid scenery can sit under a source; such a tile stays blocked once harvested, so it is ruled
+    // out and the search runs again rather than build a wall into it.
+    let still = 0;
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) if (blockedAt(r, hit.tx + x, hit.ty + y)) { hard.add((hit.ty + y) * WW + hit.tx + x); still++; }
+    if (!still) return hit;
+  }
+  return null;
+}
+
+/** Pixel position near (x, y) a creature can stand on: the requested spot, or the closest free tile. */
+function qaStandPoint(r: RunState, x: number, y: number): { x: number; y: number } {
+  markDirty();
+  const cx = Math.floor(x / TILE), cy = Math.floor(y / TILE);
+  const ptx = Math.floor(r.player.x / TILE), pty = Math.floor(r.player.y / TILE);
+  const reach = qaWalkable(r, ptx, pty, Math.max(Math.abs(cx - ptx), Math.abs(cy - pty)) + 12);
+  if (reach.has(cy * WW + cx)) return { x, y };
+  for (let rad = 1; rad <= 10; rad++) for (let dy = -rad; dy <= rad; dy++) for (let dx = -rad; dx <= rad; dx++) {
+    if (Math.max(Math.abs(dx), Math.abs(dy)) !== rad) continue;
+    if ((cx + dx !== ptx || cy + dy !== pty) && reach.has((cy + dy) * WW + cx + dx)) return { x: (cx + dx) * TILE + 8, y: (cy + dy) * TILE + 8 };
+  }
+  return { x, y };
+}
+
+/** The Elder a QA key stands for in this run: VEYRA runs fight the six Primordials, so a legacy key
+ *  ('rust') resolves to its Primordial ('typhon') there; the Classic Island keeps the legacy six. */
+export function qaElderKey(r: RunState, key: string): string {
+  if (!r.layoutId || !isVeyra05Layout(r.layoutId)) return ELDERS[key] ? key : 'rust';
+  if (PRIMORDIAL_ELDERS[key]) return key;
+  return LEGACY_TO_PRIMORDIAL_ELDER[key] ?? 'typhon';
+}
+/** The Elder roster the QA Lab offers for this run. */
+export function qaElderRoster(r: RunState): Record<string, ElderDef> {
+  return r.layoutId && isVeyra05Layout(r.layoutId) ? PRIMORDIAL_ELDERS : ELDERS;
+}
+
+/** Bring one awake Elder next to the player. An Elder already in the loaded window is moved; otherwise
+ *  a QA body is staged. Its fight, patterns and damage are live sim behaviour. */
+function stageQaElder(r: RunState, wanted: string, now: number): { key: string; def: ElderDef } {
+  const key = qaElderKey(r, wanted);
+  const def = lookupElderDef(key)!;
+  const p = r.player;
+  const at = qaStandPoint(r, p.x + 88, p.y);
+  let m = r.creatures.find(c => c.elder?.key === key && c.state !== 'dead');
+  if (!m) {
+    m = { id: `qa_elder_${r.nextId++}`, type: 'elder_' + key, x: at.x, y: at.y, hp: def.hpAwake, maxHp: def.hpAwake, homeX: at.x, homeY: at.y, state: 'chase', t: 0, tx: at.x, ty: at.y, angle: Math.PI, dir: 1, knows: { kind: 'sight', x: p.x, y: p.y, at: now }, path: null, pathT: 0, cd: 600, kbx: 0, kby: 0, flash: 0, elder: { key, awake: true, phase: 1, pattern: 0, special: 0 } };
+    r.creatures.push(m);
+  } else {
+    m.x = at.x; m.y = at.y; m.homeX = m.x; m.homeY = m.y;
+    m.state = 'chase'; m.elder!.awake = true; m.maxHp = def.hpAwake; m.hp = def.hpAwake;
+    m.knows = { kind: 'sight', x: p.x, y: p.y, at: now };
+  }
+  return { key, def };
 }
 
 function learnAllRecipes(r: RunState) {
@@ -185,7 +332,13 @@ function loadFullGear(r: RunState) {
 
 function buildIndustrialCompound(gs: GameState, ptx: number, pty: number) {
   const r = gs.run!;
-  const bx = Math.max(8, ptx - 2), by = Math.max(8, pty - 3);
+  // Footprint: house + stations + farm + turret span 10 x 4 tiles and the warehouse row sits two tiles
+  // south; one clear tile all round keeps every face of the yard walkable. The yard goes on the nearest
+  // plot that fits it, cleared of grass, trees and rocks as a player would clear it, so no wall lands
+  // in a rock, a cliff or the sea.
+  const site = findOpenSite(r, ptx - 3, pty - 4, 13, 8, 40, true);
+  const bx = site ? site.tx + 1 : Math.max(8, ptx - 2), by = site ? site.ty + 1 : Math.max(8, pty - 3);
+  if (!site) pushLog(r, r.clock.lastSimAt, 'QA note: no clear ground for the yard near this spawn; it was placed on the spot and may overlap scenery.', 'red');
   for (let dy = 0; dy < 4; dy++) for (let dx = 0; dx < 4; dx++) {
     placeStruct(r, 'floor_stone', bx + dx, by + dy);
     placeStruct(r, 'roof_tile', bx + dx, by + dy);
@@ -227,8 +380,8 @@ function buildIndustrialCompound(gs: GameState, ptx: number, pty: number) {
   placeStruct(r, 'power_cable', bx + 8, by);
   const tur = placeStruct(r, 'arrow_turret', bx + 9, by, { turret: { enabled: true, cooldown: 0, angle: 0, generatorId: gen.id } });
   addItem(r, tur.c!, 'arrow', 40);
-  const escrowClaimX = bx + 1, escrowClaimY = by + 1;
-  placeStruct(r, 'escrow', escrowClaimX + 1, escrowClaimY);
+  // The Escrow Chest stands east of the farm column, open on its east side, inside the Cabinet's ground. (It used to share the bed's tile, which the engine's own placement rule refuses.)
+  placeStruct(r, 'escrow', bx + 8, by + 2);
   // Same post-placement step the real 'build' intent performs for a Cabinet: link coverage so upkeep/protection is real.
   refreshTerritoryLinks(r);
 
@@ -313,7 +466,8 @@ export function buildQaSandbox(
   now = Date.now(),
 ): { gs: GameState; report: { lines: string[]; report: OfflineReturnV1 | null } | null; banner?: { text: string; sub: string } } {
   setVfxTestKit(preset === 'vfx_showcase');
-  const targetLayout = preset === 'vfx_showcase' ? U05_WORLD_LAYOUT_ID : 'shipping_fresh';
+  // Every preset runs on VEYRA, the world a player's New run uses. The Classic Island stays for tests and old saves only.
+  const targetLayout = U05_WORLD_LAYOUT_ID;
   setActiveLayout(targetLayout);
   getWorld(targetLayout);
   const gs = newGame();
@@ -326,7 +480,12 @@ export function buildQaSandbox(
     syncFloor(gs, ww, ww.floors, markDirty);
   }
   const p = r.player;
-  const ptx = Math.floor(p.x / TILE), pty = Math.floor(p.y / TILE);
+  let ptx = Math.floor(p.x / TILE), pty = Math.floor(p.y / TILE);
+  // The yard is built on the nearest clear ground and the player is moved into it, so later
+  // placements measure from where the player now stands, not from the original landing tile.
+  const yard = () => { const c = buildIndustrialCompound(gs, ptx, pty); ptx = Math.floor(p.x / TILE); pty = Math.floor(p.y / TILE); return c; };
+  // Test creatures are written at fixed offsets from the player; each is then stood on walkable ground.
+  const settleCreatures = () => { for (const m of r.creatures) if (m.id.startsWith('qa_m_')) { const at = qaStandPoint(r, m.x, m.y); m.x = m.homeX = m.tx = at.x; m.y = m.homeY = m.ty = at.y; } };
 
   let report: { lines: string[]; report: OfflineReturnV1 | null } | null = null;
   let banner: { text: string; sub: string } | undefined;
@@ -349,6 +508,7 @@ export function buildQaSandbox(
     );
     banner = { text: 'VFX CHOREOGRAPHY SHOWCASE', sub: 'Slots 2–8 = 7 Creator Cores · LMB Basic · Hold Q Refined · Hold E Signature · F6 Side Boss · F7 Heal/Reload' };
     pushLog(r, now, 'QA Sandbox: VFX Showcase active on Veyra. Press F6 to summon Side Bosses, F7 to heal & reload Cores.', 'gold');
+    settleCreatures();
     markDirty();
     return { gs, report, banner };
   }
@@ -357,7 +517,7 @@ export function buildQaSandbox(
   equipFullGear(r);
 
   if (preset === 'full_gear') {
-    const compound = buildIndustrialCompound(gs, ptx, pty);
+    const compound = yard();
     // Keep one real specimen study available in the full-gear workshop.
     r.knowledge.recipes = r.knowledge.recipes.filter(k => k !== 'fur_cloak');
     loadFullGear(r);
@@ -377,13 +537,16 @@ export function buildQaSandbox(
       { id: `qa_m_${r.nextId++}`, type: 'wolf', x: p.x + 86, y: p.y - 18, hp: 30, maxHp: 30, homeX: p.x + 86, homeY: p.y - 18, state: 'wander', t: 0, tx: p.x + 86, ty: p.y - 18, angle: Math.PI, dir: 1, knows: null, path: null, pathT: 0, cd: 0, kbx: 0, kby: 0, flash: 0 },
       { id: `qa_m_${r.nextId++}`, type: 'boar', x: p.x + 98, y: p.y + 32, hp: 40, maxHp: 40, homeX: p.x + 98, homeY: p.y + 32, state: 'wander', t: 0, tx: p.x + 98, ty: p.y + 32, angle: Math.PI, dir: 1, knows: null, path: null, pathT: 0, cd: 0, kbx: 0, kby: 0, flash: 0 },
     );
-    const airdrop = mkContainer(r, 'airdrop', 4);
-    airdrop.slots[0] = mkStack(r, 'core_meteor', 1);
-    airdrop.slots[1] = mkStack(r, 'spares', 12);
-    const adX = Math.floor((p.x + 72) / TILE), adY = Math.floor((p.y - 30) / TILE);
-    const drop: Entity = { id: `qa_airdrop_${r.nextId++}`, kind: 'airdrop', x: adX * TILE + 8, y: adY * TILE + 8, tx: adX, ty: adY, c: airdrop.id, airdrop: { index: 91, phase: 'descending', signalAt: now - 2000, descentAt: now, landAt: now + 6500, unlockAt: now + 16000, expiresAt: now + 900000 } };
-    r.entities[drop.id] = drop;
-    banner = { text: 'FULL-GEAR · ASHFALL COMPOUND', sub: 'Live work queues, 11 Cores, six-state tests, freight, research & an airdrop visual preview' };
+    // Airdrops are a Classic Island feature (supportsAirdrops); VEYRA has none, so none is staged there.
+    if (supportsAirdrops(r.layoutId || '')) {
+      const airdrop = mkContainer(r, 'airdrop', 4);
+      airdrop.slots[0] = mkStack(r, 'core_meteor', 1);
+      airdrop.slots[1] = mkStack(r, 'spares', 12);
+      const adX = Math.floor((p.x + 72) / TILE), adY = Math.floor((p.y - 30) / TILE);
+      const drop: Entity = { id: `qa_airdrop_${r.nextId++}`, kind: 'airdrop', x: adX * TILE + 8, y: adY * TILE + 8, tx: adX, ty: adY, c: airdrop.id, airdrop: { index: 91, phase: 'descending', signalAt: now - 2000, descentAt: now, landAt: now + 6500, unlockAt: now + 16000, expiresAt: now + 900000 } };
+      r.entities[drop.id] = drop;
+    }
+    banner = { text: 'FULL-GEAR · ASHFALL COMPOUND', sub: supportsAirdrops(r.layoutId || '') ? 'Live work queues, 11 Cores, six-state tests, freight, research & an airdrop visual preview' : 'Live work queues, 11 Cores, six-state tests, freight & research' };
     pushLog(r, now, 'QA fixture: one all-in-one world is ready. Actions you perform still use the live engine.', 'gold');
   }
 
@@ -404,19 +567,14 @@ export function buildQaSandbox(
     C(r, 'inv').slots[20] = mkStack(r, 'iron_sword', 1);
     C(r, 'inv').slots[21] = mkStack(r, 'bow', 1);
     C(r, 'inv').slots[22] = mkStack(r, 'arrow', 60);
-    // Move Rust Colossus (or summon a fresh Elder) 6 tiles east of the player, awake and ready to fight
-    const existing = r.creatures.find(m => m.elder?.key === 'rust');
-    const d = ELDERS.rust;
-    if (existing) {
-      existing.x = p.x + 92; existing.y = p.y; existing.homeX = existing.x; existing.homeY = existing.y;
-      existing.state = 'chase'; existing.elder!.awake = true; existing.maxHp = d.hpAwake; existing.hp = d.hpAwake;
-    }
-    banner = { text: 'ELDER BOSS ARENA', sub: 'Rust Colossus awakened — open QA Lab [F9] to switch any of the 6 Elders' };
+    // One awake Elder 5-6 tiles east of the player, ready to fight: the Primordial of this world on VEYRA.
+    const staged = stageQaElder(r, 'rust', now);
+    banner = { text: 'ELDER BOSS ARENA', sub: `${staged.def.name} awakened — open QA Lab [F9] to switch any of the 6 Elders` };
     pushLog(r, now, 'QA Sandbox: Elder Boss Arena active. Use QA Lab [F9] to summon any of the 6 Elders.', 'red');
   }
 
   if (preset === 'industry') {
-    const compound = buildIndustrialCompound(gs, ptx, pty);
+    const compound = yard();
     fillAssetWarehouse(r, compound.bx, compound.by);
     banner = { text: 'HOME & INDUSTRIAL YARD', sub: 'Real jobs are queued through the engine; open a station to inspect or cancel.' };
     pushLog(r, now, 'QA setup: supplied compound placed. Station actions, queue costs and completion use the live engine.', 'gold');
@@ -429,7 +587,7 @@ export function buildQaSandbox(
   }
 
   if (preset === 'offline_return') {
-    const compound = buildIndustrialCompound(gs, ptx, pty);
+    const compound = yard();
     fillAssetWarehouse(r, compound.bx, compound.by);
     banner = { text: 'OFFLINE RETURN · ENGINE REPLAY', sub: 'Use F9 → Events → Run real 6.5h settle. Rows are generated from live settlement receipts & snapshots.' };
     pushLog(r, now, 'QA setup: real furnace, refinery and research jobs queued. F9 → Events can replay a 6.5h engine settlement.', 'gold');
@@ -448,22 +606,30 @@ export function buildQaSandbox(
     const vSpot = findOpenTile(r, ptx, pty, 6);
     r.entities[`qa_vendor_${r.nextId}`] = { id: `qa_vendor_${r.nextId++}`, kind: 'vendor', x: vSpot.tx * TILE + 8, y: vSpot.ty * TILE + 8, tx: vSpot.tx, ty: vSpot.ty, label: 'Mirela the Trader' };
 
-    placeStruct(r, 'claim', ptx - 2, pty + 1, { cabinet: { credit: {}, legacy: false } });
-    placeStruct(r, 'escrow', ptx - 1, pty + 1);
+    // Cabinet and Escrow Chest side by side on the nearest clear pair of tiles (Escrow needs the Cabinet's ground).
+    const pair = findOpenSite(r, ptx - 2, pty + 1, 2, 1, 12) ?? { tx: ptx - 2, ty: pty + 1 };
+    // A Cabinet only holds ground from an intact owned foundation (the engine's rule), so both stand on stone.
+    placeStruct(r, 'floor_stone', pair.tx, pair.ty); placeStruct(r, 'floor_stone', pair.tx + 1, pair.ty);
+    placeStruct(r, 'claim', pair.tx, pair.ty, { cabinet: { credit: {}, legacy: false } });
+    placeStruct(r, 'escrow', pair.tx + 1, pair.ty);
+    refreshTerritoryLinks(r);
 
     const evSpot = findOpenTile(r, ptx, pty, 7);
     r.entities[`qa_evac_${r.nextId}`] = { id: `qa_evac_${r.nextId++}`, kind: 'evac', x: evSpot.tx * TILE + 8, y: evSpot.ty * TILE + 8, tx: evSpot.tx, ty: evSpot.ty, label: 'Evacuation Beacon' };
 
-    r.elderStones = ['stone_frost', 'stone_magma', 'stone_grove'];
+    // Three of six stones already won: this world's own stones (Primordial stones on VEYRA).
+    r.elderStones = ['frost', 'magma', 'grove'].map(k => lookupElderDef(qaElderKey(r, k))!.stone);
     r.elderStones.forEach(sk => addItem(r, 'inv', sk, 1));
     banner = { text: 'RAGNAROK · FINAL 72 HOURS', sub: 'Sealed Cash, Mirela Trader, Escrow Chest & Evacuation Beacon in reach' };
     pushLog(r, now, 'QA Sandbox: Ragnarok economy & evacuation scenario active (Hour 266/336).', 'red');
   }
 
   if (preset === 'death_recovery') {
-    placeStruct(r, 'bed_straw', ptx - 1, pty);
-    // Drop a real Ground Death Bag 10 tiles east containing high-value Cores & Ragnarok Cash
-    const bx = Math.min(WW - 6, ptx + 10), by = pty;
+    const bedSpot = findOpenTile(r, ptx - 1, pty, 3);
+    placeStruct(r, 'bed_straw', bedSpot.tx, bedSpot.ty);
+    // Drop a real Ground Death Bag about 10 tiles east, on ground the player can walk to, containing high-value Cores & Ragnarok Cash
+    const bagSpot = findOpenTile(r, Math.min(WW - 6, ptx + 10), pty, 6);
+    const bx = bagSpot.tx, by = bagSpot.ty;
     const bagC = mkContainer(r, 'bag', 12);
     const dragon = mkStack(r, 'core_dragon', 1); dragon.lvl = 3;
     bagC.slots[0] = dragon;
@@ -495,6 +661,7 @@ export function buildQaSandbox(
     pushLog(r, now, 'QA Sandbox: a Research Table stands on free ground nearby. Select the packed spare to place a second, or press E at the table.', 'gold');
   }
 
+  settleCreatures();
   markDirty();
   return { gs, report, banner };
 }
@@ -519,16 +686,7 @@ export function triggerQaEvent(
       return { banner: { text: 'RAGNAROK HAS BEGUN', sub: 'Final 72 hours · Sealed Vaults unseal · Elders stir' } };
     }
     case 'awaken_elder': {
-      const d = ELDERS[elderKey] || ELDERS.rust;
-      let m = r.creatures.find(c => c.elder?.key === elderKey);
-      if (!m) {
-        m = { id: `qa_elder_${r.nextId++}`, type: 'elder_' + elderKey, x: p.x + 88, y: p.y, hp: d.hpAwake, maxHp: d.hpAwake, homeX: p.x + 88, homeY: p.y, state: 'chase', t: 0, tx: p.x + 88, ty: p.y, angle: Math.PI, dir: 1, knows: { kind: 'sight', x: p.x, y: p.y, at: now }, path: null, pathT: 0, cd: 600, kbx: 0, kby: 0, flash: 0, elder: { key: elderKey, awake: true, phase: 1, pattern: 0, special: 0 } };
-        r.creatures.push(m);
-      } else {
-        m.x = p.x + 88; m.y = p.y; m.homeX = m.x; m.homeY = m.y;
-        m.state = 'chase'; m.elder!.awake = true; m.maxHp = d.hpAwake; m.hp = d.hpAwake;
-        m.knows = { kind: 'sight', x: p.x, y: p.y, at: now };
-      }
+      const { def: d } = stageQaElder(r, elderKey, now);
       FX.push({ type: 'shake', m: 4 });
       return { banner: { text: `${d.name.toUpperCase()} AWAKENS`, sub: `${d.title} · ${d.region}` } };
     }
@@ -537,18 +695,20 @@ export function triggerQaEvent(
       if (m) {
         m.atk = { tell: 400, vuln: 4500, pat: 'overload' };
         HAZ.push({ kind: 'ring', x: m.x, y: m.y, r: 64, t: 0, tell: 400, dur: 600, dmg: 0, style: 'steam', elder: m.elder!.key, owner: m.id } as any);
-        pushLog(r, now, `${ELDERS[m.elder!.key].name} is exposed — 2× vulnerability window!`, 'gold');
+        pushLog(r, now, `${lookupElderDef(m.elder!.key)?.name ?? 'The Elder'} is exposed — 2× vulnerability window!`, 'gold');
       }
       return {};
     }
     case 'defeat_elder': {
-      const m = r.creatures.find(c => c.elder && c.state !== 'dead') || r.creatures.find(c => c.elder);
-      const key = m?.elder?.key || elderKey;
-      const d = ELDERS[key];
+      const want = qaElderKey(r, elderKey);
+      const m = r.creatures.find(c => c.elder?.key === want && c.state !== 'dead') || r.creatures.find(c => c.elder && c.state !== 'dead') || r.creatures.find(c => c.elder);
+      const key = m?.elder?.key || want;
+      const d = lookupElderDef(key) ?? lookupElderDef(qaElderKey(r, 'rust'))!;
       if (m) { m.hp = 0; m.state = 'dead'; m.t = 0; }
       const dropC = mkContainer(r, 'drop', 1);
       dropC.slots[0] = mkStack(r, d.stone, 1);
-      r.entities[`qa_stone_${r.nextId}`] = { id: `qa_stone_${r.nextId++}`, kind: 'drop', x: p.x + 36, y: p.y, c: dropC.id, born: now };
+      const stoneAt = qaStandPoint(r, p.x + 36, p.y);
+      r.entities[`qa_stone_${r.nextId}`] = { id: `qa_stone_${r.nextId++}`, kind: 'drop', x: stoneAt.x, y: stoneAt.y, c: dropC.id, born: now };
       FX.push({ type: 'boom', x: p.x + 56, y: p.y });
       receipt(r, now, 'elder.defeat', key);
       return { banner: { text: `${d.name.toUpperCase()} VANQUISHED`, sub: `${ITEMS[d.stone].name} dropped · Claim it for the Crown of Six` } };
@@ -564,7 +724,7 @@ export function triggerQaEvent(
       return { coreKey: 'core_dragon' };
     }
     case 'spawn_airdrop': {
-      const tx = Math.floor(p.x / TILE) + 3, ty = Math.floor(p.y / TILE) - 1;
+      const { tx, ty } = findOpenTile(r, Math.floor(p.x / TILE) + 3, Math.floor(p.y / TILE) - 1, 3);
       const c = mkContainer(r, 'airdrop', 4);
       c.slots[0] = mkStack(r, 'core_meteor', 1);
       c.slots[1] = mkStack(r, 'spares', 10);

@@ -9,6 +9,8 @@
 // Branch: arena/visual-soh-ashfall (independent of arena/d4bfcfff-soul-of-hero)
 // ============================================================================
 
+import { fitStageView, type StageView } from '../game/viewport';
+
 export type DirectionId = 'fieldcraft' | 'arcane' | 'mythic';
 
 export interface Direction {
@@ -90,16 +92,18 @@ export interface VisualPrefs {
   highContrastHud: boolean;
   uiLayout: UiLayoutPref;     // 'auto' -> PC unified 2-column on computers, 2-tab touch layout on phones
   stageScale: StageScaleMode; // 'fit' -> high-res window fit (default), 'integer' -> strict 1x/2x/3x floor
+  stageView: StageViewPref;   // 'wide' -> the view takes the window's shape (default), 'classic' -> fixed 640x360 with borders
   music: number; ambience: number; world: number; combat: number; ui: number;
   muted: boolean;
   touchControls: TouchPref;   // on-screen stick and buttons: 'auto' shows them on phones and tablets
   hudScale: HudScalePref;     // size of the always-visible HUD: 'auto' enlarges it when the window is small
 }
 export type TouchPref = 'auto' | 'on' | 'off';
+export type StageViewPref = 'wide' | 'classic';
 export type HudScalePref = 'auto' | 1 | 1.25 | 1.5;
 export const DEFAULT_PREFS: VisualPrefs = {
   direction: DEFAULT_DIRECTION, grade: 1, shake: 1, reduceFlash: false, highContrastHud: false,
-  uiLayout: 'auto', stageScale: 'fit',
+  uiLayout: 'auto', stageScale: 'fit', stageView: 'wide',
   music: 0.5, ambience: 0.65, world: 0.8, combat: 0.9, ui: 0.6, muted: false,
   touchControls: 'auto', hudScale: 'auto',
 };
@@ -156,6 +160,11 @@ export function computeStageFit(
     x: Math.floor((W - viewW * k) / 2),
     y: Math.floor((H - viewH * k) / 2),
   };
+}
+
+/** View size, scale and offset for the window, by the player's Screen scale and Screen shape settings. */
+export function computeStageView(W: number, H: number, p: Pick<VisualPrefs, 'stageScale' | 'stageView'> = prefs): StageView {
+  return fitStageView(W, H, p.stageScale ?? 'fit', (p.stageView ?? 'wide') === 'wide');
 }
 
 let prefs: VisualPrefs = { ...DEFAULT_PREFS };

@@ -9,7 +9,8 @@ import {makeUrbanHarborSprites,drawUrbanHarborDeckTile} from './c01-art';
  * rewards or interactions invented.
  */
 import * as comp from '../game/compositor';
-import { T, TILE, WW, WH, VIEW_W, VIEW_H, hash2, type GameState, type RunState } from '../game/core';
+import { T, TILE, WW, WH, hash2, type GameState, type RunState } from '../game/core';
+import { viewW, viewH } from '../game/viewport';
 import { mk, type Sprite } from '../game/art';
 import { getWorld } from '../game/world';
 import { isVeyra05Layout } from './scenes';
@@ -209,8 +210,8 @@ function items(g: CanvasRenderingContext2D): comp.DepthItem[] {
   const kit = decorKit();
   const lmSprites = landmarkSprites();
   const m = g.getTransform(); const cx = -m.e, cy = -m.f;
-  const vx0 = Math.max(0, Math.floor(cx / TILE) - 1), vx1 = Math.min(WW - 1, Math.floor((cx + VIEW_W) / TILE) + 1);
-  const vy0 = Math.max(0, Math.floor(cy / TILE) - 1), vy1 = Math.min(WH - 1, Math.floor((cy + VIEW_H) / TILE) + 2);
+  const vx0 = Math.max(0, Math.floor(cx / TILE) - 1), vx1 = Math.min(WW - 1, Math.floor((cx + viewW) / TILE) + 1);
+  const vy0 = Math.max(0, Math.floor(cy / TILE) - 1), vy1 = Math.min(WH - 1, Math.floor((cy + viewH) / TILE) + 2);
   const occupied = new Set<number>();
   for (const e of Object.values(r.entities)) {
     if (e.tx !== undefined && e.ty !== undefined) occupied.add(e.ty * WW + e.tx);
@@ -223,7 +224,7 @@ function items(g: CanvasRenderingContext2D): comp.DepthItem[] {
   // Ground reservation outlines (e.g., MGP-D07 Beacon grounded helicopter reservation — outline only, no sprite)
   for (const res of ww.reservations) {
     const rx = res.x * TILE, ry = res.y * TILE, rw = res.w * TILE, rh = res.h * TILE;
-    if (rx + rw < cx || rx > cx + VIEW_W || ry + rh < cy || ry > cy + VIEW_H) continue;
+    if (rx + rw < cx || rx > cx + viewW || ry + rh < cy || ry > cy + viewH) continue;
     out.push({
       y: ry - 2,
       f: () => {

@@ -1,5 +1,6 @@
-import { VIEW_W, VIEW_H, WW, WH, TILE, angDiff, dirFromAngle, clamp, type Creature, type GameState, type RunState } from '../core';
+import { WW, WH, TILE, angDiff, dirFromAngle, clamp, type Creature, type GameState, type RunState } from '../core';
 import { PRIMORDIAL_ELDERS } from '../catalog';
+import { viewW, viewH } from '../viewport';
 import { World, v, dist, segDist, norm, sub, add, mul, type Actor, type MapAdapter, type Shape } from './game/core';
 import { spawnBoss, spawnPlayer, stepWorld } from './game/sim';
 import { installFx } from './game/fx';
@@ -508,21 +509,21 @@ export function renderPrimordialOverlay(
   if (!sess || sess.mounted.size === 0) return false;
   if (typeof document === 'undefined') return false;
 
-  if (!overlayFb || overlayFb.w !== VIEW_W || overlayFb.h !== VIEW_H) {
-    overlayFb = new FB(VIEW_W, VIEW_H);
+  if (!overlayFb || overlayFb.w !== viewW || overlayFb.h !== viewH) {
+    overlayFb = new FB(viewW, viewH);
   }
-  if (!overlayCanvas) {
-    overlayCanvas = document.createElement('canvas');
-    overlayCanvas.width = VIEW_W;
-    overlayCanvas.height = VIEW_H;
+  if (!overlayCanvas) overlayCanvas = document.createElement('canvas');
+  if (overlayCanvas.width !== viewW || overlayCanvas.height !== viewH) {   // the view follows the window's shape
+    overlayCanvas.width = viewW;
+    overlayCanvas.height = viewH;
   }
 
   renderWorld(overlayFb, sess.world, camX, camY, OVERLAY_OPTS);
 
   const octx = overlayCanvas.getContext('2d');
   if (!octx) return false;
-  if (!overlayImgData || overlayImgData.width !== VIEW_W || overlayImgData.height !== VIEW_H) {
-    overlayImgData = octx.createImageData(VIEW_W, VIEW_H);
+  if (!overlayImgData || overlayImgData.width !== viewW || overlayImgData.height !== viewH) {
+    overlayImgData = octx.createImageData(viewW, viewH);
   }
   overlayImgData.data.set(overlayFb.data);
   octx.putImageData(overlayImgData, 0, 0);

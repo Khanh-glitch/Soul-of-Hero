@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
-import { VIEW_W, VIEW_H, type RunState } from '../game/core';
+import { type RunState } from '../game/core';
+import { viewW, viewH } from '../game/viewport';
 import { SOURCES } from '../game/catalog';
 import { sourceAt } from '../game/engine';
 import { DAILY_MILESTONES, jumpTargetFor, type AnchorHint, type JourneyEvent, type JourneyStore, type QuickJumpTarget, type TrackView } from '../game/journey';
 import type { Cinematic, Flare, Issue } from '../game/attention';
 import { T, type Lang } from '../game/i18n';
 import { Icon } from './common';
+import { formatDistance, type DestinationView } from '../game/map-atlas';
 
 // ---------------------------------------------------------------------------
 // WAYMARK — the smart journey tracker.
@@ -24,8 +26,10 @@ export const touchWords = (text: string, lang: Lang): string => lang === 'vi'
   ? text.replace(/chuột trái|\bLMB\b/g, 'nút Đánh').replace(/\bSpace\b/g, 'nút Lăn').replace(/\bWASD\b/g, 'cần điều khiển')
   : text.replace(/\bLMB\b/g, 'the Hit button').replace(/\bSpace\b/g, 'the Roll button').replace(/\bWASD\b/g, 'the stick');
 
-export function Waymark({ view, mode, store, stamp, onToggle, onUntrack, onOpenJournal, onJump, blocked, lang = 'en', touch = false }: {
+export function Waymark({ view, mode, store, stamp, onToggle, onUntrack, onOpenJournal, onJump, blocked, lang = 'en', touch = false, brief = false }: {
   touch?: boolean;
+  /** Build mode: keep the title, the step and its button, and drop the two explanatory lines so the card ends above the build bar. */
+  brief?: boolean;
   view: TrackView | null; mode: WaymarkMode; store: JourneyStore; stamp: JourneyEvent | null; blocked?: string | null; lang?: Lang;
   onToggle: () => void; onUntrack: () => void; onOpenJournal: () => void; onJump?: (t: QuickJumpTarget) => void;
 }) {
@@ -52,7 +56,7 @@ export function Waymark({ view, mode, store, stamp, onToggle, onUntrack, onOpenJ
   if (mode === 'glyph') return <div className="wm wm--glyph" title={`${v.title} ${v.progress}/${v.target}`} onClick={onToggle}>
     <div className="wm__socket"><Ring frac={frac} /><Icon k={v.icon} size={12} /></div>
   </div>;
-  return <div className={`wm wm--${mode} lang-${lang} ${v.suggested ? 'wm--suggested' : ''} ${v.done ? 'wm--done' : ''} ${v.claimable ? 'wm--claim' : ''}`} onMouseDown={e => e.stopPropagation()}>
+  return <div className={`wm wm--${mode} ${brief ? 'wm--brief' : ''} lang-${lang} ${v.suggested ? 'wm--suggested' : ''} ${v.done ? 'wm--done' : ''} ${v.claimable ? 'wm--claim' : ''}`} onMouseDown={e => e.stopPropagation()}>
     <button className="wm__socket" onClick={onToggle} title="Peek [T]" key={`b${bump}`} data-bump={bump > 0 || undefined}>
       <Ring frac={frac} /><Icon k={v.icon} size={14} />
     </button>
@@ -126,13 +130,34 @@ export function findAnchor(r: RunState, a: AnchorHint | undefined, now: number):
 export function WorldBeacon({ target, camX, camY, icon }: { target: { x: number; y: number; label: string } | null; camX: number; camY: number; icon: string }) {
   if (!target) return null;
   const sx = target.x - camX, sy = target.y - camY;
-  const on = sx > 8 && sx < VIEW_W - 8 && sy > 20 && sy < VIEW_H - 40;
+  const on = sx > 8 && sx < viewW - 8 && sy > 20 && sy < viewH - 40;
   if (on) return <div className="beacon" style={{ left: Math.round(sx), top: Math.round(sy) - 20 }} aria-hidden><i className="beacon__pin"><Icon k={icon} size={8} /></i>{target.label && <span>{target.label}</span>}</div>;
-  const cx = VIEW_W / 2, cy = VIEW_H / 2; const ang = Math.atan2(sy - cy, sx - cx);
-  const ex = Math.max(14, Math.min(VIEW_W - 14, cx + Math.cos(ang) * 400)), ey = Math.max(30, Math.min(VIEW_H - 46, cy + Math.sin(ang) * 400));
+  const cx = viewW / 2, cy = viewH / 2; const ang = Math.atan2(sy - cy, sx - cx);
+  const ex = Math.max(14, Math.min(viewW - 14, cx + Math.cos(ang) * 400)), ey = Math.max(30, Math.min(viewH - 46, cy + Math.sin(ang) * 400));
   const dist = Math.round(Math.hypot(sx - cx, sy - cy) / 16);
   return <div className="beacon beacon--edge" style={{ left: Math.round(ex), top: Math.round(ey) }} aria-hidden>
     <i className="beacon__chev" style={{ transform: `rotate(${ang}rad)` }} /><span>{dist}m</span>
+  </div>;
+}
+
+// ---------------------------------------------------------------------------
+// DESTINATION — the place the player picked on the chart [M]. On screen it is a
+// pin with the name; off screen an arrow on the edge with name and distance.
+// ---------------------------------------------------------------------------
+export function DestinationBeacon({ dest, camX, camY }: { dest: DestinationView | null; camX: number; camY: number }) {
+  if (!dest) return null;
+  const sx = dest.x - camX, sy = dest.y - camY;
+  const on = sx > 8 && sx < viewW - 8 && sy > 20 && sy < viewH - 40;
+  if (on) return <div className="beacon beacon--dest" data-testid="dest-beacon" style={{ left: Math.round(sx), top: Math.round(sy) - 20 }}>
+    <i className="beacon__pin" /><span data-notr>{dest.place.name}</span>
+  </div>;
+  const cx = viewW / 2, cy = viewH / 2; const ang = Math.atan2(sy - cy, sx - cx);
+  // Ride an ellipse inside the view rather than its edge: the corners belong to the HUD (status, clock, journey card),
+  // and the bottom to the hotbar. The arrow still sits on the side the place lies.
+  const ex = cx + Math.cos(ang) * (viewW / 2 - 150), ey = cy + 8 + Math.sin(ang) * (viewH / 2 - 76);
+  return <div className="beacon beacon--edge beacon--dest" data-testid="dest-beacon" style={{ left: Math.round(ex), top: Math.round(ey) }}>
+    <i className="beacon__chev" style={{ transform: `rotate(${ang}rad)` }} />
+    <span data-notr>{dest.place.name}<em>{formatDistance(dest.dist)}</em></span>
   </div>;
 }
 
@@ -142,7 +167,7 @@ export function WorldBeacon({ target, camX, camY, icon }: { target: { x: number;
 export function FlareLayer({ flares, camX, camY }: { flares: Flare[]; camX: number; camY: number }) {
   if (!flares.length) return null;
   return <div className="flare-layer" aria-live="polite">{flares.map((f, i) => {
-    const x = Math.max(70, Math.min(VIEW_W - 70, Math.round(f.x - camX))), y = Math.max(54, Math.min(VIEW_H - 60, Math.round(f.y - camY)));
+    const x = Math.max(70, Math.min(viewW - 70, Math.round(f.x - camX))), y = Math.max(54, Math.min(viewH - 60, Math.round(f.y - camY)));
     return <div key={f.id} className="flare" style={{ left: x, top: y - i * 30, '--accent': f.accent } as React.CSSProperties}>
       <i className="flare__burst" /><i className="flare__beam" />
       <div className="flare__plate"><span className="flare__icon"><Icon k={f.icon || 'gear'} size={14} /></span><span><b>{f.title}</b>{f.detail && <em>{f.detail}</em>}</span></div>

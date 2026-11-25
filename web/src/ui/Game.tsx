@@ -8,6 +8,7 @@ import { VFX_TEST_KIT } from '../game/vfx/testkit';
 import { vfxTestSummonBoss } from '../veyra05/ecosystem';
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { BAL, TILE, WW, VIEW_W, VIEW_H, HOUR, type GameState } from '../game/core';
+import { setViewSize, viewInsetX, viewInsetY, viewW, viewH } from '../game/viewport';
 import { ITEMS, STRUCTS, ELDERS, CREATURES, STRUCTURE_UPGRADES } from '../game/catalog';
 import { TAMING_SPECIES, deterministicAnimalSex } from '../game/husbandry';
 import { dispatch, markDirty, blockGrid as vfxBlockGrid, phaseOf, runHours, dayTime, weatherAt, weatherSlot, countItem, C, entsAt, cartWeight, cartLimit, effTile, isRagnarok, buildReason, clearWallLine, claimAt, territoryForecast } from '../game/engine';
@@ -33,7 +34,7 @@ import { autosaveDecision, AUTOSAVE_MIN_MS, AUTOSAVE_STILL_MS } from '../game/au
 import { Slot, Bar, Icon, Mark, PanelGuard, mkIntent, type Api, type PanelState } from './common';
 import { Vitals, UrgentAlerts, WorldClock, Hotbar, RigStatus, ThreatBar, PresentationPanel, useVisualPrefs, Glyph } from './hud';
 import { setListener, setEnvironment, machineState, setMood, tickMusic, stopAllMachines } from '../game/audio';
-import { getPrefs, setPrefs, applyCssTheme, computeStageFit, isTouchDevice, resolveHudScale } from '../visual/direction';
+import { getPrefs, setPrefs, applyCssTheme, computeStageView, isTouchDevice, resolveHudScale } from '../visual/direction';
 import { TouchControls, TouchScreens, type TouchApi } from './TouchControls';
 import { HomeStatusCard } from './HomeStatus';
 import { thermalStatusView } from '../game/thermal';
@@ -59,7 +60,8 @@ import { BuildBar, BUILD_KIT, BUILD_PAGES, type BuildTool, placeHint } from './B
 import { clearSlotInteraction, getHoverSlot, getKeyboardPick, DragGhost } from './dragSlots';
 import { loadJourney, flushJourney, ingestJourney, resolveTrack, rerollDaily, recordWorldMoment, markChronicleSeen, lessonState, type JourneyStore, type JourneyEvent, type TrackRef, type QuickJumpTarget } from '../game/journey';
 import { directCues, standingIssues, ragnarokCinematic, eldersWakeCinematic, type Flare, type Cinematic, type Issue } from '../game/attention';
-import { Waymark, WorldBeacon, FlareLayer, CinematicLayer, IssueRail, findAnchor, type WaymarkMode } from './Waymark';
+import { Waymark, WorldBeacon, DestinationBeacon, FlareLayer, CinematicLayer, IssueRail, findAnchor, type WaymarkMode } from './Waymark';
+import { destinationView, storeDestination } from '../game/map-atlas';
 import { JourneyLedger, useLang } from './Journey';
 
 export default function Game({
@@ -295,18 +297,23 @@ export default function Game({
     if (res.ok) setJourney(rerollDaily(journeyRef.current, id, gs.run));
   }, [act, gs]);
 
-  // scale stage to fit window smoothly at native resolution ('fit') or strict integer multiples ('integer')
-  const [scale, setScale] = useState(1); const [off, setOff] = useState({ x: 0, y: 0 });
+  // scale stage to fit window smoothly at native resolution ('fit') or strict integer multiples ('integer').
+  // The view takes the window's shape (640x360 up to 768x400) so a browser window that is not exactly 16:9 has no bars;
+  // game rules keep the 640x360 frame in its centre (see game/viewport.ts).
+  const [scale, setScale] = useState(1); const [off, setOff] = useState({ x: 0, y: 0 }); const [view, setView] = useState({ w: VIEW_W, h: VIEW_H });
   useEffect(() => {
     const fit = () => {
-      const f = computeStageFit(window.innerWidth, window.innerHeight, VIEW_W, VIEW_H, vp.stageScale);
+      const f = computeStageView(window.innerWidth, window.innerHeight, { stageScale: vp.stageScale, stageView: vp.stageView });
+      if (setViewSize(f.w, f.h)) cam.init = false;   // a new view size: the camera re-centres at once instead of drifting there
       setScale(f.k);
       setOff({ x: f.x, y: f.y });
+      setView(v => v.w === f.w && v.h === f.h ? v : { w: f.w, h: f.h });
     };
     fit();
     window.addEventListener('resize', fit);
-    return () => window.removeEventListener('resize', fit);
-  }, [vp.stageScale]);
+    return () => { window.removeEventListener('resize', fit); if (setViewSize(VIEW_W, VIEW_H)) cam.init = false; };
+  }, [vp.stageScale, vp.stageView]);
+  const insetX = (view.w - VIEW_W) >> 1, insetY = (view.h - VIEW_H) >> 1;   // where the 640x360 frame sits in the view
   const scaleRef = useRef(scale); scaleRef.current = scale; const offRef = useRef(off); offRef.current = off;
 
   const findNearAnimal = (r: NonNullable<GameState['run']>) => {
@@ -454,7 +461,7 @@ export default function Game({
         }
       }
     };
-    const up = (e: KeyboardEvent) => { if (keyMap[e.code]) (inp.current as any)[keyMap[e.code]] = false; const a=coreAimRef.current;if(a && a.code===e.code){coreAimRef.current=null;setCoreAim(null);const selected=gs.run && activeStack(gs.run);if(!panelRef.current && selected?.uid===a.uid && gs.run && !gs.run.player.dead){const vx=Math.round(cam.x),vy=Math.round(cam.y),spirit=selected.key==='core_demon' && a.mode==='signature';const dest=spiritTarget.current;if(spirit && (!dest||dest.uid!==a.uid)){toast('Open M and select explored safe ground first.');return;}inp.current.skill=a.mode;inp.current.skillAim={uid:a.uid,slot:gs.run.player.active,mx:spirit?dest!.x:mouse.current.x+vx,my:spirit?dest!.y:mouse.current.y+vy,viewX:vx,viewY:vy};}} };
+    const up = (e: KeyboardEvent) => { if (keyMap[e.code]) (inp.current as any)[keyMap[e.code]] = false; const a=coreAimRef.current;if(a && a.code===e.code){coreAimRef.current=null;setCoreAim(null);const selected=gs.run && activeStack(gs.run);if(!panelRef.current && selected?.uid===a.uid && gs.run && !gs.run.player.dead){const vx=Math.round(cam.x),vy=Math.round(cam.y),spirit=selected.key==='core_demon' && a.mode==='signature';const dest=spiritTarget.current;if(spirit && (!dest||dest.uid!==a.uid)){toast('Open M and select explored safe ground first.');return;}inp.current.skill=a.mode;inp.current.skillAim={uid:a.uid,slot:gs.run.player.active,mx:spirit?dest!.x:mouse.current.x+vx,my:spirit?dest!.y:mouse.current.y+vy,viewX:vx+viewInsetX(),viewY:vy+viewInsetY()};}} };
     const blur = () => { const i = inp.current; i.up = i.down = i.left = i.right = i.attack = false; i.skill=undefined;i.cancel=true;coreAimRef.current=null;setCoreAim(null); };
     const wheel = (e: WheelEvent) => { const r = gs.run; if (!r || panelRef.current || playerAtSea(r)) return; if (buildModeRef.current) { setBuildTool(t => { const all: BuildTool[] = [...BUILD_KIT, 'upgrade', 'repair', 'reclaim']; const nx = all[(all.indexOf(t) + (e.deltaY > 0 ? 1 : all.length - 1)) % all.length]; applyTool(nx); return nx; }); return; } r.player.active = (r.player.active + (e.deltaY > 0 ? 1 : 7)) % 8; rerender(); };
     const vis = () => { if (document.hidden) { if (!qaMode) { if (saveSync(gs)) flushJourney(gs, false, journeyRef.current); void save(gs); } blur(); } };
@@ -498,6 +505,7 @@ export default function Game({
   // main loop
   useEffect(() => {
     const cv = cvRef.current; const g = cv?.getContext('2d'); if (!cv || !g) return; g.imageSmoothingEnabled = false;
+    const keepCrisp = () => { if (g.imageSmoothingEnabled) g.imageSmoothingEnabled = false; };   // resizing the canvas resets its drawing state
     void pfx.initPfx(); vfxDirector.init();
     let last = performance.now(); let raf = 0; let uiAcc = 0, prebuildAcc = 1000, ambAcc = 0; let autosavedAt = last, movedAt = last, frameGap = 16.7, frameAt = last; let ended = false;
     const loop = (t: number) => {
@@ -505,7 +513,7 @@ export default function Game({
       raf = requestAnimationFrame(loop); const dt = Math.min(50, t - last); last = t; const now = Date.now();
       if (!gs.run) { if (!ended) { ended = true; if (!qaMode) save(gs); onRunEnd(); } return; }
       { const ta = touchAim.current, tp = gs.run?.player; if (ta && tp) mouse.current = { x: tp.x - Math.round(cam.x) + ta.x * 56, y: tp.y - Math.round(cam.y) + ta.y * 56 }; }
-      const i = inp.current; i.mx = mouse.current.x + Math.round(cam.x); i.my = mouse.current.y + Math.round(cam.y); i.viewX=Math.round(cam.x); i.viewY=Math.round(cam.y);
+      const i = inp.current; i.mx = mouse.current.x + Math.round(cam.x); i.my = mouse.current.y + Math.round(cam.y); i.viewX=Math.round(cam.x)+viewInsetX(); i.viewY=Math.round(cam.y)+viewInsetY();   // "in view" for game rules is the 640x360 frame, whatever the window shows
       let simDt = dt; if (hitstop.current > 0) { hitstop.current -= dt; simDt = dt * 0.08; }
       const phaseBefore = phaseOf(gs.run, now);
       const wasDead = gs.run.player.dead;
@@ -562,12 +570,13 @@ export default function Game({
       target.current = findInteract(gs, now);
       pfx.update(simDt,now);vfxDirector.update(simDt);pfx.tickStats(dt);
       consumeFX(e => { if(!vfxDirector.onEvent(e,gs)) pfxFromSimEvent(e); sfx(e); if(e.type==='spiritDepart'){spiritTarget.current=null;setToasts(t=>t.filter(v=>!v.text.startsWith('Destination set.')));toast('Departed. The cart stays behind.');} else if(e.type==='spiritArrive'){setToasts(t=>t.filter(v=>!v.text.startsWith('Destination set.')&&!v.text.startsWith('Departed.')));toast('Arrived — Signature charge spent.','ok');scheduleSave();} else if (e.type === 'toast') toast(e.text); else if (e.type === 'hitstop') hitstop.current = Math.max(hitstop.current, e.ms); else if (e.type === 'banner') setBanner({ text: e.text, sub: e.sub, id: now }); else if (e.type === 'discover') setBanner({ text: e.name, sub: 'Discovered', id: now }); else if (e.type === 'region') setBanner(b => (b && now - b.id < 2500 ? b : { text: e.name, id: now })); else if (e.type === 'pickup') { fieldActionsRef.current.add('harvested'); scheduleSave(); } else if (e.type === 'struct.destroyed') scheduleSave(); });
+      keepCrisp();
       if (!playerAtSea(gs.run)) draw(g, gs, now, dt, { buildType: buildRef.current, reclaim: reclaimRef.current || repairRef.current || upgradeRef.current, mouseX: i.mx, mouseY: i.my, target: target.current, time: t, working: panelRef.current?.kind === 'container' });
       // close container panels when walking away
       const P = panelRef.current; if (P?.eid && gs.run.entities[P.eid]) { const e = gs.run.entities[P.eid]; if ((Math.hypot(e.x - gs.run.player.x, e.y - gs.run.player.y) > 3.4 * TILE || (e.kind === 'struct' && !clearWallLine(gs.run, gs.run.player, e)))) setPanel(null); } else if (P?.eid && !gs.run.entities[P.eid]) setPanel(null);
       // VISUAL ARENA audio: listener follows the camera; music is scheduled at
       // 10 Hz and ambience/machines/mood are re-derived at 1 Hz from real state.
-      setListener(cam.x + VIEW_W / 2, cam.y + VIEW_H / 2);
+      setListener(cam.x + viewInsetX() + VIEW_W / 2, cam.y + viewInsetY() + VIEW_H / 2);
       uiAcc += dt; if (uiAcc > 100) { uiAcc = 0; rerender(); tickMusic(now); }
       { const clock = performance.now(); frameGap += (Math.min(250, clock - frameAt) - frameGap) * 0.05; frameAt = clock; }   // smoothed real time between frames; above ~20 ms the game is missing its frame rate
       prebuildAcc += dt; if (prebuildAcc > 1000) { prebuildAcc = 0; prebuildRegions(gs.run, now, frameGap > 20); }
@@ -743,7 +752,7 @@ export default function Game({
 
   if (import.meta.env.VITE_SOH_QA === '1') (window as any).__soh = gs; // QA builds only: mutable state reference for drivers
   // QA read-only view: camera + stage transform + current interaction target (lets a driver aim the real mouse). No authority.
-  (window as any).__sohView = () => ({ regions: regionPrebuildStats(), lastSave: lastSaveOutcome(), cam: { x: cam.x, y: cam.y }, scale: scaleRef.current, off: offRef.current, target: target.current ? { kind: target.current.kind, label: target.current.label, eid: target.current.eid ?? null } : null });
+  (window as any).__sohView = () => ({ regions: regionPrebuildStats(), lastSave: lastSaveOutcome(), cam: { x: cam.x, y: cam.y }, view: { w: viewW, h: viewH }, ruleFrame: { x: inp.current.viewX, y: inp.current.viewY, w: VIEW_W, h: VIEW_H }, scale: scaleRef.current, off: offRef.current, target: target.current ? { kind: target.current.kind, label: target.current.label, eid: target.current.eid ?? null } : null });
   // QA fixture passthrough: used ONLY by disclosed browser fixtures (pack filling, cart placement). Gameplay still goes through dispatch.
   if (import.meta.env.VITE_SOH_QA === '1') (window as any).__sohQA = { // QA builds only: fixture helpers (all mutations via engine rules)
     act: (type: string, payload: Record<string, any> = {}) => act(type, payload),
@@ -775,6 +784,14 @@ export default function Game({
     hurtWarnAt.current = t; setHurtBehindPanel(t);
     toast('You are losing health. The world does not stop while this is open: press Esc.', 'bad');
   });
+  // The destination picked on the chart [M]: shown while walking, put away on arrival.
+  const dest = r ? destinationView(r, qaMode) : null;
+  const destArrived = !!dest?.arrived && !!r && !r.player.dead;
+  useEffect(() => {
+    if (!destArrived || !dest || !r) return;
+    storeDestination(r, qaMode, null);
+    toast(`Arrived: ${dest.place.name}`, 'ok');
+  }, [destArrived]);
   if (!r || !fieldEval) return <div className="stage" />;
   const p = r.player, ph = phaseOf(r, now); const day = Math.floor(hrs / 24) + 1;
   const dtm = dayTime(r, now); const clock = `${String(Math.floor(dtm * 24)).padStart(2, '0')}:${String(Math.floor((dtm * 24 % 1) * 60)).padStart(2, '0')}`;
@@ -853,8 +870,8 @@ export default function Game({
 
   const voyage = playerVoyage(r);
   return <div style={{ position: 'fixed', inset: 0, cursor: buildType || reclaim || repairMode || upgradeMode ? 'cell' : 'crosshair' }} onMouseMove={onMouseMove} onMouseDown={onMouseDown} onMouseUp={onMouseUp} onContextMenu={e => e.preventDefault()}>
-    <div ref={stageRef} className={`stage ${touchOn ? 'stage--touch' : ''}`} style={{ transform: `translate(${off.x}px, ${off.y}px) scale(${scale})`, '--hud-zoom': resolveHudScale(scale, vp, touchOn) } as React.CSSProperties}>
-      <canvas ref={cvRef} className="px" width={VIEW_W} height={VIEW_H} style={{ width: VIEW_W, height: VIEW_H, imageRendering: 'pixelated' }} />
+    <div ref={stageRef} className={`stage ${touchOn ? 'stage--touch' : ''}`} data-view={`${view.w}x${view.h}`} style={{ width: view.w, height: view.h, transform: `translate(${off.x}px, ${off.y}px) scale(${scale})`, '--hud-zoom': resolveHudScale(scale, vp, touchOn) } as React.CSSProperties}>
+      <canvas ref={cvRef} className="px" width={view.w} height={view.h} style={{ width: view.w, height: view.h, imageRendering: 'pixelated' }} />
       {voyage ? <VoyageView trip={voyage} at={r.clock.lastSimAt} onMenu={()=>setPanel({kind:'menu'})} /> : <>
       {touchOn && !p.dead && !qaOpen && <TouchControls api={touchApi} panelOpen={!!panel} building={buildMode || !!buildType || reclaim || repairMode || upgradeMode} useLabel={tgt?.label ?? (nearStair ? nearStair.stair.label : null)} />}
       {criticalEdge && <div className={`danger-vignette ${vp.reduceFlash ? 'soft' : ''}`} aria-hidden="true" />}
@@ -892,7 +909,7 @@ export default function Game({
         {!panel && !combatFocus && <RagnarokStrip r={r} now={now} secured={gs.profile.securedCash} />}
         {!panel && !qaOpen && returnDigest && <ReturnDigest report={returnDigest} onExpand={() => { setPanel({ kind: 'report', lines: [], report: returnDigest }); setReturnDigest(null); }} onDismiss={() => setReturnDigest(null)} />}
         {contextCard === 'home' && <HomeStatusCard r={r} px={p.x} py={p.y} inline />}
-        {wmVisible && !panel && <Waymark touch={touchOn} view={trackView} mode={wmMode} store={journey} stamp={activeStamp} blocked={blocked} lang={lang} onToggle={() => setPeek(v => !v)} onUntrack={() => track(null)} onOpenJournal={() => setPanel({ kind: 'journey' })} onJump={handleJump} />}
+        {wmVisible && !panel && <Waymark touch={touchOn} brief={buildMode} view={trackView} mode={wmMode} store={journey} stamp={activeStamp} blocked={blocked} lang={lang} onToggle={() => setPeek(v => !v)} onUntrack={() => track(null)} onOpenJournal={() => setPanel({ kind: 'journey' })} onJump={handleJump} />}
         {!panel && !buildMode && !combatFocus && !qaOpen && !returnDigest && !touchOn && contextCard !== 'home' && fieldEval.active && !activeStamp && wmMode !== 'open' && !(trackView && ['first_landfall', 'pack_and_craft'].includes(fieldEval.active.id)) && (
           <FieldNoteCard
             note={fieldEval.active}
@@ -920,13 +937,14 @@ export default function Game({
 
       <FieldPickupLayer items={fieldPickups} camX={Math.round(cam.x)} camY={Math.round(cam.y)} />
       {showBeacon && <WorldBeacon target={anchor} camX={Math.round(cam.x)} camY={Math.round(cam.y)} icon={trackView!.icon} />}
+      {wmVisible && !panel && !engaged && !cine0 && dest && !dest.arrived && <DestinationBeacon dest={dest} camX={Math.round(cam.x)} camY={Math.round(cam.y)} />}
       <FlareLayer flares={flares} camX={Math.round(cam.x)} camY={Math.round(cam.y)} />
       {cine0 && !combatFocus && gateRef.current.cine && <CinematicLayer c={cine0} compact={false} reduceMotion={vp.reduceFlash} onDone={() => setCines(c => c.slice(1))} />}
-      {coreAim && ['core_meteor','core_dragon','core_elsa'].includes(activeStack(r)?.key||'') && coreAim.mode==='signature' && <svg className="absolute" width={VIEW_W} height={VIEW_H} style={{left:0,top:0,pointerEvents:'none'}}><rect x="2" y="2" width={VIEW_W-4} height={VIEW_H-4} fill="none" stroke="#ffd98a" strokeDasharray="4 3"/></svg>}
-      {coreAim && !(activeStack(r)?.key==='core_demon' && coreAim.mode==='signature') && !(['core_meteor','core_dragon','core_elsa'].includes(activeStack(r)?.key||'') && coreAim.mode==='signature') && (()=>{const px=p.x-Math.round(cam.x),py=p.y-Math.round(cam.y),len=rayLen(r,p.x,p.y,p.aim,['core_meteor','core_dragon','core_elsa'].includes(activeStack(r)?.key||'')?Math.min(activeStack(r)?.key==='core_meteor'?180:157,Math.hypot(mouse.current.x+Math.round(cam.x)-p.x,mouse.current.y+Math.round(cam.y)-p.y)):coreAim.mode==='refined'?120:195);return <svg className="absolute" width={VIEW_W} height={VIEW_H} style={{left:0,top:0,pointerEvents:'none'}}><line x1={px} y1={py} x2={px+Math.cos(p.aim)*len} y2={py+Math.sin(p.aim)*len} stroke="#ffd98a" strokeWidth="1" strokeDasharray="4 3"/><circle cx={px+Math.cos(p.aim)*len} cy={py+Math.sin(p.aim)*len} r="4" fill="none" stroke="#ffd98a"/></svg>;})()}
+      {coreAim && ['core_meteor','core_dragon','core_elsa'].includes(activeStack(r)?.key||'') && coreAim.mode==='signature' && <svg className="absolute" data-testid="signature-frame" width={view.w} height={view.h} style={{left:0,top:0,pointerEvents:'none'}}><rect x={insetX+2} y={insetY+2} width={VIEW_W-4} height={VIEW_H-4} fill="none" stroke="#ffd98a" strokeDasharray="4 3"/></svg>}
+      {coreAim && !(activeStack(r)?.key==='core_demon' && coreAim.mode==='signature') && !(['core_meteor','core_dragon','core_elsa'].includes(activeStack(r)?.key||'') && coreAim.mode==='signature') && (()=>{const px=p.x-Math.round(cam.x),py=p.y-Math.round(cam.y),len=rayLen(r,p.x,p.y,p.aim,['core_meteor','core_dragon','core_elsa'].includes(activeStack(r)?.key||'')?Math.min(activeStack(r)?.key==='core_meteor'?180:157,Math.hypot(mouse.current.x+Math.round(cam.x)-p.x,mouse.current.y+Math.round(cam.y)-p.y)):coreAim.mode==='refined'?120:195);return <svg className="absolute" width={view.w} height={view.h} style={{left:0,top:0,pointerEvents:'none'}}><line x1={px} y1={py} x2={px+Math.cos(p.aim)*len} y2={py+Math.sin(p.aim)*len} stroke="#ffd98a" strokeWidth="1" strokeDasharray="4 3"/><circle cx={px+Math.cos(p.aim)*len} cy={py+Math.sin(p.aim)*len} r="4" fill="none" stroke="#ffd98a"/></svg>;})()}
 
       {/* interaction prompt */}
-      {(tgt || nearStair || nearAnimal) && ts && !panel && !buildMode && <div className="prompt absolute" style={{ left: Math.max(60, Math.min(VIEW_W - 60, Math.round(ts.x))), top: Math.round(ts.y) - 34, transform: 'translateX(-50%)', pointerEvents: 'none' }}>
+      {(tgt || nearStair || nearAnimal) && ts && !panel && !buildMode && <div className="prompt absolute" style={{ left: Math.max(60, Math.min(view.w - 60, Math.round(ts.x))), top: Math.round(ts.y) - 34, transform: 'translateX(-50%)', pointerEvents: 'none' }}>
         {/* E interacts unless a Creator Core is in hand (then E casts); F always interacts. Show the key the handbook teaches whenever it works. */}
         <span className="key">{bike ? 'F' : tgt || nearStair ? (ITEMS[activeStack(r)?.key || '']?.creatorCore ? 'F' : 'E') : 'T'}</span>
         {tgt ? tgt.label : nearStair ? nearStair.stair.label : (() => { const sexSym = (nearAnimal!.husbandry?.sex ?? deterministicAnimalSex(nearAnimal!.id)) === 'f' ? '♀' : '♂'; const spName = CREATURES[nearAnimal!.type]?.name || nearAnimal!.type; return nearAnimal!.husbandry?.tamed ? `${nearAnimal!.husbandry.following ? 'Release' : 'Lead'} ${sexSym} ${nearAnimal!.husbandry.stage === 'juvenile' ? 'Juvenile ' : ''}${spName} (${nearAnimal!.husbandry.penned ? 'Penned' : 'Open'} · FD ${Math.round(nearAnimal!.husbandry.hunger)}%) · [Shift+T] Butcher` : `Feed ${spName} (${sexSym})`; })()}
@@ -935,7 +953,7 @@ export default function Game({
       </div>}
 
       {/* build helper */}
-      {!buildMode && (buildType || reclaim || repairMode || upgradeMode) && <div className="panel absolute" style={{ left: 145, bottom: 38, width: 350, padding: '3px 6px', fontSize: 11, textAlign: 'center',lineHeight:1.1 }} onMouseDown={e => e.stopPropagation()}>{buildType ? <><b style={{color:'#ffd98a'}}>Place {STRUCTS[buildType].name}</b> · {(STRUCTS[buildType].item ? [[STRUCTS[buildType].item!,1] as [string,number]] : STRUCTS[buildType].cost).map(([k,q])=>`${ITEMS[k].name} ${countItem(r,'inv',k)}/${q}`).join(' · ')}<br/><span style={{color:placementReason?'#ff9a8a':'#9ae0a0'}}>{placementReason ? placeHint(placementReason) : (buildType==='claim'?'Placement allowed':claimAt(r,hoverX,hoverY)?`Placement allowed · cabinet coverage ${territoryForecast(r,claimAt(r,hoverX,hoverY)!).funded?'funded':'unfunded'}`:`Placement allowed · unprotected, decays in ~${BAL.territory.unprotectedCollapseHours}h`)} · RMB/Esc stop</span></> : <><b>{upgradeMode?'Upgrade':repairMode?'Repair':'Dismantle'}</b> · G layer: {editLayer} · RMB/Esc stop<br/>{hover ? <span>{STRUCTS[hover.type!].name} · HP {Math.ceil(hover.hp||0)}/{hover.maxHp} · {hover.owner && hover.owner!=='player'?'not owned':'owned'}{upgradeMode && STRUCTURE_UPGRADES[hover.type!] ? ` → ${STRUCTS[STRUCTURE_UPGRADES[hover.type!]].name}: ${STRUCTS[STRUCTURE_UPGRADES[hover.type!]].cost.map(([k,q])=>`${ITEMS[k].name} ${countItem(r,'inv',k)}/${q}`).join(', ')}` : ''}{repairMode ? ` · Repair: ${STRUCTS[hover.type!].cost.map(([k,q])=>`${ITEMS[k].name} ${countItem(r,'inv',k)}/${Math.max(1,Math.ceil(q/4))}`).join(', ')}` : ''}{reclaim ? ` · Refund: ${STRUCTS[hover.type!].item ? ITEMS[STRUCTS[hover.type!].item!].name : STRUCTS[hover.type!].cost.map(([k,q])=>`${ITEMS[k].name} ${Math.floor(q*BAL.economy.reclaimRefund)}`).join(', ')}` : ''}</span> : 'Point at a structure; click to act.'}</>}</div>}
+      {!buildMode && (buildType || reclaim || repairMode || upgradeMode) && <div className="panel absolute" style={{ left: '50%', marginLeft: -175, bottom: 38, width: 350, padding: '3px 6px', fontSize: 11, textAlign: 'center',lineHeight:1.1 }} onMouseDown={e => e.stopPropagation()}>{buildType ? <><b style={{color:'#ffd98a'}}>Place {STRUCTS[buildType].name}</b> · {(STRUCTS[buildType].item ? [[STRUCTS[buildType].item!,1] as [string,number]] : STRUCTS[buildType].cost).map(([k,q])=>`${ITEMS[k].name} ${countItem(r,'inv',k)}/${q}`).join(' · ')}<br/><span style={{color:placementReason?'#ff9a8a':'#9ae0a0'}}>{placementReason ? placeHint(placementReason) : (buildType==='claim'?'Placement allowed':claimAt(r,hoverX,hoverY)?`Placement allowed · cabinet coverage ${territoryForecast(r,claimAt(r,hoverX,hoverY)!).funded?'funded':'unfunded'}`:`Placement allowed · unprotected, decays in ~${BAL.territory.unprotectedCollapseHours}h`)} · RMB/Esc stop</span></> : <><b>{upgradeMode?'Upgrade':repairMode?'Repair':'Dismantle'}</b> · G layer: {editLayer} · RMB/Esc stop<br/>{hover ? <span>{STRUCTS[hover.type!].name} · HP {Math.ceil(hover.hp||0)}/{hover.maxHp} · {hover.owner && hover.owner!=='player'?'not owned':'owned'}{upgradeMode && STRUCTURE_UPGRADES[hover.type!] ? ` → ${STRUCTS[STRUCTURE_UPGRADES[hover.type!]].name}: ${STRUCTS[STRUCTURE_UPGRADES[hover.type!]].cost.map(([k,q])=>`${ITEMS[k].name} ${countItem(r,'inv',k)}/${q}`).join(', ')}` : ''}{repairMode ? ` · Repair: ${STRUCTS[hover.type!].cost.map(([k,q])=>`${ITEMS[k].name} ${countItem(r,'inv',k)}/${Math.max(1,Math.ceil(q/4))}`).join(', ')}` : ''}{reclaim ? ` · Refund: ${STRUCTS[hover.type!].item ? ITEMS[STRUCTS[hover.type!].item!].name : STRUCTS[hover.type!].cost.map(([k,q])=>`${ITEMS[k].name} ${Math.floor(q*BAL.economy.reclaimRefund)}`).join(', ')}` : ''}</span> : 'Point at a structure; click to act.'}</>}</div>}
 
       {/* cargo + bottom-left event feed */}
       {(bike || cart) && !fullScreen && <div className="hud" style={{ left: 4, bottom: 32 }} onMouseDown={e => e.stopPropagation()}><RigStatus r={r} /></div>}
@@ -955,6 +973,10 @@ export default function Game({
       </div>
 
       {/* panels: a panel that throws is closed with a notice; the island keeps running underneath */}
+      {/* Panels are laid out for 640x360: they live in a frame of that size in the middle of the view, so a wider
+          window never moves or stretches them. A full-screen panel gets a dark surround instead of a strip of world. */}
+      {fullScreen && (insetX > 0 || insetY > 0) && <div className="stage-scrim" aria-hidden="true" />}
+      <div className="stage-frame" data-testid="stage-frame">
       <PanelGuard resetKey={panel ? `${panel.kind}:${panel.eid ?? panel.actorId ?? ''}` : ''} onError={() => { setPanel(null); toast('That panel could not be shown and was closed. Your game is still running.', 'bad'); }}>
       {(panel?.kind === 'inv' || panel?.kind === 'craft') && <SurvivorScreen api={api} initial="all" initialView={panel.kind === 'craft' ? 'work' : 'pack'} focusRecipe={panel.recipe} />}
       {panel?.kind === 'container' && panel.eid && <ContainerPanel api={api} eid={panel.eid} />}
@@ -987,6 +1009,7 @@ export default function Game({
       {panel?.kind === 'evac' && panel.eid && <EvacPanel api={api} eid={panel.eid} />}
       {panel?.kind === 'human' && panel.actorId && <HumanPanel key={panel.actorId} api={api} actorId={panel.actorId} onClose={() => setPanel(null)} />}
       </PanelGuard>
+      </div>
 
       <DragGhost />
       {p.dead && <DeathRecoveryOverlay gs={gs} onRespawn={() => act('respawn')} />}
@@ -1013,10 +1036,12 @@ export default function Game({
         onClose={() => setQaOpen(false)}
       />}
       </>}
+      <div className="stage-frame">
       {panel?.kind === 'report' && <ReportPanel api={api} lines={panel.lines || []} report={panel.report ?? null} history={returnHistory} />}
       {panel?.kind === 'menu' && <MenuPanel api={api} qaMode={qaMode} returnHistory={returnHistory} onSave={() => qaMode ? Promise.resolve(false) : save(gs)} onQuit={async () => { if (qaMode) { onExit(); return; } if (await save(gs)) onExit(); else toast('Save failed; staying in the run.', 'bad'); }} />}
+      </div>
     </div>
-    {import.meta.env.VITE_FX_TEST === '1' && <SpiritVfxEditor gs={gs} top={off.y + Math.round(62 * scale) + 4} right={Math.max(0, window.innerWidth - off.x - VIEW_W * scale) + 8} viewport={{left:off.x,top:off.y,scale,width:VIEW_W,height:VIEW_H}} />}
+    {import.meta.env.VITE_FX_TEST === '1' && <SpiritVfxEditor gs={gs} top={off.y + Math.round(62 * scale) + 4} right={Math.max(0, window.innerWidth - off.x - view.w * scale) + 8} viewport={{left:off.x,top:off.y,scale,width:view.w,height:view.h}} />}
   </div>;
 }
 void HOUR; void CREATURES;

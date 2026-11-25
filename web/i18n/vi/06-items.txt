@@ -354,7 +354,6 @@ clear => trời quang
 Cab => Tủ
 SFX => Tiếng
 Map => Bản đồ
-The whole continent. Only what you have charted is drawn. => Toàn bộ lục địa. Chỉ vẽ những nơi bạn đã đi qua.
 (shown on the World view) => (hiện ở chế độ Thế giới)
 Basement {n} => Tầng hầm {1}
 

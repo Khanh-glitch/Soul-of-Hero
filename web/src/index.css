@@ -63,10 +63,17 @@ body {
 }
 /* No ligatures: the Pixelify "fi" ligature reads as a capital A ("find" looked like "And", "filter" like "Alter").
    Form controls reset font-variant through the UA `font` shorthand, hence the universal selector. */
-*, *::placeholder { font-variant-ligatures: none; }
+*, *::placeholder { font-variant-ligatures: none !important; }
 canvas { image-rendering: pixelated; image-rendering: crisp-edges; display: block; }
 img.px { image-rendering: pixelated; image-rendering: crisp-edges; }
 .stage { position: absolute; left: 0; top: 0; width: 640px; height: 360px; transform-origin: 0 0; overflow: hidden; }
+/* The view can be wider or taller than 640x360 (it takes the window's shape). Panels keep their 640x360 layout
+   inside this centred frame; the frame itself is not a surface, so the HUD and the world under it stay clickable.
+   :where() keeps the rule weaker than any class, so a panel that turns pointer events off itself still wins. */
+.stage-frame { position: absolute; left: 50%; top: 50%; width: 640px; height: 360px; margin: -180px 0 0 -320px; pointer-events: none; }
+:where(.stage-frame > *) { pointer-events: auto; }
+/* No z-index on purpose: it sits just under the panels (which follow it), like a panel without one. */
+.stage-scrim { position: absolute; inset: 0; background: rgba(5,7,10,.94); pointer-events: none; }
 .title-font { font-family: var(--f-lbl); }
 .lbl { font-family: var(--f-lbl); letter-spacing: .3px; }
 
@@ -600,20 +607,24 @@ input::placeholder { color: #566872; }
 /* ==========================================================================
    BUILD MODE BAR — replaces the hotbar while building
    ========================================================================== */
-.buildbar { display: flex; flex-direction: column; align-items: center; gap: 3px; }
-.buildbar__status { display: inline-flex; align-items: center; gap: 5px; padding: 2px 8px 3px; font-family: var(--f-lbl); font-size: 9px; background: rgba(8,11,14,.92); box-shadow: inset 0 0 0 1px var(--edge), 0 2px 0 #04060a; color: var(--paper); }
+.buildbar { display: flex; flex-direction: column; align-items: stretch; gap: 3px; }
+.buildbar__status { display: flex; align-items: center; gap: 5px; width: 0; min-width: 100%; box-sizing: border-box; padding: 2px 8px 3px; font-family: var(--f-lbl); font-size: 9px; background: rgba(8,11,14,.92); box-shadow: inset 0 0 0 1px var(--edge), 0 2px 0 #04060a; color: var(--paper); }
 .buildbar__status.ok { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--good) 60%, var(--edge)), 0 2px 0 #04060a; }
 .buildbar__status.no { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--bad) 70%, var(--edge)), 0 2px 0 #04060a; }
-.buildbar__status b { color: var(--brassLit); }
-.buildbar__status span { display: inline-flex; align-items: center; gap: 1px; }
+.buildbar__status b { color: var(--brassLit); white-space: nowrap; }
+.buildbar__status span { display: inline-flex; align-items: center; gap: 1px; white-space: nowrap; }
+.buildbar__status > * { flex: none; }
+.buildbar__status .buildbar__reason { flex: 1 1 0; min-width: 0; display: block; white-space: normal; line-height: 1.15; }
 .buildbar__status span.ok { color: var(--good); } .buildbar__status span.no { color: var(--bad); }
 .buildbar__status .sep { width: 1px; height: 9px; background: var(--edge); }
 .buildbar__status.no .buildbar__reason { color: var(--bad); } .buildbar__status.ok .buildbar__reason { color: var(--muted); }
-.buildbar__pages { display:flex; align-items:center; justify-content:center; flex-wrap:nowrap; gap:3px; max-width:600px; padding:2px 5px; background:rgba(6,10,13,.93); border:1px solid rgba(115,135,141,.3); }
-.buildbar__pages button { font-family: var(--f-lbl); font-size:9px; padding:2px 8px; color:var(--paper); background:#1a242b; border:1px solid #46525b; cursor:pointer; }
+/* tabs and slots share one frame: the tab strip is the head of the slot row, not a bar of its own */
+.buildbar__frame { display:flex; flex-direction:column; align-items:stretch; }
+.buildbar__pages { display:flex; align-items:center; justify-content:flex-start; flex-wrap:nowrap; gap:3px; padding:3px 3px 2px; border-bottom:1px solid rgba(57,70,79,.75); }
+.buildbar__pages button { flex:none; white-space:nowrap; font-family: var(--f-lbl); font-size:9px; padding:2px 8px; color:var(--paper); background:#1a242b; border:1px solid #46525b; cursor:pointer; }
 .buildbar__pages button.on { color:var(--brassLit); border-color:var(--brassLit); background:#332917; }
 .buildbar__pages small { font-size:8px; color:var(--muted); }
-.buildbar__pages-hint { font-size:8px; color:var(--muted); padding:0 4px; white-space:nowrap; }
+.buildbar__pages-hint { font-size:8px; color:var(--muted); padding:0 4px; margin-left:auto; white-space:nowrap; min-width:0; overflow:hidden; text-overflow:ellipsis; }
 @media(max-width:580px) { .buildbar__pages-hint { display:none; } .buildbar__pages button { padding:2px 5px; } }
 .buildbar__row { display: flex; align-items: center; gap: 2px; padding: 3px; }
 .bslot { position: relative; width: 24px; height: 24px; display: grid; place-items: center; padding: 0; background: linear-gradient(180deg, #0c1014, #151b21); border: 1px solid #05070a; box-shadow: inset 0 0 0 1px rgba(57,70,79,.6); cursor: pointer; transition: transform var(--t-fast) linear; }
@@ -897,6 +908,30 @@ div.map-row--mark { flex-direction: row; align-items: center; padding: 0; }
 .map-inspector__tag, .map-inspector__status { font-size: 9px; line-height: 1.25; }
 .map-inspector__tag { padding: 4px 5px; }
 .map-gate span, .map-gate small { font-size: 9px; line-height: 1.3; }
+/* Atlas: named places known from the start, and the chosen destination */
+.map-place { display: flex; flex-direction: column; gap: 3px; }
+.map-place + .map-inspector__head, .map-place + .map-inspector__fog { border-top: 1px solid #2d3d43; padding-top: 4px; }
+.map-inspector__head span em, .map-row span em { font-style: normal; }
+.map-place__blurb { font: 9px var(--f-lbl); line-height: 1.35; color: #e4e9dc; }
+.map-place__blurb--dim { color: #9fb0ae; }
+.map-place__actions { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 1px; }
+.map-place__actions .btn { font-size: 9px; min-height: 18px; padding: 2px 6px 3px; }
+.map-row--place b { display: flex; align-items: baseline; gap: 4px; }
+.map-row--place b i { flex: none; align-self: center; }
+/* Marks and direction are drawn, not typed: the label fonts lack ○, ➤ and the diagonal arrows. */
+.pm { display: inline-block; box-sizing: border-box; width: 6px; height: 6px; border: 1px solid currentColor; border-radius: 50%; vertical-align: middle; }
+.pm--seen { background: currentColor; }
+.pm--dest { width: 0; height: 0; border: 0; border-radius: 0; border-left: 6px solid #9fe8ff; border-top: 3px solid transparent; border-bottom: 3px solid transparent; }
+.dir-arrow { display: inline-block; margin: 0 1px 0 3px; vertical-align: -1px; }
+.map-row--place b span { font-size: inherit; color: inherit; }
+.map-row--place > span { padding-left: 10px; }
+.map-row--place.is-dest { background: rgba(60, 120, 140, .28); box-shadow: inset 2px 0 0 #9fe8ff; }
+.map-row--more { color: #9fe8ff; font-size: 8px; text-align: center; align-items: center; }
+.map-list__head { font: 8px var(--f-lbl); letter-spacing: .6px; text-transform: uppercase; color: #8fa3a2; padding: 5px 2px 2px; border-bottom: 1px solid #35444a; }
+.chart-dest-pill { position: absolute; left: 5px; bottom: 5px; max-width: 300px; display: flex; align-items: baseline; gap: 4px; padding: 2px 6px 3px; background: rgba(8, 26, 34, .92); border: 1px solid #9fe8ff; color: #e6fbff; font: 9px var(--f-lbl); cursor: pointer; z-index: 2; }
+.chart-dest-pill i { flex: none; align-self: center; }
+.chart-dest-pill span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.chart-dest-pill em { font-style: normal; color: #a9d6e2; white-space: nowrap; }
 .map-tabs button { min-height: 21px; font-size: 10px; }
 .map-tabs button:hover, .map-tabs button:focus-visible { background: #31444a; outline: 1px solid #d8bd82; outline-offset: -2px; }
 .map-row { padding: 5px 6px; gap: 2px; border-bottom: 1px solid #3f5559; }
@@ -1015,3 +1050,6 @@ div.map-row--mark { flex-direction: row; align-items: center; padding: 0; }
 .scroll-more::after { content: ''; display: inline-block; margin-left: 5px; border: 3px solid transparent; border-top-color: currentColor; border-bottom: 0; vertical-align: middle; }
 .scroll-more { position: sticky; bottom: 0; flex: 0 0 auto; width: 100%; padding: 2px 4px 3px; font: 700 8px var(--f-lbl); letter-spacing: .04em; color: #1a1206; background: linear-gradient(180deg, var(--brassLit), var(--brass)); border: 1px solid #05070a; cursor: pointer; text-align: center; }
 .stage--touch .scroll-more { min-height: 20px; font-size: 9px; }
+
+/* build mode: the open waymark keeps what to do and drops why / reward, so it ends above the build bar */
+.wm--brief .wm__why, .wm--brief .wm__reward { display: none; }

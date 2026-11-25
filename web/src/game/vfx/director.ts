@@ -7,7 +7,8 @@
 // ============================================================================
 import * as S from './stage';
 import type { Inst, Pt } from './stage';
-import { BAL, VIEW_W, VIEW_H } from '../core';
+import { BAL } from '../core';
+import { viewW, viewH } from '../viewport';
 
 type Any = any;
 const TAU = Math.PI * 2;
@@ -18,7 +19,8 @@ const W = (id: string) => { const f = S.def(id); return f.core[2] - f.core[0]; }
 /** keep side-view "eruption line" art upright: mirror for leftward aims, clamp tilt */
 function upr(a: number) { const left = Math.cos(a) < 0; let t = left ? Math.PI - a : a; t = Math.atan2(Math.sin(t), Math.cos(t)); t = Math.max(-0.7, Math.min(0.7, t)); return { angle: left ? -t : t, flipX: left }; }
 const slam = (x: number, y: number, px: number, to = 1500) => S.fx('impacts/ground-slam', { x, y, layer: 'floor', scale: S.fit('impacts/ground-slam', px), to, fadeOut: 450 });
-const impactFrame = (a: number) => S.fx('impacts/impact-frame', { x: VIEW_W / 2, y: VIEW_H / 2, layer: 'screen', scale: 2, alpha: a });
+// The impact frame is a 320 x 180 picture: scaled to cover the whole view (2 on the 640 x 360 stage), centred.
+const impactFrame = (a: number) => S.fx('impacts/impact-frame', { x: viewW / 2, y: viewH / 2, layer: 'screen', scale: Math.max(viewW / 320, viewH / 180), alpha: a });
 
 // ---- tracked state --------------------------------------------------------------
 interface ProjT { kind: string; x: number; y: number; vx: number; vy: number; seen: number; own: boolean; insts: Inst[]; done: boolean; gone: boolean; next: number }

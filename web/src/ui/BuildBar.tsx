@@ -24,14 +24,6 @@ export function BuildBar({ gs, tool, onPick, hoverX, hoverY }: {
   const page=Object.entries(BUILD_PAGES).find(([,xs])=>(xs as readonly string[]).includes(tool))?.[0] ?? 'Foundation';
   const shown=BUILD_PAGES[page as keyof typeof BUILD_PAGES];
   return <div className="buildbar" data-testid="pa1-expanded-buildbar">
-    <div className="buildbar__pages" role="group" aria-label="Building geometry categories">
-      {Object.entries(BUILD_PAGES).map(([name,parts])=><button
-        key={name} type="button" className={page===name?'on':''}
-        title={name+' · '+parts.length+' build shapes'}
-        onClick={()=>onPick(parts[0] as BuildTool)}
-      >{name} <small>{parts.length}</small></button>)}
-      <span className="buildbar__pages-hint">Wooden pieces only · upgrade at Cabinet</span>
-    </div>
     {d && <div className={`buildbar__status ${reason?'no':'ok'}`}>
       <b>{d.name}</b>
       {d.cost.map(([i,n])=><span key={i} className={have(i)>=n?'ok':'no'} title={ITEMS[i].name}>
@@ -43,21 +35,32 @@ export function BuildBar({ gs, tool, onPick, hoverX, hoverY }: {
     {!d && <div className="buildbar__status ok"><b>{tool==='upgrade'?'Upgrade':tool==='repair'?'Repair':'Dismantle'}</b>
       <span className="buildbar__reason">point at a placed structure · G layer · cabinet required for upgrades</span>
     </div>}
-    <div className="plate buildbar__row">
-      {shown.map((key,i)=>{
-        const d=STRUCTS[key],affordable=d.cost.every(([item,n])=>have(item)>=n);
-        return <button key={key} className={`bslot ${tool===key?'on':''} ${affordable?'':'no'}`}
-          onClick={()=>onPick(key as BuildTool)}
-          title={`[${KEYS[i]}] ${d.name} — needs: ${d.cost.map(([item,n])=>ITEMS[item].name+' ×'+n).join(', ')}`}>
-          <span className="bslot__key">{KEYS[i]}</span><img className="px" src={iconUrl('st:'+key)} alt={d.name}/>
-        </button>;
-      })}
-      <i className="buildbar__div"/>
-      {([['upgrade','U','⬆'],['repair','V','⚒'],['reclaim','X','✂']] as const).map(([t,k,g])=>
-        <button key={t} className={`bslot mode ${tool===t?'on':''}`} onClick={()=>onPick(t)}
-          title={t==='upgrade'?'Upgrade a placed structure [U]':t==='repair'?'Repair a placed structure [V]':'Dismantle a placed structure [X]'}><span className="bslot__key">{k}</span><span className="bslot__glyph">{g}</span></button>
-      )}
-      <span className="buildbar__exit"><span className="key">B</span>exit</span>
+    {/* One frame: the three category tabs sit directly on the slots they switch, so the bar reads as one tool. */}
+    <div className="plate buildbar__frame">
+      <div className="buildbar__pages" role="group" aria-label="Building geometry categories">
+        {Object.entries(BUILD_PAGES).map(([name,parts])=><button
+          key={name} type="button" className={page===name?'on':''}
+          title={name+' · '+parts.length+' build shapes'}
+          onClick={()=>onPick(parts[0] as BuildTool)}
+        >{name} <small>{parts.length}</small></button>)}
+        <span className="buildbar__pages-hint">Wooden pieces only · upgrade at Cabinet</span>
+      </div>
+      <div className="buildbar__row">
+        {shown.map((key,i)=>{
+          const d=STRUCTS[key],affordable=d.cost.every(([item,n])=>have(item)>=n);
+          return <button key={key} className={`bslot ${tool===key?'on':''} ${affordable?'':'no'}`}
+            onClick={()=>onPick(key as BuildTool)}
+            title={`[${KEYS[i]}] ${d.name} — needs: ${d.cost.map(([item,n])=>ITEMS[item].name+' ×'+n).join(', ')}`}>
+            <span className="bslot__key">{KEYS[i]}</span><img className="px" src={iconUrl('st:'+key)} alt={d.name}/>
+          </button>;
+        })}
+        <i className="buildbar__div"/>
+        {([['upgrade','U','⬆'],['repair','V','⚒'],['reclaim','X','✂']] as const).map(([t,k,g])=>
+          <button key={t} className={`bslot mode ${tool===t?'on':''}`} onClick={()=>onPick(t)}
+            title={t==='upgrade'?'Upgrade a placed structure [U]':t==='repair'?'Repair a placed structure [V]':'Dismantle a placed structure [X]'}><span className="bslot__key">{k}</span><span className="bslot__glyph">{g}</span></button>
+        )}
+        <span className="buildbar__exit"><span className="key">B</span>exit</span>
+      </div>
     </div>
   </div>;
 }

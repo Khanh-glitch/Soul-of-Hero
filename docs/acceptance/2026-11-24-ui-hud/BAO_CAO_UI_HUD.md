@@ -109,13 +109,15 @@ Vòng này làm nốt danh sách "Chưa làm, chưa kiểm" của vòng 2: mở 
 | 26 | Vừa | Cột phải của bảng trạm: khối nhiên liệu và thành phẩm nằm dưới mép cuộn, không có dấu hiệu nào cho biết. | **Đã sửa một phần**: thêm thanh "Còn nữa ở dưới", bấm là cuộn tới cuối (`r3-lo-luyen.png`). Kích thước bảng giữ nguyên vì bị cổng kiểm `pa1-research-visible-gate` khóa |
 | 27 | Nhẹ | Lời nhắc cạnh nhân vật còn tiếng Anh ở 29 / 43 mẫu thử (giao dịch, cửa, thùng tiếp tế, máy phát, bẫy, giường…). | **Đã sửa** |
 | 28 | Nhẹ | Cảnh báo khẩn "FREEZING", "DEHYDRATED", "STARVING" còn tiếng Anh. | **Đã sửa** (`r3-lanh-doi-khat.png`) |
-| 29 | Nhẹ | Chế độ xây: chú thích ô đồ và lý do không đặt được còn tiếng Anh. | **Đã sửa** (`r2-xay-dung.png` chụp lại) |
+| 29 | Nhẹ | Chế độ xây: chú thích ô đồ và lý do không đặt được còn tiếng Anh. | **Đã sửa** (`r3-xay-dung.png`, chụp sau khi dịch; `r2-xay-dung.png` là ảnh cũ, dòng trạng thái còn tiếng Anh) |
 | 30 | Nhẹ | Trên máy cảm ứng, dòng hướng dẫn của bước đang theo dõi vẫn bảo "nhấn chuột trái", "Space". | **Đã sửa** cho dòng bước đang theo dõi: đổi thành "nút Đánh", "nút Lăn", "cần điều khiển" |
 | 31 | Nội bộ | Cảnh QA "ragnarok_economy": thương nhân, trạm di tản, rương tiền hiện lời nhắc nhưng bấm E không mở (mã lưu lệch một đơn vị). Không ảnh hưởng người chơi. | **Đã sửa** |
+| 32 | Vừa | **Thanh xây trông như hai bảng xây riêng** (góp ý khi chơi thử): hàng thẻ Nền / Tường / Mái nằm trong một khung riêng, dòng trạng thái chen giữa nó và hàng ô mà nó điều khiển. Tên mảnh xuống dòng ("Wood / Wall"), và khi mảnh có hai loại vật liệu thì số lượng dính vào câu báo. | **Đã sửa**: thẻ và ô nằm chung một khung, dòng trạng thái nằm trên cùng và rộng bằng khung, câu dài tự xuống dòng bên trong (`r3-xay-dung.png`) |
+| 33 | Vừa | Khi đang xây, thẻ chỉ đường mở rộng đè lên góc thanh xây. | **Đã sửa ở 1280 × 720**: trong chế độ xây thẻ chỉ giữ tên bước, cách làm và nút, bỏ hai dòng giải thích và phần thưởng nên kết thúc phía trên thanh xây. Chưa kiểm ở các cỡ cửa sổ khác |
 
 ### Các bảng đã mở và xem trong vòng 3
 
-Tiếng Việt, 1280 × 720, không lỗi console: nghỉ (giường), nhật ký trở về (sau 6,5 giờ vắng mặt thật của máy game, cả hai khối "Xem"), thương nhân, trạm di tản (cả bước xác nhận), rương tiền Ragnarok, rương ký gửi, tủ lãnh thổ, lò, bàn chế tạo, bàn nghiên cứu, rương lớn, cư dân, hải trình (đang đi và mắc kẹt), tử trận, chế độ xây, HUD ban đêm (19:42 và 20:22), HUD khi lạnh / đói / khát / máu thấp. Thương nhân, di tản, rương tiền, rương ký gửi, tủ lãnh thổ được xem thêm bằng tiếng Anh.
+Tiếng Việt, 1280 × 720, không lỗi console: nghỉ (giường), nhật ký trở về (sau 6,5 giờ vắng mặt thật của máy game, cả hai khối "Xem"), thương nhân, trạm di tản (cả bước xác nhận), rương tiền Ragnarok, rương ký gửi, tủ lãnh thổ, lò, bàn chế tạo, bàn nghiên cứu, rương lớn, cư dân, hải trình (đang đi và mắc kẹt), chế độ xây (cả ba trang và chế độ nâng cấp, sau khi dịch), HUD khi lạnh / khát / máu thấp (08:45 trong game). Thương nhân, di tản, rương tiền, rương ký gửi, tủ lãnh thổ được xem thêm bằng tiếng Anh.
 
 Game không có bảng "di vật"; mục đó trong danh sách cũ là ghi nhầm.
 
@@ -136,6 +138,106 @@ Thêm sổ câu `web/i18n/vi/07-panels.txt`; tổng 1.959 câu (vòng 2: 1.444).
 
 Ba tệp bị loại từ trước (`src/veyra05/audit-closure`, `src/veyra05/review-r2-acceptance`, `tests/economic-network-m2`) không được chạy.
 
+### Sau khi chơi thử (nhánh `arena/3fc28afa-soul-of-hero`)
+
+Sửa dòng 32 và 33 ở bảng trên. Kiểm: `typecheck`, `typecheck:tests`, `build` sạch; 15 tệp kiểm giao diện chạy 136 bài, 135 đạt. Bài còn lại (`tests/b03-return.test.ts`, "the legacy string route…") chạy khoảng 5 giây so với giới hạn 5 giây mặc định nên quá giờ trên máy kiểm này; trên mã trước thay đổi nó cũng vậy, và với giới hạn 60 giây thì đạt. Chưa chạy lại toàn bộ bộ hồi quy cho thay đổi này. Xem bằng trình duyệt ở 1280 × 720, tiếng Việt, cả ba trang và chế độ nâng cấp, không lỗi trang.
+
+ZIP đóng lại từ bản dựng này: 64.429.971 byte, 221 tệp, SHA256 `a38fb20b7aac5ab09d1368aff48632c0611af078dd29445745a0d7e89833d43b` (thay cho số liệu ở bảng kiểm thử vòng 3).
+
+Bản kiểm thử (có danh sách cảnh dựng sẵn, phím F9): https://soul-of-hero-qa.vercel.app, project Vercel `soul-of-hero-qa`, dựng với `VITE_SOH_QA=1`.
+
+## Vòng 4: cảnh QA trên Veyra và khung hình lấp kín cửa sổ (nhánh `arena/3fc28afa-soul-of-hero`)
+
+### Cảnh QA (F9) dùng bản đồ Veyra
+
+Cả 11 cảnh dựng sẵn giờ dựng trên Veyra, cạnh bãi đổ bộ, thay cho đảo cũ. Trạm, rương, giường và sinh vật thử được đặt trên đất xây được và người chơi đi bộ tới được; bài `tests/qa-sandbox-veyra.test.ts` (49 bài) kiểm điều đó cho từng cảnh.
+
+- Cảnh có sân trạm (`industry`, `full_gear`, `offline_return`): game dọn cỏ, bụi, đá trong ô sân trước khi dựng.
+- Cảnh Trưởng lão: danh sách là sáu Nguyên Thủy của Veyra, mặc định Typhon. "Awaken" thêm con được chọn, "Defeat" hạ đúng con đó.
+- Veyra không có thùng tiếp tế thả dù, nên các nút xem trước thùng thả đã bị gỡ khỏi bảng F9 khi đang ở Veyra.
+
+Xem bằng trình duyệt (bản QA, 1280 × 720): cả 11 cảnh khởi động, không lỗi trang, không lỗi console. Ảnh: `shots/r4-qa-veyra-typhon.png`.
+
+### Khung hình
+
+Trước đây game luôn vẽ 640 × 360 (16:9) rồi phóng to; cửa sổ nào không đúng 16:9 thì có viền đen. Cửa sổ trình duyệt trên màn 16:9 gần như không bao giờ đúng 16:9 vì thanh địa chỉ và thẻ chiếm chiều cao. Đo trên bản QA trước khi sửa: cửa sổ 1366 × 651 có 104 px viền mỗi bên, 1920 × 953 có 112 px mỗi bên.
+
+Giờ vùng nhìn lấy theo hình dạng cửa sổ, từ 640 × 360 tới tối đa 768 × 400:
+
+| Cửa sổ | Vùng nhìn | Viền còn lại |
+|---|---|---|
+| 1280 × 720, 1920 × 1080 (đúng 16:9) | 640 × 360, như cũ | không |
+| 1366 × 651 | 754 × 360 | 1 px mỗi bên |
+| 1920 × 953 | 724 × 360 | 1 px mỗi bên (tính, chưa chụp) |
+| 1440 × 900 (16:10) | 640 × 400 | không |
+| 844 × 390 (điện thoại nằm ngang) | 768 × 360 | 6 px mỗi bên |
+| 2560 × 1080 (21:9) | 768 × 360 | 128 px mỗi bên (tính, chưa chụp) |
+
+Những gì giữ nguyên:
+
+- **Luật chơi.** Các kỹ năng "phủ cả màn hình" (mưa thiên thạch, đóng băng, gom mục tiêu trong tầm nhìn) vẫn tính trên vùng 640 × 360 ở giữa. Khi giữ phím nhắm kỹ năng đó, khung vàng vẽ đúng vùng này. Đo trong trình duyệt: vùng luật ở cùng một toạ độ (1544, 1262) tại mọi cỡ cửa sổ đã thử.
+- **Các bảng.** Túi đồ, bản đồ, sổ hành trình, trạm, menu vẫn bố trí 640 × 360 và nằm giữa vùng nhìn; bảng toàn màn hình có nền tối bao quanh.
+- **Cửa sổ 16:9.** Vùng nhìn, tỉ lệ phóng và vị trí như trước (đo ở 1280 × 720: canvas 640 × 360, phóng 2 lần, không lệch). Chưa so từng điểm ảnh với bản cũ.
+
+Giới hạn rộng là 768 (48 ô) chứ không tới 21:9: Veyra trượt vùng bản đồ đang nạp khi người chơi cách mép 24 ô, rộng hơn thế thì thấy được mép vùng nạp. Màn 21:9 vì vậy còn viền hai bên.
+
+Cài đặt mới ở Menu → Display → "Screen shape" / "Khung hình": "Lấp kín cửa sổ" (mặc định) và "16:9 cố định" (hành vi cũ).
+
+Kèm theo, sửa một lỗi cũ: ở vài cỡ cửa sổ, sai số dấu phẩy động đặt khung game lệch lên 1 px.
+
+Đã kiểm:
+
+- `typecheck`, `typecheck:tests` sạch. 15 tệp kiểm thử liên quan, gồm `tests/viewport.test.ts` (12 bài mới): 166 bài, đạt hết. Hồi quy toàn bộ chưa chạy lại.
+- Trình duyệt, bản QA, cảnh `industry`, không lỗi trang hay console ở: 1280 × 720, 1366 × 651, 1440 × 900, 844 × 390 (cảm ứng); đổi cỡ cửa sổ khi đang chơi (1366 × 651 → 1280 × 720 → 1440 × 900); chế độ "16:9 cố định"; chế độ "Điểm ảnh nguyên" ở 1920 × 953.
+- Chuột nhắm đúng chỗ ở mọi góc vùng nhìn, kể cả dải mới thêm: sai lệch góc lớn nhất 0,002 rad.
+- Đã mở và xem ở 1366 × 651: túi đồ, bản đồ, sổ hành trình, menu, thanh xây, trạm lọc dầu, trận Typhon. Ở 1440 × 900: túi đồ. Ở 844 × 390: HUD cảm ứng, túi đồ.
+
+Ảnh: `shots/r4-ti-le-truoc-1366x651.png` (trước), `shots/r4-ti-le-sau-1366x651.png`, `shots/r4-ti-le-sau-1440x900.png`, `shots/r4-ti-le-dien-thoai-844x390.png`, `shots/r4-ti-le-tui-do-1366x651.png`.
+
+ZIP đóng lại từ bản dựng này: 64.432.602 byte, SHA256 `89668395aa77115eaf26fde0422d558a450b82308f1b67db51099b8dc56cfbc1`.
+
+Chưa kiểm ở vòng này: màn 21:9 và 1920 × 953 bằng ảnh chụp (mới tính bằng bài kiểm thử); mưa, bão, tuyết, đêm ở vùng nhìn rộng (mới xem sương mù); các kịch bản `e2e/*.mjs` (hầu hết chạy ở 640 × 360 hoặc 1280 × 720, là cỡ không đổi); màn hình tiêu đề vẫn đặt nút ngôn ngữ theo khung 640 × 360 chứ chưa sát mép.
+
+## Vòng 5: bản đồ mở sẵn và điểm đến (nhánh `arena/3fc28afa-soul-of-hero`)
+
+Yêu cầu: bản đồ nên mở toàn bộ ngay từ đầu, để người chơi biết mình có thể đi đâu rồi tự đi tới đó.
+
+Đã làm:
+
+- **Cả lục địa hiện ngay từ lúc đặt chân.** Ở chế độ "Thế giới", địa hình, sông, đường và tên vùng được vẽ đủ; vùng chưa đi qua vẽ tối hơn, vùng đã đi qua vẽ đủ màu. Ở các mức phóng 1×, 2×, 4×, phần chưa đi qua hiện màu địa hình mờ thay cho ô đen.
+- **Mọi địa điểm có tên đều có dấu trên bản đồ**: 75 trên 81 nơi ở một ván mới. Sáu rương Ragnarok không hiện cho tới khi người chơi tự tìm ra. Dấu rỗng là chưa tới, dấu đặc là đã tới; hình và màu của dấu theo loại nơi.
+- **Bấm vào một nơi** (trên bản đồ hoặc trong danh sách) để xem tên, loại, khoảng cách, hướng, đã tới hay chưa và một dòng nói nơi đó là gì. Bên trong có gì thì bản đồ không ghi.
+- **Danh sách "Nơi gần nhất"** (5 dòng) và thẻ "Nơi N/75" liệt kê tất cả theo khoảng cách.
+- **Đặt điểm đến.** Sau khi đặt, màn hình chơi có mũi tên kèm tên nơi và khoảng cách; khi nơi đó nằm trong khung nhìn thì mũi tên đổi thành dấu ghim đứng trên nó. Tới trong vòng 12 ô thì điểm đến tự xóa và hiện thông báo "Đã tới". Mũi tên ẩn khi đang giao chiến hoặc đang chạy đoạn cắt cảnh.
+- Phím: các phím mũi tên chuyển sang nơi gần nhất theo hướng đó, Enter đặt hoặc bỏ điểm đến.
+
+Giữ nguyên: dịch chuyển bằng lõi Linh hồn và ghim ghi chú vẫn cần vùng đã đi qua; "% đã vẽ" vẫn tính theo vùng đã đi qua; điểm đến chỉ là phần hiển thị, không đổi luật chơi và không ghi vào tệp lưu ván (lưu riêng theo ván trong trình duyệt; phiên QA chỉ giữ trong bộ nhớ).
+
+Lỗi lộ ra khi xem ảnh và đã sửa: phông nhãn thiếu các ký hiệu vòng tròn rỗng, mũi tên chéo và đầu mũi tên nên chúng hiện thành ô trống (nay vẽ bằng CSS và SVG); chữ "fi", "fl" bị dính thành một ký tự lạ ở vài bảng ("find" đọc như "And"), nay đã tắt chữ ghép trên toàn giao diện; tên vùng trên bản đồ quá mờ; mũi tên điểm đến trượt vào thẻ hành trình ở góc phải (nay chạy trên một đường elip nằm trong vùng trống).
+
+| Kiểm | Kết quả |
+|---|---|
+| `tests/map-atlas.test.tsx` (mới) | 22 bài đạt |
+| 9 tệp có liên quan (`map-atlas`, `i18n-vi`, `viewport`, `ui-round2`, `ui-round3`, `gold-intake-integration`, `control-tower-audit-regressions`, `visual-readmodels`, `qa-sandbox-veyra`) | 153 bài đạt |
+| `tsc` cho mã và cho bài kiểm thử | Đạt |
+| Trình duyệt, 1280 × 720, tiếng Anh và tiếng Việt | Bản đồ, thẻ địa điểm, đặt và bỏ điểm đến, mức phóng 2×, mũi tên gần (207 m) và xa (1,3 km), bấm trực tiếp lên bản đồ, phím mũi tên và Enter; không lỗi console |
+| Trình duyệt, 1366 × 651, tiếng Việt | Bản đồ và mũi tên; không lỗi console |
+| Trình duyệt, 844 × 390, cảm ứng | Chạm vào dòng, chạm lên bản đồ, đặt điểm đến, mũi tên trên màn hình chơi; không lỗi console |
+| Tới nơi | Đặt người chơi cách Crushed Viaduct 9 ô: mũi tên biến mất, hiện "Arrived: Crushed Viaduct", thẻ đổi thành "Places 1/75" |
+
+Ảnh: `shots/r5-map-fresh-vi.png`, `shots/r5-map-place-card-vi.png`, `shots/r5-map-sector-2x-vi.png`, `shots/r5-hud-arrow-vi.png`, `shots/r5-arrived-en.png`, `shots/r5-map-after-arrival-en.png`.
+
+ZIP đóng lại từ bản dựng này: 64.440.484 byte, SHA256 `bc025c735338ca7df14b5b21483dc9f0cf3ce88a53df5945f12e0ceefdd88b9f`.
+
+Chưa kiểm ở vòng này:
+
+- Chưa đi bộ thật tới một điểm đến. Lượt thử đi về phía nam bị địa hình chặn sau 17 m, nên bước "tới nơi" được kiểm bằng cách đặt thẳng vị trí người chơi.
+- Dấu ghim khi điểm đến nằm trong khung nhìn chỉ có bài kiểm thử tự động, chưa có ảnh.
+- Mũi tên điểm đến mới được xem ở ba hướng (bắc, đông, đông nam) và chỉ ở ván mới; chưa xem cùng lúc với thanh xây, lúc trời tối, hay khi thẻ hành trình cũng đang chỉ đường.
+- Thông báo "Đã tới" bằng tiếng Việt chưa có ảnh (câu dịch có trong sổ dịch).
+- Lần đầu mở chế độ "Thế giới", nền lục địa được vẽ dần trong chưa đầy 3 giây; trong lúc đó phần dưới còn trống.
+- Bộ kiểm thử đầy đủ và ba tệp chậm không chạy lại ở vòng này.
+
 ## Chưa làm, chưa kiểm
 
 - Chưa thử trên điện thoại thật, Firefox, Safari. Máy kiểm chỉ có Chromium không màn hình và không truy cập được địa chỉ chơi thật.
@@ -144,4 +246,8 @@ Ba tệp bị loại từ trước (`src/veyra05/audit-closure`, `src/veyra05/re
 - Nút chọn số giờ nghỉ ghi "1 h / 8 h / 24 h" ở cả hai ngôn ngữ.
 - Tên vùng và địa danh giữ tiếng Anh.
 - Chú thích khi rê chuột (`title`) không hiện trong ảnh chụp nên chỉ được kiểm bằng cách đọc chữ.
+- **HUD ban đêm và màn tử trận chưa được xem trong vòng 3.** Mọi lượt chạy trình duyệt đều nằm trong khoảng 07:30–09:11 giờ game. (Bản báo cáo gộp ở PR #67 ghi nhầm là đã xem; dòng này sửa lại.)
+- Ở cửa sổ rất nhỏ (640 × 360, 844 × 390) thông báo "Cửa sổ nhỏ" của game nằm đè lên thanh xây; chưa xử lý.
+- Khi chọn Nâng cấp / Sửa / Tháo, thẻ "Nền" vẫn sáng vì hàng ô đang hiện trang Nền.
+- Còn tiếng Anh, đã biết: ở thương nhân "Parts: {n}", "{n} Parts", "Put in pack", tiêu đề Parcel; "Ragnarok chest"; trạng thái tháp canh ("No generator", "Connection blocked", "No power", "No arrows", "Capacity allocated elsewhere"); "Open relevant action for Hunger & Thirst"; lời nhắc "Chop", "Mine"; chú thích loại lò sưởi. Danh sách câu thiếu do công cụ ghi lại ở bảng nghỉ (16 câu) và nhật ký trở về (22 câu) chưa được rà.
 - Bảng nghỉ mới xem ở trạng thái thiếu rương; luồng chọn đồ rồi nằm ngủ chỉ được kiểm bằng các bài kiểm thử tự động có sẵn, chưa xem bằng mắt.
