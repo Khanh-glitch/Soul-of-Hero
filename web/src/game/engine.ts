@@ -391,7 +391,8 @@ export function startRun(gs: GameState, character: 'male' | 'female', now: numbe
     }
   }
   gs.run = r; markDirty(); gs.revision++;
-  pushLog(r, now, `You wash up near ${sp.name}. No one is coming to tell you what to do.`, 'gold');
+  // the open world's zone name is a technical label ("VEYRA · U=0.5"); the log names the land
+  pushLog(r, now, `You wash up near ${/^VEYRA · /.test(sp.name) ? 'Veyra' : sp.name}. No one is coming to tell you what to do.`, 'gold');
   const startRc = receipt(r, now, 'run.start', `${character}@${sp.name}`);
   syncRunDailyLedger(r, dateKey(now));
   return { ok: true, receipt: startRc };

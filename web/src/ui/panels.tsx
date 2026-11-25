@@ -21,7 +21,7 @@ import { recipeOutputs } from '../game/engine';
 const bundleLabel = (rc: { out: string; qty: number; outs?: [string, number][] }) => recipeOutputs(rc).map(([k, q]) => `${q} ${ITEMS[k].name}`).join(' + ');
 import { getMapCanvas } from '../game/render';
 import { setVolume } from '../game/audio';
-import { Panel, Slot, Icon, Cost, iconUrl, type Api } from './common';
+import { Panel, Slot, Icon, Cost, Mark, iconUrl, type Api } from './common';
 import { Glyph } from './hud';
 import { getArt } from '../game/art';
 import { ExpeditionMap } from './ExpeditionMap';
@@ -149,7 +149,7 @@ export function InventoryPanel({ api, quickTo, x = 404, top = 54, onClose, backT
         <div className="doll-stats">
           <span className="stat" title="Damage reduction from armour"><Glyph k="hp" c="var(--good)" s={7} />-{Math.round(armor * 100)}%</span>
           <span className="stat" title="Warmth from clothing"><Glyph k="wr" c="var(--warm)" s={7} />+{warm}</span>
-          <span className="stat" title="Unsecured coins carried / profile-secured"><Icon k="rcash" size={8} />{cash}<i className="sep" />{api.gs.profile.securedCash}</span>
+          <span className="stat" title="Coins carried (not yet secured) / coins secured"><Icon k="rcash" size={8} />{cash}<i className="sep" />{api.gs.profile.securedCash}</span>
           <div className="loadbar" title={`Load ${w.toFixed(1)} / ${limit} kg`}>
             <Glyph k="weight" c={w > limit ? 'var(--bad)' : 'var(--muted)'} s={7} />
             <div className="track"><i style={{ width: `${load * 100}%`, background: w > limit ? 'var(--bad)' : load > 0.8 ? 'var(--warn)' : 'var(--good)' }} /></div>
@@ -196,7 +196,7 @@ export function ParcelPanel({ api, eid }: { api: Api; eid: string }) {
           <button className="btn gold" style={{ marginLeft: 'auto', padding: '1px 5px' }} disabled={blocked} onClick={() => run('move', { from: e.c, fs: 0, to: cart.c, ts: free })}>Load into this cart</button></div>
         {!clear && <div style={{ color: '#ff9a7a' }}>Obstructed: no clear line to this cart.</div>}
         {clear && free < 0 && <div style={{ color: '#ff9a7a' }}>Cart full: no free slot.</div>}
-        {clear && free >= 0 && w + itemW > lim && <div style={{ color: '#ffd98a' }}>Overloaded: the cart will crawl (existing soft limit).</div>}
+        {clear && free >= 0 && w + itemW > lim && <div style={{ color: '#ffd98a' }}>Overloaded: the cart will crawl.</div>}
       </div>;
     })}
     <div className="flex gap-1" style={{ marginTop: 6 }}>
@@ -279,7 +279,7 @@ export function ContainerPanel({ api, eid }: { api: Api; eid: string }) {
         {e.turret && <div style={{fontSize:11,marginTop:5}}><b>Turret · {turretStatus(r,e)}{e.turret.tracking?' · target in sight':''}</b><div>Arrows: {countItem(r,e.c!,'arrow')} · fog/storm reduce sight. No firing while away. An armed, wired, supplied turret still reserves generator capacity; switch it off to free capacity.</div><label>Connected generator: <select aria-label="Turret generator" value={e.turret.generatorId||''} onChange={ev=>api.act('turretConfigure',{eid,field:'generatorId',value:ev.target.value})} style={{background:'#2b1e30',color:'#fff',maxWidth:140}}><option value="">Not linked</option>{Object.values(r.entities).filter(g=>g.basePower&&(g.owner===undefined||g.owner==='player')&&(connectedPower(r,g,e)||g.id===e.turret?.generatorId||g.id===e.industrial?.generatorId)).map(g=><option key={g.id} value={g.id}>Generator {g.tx},{g.ty}</option>)}</select></label><div><button className="btn gold" onClick={()=>api.act('turretConfigure',{eid,field:'enabled',value:!e.turret!.enabled})}>{e.turret.enabled?'Stop':'Start'}</button></div></div>}
         {e.farm && <div style={{fontSize:10,marginTop:5}}>
           <b style={{color:'#ffd98a'}}>Garden Tender · {tenderStatus(r,e)}</b>{e.farm.gardenId && r.entities[e.farm.gardenId]?.garden && (()=>{const g=r.entities[e.farm!.gardenId!], climate=gardenEnvironment(r,g,isWet(weatherAt(r,api.now())),gardenClimateClass(isGardenCrop(g.garden!.crop)?g.garden!.crop:e.farm!.crop));return <div>Climate {climate.climate} · {climate.biome} soil · {Math.round(climate.rate*100)}% growth{climate.frame?' · framed':''}{climate.scorched?' · scorched':''}</div>;})()}{e.farm.gardenId && r.entities[e.farm.gardenId]?.garden && <div>Plot {Math.floor(r.entities[e.farm.gardenId].garden!.growth*100)}% · soil {r.entities[e.farm.gardenId].garden!.water.toFixed(1)}/3 · barrel {(r.entities[e.farm.barrelId||'']?.water||0).toFixed(1)}/12</div>}<div>Fuel: {(e.farm.energy/1000).toFixed(0)} s stored · links ≤3 tiles; walls block.</div>
-          {(['gardenId','barrelId','chestId'] as const).map(field => <label key={field} style={{display:'block',marginTop:3}}>{field==='gardenId'?'Plot':field==='barrelId'?'Water barrel':'Input / output chest'}: <select aria-label={field} value={e.farm![field]||''} onChange={ev=>api.act('farmConfigure',{eid,field,value:ev.target.value})} style={{background:'#2b1e30',color:'#fff',maxWidth:130}}><option value="">Not linked</option>{Object.values(r.entities).filter(o=>o.kind==='struct'&&(o.owner===undefined||o.owner==='player')&&Math.hypot(o.x-e.x,o.y-e.y)<=BAL.garden.tenderLinkTiles*TILE&&(field==='gardenId'?o.type==='garden':field==='barrelId'?o.type==='barrel':['chest_small','chest_large'].includes(o.type||''))).map(o=><option value={o.id} key={o.id}>{STRUCTS[o.type!].name} {o.tx},{o.ty}</option>)}</select></label>)}
+          {(['gardenId','barrelId','chestId'] as const).map(field => <label key={field} style={{display:'block',marginTop:3}}>{field==='gardenId'?'Plot':field==='barrelId'?'Water barrel':'Input / output chest'}: <select aria-label={field==='gardenId'?'Plot':field==='barrelId'?'Water barrel':'Input / output chest'} value={e.farm![field]||''} onChange={ev=>api.act('farmConfigure',{eid,field,value:ev.target.value})} style={{background:'#2b1e30',color:'#fff',maxWidth:130}}><option value="">Not linked</option>{Object.values(r.entities).filter(o=>o.kind==='struct'&&(o.owner===undefined||o.owner==='player')&&Math.hypot(o.x-e.x,o.y-e.y)<=BAL.garden.tenderLinkTiles*TILE&&(field==='gardenId'?o.type==='garden':field==='barrelId'?o.type==='barrel':['chest_small','chest_large'].includes(o.type||''))).map(o=><option value={o.id} key={o.id}>{STRUCTS[o.type!].name} {o.tx},{o.ty}</option>)}</select></label>)}
           {e.farm.barrelId && <button className="btn" onClick={()=>api.act('fillBarrel',{eid:e.farm!.barrelId})}>Pour 1 flask charge into barrel</button>}<div>Replant: <button className="btn" onClick={()=>api.act('farmConfigure',{eid,field:'crop',value:GARDEN_CROP_KINDS[(GARDEN_CROP_KINDS.indexOf(e.farm!.crop)+1)%GARDEN_CROP_KINDS.length]})}>{GARDEN_CROPS[e.farm.crop].name}</button> <button className="btn gold" onClick={()=>api.act('farmConfigure',{eid,field:'enabled',value:!e.farm!.enabled})}>{e.farm.enabled?'Stop':'Start'}</button></div>
           <div style={{color:'#b7a8bf'}}>Chest: seeds + produce (Bitterleaf also needs herb). Barrel: water. Plant / pump / harvest: 8 / 4 / 8 fuel-seconds.</div>
         </div>}
@@ -305,7 +305,7 @@ export function ContainerPanel({ api, eid }: { api: Api; eid: string }) {
         {e.kind === 'recycler' && st && <RecyclerBody api={api} eid={eid} />}
         {st && e.kind !== 'recycler' && kind !== 'research' && <StationBody api={api} eid={eid} />}
         {st && kind === 'research' && <ResearchBody api={api} eid={eid} />}
-        {e.kind === 'struct' && <div style={{ marginTop: 6, fontSize: 10, color: '#8a7a9a' }}>HP {Math.round(e.hp!)}/{e.maxHp} {owned(e) && <button className="btn ghost" style={{ marginLeft: 6 }} onClick={() => { api.act('reclaim', { eid }); api.open(null); }}>Reclaim</button>}</div>}
+        {e.kind === 'struct' && <div style={{ marginTop: 6, fontSize: 10, color: '#8a7a9a' }}>{`Durability ${Math.round(e.hp!)}/${e.maxHp}`} {owned(e) && <button className="btn ghost" style={{ marginLeft: 6 }} onClick={() => { api.act('reclaim', { eid }); api.open(null); }}>Reclaim</button>}</div>}
       </div>
     </Panel>
     {!compact && <InventoryPanel api={api} quickTo={quickTo} top={54} />}
@@ -320,7 +320,7 @@ function RecyclerBody({api,eid}:{api:Api;eid:string}) {
   <div>Destroy one carried item for physical materials. Keep, repair or study it instead. Cores, cards, cash and unlisted items cannot be recycled.</div>
   {st.queue.map(j=><div key={j.id} style={{marginTop:4,color:'#ffd98a'}}>{j.left>0?`Processing · ${Math.ceil(j.left/1000)}s`:'Complete · output blocked'} {j.workerId ? <span>· Reserved by {r.humanWorld?.people[j.workerId]?.name ?? 'salvager'}</span> : <button className="btn ghost" onClick={()=>api.act('cancelJob',{eid,jobId:j.id})}>Cancel / return input</button>}</div>)}
   {!st.queue.length && <><label>Carried item <select aria-label="Recycler item" value={selected} style={{maxWidth:180,background:'#2b1e30',color:'white'}} onChange={ev=>{setSelected(ev.target.value);setConfirm(false);}}><option value="">Select item</option>{entries.map(({s,i})=><option key={s.uid} value={s.uid}>{ITEMS[s.key].name} · {s.uid} · {recoveryPlan(s)?'eligible':'not eligible'} (slot {i+1})</option>)}</select></label>
-  {choice && (plan ? <div>UID {choice.s.uid} · {plan.condition===null?'fixed drive':`condition ${Math.round(plan.condition*100)}%`}<br/>Returns: {list(plan)} · {plan.total/1000}s<br/>Output: {fits?'all results fit':'not enough space for all results'}<br/>{confirm ? <><span style={{color:'#ffb8a0'}}>Permanently destroy this item?</span> <button className="btn danger" disabled={!fits} onClick={()=>{api.act('recycleItem',{eid,slot:choice.i,uid:choice.s.uid});setConfirm(false);setSelected('');}}>Confirm recycle</button> <button className="btn ghost" onClick={()=>setConfirm(false)}>Back</button></> : <button className="btn gold" disabled={!fits} onClick={()=>setConfirm(true)}>Recycle item…</button>}</div> : <div style={{color:'#ffb8a0'}}>Not eligible: protected, unlisted, stacked or missing valid condition.</div>)}
+  {choice && (plan ? <div>{plan.condition===null?'Fixed drive':`Condition ${Math.round(plan.condition*100)}%`}<br/>Returns: {list(plan)} · {plan.total/1000}s<br/>Output: {fits?'all results fit':'not enough space for all results'}<br/>{confirm ? <><span style={{color:'#ffb8a0'}}>Permanently destroy this item?</span> <button className="btn danger" disabled={!fits} onClick={()=>{api.act('recycleItem',{eid,slot:choice.i,uid:choice.s.uid});setConfirm(false);setSelected('');}}>Confirm recycle</button> <button className="btn ghost" onClick={()=>setConfirm(false)}>Back</button></> : <button className="btn gold" disabled={!fits} onClick={()=>setConfirm(true)}>Recycle item…</button>}</div> : <div style={{color:'#ffb8a0'}}>Not eligible: protected, unlisted, stacked or missing valid condition.</div>)}
   </>}
   <div style={{marginTop:4,color:'#ffd98a'}}>Output · {output.slots.filter(Boolean).length}/{output.slots.length} slots occupied</div><Grid api={api} cid={st.outC} cols={4}/><button className="btn" onClick={()=>{for(let i=0;i<output.slots.length;i++)if(output.slots[i] && !output.slots[i]?.production)api.act('move',{from:st.outC,fs:i,to:'inv'});}}>Take output</button>
  </div>;
@@ -357,7 +357,7 @@ export function StationBody({ api, eid }: { api: Api; eid: string }) {
       <div style={{ fontSize: 10, color: '#ffd98a' }}>Fuel {st.burn > 0 ? <span style={{ color: '#ffb040' }}>· burning {Math.ceil(st.burn / 1000)}s</span> : <span style={{ color: '#8a7a9a' }}>· cold</span>}{kind === 'campfire' ? ' (burns continuously; warmth + light)' : ' (burns only while working)'}</div><Grid api={api} cid={st.fuelC} cols={3} /></div>}
     <div style={{ fontSize: 10, color: '#ffd98a' }}>Queue</div>
     {st.queue.length === 0 && <div style={{ fontSize: 10, color: '#8a7a9a' }}>Idle.</div>}
-    {st.queue.map((j, i) => { const rcj = j.recipe.startsWith('R:') || j.recipe.startsWith('F:') ? null : recipeForJob(j.recipe, j.rv); const out = rcj ? rcj.out : 'blueprint'; const label = rcj ? bundleLabel(rcj) : j.recipe.startsWith('F:') ? j.recipe.slice(2) + ' family study' : ITEMS[out]?.name ?? j.recipe; const pause = i === 0 && rcj?.station === 'refinery' ? (j.left <= 0 ? (rcj.outs && !recoveryFits(C(r, st.outC), recipeOutputs(rcj)) ? 'paused: output storage full' : '') : (st.burn <= 0 && !C(r, st.fuelC).slots.some(s => s && ITEMS[s.key].fuel) ? 'paused: no fuel' : '')) : ''; return <div key={j.id} className="flex items-center gap-1" style={{ fontSize: 10, flexWrap: 'wrap' }}><Icon k={out} size={12} /><span style={{ width: 150 }}>{label}</span>{pause && <span style={{ color: '#ffb040', width: '100%' }}>{pause}</span>}<div className="bar" style={{ width: 60 }}><i style={{ width: `${(1 - j.left / j.total) * 100}%`, background: i === 0 && (!fuelled || st.burn > 0) ? '#7aff6a' : '#a07a3a' }} /></div><span>{Math.ceil(j.left / 1000)}s</span><button className="btn ghost" style={{ padding: '0 3px' }} disabled={!!j.workerId} onClick={() => api.act('cancelJob', { eid, jobId: j.id })}>✕</button></div>; })}
+    {st.queue.map((j, i) => { const rcj = j.recipe.startsWith('R:') || j.recipe.startsWith('F:') ? null : recipeForJob(j.recipe, j.rv); const out = rcj ? rcj.out : 'blueprint'; const label = rcj ? bundleLabel(rcj) : j.recipe.startsWith('F:') ? j.recipe.slice(2) + ' family study' : ITEMS[out]?.name ?? j.recipe; const pause = i === 0 && rcj?.station === 'refinery' ? (j.left <= 0 ? (rcj.outs && !recoveryFits(C(r, st.outC), recipeOutputs(rcj)) ? 'paused: output storage full' : '') : (st.burn <= 0 && !C(r, st.fuelC).slots.some(s => s && ITEMS[s.key].fuel) ? 'paused: no fuel' : '')) : ''; return <div key={j.id} className="flex items-center gap-1" style={{ fontSize: 10, flexWrap: 'wrap' }}><Icon k={out} size={12} /><span style={{ width: 150 }}>{label}</span>{pause && <span style={{ color: '#ffb040', width: '100%' }}>{pause}</span>}<div className="bar" style={{ width: 60 }}><i style={{ width: `${(1 - j.left / j.total) * 100}%`, background: i === 0 && (!fuelled || st.burn > 0) ? '#7aff6a' : '#a07a3a' }} /></div><span>{Math.ceil(j.left / 1000)}s</span><button className="btn ghost" title="Cancel job" style={{ padding: '2px 3px', position: 'relative', lineHeight: 0 }} disabled={!!j.workerId} onClick={() => api.act('cancelJob', { eid, jobId: j.id })}><Mark ch="✕" /></button></div>; })}
     <div style={{ fontSize: 10, color: '#ffd98a', marginTop: 4 }}>Output</div><Grid api={api} cid={st.outC} cols={6} />
     <div style={{ fontSize: 10, color: '#ffd98a', marginTop: 4 }}>Recipes</div>
     {kind === 'workbench' && <div style={{ fontSize: 10, color: '#cfc2dc' }}>Drive recovery: 1 Damaged Drive + 1 Scrap → 1 Machine Parts (12s).</div>}
@@ -389,7 +389,7 @@ function ResearchBody({ api, eid }: { api: Api; eid: string }) {
     {specimens.length === 0 && <div style={{ fontSize: 10, color: '#8a7a9a' }}>Carry a creature specimen, Core or studyable equipment.</div>}
     {specimens.map(([s, i]) => <div key={i} className="flex items-center gap-1" style={{ fontSize: 10 }}><Icon k={s!.key} size={12} />{ITEMS[s!.key].name} → {ITEMS[RECIPES[studyTarget(s!.key)!]?.out ?? ''].name ?? 'a retired formula'}{confirmStudy === s!.uid ? <><span>Reserves item; completion consumes it, cancellation returns it</span><button className="btn danger" onClick={() => { api.act('research', { mode: 'specimen', slot: i, uid: s!.uid, eid }); setConfirmStudy(null); }}>Confirm</button><button className="btn ghost" onClick={() => setConfirmStudy(null)}>Cancel</button></> : <button className="btn" style={{ marginLeft: 'auto', padding: '1px 5px' }} onClick={() => setConfirmStudy(s!.uid)}>Study</button>}</div>)}
     <div style={{ fontSize: 10, color: '#ffd98a', marginTop: 4 }}>In progress</div>
-    {st.queue.map(j => { const rc = j.recipe.startsWith('R:') ? recipeForJob(j.recipe.slice(2), j.rv) : null; const label = rc ? ITEMS[rc.out].name + ' blueprint' : j.recipe.startsWith('F:') ? j.recipe.slice(2) + ' family study' : 'a retired formula, kept from your old save'; return <div key={j.id} className="flex items-center gap-1" style={{ fontSize: 10 }}><Icon k="blueprint" size={12} />{label}<div className="bar" style={{ width: 60 }}><i style={{ width: `${(1 - j.left / j.total) * 100}%`, background: '#9ad0ff' }} /></div>{Math.ceil(j.left / 1000)}s <button className="btn ghost" disabled={!!j.workerId} onClick={() => api.act('cancelJob', { eid, jobId: j.id })}>✕</button></div>; })}
+    {st.queue.map(j => { const rc = j.recipe.startsWith('R:') ? recipeForJob(j.recipe.slice(2), j.rv) : null; const label = rc ? ITEMS[rc.out].name + ' blueprint' : j.recipe.startsWith('F:') ? j.recipe.slice(2) + ' family study' : 'a retired formula, kept from your old save'; return <div key={j.id} className="flex items-center gap-1" style={{ fontSize: 10 }}><Icon k="blueprint" size={12} />{label}<div className="bar" style={{ width: 60 }}><i style={{ width: `${(1 - j.left / j.total) * 100}%`, background: '#9ad0ff' }} /></div>{Math.ceil(j.left / 1000)}s <button className="btn ghost" title="Cancel job" style={{ position: 'relative' }} disabled={!!j.workerId} onClick={() => api.act('cancelJob', { eid, jobId: j.id })}><Mark ch="✕" /></button></div>; })}
     <ResearchFamilies api={api} eid={eid} />
     <div style={{ fontSize: 10, color: '#ffd98a', marginTop: 4 }}>Blueprints ready (take, then use to learn)</div><Grid api={api} cid={st.outC} cols={4} />
   </div>;
@@ -559,10 +559,10 @@ export function SkillsPanel({ api }: { api: Api }) {
         <div className="flex gap-1" style={{ marginTop: 2 }}>{elderDefs.map(e => <div key={e.stone} title={e.name} style={{ opacity: r.elderStones.includes(e.stone) ? 1 : 0.25 }}><Icon k={e.stone} /></div>)}</div>
         <div style={{ color: '#8a7a9a' }}>{r.elderStones.length}/6 — six stones + evacuation = exceptional ending.</div>
         <div style={{ color: '#ffd98a', marginTop: 6 }}>Run achievements · {r.score} local score</div>{r.achievements.map(a => <div key={a}>★ {ACHIEVEMENTS[a].name} <span style={{ color: '#8a7a9a' }}>+{ACHIEVEMENTS[a].score}</span></div>)}
-        <div style={{ color: '#ff9a7a', fontSize: 9 }}>LOCAL/UNVERIFIED — never converts into cash.</div>
+        <div style={{ color: '#ff9a7a', fontSize: 9 }}>Local score only: it never converts into cash.</div>
       </div>
       <div style={{ flex: 1 }}><div style={{ color: '#ffd98a' }}>Known recipes ({Object.keys(RECIPES).filter(k => isRecipeKnown(r.knowledge.recipes,k)).length})</div>
-        <div className="scroll" style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', maxHeight: 220, overflowY: 'auto' }}>{Object.keys(RECIPES).filter(k => isRecipeKnown(r.knowledge.recipes,k)).map(k => <div key={k} className="flex items-center gap-1"><Icon k={RECIPES[k].out} size={10} />{ITEMS[RECIPES[k].out].name}</div>)}</div></div>
+        <div className="scroll" style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', maxHeight: 220, overflowY: 'auto' }}>{Object.keys(RECIPES).filter(k => isRecipeKnown(r.knowledge.recipes,k)).map(k => <div key={k} className="flex items-center gap-1"><Icon k={RECIPES[k].out} size={10} />{RECIPES[k].alias ?? ITEMS[RECIPES[k].out].name}{RECIPES[k].qty > 1 ? ` ×${RECIPES[k].qty}` : ''}</div>)}</div></div>
     </div></Panel>;
 }
 
@@ -581,8 +581,8 @@ export function MenuPanel({ api, onQuit, onSave, qaMode = false, returnHistory =
     {playerAtSea(r) ? <p>At sea. The voyage clock and hull condition continue while you are away; island hazards cannot reach this vessel.</p> : <div style={{ fontSize: 10, marginTop: 5, color: '#e6d9bc', lineHeight: 1.2 }}>
       <b>Before you leave</b> · {isSheltered(r, r.player.x, r.player.y) ? 'Sheltered here' : 'Not sheltered here'} · Weather: {weatherAt(r, api.now())}.<br />
       Hunger {Math.round(r.player.hunger)} / thirst {Math.round(r.player.thirst)} / HP {Math.round(r.player.hp)}. Without new hazards: hunger empty ~{survival.hungerHours.toFixed(1)}h; thirst empty ~{survival.thirstHours.toFixed(1)}h; estimated survival ~{survival.survivalHours.toFixed(1)}h. This is not a guarantee: cold, radiation, fire, monsters, changing shelter or run expiry can end it sooner. Shelter prevents hunger-only death, not thirst or other hazards.<br />
-      Next {Math.round(outlook.hours)}h outlook: ~{Math.round(outlook.wetHours)}h wet (global schedule estimate). Footprints fade; rain washes them faster. Change route, clear nearby creatures, wait, or use doors and terrain. No home is required.<br />
-      {cabinets.length>0 && <>{cabinets.map(c=>{const f=territoryForecast(r,c);return <span key={c.id}>Cabinet {c.tx},{c.ty}: {f.funded ? `${f.hours.toFixed(1)}h upkeep` : 'UNFUNDED — structures decay'}. </span>})}<br /></>}
+      {`Next ${Math.round(outlook.hours)}h outlook: ~${Math.round(outlook.wetHours)}h wet. Footprints fade; rain washes them faster. Change route, clear nearby creatures, wait, or use doors and terrain. No home is required.`}<br />
+      {cabinets.length>0 && <>{cabinets.map(c=>{const f=territoryForecast(r,c);return <span key={c.id}>Cabinet {c.tx},{c.ty}: {f.funded ? `upkeep paid for ${Number.isFinite(f.hours) ? Math.round(f.hours) + 'h' : 'good'}` : 'UNFUNDED — structures decay'}. </span>})}<br /></>}
       While away: weather, fire, production and exposure advance. Limited trace playback can damage reachable structures; other encounters remain unresolved.
     </div>}
     <div style={{ fontSize: 10, marginTop: 6 }} className="flex items-center gap-2">Volume <input type="range" min={0} max={1} step={0.05} value={pf.settings.volume} onChange={e => { pf.settings.volume = +e.target.value; setVolume(pf.settings.volume, pf.settings.muted); api.rerender(); }} /><label><input type="checkbox" checked={pf.settings.muted} onChange={e => { pf.settings.muted = e.target.checked; setVolume(pf.settings.volume, pf.settings.muted); api.rerender(); }} /> mute</label></div>
@@ -591,8 +591,8 @@ export function MenuPanel({ api, onQuit, onSave, qaMode = false, returnHistory =
       <div className="flex flex-wrap gap-1" style={{ marginTop: 3 }}>{[1, 24].map(h => <button key={h} className="btn ghost" onClick={() => api.act('qaAdvance', { hours: h })}>+{h}h</button>)}
         <button className="btn ghost" onClick={() => api.act('qaAdvance', { hours: Math.max(0, 264.05 - runHours(r, api.now())) })}>→ Ragnarok (h264)</button>
         <button className="btn ghost" onClick={() => api.act('qaAdvance', { hours: Math.max(0, 312.05 - runHours(r, api.now())) })}>→ Day 14 (h312)</button></div></div>}
-    {!playerAtSea(r) && !r.player.dead && <div style={{ marginTop: 6 }}>{!giveUp ? <button className="btn" onClick={() => setGiveUp(true)}>Stuck? Give up &amp; wake somewhere safe…</button> : <span className="flex flex-wrap gap-1 items-center" style={{ fontSize: 10 }}>You fall where you stand: everything you carry stays in a bag here. You wake at your bed, or on a safe shore, with a Stone Axe. The run goes on. <button className="btn gold" onClick={() => { const res = api.act('giveUp'); if (res.ok) api.open(null); else setGiveUp(false); }}>Give up &amp; wake</button><button className="btn ghost" onClick={() => setGiveUp(false)}>No</button></span>}</div>}
-    <div style={{ marginTop: 6 }}>{!confirm ? <button className="btn danger" onClick={() => setConfirm(true)}>Abandon run…</button> : <span className="flex gap-1 items-center" style={{ fontSize: 10 }}>Abandon wipes all run items, home and unsecured cash. <button className="btn danger" onClick={() => api.act('abandon')}>Confirm abandon</button><button className="btn ghost" onClick={() => setConfirm(false)}>No</button></span>}</div>
+    {!playerAtSea(r) && !r.player.dead && <div style={{ marginTop: 6 }}>{!giveUp ? <button className="btn" onClick={() => { setGiveUp(true); setConfirm(false); }}>Stuck? Give up &amp; wake somewhere safe…</button> : <span className="flex flex-wrap gap-1 items-center" style={{ fontSize: 10 }}>You fall where you stand: everything you carry stays in a bag here. You wake at your bed, or on a safe shore, with a Stone Axe. The run goes on. <button className="btn gold" onClick={() => { const res = api.act('giveUp'); if (res.ok) api.open(null); else setGiveUp(false); }}>Give up &amp; wake</button><button className="btn ghost" onClick={() => setGiveUp(false)}>No</button></span>}</div>}
+    <div style={{ marginTop: 6 }}>{!confirm ? <button className="btn danger" onClick={() => { setConfirm(true); setGiveUp(false); }}>Abandon run…</button> : <span className="flex gap-1 items-center" style={{ fontSize: 10 }}>Abandon wipes all run items, home and unsecured cash. <button className="btn danger" onClick={() => api.act('abandon')}>Confirm abandon</button><button className="btn ghost" onClick={() => setConfirm(false)}>No</button></span>}</div>
   </Panel>;
 }
 
@@ -621,7 +621,7 @@ export function VendorPanel({ api, eid }: { api: Api; eid: string }) {
 
       <div className="console-col">
         <div className="console-h" style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <span>Parts Barter (Run-Local)</span>
+          <span>Parts Barter (this run only)</span>
           <span style={{ color: 'var(--paper)' }}>Parts: {countItem(r, 'inv', 'spares')}</span>
         </div>
         {Object.entries(VENDOR_SPARES).map(([k, v]) => (
@@ -636,7 +636,7 @@ export function VendorPanel({ api, eid }: { api: Api; eid: string }) {
 
       <div className="console-col">
         <div className="console-h" style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <span>Profile-Secured Outfitting</span>
+          <span>Outfitting · paid from secured cash</span>
           <span style={{ color: 'var(--info)' }}>Secured: {pf.securedCash}</span>
         </div>
         <div className="lbl" style={{ fontSize: 9, color: 'var(--muted)' }}>Pack needs a free slot. Parcel stays physical beside Mirela if your pack is full.</div>
@@ -650,7 +650,7 @@ export function VendorPanel({ api, eid }: { api: Api; eid: string }) {
           </div>
         ))}
         <div className="lbl" style={{ fontSize: 8, color: 'var(--muted)', marginTop: 2 }}>
-          Waiting parcels: <b style={{ color: 'var(--brassLit)' }}>{parcels}</b> · Purchases become run-local items wiped at run end.
+          Waiting parcels: <b style={{ color: 'var(--brassLit)' }}>{parcels}</b> · Purchases belong to this run and are wiped when it ends.
         </div>
       </div>
     </div>
@@ -667,12 +667,12 @@ export function EscrowPanel({ api, eid }: { api: Api; eid: string }) {
       </div>
       <span className="flow-arrow" style={{ fontSize: 16 }}>→</span>
       <div className="console-col" style={{ textAlign: 'center' }}>
-        <div className="console-h" style={{ color: 'var(--info)' }}>Profile-Secured</div>
+        <div className="console-h" style={{ color: 'var(--info)' }}>Secured in your profile</div>
         <div className="title-font" style={{ fontSize: 16, color: 'var(--info)' }}>{api.gs.profile.securedCash}</div>
       </div>
     </div>
     <div className="lbl" style={{ fontSize: 8, color: 'var(--paper)', lineHeight: 1.25 }}>
-      Depositing transfers all carried Ragnarok Cash into your permanent Profile balance in one atomic step. The run continues; only secured cash survives when the run ends.
+      Depositing transfers all carried Ragnarok Cash into your permanent Profile balance at once. The run continues; only secured cash survives when the run ends.
     </div>
     <div className="flex gap-1" style={{ marginTop: 6 }}>
       <button className="btn gold" style={{ flex: 1 }} disabled={!cash} onClick={() => { const res = api.act('deposit', { eid }); if (res.ok) api.sfx('coin'); }}>

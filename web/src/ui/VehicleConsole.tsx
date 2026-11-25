@@ -22,7 +22,7 @@ export function VehicleConsole({ api, e }: { api: Api; e: Entity }) {
   return <div className={`vehicle-console vehicle-console--${state}`}>
     <div className="vehicle-console__top">
       <img className="px" src={iconUrl(`st:vehicle_side_${state}`)} width={48} height={32} alt="" />
-      <div><b>{state === 'broken' ? 'BROKEN' : state === 'empty' ? 'OUT OF FUEL' : 'READY'}</b><span>{e.deployed?.uid ? `Bike ${e.deployed.uid}` : 'Utility motorbike'}</span></div>
+      <div><b>{state === 'broken' ? 'BROKEN' : state === 'empty' ? 'OUT OF FUEL' : 'READY'}</b><span>Utility motorbike</span></div>
       <i className={`lamp ${state === 'broken' ? 'diamond' : 'round'}`} style={{ color: state === 'ok' ? 'var(--good)' : 'var(--bad)' }} />
     </div>
     <div className="vehicle-console__meters">
@@ -35,8 +35,8 @@ export function VehicleConsole({ api, e }: { api: Api; e: Entity }) {
       <button className="btn gold" disabled={otherBike} onClick={() => { const res = api.act(mounted ? 'vehicleExit' : 'vehicleMount', { eid: e.id }); if (res.ok) api.open(null); }}>
         {mounted ? 'Dismount [F]' : state === 'ok' ? 'Mount & drive' : 'Mount · cannot move'}
       </button>
-      <button className="btn" disabled={!canRefuel} title={fuelCount <= 0 ? 'Carry one Fuel Canister' : 'A full canister needs 100 tank space'} onClick={() => api.act('vehicleRefuel', { eid: e.id })}><Icon k="fuel_can" size={10} /> Refuel {fuelCount}/1</button>
-      <button className="btn" disabled={!canRepair} title={mounted ? 'Dismount first' : (e.hp ?? 0) >= BAL.motorbike.maxHp ? 'Already sound' : `Iron Ingot ${partCount}/1 · Parts ${fastenerCount}/1`} onClick={() => api.act('vehicleRepair', { eid: e.id })}><Icon k="mechanical_gear" size={10} /> Repair {partCount}/1 + {fastenerCount}/1</button>
+      <button className="btn" disabled={!canRefuel} title={fuelCount <= 0 ? 'Carry one Fuel Canister' : 'A full canister needs 100 tank space'} onClick={() => api.act('vehicleRefuel', { eid: e.id })}><Icon k="fuel_can" size={10} /> Refuel · uses 1 of {fuelCount}</button>
+      <button className="btn" disabled={!canRepair} title={mounted ? 'Dismount first' : (e.hp ?? 0) >= BAL.motorbike.maxHp ? 'Already sound' : `Needs 1 Iron Ingot (you have ${partCount}) and 1 Parts (you have ${fastenerCount})`} onClick={() => api.act('vehicleRepair', { eid: e.id })}><Icon k="mechanical_gear" size={10} /> Repair · 1 ingot + 1 parts</button>
       {stranded && cargo > 0 && <button className="btn" disabled={mounted} onClick={() => api.act('vehicleUnloadBag', { eid: e.id })}>Unload {cargo} stacks → ground bag</button>}
     </div>
     {stranded && <div className="vehicle-console__next" role="status">{state === 'broken' ? 'Dismount; spend 1 Iron Ingot + 1 Parts to repair.' : 'Use 1 physical Fuel Canister. Cargo stays in the bike.'}</div>}

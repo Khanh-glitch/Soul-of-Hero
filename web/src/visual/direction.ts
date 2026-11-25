@@ -92,11 +92,16 @@ export interface VisualPrefs {
   stageScale: StageScaleMode; // 'fit' -> high-res window fit (default), 'integer' -> strict 1x/2x/3x floor
   music: number; ambience: number; world: number; combat: number; ui: number;
   muted: boolean;
+  touchControls: TouchPref;   // on-screen stick and buttons: 'auto' shows them on phones and tablets
+  hudScale: HudScalePref;     // size of the always-visible HUD: 'auto' enlarges it when the window is small
 }
+export type TouchPref = 'auto' | 'on' | 'off';
+export type HudScalePref = 'auto' | 1 | 1.25 | 1.5;
 export const DEFAULT_PREFS: VisualPrefs = {
   direction: DEFAULT_DIRECTION, grade: 1, shake: 1, reduceFlash: false, highContrastHud: false,
   uiLayout: 'auto', stageScale: 'fit',
   music: 0.5, ambience: 0.65, world: 0.8, combat: 0.9, ui: 0.6, muted: false,
+  touchControls: 'auto', hudScale: 'auto',
 };
 
 /** Resolve 'pc' (unified 2-column SurvivorScreen) vs 'mobile' (touch-friendly 2-tab PACK/WORK). */
@@ -114,6 +119,26 @@ export function resolveUiLayout(
   const touchPts = env?.maxTouchPoints ?? (typeof navigator !== 'undefined' ? navigator.maxTouchPoints || 0 : 0);
   if (touchPts > 0 && /Android|iPhone|iPad|iPod|Mobile/i.test(ua)) return 'mobile';
   return 'pc';
+}
+
+/** A phone or tablet: the primary pointer is a finger and nothing hovers. Same test as the pack layout. */
+export function isTouchDevice(env?: { coarseOnly?: boolean; userAgent?: string; maxTouchPoints?: number }): boolean {
+  return resolveUiLayout({ uiLayout: 'auto' }, env) === 'mobile';
+}
+/** Whether the on-screen stick and buttons are shown. */
+export function resolveTouchControls(p: Pick<VisualPrefs, 'touchControls'> = prefs, env?: Parameters<typeof isTouchDevice>[0]): boolean {
+  return p.touchControls === 'on' || ((p.touchControls ?? 'auto') === 'auto' && isTouchDevice(env));
+}
+/**
+ * HUD zoom for a given stage scale. The interface is drawn on a 640x360 stage, so its 8px labels are 8 x scale
+ * screen pixels tall. 'auto' keeps them near the size they have at 1280x720. It never enlarges past 1.5x, and
+ * past 1.25x when the touch buttons are on screen, because the zoomed HUD and the buttons share the same room.
+ */
+export function resolveHudScale(stageScale: number, p: Pick<VisualPrefs, 'hudScale'> = prefs, touch = false): number {
+  const pref = p.hudScale ?? 'auto';
+  if (pref !== 'auto') return pref;
+  if (!(stageScale > 0) || stageScale >= 1.7) return 1;
+  return Math.min(touch ? 1.25 : 1.5, Math.round((1.7 / stageScale) * 20) / 20);
 }
 
 /** Compute stage scale & letterbox offset: 'fit' fills window smoothly at native resolution; 'integer' snaps 1x/2x/3x. */

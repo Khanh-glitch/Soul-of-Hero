@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { BAL, type Entity } from '../game/core';
 import { ITEMS, RECIPES, STRUCTS, isRecipeKnown, permitsDirectedResearch, CORE_STUDY, stationBurnable } from '../game/catalog';
 import { C, countItem, recipeOutputs, spaceFor, oilAvailability, OIL_TEXT } from '../game/engine';
-import { Panel, Slot, Icon, type Api } from './common';
+import { Panel, Slot, Icon, Mark, type Api } from './common';
 import { Glyph } from './hud';
 import { craftReadiness } from '../game/action-readiness';
 import { recoveryFits } from '../game/recycler';
@@ -109,10 +109,10 @@ export function StationConsole({ api, eid, initialTab = 'make' }: { api: Api; ei
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
         <StatusLamp tone={stateTone} shape={state === 'NO FUEL' ? 'diamond' : 'round'} label={state} />
         {fuelled && <span className="lbl" style={{ fontSize: 8, color: burning ? 'var(--food)' : 'var(--muted)', display: 'inline-flex', gap: 3, alignItems: 'center' }}>
-          <Glyph k="wr" c={burning ? 'var(--food)' : '#4c5a63'} s={7} />{((st.burn ?? 0) / 1000).toFixed(0)}s burn
+          <Glyph k="wr" c={burning ? 'var(--food)' : '#4c5a63'} s={7} />{`${((st.burn ?? 0) / 1000).toFixed(0)}s burn`}
         </span>}
         <span className="lbl" style={{ fontSize: 8, color: 'var(--muted)', marginLeft: 'auto' }}>
-          HP {Math.round(e.hp ?? 0)}/{e.maxHp}
+          {`Durability ${Math.round(e.hp ?? 0)}/${e.maxHp}`}
         </span>
       </div>
       {state === 'NO FUEL' && <div className="station-action" role="status">Add burnable fuel below. The reserved job is paused.</div>}
@@ -131,7 +131,7 @@ export function StationConsole({ api, eid, initialTab = 'make' }: { api: Api; ei
           <Icon k={job.recipe.startsWith('R:') ? 'blueprint' : RECIPES[job.recipe]?.out || 'gear'} size={11} />
           <span className="lbl" style={{ fontSize: 9 }}>{job.recipe.startsWith('R:') ? `Study: ${ITEMS[RECIPES[job.recipe.slice(2)]?.out]?.name ?? '?'}` : ITEMS[RECIPES[job.recipe]?.out]?.name ?? job.recipe}</span>
           <span className="lbl" style={{ fontSize: 8, marginLeft: 'auto', color: running ? 'var(--info)' : 'var(--bad)' }}>{Math.ceil(job.left / 1000)}s{running ? '' : ' · held'}</span>
-          <button className="btn ghost sm" disabled={!!job.workerId} onClick={() => api.act('cancelJob', { eid, jobId: job.id })} title={job.workerId ? "Reserved by worker" : "Cancel — reserved inputs are returned"}>✕</button>
+          <button className="btn ghost sm" disabled={!!job.workerId} onClick={() => api.act('cancelJob', { eid, jobId: job.id })} title={job.workerId ? "Reserved by worker" : "Cancel — reserved inputs are returned"} style={{ position: 'relative' }}><Mark ch="✕" /></button>
         </div>
       </div>}
       {st.queue.length > 1 && <div className="lbl" style={{ fontSize: 8, color: 'var(--muted)', marginTop: 2 }}>+{st.queue.length - 1} more queued</div>}
@@ -190,7 +190,7 @@ export function StationConsole({ api, eid, initialTab = 'make' }: { api: Api; ei
               <span className="lbl" style={{ fontSize: 9, color: 'var(--brassLit)' }}>{outs.map(([k, qn]) => `${qn} ${ITEMS[k].name}`).join(' + ')}</span>
             </div>
             <CostChips ins={rc.ins} have={have} />
-            <div className="lbl" style={{ fontSize: 8, color: 'var(--muted)', marginTop: 3 }}>{rc.secs}s at the station{rc.stationLevel ? ` · level ${rc.stationLevel}` : ''}</div>
+            <div className="lbl" style={{ fontSize: 8, color: 'var(--muted)', marginTop: 3 }}>{`${rc.secs}s at the station${rc.stationLevel ? ` · level ${rc.stationLevel}` : ''}`}</div>
             <button className="btn gold sm" style={{ width: '100%', marginTop: 4 }} disabled={!readiness.canSubmit}
               onClick={() => api.act('craft', { recipe: sel, eid })}>
               {readiness.state === 'waiting' ? 'Queue · will wait' : 'Queue job'}
@@ -225,7 +225,7 @@ export function StationConsole({ api, eid, initialTab = 'make' }: { api: Api; ei
     {/* ---- pack strip: physical transfer, no remote access ---- */}
     <div className="rule" style={{ margin: '4px 0 3px' }} />
     <div className="console-h">Pack · click an item to load it here</div>
-    <div className="scroll" style={{ display: 'flex', gap: 2, flexWrap: 'wrap', maxHeight: 24, overflowY: 'auto' }}>
+    <div className="scroll" style={{ display: 'flex', gap: 2, flexWrap: 'wrap', maxHeight: 44, overflowY: 'auto' }}>
       {C(r, 'inv').slots.map((s, i) => <Slot key={i} s={s} hotkey={i < 8 ? String(i + 1) : undefined}
         onClick={() => { if (!s) return; if (fuelled && stationBurnable(s.key)) transferFuel(i); else api.act('useItem', { slot: i }); }} />)}
     </div>
@@ -263,7 +263,7 @@ function ResearchList({ api, eid, e, q, setQ }: { api: Api; eid: string; e: Enti
       const rc = RECIPES[k]; const can = !full && spares >= B.directedSparesCost;
       return <div key={k} className={`recipe-row ${can ? '' : 'no'}`} style={{ cursor: 'default' }}>
         <Icon k={rc.out} size={12} />
-        <span className="lbl" style={{ fontSize: 9, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{ITEMS[rc.out].name}</span>
+        <span className="lbl" title={ITEMS[rc.out].name} style={{ fontSize: 9, flex: 1, minWidth: 0, lineHeight: 1.1, overflowWrap: 'anywhere' }}>{ITEMS[rc.out].name}</span>
         <button className="btn sm" disabled={!can} title={full ? 'Queue full' : !can ? `Need ${B.directedSparesCost - spares} more Parts` : 'Reserve Parts for this research'} onClick={() => api.act('research', { mode: 'directed', recipe: k, eid })}>Study</button>
       </div>;
     })}

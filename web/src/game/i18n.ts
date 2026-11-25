@@ -1,6 +1,7 @@
 // ============================================================================
-// i18n — presentation-only language switch for the Journey ledger (English /
-// Tiếng Việt). It has NO authority: nothing in the save, the engine or a
+// i18n — presentation-only language switch (English / Tiếng Việt). The Journey
+// ledger carries two-language texts; every other screen is translated on the
+// way to the DOM by ui/i18n-dom.ts with the phrase book in i18n-vi.ts. It has NO authority: nothing in the save, the engine or a
 // receipt depends on it. Item and structure names stay in English in both
 // languages so the handbook always matches the names shown in the pack.
 // ============================================================================
@@ -15,7 +16,10 @@ const listeners = new Set<() => void>();
 function read(): Lang {
   try {
     const v = typeof localStorage !== 'undefined' ? localStorage.getItem(KEY) : null;
-    return v === 'vi' ? 'vi' : 'en';
+    if (v === 'vi' || v === 'en') return v;
+    // No choice saved yet: follow the browser. A Vietnamese browser starts in Vietnamese.
+    const nav = typeof navigator !== 'undefined' ? String(navigator.language ?? '') : '';
+    return nav.toLowerCase().startsWith('vi') ? 'vi' : 'en';
   } catch { return 'en'; }
 }
 

@@ -252,7 +252,7 @@ export function DeathRecoveryOverlay({ gs, onRespawn }: { gs: GameState; onRespa
           <div className="console-col">
             <div className="console-h" style={{ color: 'var(--info)' }}>Safe &amp; Next Step</div>
             <div className="lbl" style={{ fontSize: 9, color: 'var(--info)' }}>
-              Profile-Secured Cash: <b>{gs.profile.securedCash}</b>
+              Secured cash (kept after death): <b>{gs.profile.securedCash}</b>
             </div>
             <div className="lbl" style={{ fontSize: 8, color: 'var(--muted)', marginTop: 2 }}>
               Preferred wake: <b style={{ color: 'var(--paper)' }}>{hasBed ? 'Your Straw Bed (if safe)' : 'Safe Landing Site'}</b>

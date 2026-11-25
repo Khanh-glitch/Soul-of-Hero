@@ -7,6 +7,7 @@ import { ITEMS } from '../game/catalog';
 import { spiritDestination } from '../game/sim';
 import { deathBagView } from '../game/death-view';
 import { expeditionNotes, type PlaceNote } from '../game/expedition-intel';
+import { displayZone } from './hud';
 import { addFieldMark, discoveredCell, readFieldMarks, storeFieldMarks, type FieldMark, type MarkKind } from '../game/map-notes';
 import { Panel, Icon, type Api } from './common';
 import { isVeyra05Layout } from '../veyra05/scenes';
@@ -67,6 +68,13 @@ function bearingLabel(dx: number, dy: number): string {
   const idx = Math.round(((a + 360) % 360) / 45) % 8;
   return `${Math.round(d)}t ${dirs[idx]}`;
 }
+
+/**
+ * The continent overview marks only the player's own bag. Every 'bag' entity used to get the red mark, which put
+ * a dot on each survivor store and corpse on the continent, charted or not: about 66 marks on a fresh run.
+ */
+export const isOwnBag = (e: { kind?: string; label?: string; owner?: unknown; parcel?: unknown }): boolean =>
+  e.kind === 'bag' && e.label === 'Your bag' && !e.owner && !e.parcel;
 
 function discoveredBounds(r: RunState): { minX: number; maxX: number; minY: number; maxY: number; pct: number } {
   let minX = WW, maxX = 0, minY = WH, maxY = 0, count = 0;
@@ -207,7 +215,7 @@ function renderContinentChart(
   for (const e of Object.values(r.entities)) {
     if (!onActiveFloor(r, e)) continue;
     if (e.type === 'claim') dot(ox + e.tx!, oy + e.ty!, '#8fd45a', 4);
-    if (e.kind === 'bag') dot(ox + e.x / TILE, oy + e.y / TILE, '#ff8e7a', 3);
+    if (isOwnBag(e)) dot(ox + e.x / TILE, oy + e.y / TILE, '#ff8e7a', 3);
     if (e.kind === 'cart' || e.kind === 'vehicle') dot(ox + e.x / TILE, oy + e.y / TILE, '#7fd8ff', 3);
   }
   if (r.veyraOffscreenEntities) {
@@ -215,7 +223,7 @@ function renderContinentChart(
       const gtx = oe.tx !== undefined ? oe.tx : oe.x / TILE;
       const gty = oe.ty !== undefined ? oe.ty : oe.y / TILE;
       if (oe.type === 'claim') dot(gtx, gty, '#8fd45a', 4);
-      if (oe.kind === 'bag') dot(gtx, gty, '#ff8e7a', 3);
+      if (isOwnBag(oe)) dot(gtx, gty, '#ff8e7a', 3);
       if (oe.kind === 'cart' || oe.kind === 'vehicle') dot(gtx, gty, '#7fd8ff', 3);
     }
   }
@@ -473,7 +481,7 @@ export function ExpeditionMap({ api, onTeleportSelect, teleportTarget, qaSession
   const sites = w.places.filter(site => r.poiSeen.includes(site.id) && discoveredCell(r, site.tx, site.ty));
   const seenContinentPois = isVeyra ? POIS.filter(po => r.poiSeen.includes(po.id)) : [];
   const offscreenCount = isVeyra && r.veyraOffscreenEntities
-    ? Object.values(r.veyraOffscreenEntities).filter(oe => oe.type === 'claim' || oe.kind === 'bag' || oe.kind === 'cart' || oe.kind === 'vehicle').length
+    ? Object.values(r.veyraOffscreenEntities).filter(oe => oe.type === 'claim' || isOwnBag(oe as any) || oe.kind === 'cart' || oe.kind === 'vehicle').length
     : 0;
   const ownedCabinets = Object.values(r.entities).filter(e => (!isVeyra || onActiveFloor(r, e)) && e.type === 'claim' && e.tx !== undefined && e.ty !== undefined && discoveredCell(r, e.tx, e.ty));
   const rigs = Object.values(r.entities).filter(e => (!isVeyra || onActiveFloor(r, e)) && (e.kind === 'vehicle' || e.kind === 'cart') && discoveredCell(r, Math.floor(e.x / TILE), Math.floor(e.y / TILE)));
@@ -555,7 +563,7 @@ export function ExpeditionMap({ api, onTeleportSelect, teleportTarget, qaSession
     if (!discoveredCell(r, tx, ty)) {
       return { discovered: false as const, tx, ty };
     }
-    const zoneName = (w.zoneNames || ZONES)[w.zone[ty * WW + tx]] ?? 'Island';
+    const zoneName = displayZone((w.zoneNames || ZONES)[w.zone[ty * WW + tx]]) || 'Island';
     const tileCode = effTile(r, tx, ty);
     const surface = TILE_LABEL[tileCode] ?? 'Wild terrain';
     const poi = sites.find(s => Math.hypot(s.tx - tx, s.ty - ty) <= 4) ?? null;
@@ -663,15 +671,15 @@ export function ExpeditionMap({ api, onTeleportSelect, teleportTarget, qaSession
     if (e.code === 'Delete' && selectedMarkId) removeMark(selectedMarkId);
   };
 
-  const zone = (w.zoneNames || ZONES)[w.zone[pty * WW + ptx]];
+  const zone = displayZone((w.zoneNames || ZONES)[w.zone[pty * WW + ptx]]);
   const fl = isVeyra ? activeFloor(r) : 0;
-  const floorTag = fl < 0 ? `B${Math.abs(fl)}` : fl === 0 ? 'F1' : `F${fl + 1}`;
+  const floorTag = fl < 0 ? ` · Basement ${Math.abs(fl)}` : fl === 0 ? '' : ` · Floor ${fl + 1}`;
   const [ax, ay] = isVeyra ? playerGlobalAu(r) : [0, 0];
   const totalSiteCount = (isVeyra ? Math.max(sites.length, seenContinentPois.length) : sites.length) + ownedCabinets.length;
 
   return <Panel title={<span className="map-heading">
     FIELD CHART
-    <span>{zone}{isVeyra ? ` · AU ${ax.toFixed(0)},${ay.toFixed(0)} · ${floorTag}` : ''} · {bounds.pct}% charted · {runHours(r, api.now()).toFixed(1)}h</span>
+    <span>{zone}{isVeyra ? ` · AU ${ax.toFixed(0)},${ay.toFixed(0)}${floorTag}` : ''} · {bounds.pct}% charted · {runHours(r, api.now()).toFixed(1)}h</span>
   </span>}
     className="field-map" style={{ left: 14, top: 8, width: 612, height: 344, boxSizing: 'border-box' }} onClose={() => api.open(null)}>
     <div className="field-map__body">
@@ -679,7 +687,7 @@ export function ExpeditionMap({ api, onTeleportSelect, teleportTarget, qaSession
       <div className="chart-column">
         <div className="chart-controls">
           <div className="chart-zoom" role="group" aria-label="Map zoom">
-            {isVeyra && <button data-testid="map-mode-continent" className={`btn sm ${zoom === 0 ? 'gold' : 'ghost'}`} onClick={() => changeZoom(0)} title="Veyra Continent 4000×2800 Fog of War">Cont</button>}
+            {isVeyra && <button data-testid="map-mode-continent" className={`btn sm ${zoom === 0 ? 'gold' : 'ghost'}`} onClick={() => changeZoom(0)} title="The whole continent. Only what you have charted is drawn.">World</button>}
             {([1, 2, 4] as LocalZoomLevel[]).map(z => <button key={z} data-testid={isVeyra && z === 1 ? 'map-mode-local' : undefined} className={`btn sm ${zoom === z ? 'gold' : 'ghost'}`} onClick={() => changeZoom(z)} title={z === 1 ? 'Full sector overview' : z === 2 ? 'Sector zoom' : 'Tactical zoom'}>{z}×</button>)}
             <button className="btn sm ghost" onClick={fitExplored} title="Frame explored territory">Fit</button>
             <button className="btn sm ghost" onClick={() => { inspectTile(ptx, pty); focusOn(ptx, pty, 2); }} title="Center on player">You</button>
@@ -713,7 +721,7 @@ export function ExpeditionMap({ api, onTeleportSelect, teleportTarget, qaSession
             <i style={{ color: '#8fd45a' }}>■</i>Cab
             <i style={{ color: '#ff8e7a' }}>✕</i>Bag
           </span>
-          <span className="map-key">{marks.length}/18</span>
+          <span className="map-key" title="Notes you have left on the chart, out of 18">{marks.length}/18</span>
         </div>
       </div>
 
@@ -798,7 +806,7 @@ export function ExpeditionMap({ api, onTeleportSelect, teleportTarget, qaSession
 
         <div className="map-list scroll">
           {(filter === 'all' || filter === 'sites') && <>
-            {isVeyra && offscreenCount > 0 && <div className="map-note" style={{ color: '#9ae0ff' }}>Offscreen markers: {offscreenCount} (shown on Cont view)</div>}
+            {isVeyra && offscreenCount > 0 && <div className="map-note" style={{ color: '#9ae0ff' }}>Offscreen markers: {offscreenCount} (shown on the World view)</div>}
             {death.status === 'present' && (() => {
               const btx = Math.floor(death.bag.x / TILE), bty = Math.floor(death.bag.y / TILE);
               const offWin = isVeyra && (btx < 0 || btx >= WW || bty < 0 || bty >= WH);

@@ -89,7 +89,7 @@ export interface FeedLine { id: string; icon?: string; title: string; detail: st
 /** FEED tier: small icon lines at the lower-left edge. Duplicates merge into ×N instead of stacking. */
 export function EventFeed({ lines, bottom }: { lines: FeedLine[]; bottom: number }) {
   if (!lines.length) return null;
-  return <div className="feed" style={{ bottom }} aria-live="polite">
+  return <div className="feed" style={{ bottom: `calc(${bottom}px * var(--hud-zoom, 1))` }} aria-live="polite">
     {lines.map(l => <div key={l.id} className={`feed__line ${l.warn ? 'warn' : ''}`} style={{ '--accent': l.accent } as React.CSSProperties}>
       {l.icon ? <Icon k={l.icon} size={11} /> : <i className="feed__dot" />}
       <b>{l.title}</b>{l.detail && <span>{l.detail}</span>}{l.count > 1 && <em>×{l.count}</em>}
