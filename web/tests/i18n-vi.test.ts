@@ -15,7 +15,7 @@ describe('Vietnamese phrase book', () => {
   it('the generated book matches the phrase lists it is built from', () => {
     // scripts/make-vi-book.py concatenates i18n/vi/*.txt; an edit to the lists without a rebuild must fail here.
     const dir = join(__dirname, '..', 'i18n', 'vi');
-    const want = ['01-core', '02-panels', '03-stations', '04-more', '05-engine', '06-items'].flatMap(n => readFileSync(join(dir, n + '.txt'), 'utf8').split('\n').map(l => l.trim()).filter(Boolean));
+    const want = ['01-core', '02-panels', '03-stations', '04-more', '05-engine', '06-items', '07-panels'].flatMap(n => readFileSync(join(dir, n + '.txt'), 'utf8').split('\n').map(l => l.trim()).filter(Boolean));
     const have = new Set(VI_BOOK.split('\n').map(l => l.trim()).filter(Boolean));
     expect(want.filter(l => !have.has(l))).toEqual([]);
   });

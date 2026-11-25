@@ -64,6 +64,18 @@ export function Mark({ ch, s = 7 }: { ch: '✕' | '☰'; s?: number }) {
     <span style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clipPath: 'inset(50%)', whiteSpace: 'nowrap' }}>{ch}</span>
   </>;
 }
+/**
+ * A panel that throws while drawing must not take the whole game with it (React unmounts everything when
+ * nothing catches the error). The guard drops the panel, tells the caller, and resets when another opens.
+ */
+export class PanelGuard extends React.Component<{ resetKey: string; onError: (error: unknown) => void; children: React.ReactNode }, { failed: boolean }> {
+  state = { failed: false };
+  static getDerivedStateFromError() { return { failed: true }; }
+  componentDidCatch(error: unknown) { console.error('[panel]', error); this.props.onError(error); }
+  componentDidUpdate(prev: { resetKey: string }) { if (this.state.failed && prev.resetKey !== this.props.resetKey) this.setState({ failed: false }); }
+  render() { return this.state.failed ? null : this.props.children; }
+}
+
 export function Panel({ title, children, style, onClose, className = '', testId }: { title: React.ReactNode; children: React.ReactNode; style?: React.CSSProperties; onClose?: () => void; className?: string; testId?: string }) {
   return <div className={`panel absolute fadein ${className}`} data-testid={testId} style={{ padding: 6, ...style }} onMouseDown={e => e.stopPropagation()} onContextMenu={e => e.preventDefault()}>
     <div className="flex items-center justify-between" style={{ marginBottom: 4 }}><div className="panel-h">{title}</div>{onClose && <button className="btn ghost panel-x" aria-label="Close panel" style={{ padding: '2px 4px', fontSize: 11, position: 'relative', lineHeight: 0 }} onClick={onClose}><Mark ch="✕" /></button>}</div>

@@ -63,12 +63,12 @@ export function ReturnDigest({
     >
       <div className="return-digest__head">
         <span className="lamp round" style={{ color: hasBad ? 'var(--bad)' : hasWarn ? 'var(--warn)' : 'var(--good)' }} />
-        <b>RETURNED · {dur} AWAY</b>
+        <b>{`RETURNED · ${dur} AWAY`}</b>
         <button className="btn sm ghost" style={{ marginLeft: 'auto', padding: '1px 4px' }} aria-label="Dismiss return summary" onClick={onDismiss}>×</button>
       </div>
       <div className="return-digest__body">
         <div className="return-digest__outcome"><b>{receipts.length ? `${receipts.length} verified event${receipts.length === 1 ? '' : 's'}` : changes.length ? 'Observed changes' : 'Quiet interval'}</b><span>{headline}</span></div>
-        {alert && <div className={`return-digest__alert ${alert.tone}`} role="status">CURRENT ALERT · {alert.text}</div>}
+        {alert && <div className={`return-digest__alert ${alert.tone}`} role="status"><span>CURRENT ALERT</span>{' · '}<span>{alert.text}</span></div>}
         {vitals && <div className="return-digest__vitals">{vitals}</div>}
       </div>
       <div className="return-digest__actions">
@@ -161,11 +161,11 @@ export function ReturnChronicle({
   return (
     <Panel
       title={<span style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
-        RETURN CHRONICLE · {formatDuration(activeReport.away.gapMs)} AWAY
+        {`RETURN CHRONICLE · ${formatDuration(activeReport.away.gapMs)} AWAY`}
         <span className="chip" style={{ color: sevColor }}>{grouped.severity.toUpperCase()}</span>
-        {grouped.criticalCount > 0 && <span className="chip" style={{ color: 'var(--bad)' }}>{grouped.criticalCount} CRITICAL</span>}
-        {grouped.positiveCount > 0 && <span className="chip" style={{ color: 'var(--good)' }}>+{grouped.positiveCount} EVENTS</span>}
-        {grouped.warnCount > 0 && <span className="chip" style={{ color: 'var(--warn)' }}>{grouped.warnCount} ALERTS</span>}
+        {grouped.criticalCount > 0 && <span className="chip" style={{ color: 'var(--bad)' }}>{`${grouped.criticalCount} CRITICAL`}</span>}
+        {grouped.positiveCount > 0 && <span className="chip" style={{ color: 'var(--good)' }}>{`+${grouped.positiveCount} EVENTS`}</span>}
+        {grouped.warnCount > 0 && <span className="chip" style={{ color: 'var(--warn)' }}>{`${grouped.warnCount} ALERTS`}</span>}
       </span>}
       className="return-report"
       testId="return-chronicle"
@@ -185,7 +185,7 @@ export function ReturnChronicle({
                 onClick={() => { setSelectedIdx(idx); setShowAllWear(false); setShowAllDecay(false); }}
                 title={`Recorded ${new Date(h.recordedAt).toLocaleTimeString()}`}
               >
-                {idx === 0 ? 'Latest' : `-${idx}`} ({formatDuration(h.report.away.gapMs)})
+                {`${idx === 0 ? 'Latest' : `-${idx}`} (${formatDuration(h.report.away.gapMs)})`}
               </button>
             ))}
           </div>
@@ -197,7 +197,7 @@ export function ReturnChronicle({
         <section className="return-col console-col">
           <div className="return-col__head">
             <span style={{ color: 'var(--brassLit)' }}>WHILE YOU WERE AWAY</span>
-            <small>{activeReport.receiptCount} event{activeReport.receiptCount === 1 ? '' : 's'}</small>
+            <small>{`${activeReport.receiptCount} event${activeReport.receiptCount === 1 ? '' : 's'}`}</small>
           </div>
           <div className="scroll return-col__list">
             {grouped.eventChanges.length === 0 && grouped.otherDeltaRows.length === 0 && grouped.decayRows.length === 0 ? (
@@ -233,7 +233,7 @@ export function ReturnChronicle({
                     <div className="return-row" style={{ color: 'var(--bad)', marginBottom: 2 }}>
                       <span className="chip" style={{ color: 'var(--bad)' }}>DECAY</span>
                       <div className="return-row__copy" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 4, flex: 1 }}>
-                        <span>{grouped.decayRows.length} base structure{grouped.decayRows.length === 1 ? '' : 's'} lost HP while away</span>
+                        <span>{`${grouped.decayRows.length} base structure${grouped.decayRows.length === 1 ? '' : 's'} lost HP while away`}</span>
                         <button className="btn sm ghost" onClick={() => setShowAllDecay(v => !v)}>
                           {showAllDecay ? 'Collapse' : 'Inspect'}
                         </button>
@@ -259,7 +259,7 @@ export function ReturnChronicle({
               <div key={`${row.sec}-${row.id}`} className="return-row" style={{ color: TONE_COLOR[row.tone] }}>
                 <span className="chip" style={{ color: 'var(--info)' }}>NOW</span>
                 <div className="return-row__copy">
-                  <span>{row.text}</span>
+                  <span>{row.text.replace(/^NOW · /, '')}</span>
                 </div>
               </div>
             ))}
@@ -268,7 +268,7 @@ export function ReturnChronicle({
                 <div className="return-row" style={{ color: 'var(--warn)', marginBottom: 2 }}>
                   <span className="chip" style={{ color: 'var(--warn)' }}>HOME</span>
                   <div className="return-row__copy" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 4, flex: 1 }}>
-                    <span>{grouped.wearRows.length} base structure{grouped.wearRows.length === 1 ? '' : 's'} below 50% HP</span>
+                    <span>{`${grouped.wearRows.length} base structure${grouped.wearRows.length === 1 ? '' : 's'} below 50% HP`}</span>
                     <button className="btn sm ghost" onClick={() => setShowAllWear(v => !v)}>
                       {showAllWear ? 'Collapse' : 'Inspect'}
                     </button>
@@ -287,7 +287,7 @@ export function ReturnChronicle({
       <div className="return-footer">
         <div className="return-next">
           <b>NEXT: </b>
-          {activeReport.next.length ? activeReport.next.slice(0, 2).join(' ') : grouped.criticalCount || grouped.warnCount ? 'Review the current alerts before heading out.' : 'No urgent physical follow-up recorded. Choose your next step.'}
+          {activeReport.next.length ? activeReport.next.slice(0, 2).map((line, i) => <span key={i}>{line}{' '}</span>) : grouped.criticalCount || grouped.warnCount ? 'Review the current alerts before heading out.' : 'No urgent physical follow-up recorded. Choose your next step.'}
         </div>
         <button className="btn gold" style={{ fontSize: 11, flex: '0 0 auto' }} onClick={() => api.open(null)}>
           {api.gs.run && playerAtSea(api.gs.run) ? 'Return to vessel' : 'Enter the Island'}
