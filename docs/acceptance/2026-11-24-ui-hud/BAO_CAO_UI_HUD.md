@@ -109,13 +109,13 @@ Vòng này làm nốt danh sách "Chưa làm, chưa kiểm" của vòng 2: mở 
 | 26 | Vừa | Cột phải của bảng trạm: khối nhiên liệu và thành phẩm nằm dưới mép cuộn, không có dấu hiệu nào cho biết. | **Đã sửa một phần**: thêm thanh "Còn nữa ở dưới", bấm là cuộn tới cuối (`r3-lo-luyen.png`). Kích thước bảng giữ nguyên vì bị cổng kiểm `pa1-research-visible-gate` khóa |
 | 27 | Nhẹ | Lời nhắc cạnh nhân vật còn tiếng Anh ở 29 / 43 mẫu thử (giao dịch, cửa, thùng tiếp tế, máy phát, bẫy, giường…). | **Đã sửa** |
 | 28 | Nhẹ | Cảnh báo khẩn "FREEZING", "DEHYDRATED", "STARVING" còn tiếng Anh. | **Đã sửa** (`r3-lanh-doi-khat.png`) |
-| 29 | Nhẹ | Chế độ xây: chú thích ô đồ và lý do không đặt được còn tiếng Anh. | **Đã sửa** (`r2-xay-dung.png` chụp lại) |
+| 29 | Nhẹ | Chế độ xây: chú thích ô đồ và lý do không đặt được còn tiếng Anh. | **Đã sửa trong mã, chưa xem lại bằng mắt**: câu dịch đã có trong sổ câu và qua bài kiểm tự động, nhưng `r2-xay-dung.png` chụp trước khi thêm câu dịch nên dòng trạng thái trong ảnh vẫn là tiếng Anh |
 | 30 | Nhẹ | Trên máy cảm ứng, dòng hướng dẫn của bước đang theo dõi vẫn bảo "nhấn chuột trái", "Space". | **Đã sửa** cho dòng bước đang theo dõi: đổi thành "nút Đánh", "nút Lăn", "cần điều khiển" |
 | 31 | Nội bộ | Cảnh QA "ragnarok_economy": thương nhân, trạm di tản, rương tiền hiện lời nhắc nhưng bấm E không mở (mã lưu lệch một đơn vị). Không ảnh hưởng người chơi. | **Đã sửa** |
 
 ### Các bảng đã mở và xem trong vòng 3
 
-Tiếng Việt, 1280 × 720, không lỗi console: nghỉ (giường), nhật ký trở về (sau 6,5 giờ vắng mặt thật của máy game, cả hai khối "Xem"), thương nhân, trạm di tản (cả bước xác nhận), rương tiền Ragnarok, rương ký gửi, tủ lãnh thổ, lò, bàn chế tạo, bàn nghiên cứu, rương lớn, cư dân, hải trình (đang đi và mắc kẹt), tử trận, chế độ xây, HUD ban đêm (19:42 và 20:22), HUD khi lạnh / đói / khát / máu thấp. Thương nhân, di tản, rương tiền, rương ký gửi, tủ lãnh thổ được xem thêm bằng tiếng Anh.
+Tiếng Việt, 1280 × 720, không lỗi console: nghỉ (giường), nhật ký trở về (sau 6,5 giờ vắng mặt thật của máy game, cả hai khối "Xem"), thương nhân, trạm di tản (cả bước xác nhận), rương tiền Ragnarok, rương ký gửi, tủ lãnh thổ, lò, bàn chế tạo, bàn nghiên cứu, rương lớn, cư dân, hải trình (đang đi và mắc kẹt), chế độ xây (trước khi dịch dòng trạng thái), HUD khi lạnh / khát / máu thấp (08:45 trong game). Thương nhân, di tản, rương tiền, rương ký gửi, tủ lãnh thổ được xem thêm bằng tiếng Anh.
 
 Game không có bảng "di vật"; mục đó trong danh sách cũ là ghi nhầm.
 
@@ -144,4 +144,7 @@ Ba tệp bị loại từ trước (`src/veyra05/audit-closure`, `src/veyra05/re
 - Nút chọn số giờ nghỉ ghi "1 h / 8 h / 24 h" ở cả hai ngôn ngữ.
 - Tên vùng và địa danh giữ tiếng Anh.
 - Chú thích khi rê chuột (`title`) không hiện trong ảnh chụp nên chỉ được kiểm bằng cách đọc chữ.
+- **HUD ban đêm và màn tử trận chưa được xem trong vòng 3.** Mọi lượt chạy trình duyệt đều nằm trong khoảng 07:30–09:11 giờ game. (Bản báo cáo gộp ở PR #67 ghi nhầm là đã xem; dòng này sửa lại.)
+- **Chế độ xây chưa được chụp lại sau khi dịch.** Ngoài ra thẻ chỉ đường còn đè lên thanh chọn trang (Nền / Tường / Mái) khi đang xây; lỗi này chưa sửa.
+- Còn tiếng Anh, đã biết: ở thương nhân "Parts: {n}", "{n} Parts", "Put in pack", tiêu đề Parcel; "Ragnarok chest"; trạng thái tháp canh ("No generator", "Connection blocked", "No power", "No arrows", "Capacity allocated elsewhere"); "Open relevant action for Hunger & Thirst"; lời nhắc "Chop", "Mine"; chú thích loại lò sưởi. Danh sách câu thiếu do công cụ ghi lại ở bảng nghỉ (16 câu) và nhật ký trở về (22 câu) chưa được rà.
 - Bảng nghỉ mới xem ở trạng thái thiếu rương; luồng chọn đồ rồi nằm ngủ chỉ được kiểm bằng các bài kiểm thử tự động có sẵn, chưa xem bằng mắt.
