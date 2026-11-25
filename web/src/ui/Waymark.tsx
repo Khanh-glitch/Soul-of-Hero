@@ -24,8 +24,10 @@ export const touchWords = (text: string, lang: Lang): string => lang === 'vi'
   ? text.replace(/chuột trái|\bLMB\b/g, 'nút Đánh').replace(/\bSpace\b/g, 'nút Lăn').replace(/\bWASD\b/g, 'cần điều khiển')
   : text.replace(/\bLMB\b/g, 'the Hit button').replace(/\bSpace\b/g, 'the Roll button').replace(/\bWASD\b/g, 'the stick');
 
-export function Waymark({ view, mode, store, stamp, onToggle, onUntrack, onOpenJournal, onJump, blocked, lang = 'en', touch = false }: {
+export function Waymark({ view, mode, store, stamp, onToggle, onUntrack, onOpenJournal, onJump, blocked, lang = 'en', touch = false, brief = false }: {
   touch?: boolean;
+  /** Build mode: keep the title, the step and its button, and drop the two explanatory lines so the card ends above the build bar. */
+  brief?: boolean;
   view: TrackView | null; mode: WaymarkMode; store: JourneyStore; stamp: JourneyEvent | null; blocked?: string | null; lang?: Lang;
   onToggle: () => void; onUntrack: () => void; onOpenJournal: () => void; onJump?: (t: QuickJumpTarget) => void;
 }) {
@@ -52,7 +54,7 @@ export function Waymark({ view, mode, store, stamp, onToggle, onUntrack, onOpenJ
   if (mode === 'glyph') return <div className="wm wm--glyph" title={`${v.title} ${v.progress}/${v.target}`} onClick={onToggle}>
     <div className="wm__socket"><Ring frac={frac} /><Icon k={v.icon} size={12} /></div>
   </div>;
-  return <div className={`wm wm--${mode} lang-${lang} ${v.suggested ? 'wm--suggested' : ''} ${v.done ? 'wm--done' : ''} ${v.claimable ? 'wm--claim' : ''}`} onMouseDown={e => e.stopPropagation()}>
+  return <div className={`wm wm--${mode} ${brief ? 'wm--brief' : ''} lang-${lang} ${v.suggested ? 'wm--suggested' : ''} ${v.done ? 'wm--done' : ''} ${v.claimable ? 'wm--claim' : ''}`} onMouseDown={e => e.stopPropagation()}>
     <button className="wm__socket" onClick={onToggle} title="Peek [T]" key={`b${bump}`} data-bump={bump > 0 || undefined}>
       <Ring frac={frac} /><Icon k={v.icon} size={14} />
     </button>

@@ -109,13 +109,15 @@ Vòng này làm nốt danh sách "Chưa làm, chưa kiểm" của vòng 2: mở 
 | 26 | Vừa | Cột phải của bảng trạm: khối nhiên liệu và thành phẩm nằm dưới mép cuộn, không có dấu hiệu nào cho biết. | **Đã sửa một phần**: thêm thanh "Còn nữa ở dưới", bấm là cuộn tới cuối (`r3-lo-luyen.png`). Kích thước bảng giữ nguyên vì bị cổng kiểm `pa1-research-visible-gate` khóa |
 | 27 | Nhẹ | Lời nhắc cạnh nhân vật còn tiếng Anh ở 29 / 43 mẫu thử (giao dịch, cửa, thùng tiếp tế, máy phát, bẫy, giường…). | **Đã sửa** |
 | 28 | Nhẹ | Cảnh báo khẩn "FREEZING", "DEHYDRATED", "STARVING" còn tiếng Anh. | **Đã sửa** (`r3-lanh-doi-khat.png`) |
-| 29 | Nhẹ | Chế độ xây: chú thích ô đồ và lý do không đặt được còn tiếng Anh. | **Đã sửa trong mã, chưa xem lại bằng mắt**: câu dịch đã có trong sổ câu và qua bài kiểm tự động, nhưng `r2-xay-dung.png` chụp trước khi thêm câu dịch nên dòng trạng thái trong ảnh vẫn là tiếng Anh |
+| 29 | Nhẹ | Chế độ xây: chú thích ô đồ và lý do không đặt được còn tiếng Anh. | **Đã sửa** (`r3-xay-dung.png`, chụp sau khi dịch; `r2-xay-dung.png` là ảnh cũ, dòng trạng thái còn tiếng Anh) |
 | 30 | Nhẹ | Trên máy cảm ứng, dòng hướng dẫn của bước đang theo dõi vẫn bảo "nhấn chuột trái", "Space". | **Đã sửa** cho dòng bước đang theo dõi: đổi thành "nút Đánh", "nút Lăn", "cần điều khiển" |
 | 31 | Nội bộ | Cảnh QA "ragnarok_economy": thương nhân, trạm di tản, rương tiền hiện lời nhắc nhưng bấm E không mở (mã lưu lệch một đơn vị). Không ảnh hưởng người chơi. | **Đã sửa** |
+| 32 | Vừa | **Thanh xây trông như hai bảng xây riêng** (góp ý khi chơi thử): hàng thẻ Nền / Tường / Mái nằm trong một khung riêng, dòng trạng thái chen giữa nó và hàng ô mà nó điều khiển. Tên mảnh xuống dòng ("Wood / Wall"), và khi mảnh có hai loại vật liệu thì số lượng dính vào câu báo. | **Đã sửa**: thẻ và ô nằm chung một khung, dòng trạng thái nằm trên cùng và rộng bằng khung, câu dài tự xuống dòng bên trong (`r3-xay-dung.png`) |
+| 33 | Vừa | Khi đang xây, thẻ chỉ đường mở rộng đè lên góc thanh xây. | **Đã sửa ở 1280 × 720**: trong chế độ xây thẻ chỉ giữ tên bước, cách làm và nút, bỏ hai dòng giải thích và phần thưởng nên kết thúc phía trên thanh xây. Chưa kiểm ở các cỡ cửa sổ khác |
 
 ### Các bảng đã mở và xem trong vòng 3
 
-Tiếng Việt, 1280 × 720, không lỗi console: nghỉ (giường), nhật ký trở về (sau 6,5 giờ vắng mặt thật của máy game, cả hai khối "Xem"), thương nhân, trạm di tản (cả bước xác nhận), rương tiền Ragnarok, rương ký gửi, tủ lãnh thổ, lò, bàn chế tạo, bàn nghiên cứu, rương lớn, cư dân, hải trình (đang đi và mắc kẹt), chế độ xây (trước khi dịch dòng trạng thái), HUD khi lạnh / khát / máu thấp (08:45 trong game). Thương nhân, di tản, rương tiền, rương ký gửi, tủ lãnh thổ được xem thêm bằng tiếng Anh.
+Tiếng Việt, 1280 × 720, không lỗi console: nghỉ (giường), nhật ký trở về (sau 6,5 giờ vắng mặt thật của máy game, cả hai khối "Xem"), thương nhân, trạm di tản (cả bước xác nhận), rương tiền Ragnarok, rương ký gửi, tủ lãnh thổ, lò, bàn chế tạo, bàn nghiên cứu, rương lớn, cư dân, hải trình (đang đi và mắc kẹt), chế độ xây (cả ba trang và chế độ nâng cấp, sau khi dịch), HUD khi lạnh / khát / máu thấp (08:45 trong game). Thương nhân, di tản, rương tiền, rương ký gửi, tủ lãnh thổ được xem thêm bằng tiếng Anh.
 
 Game không có bảng "di vật"; mục đó trong danh sách cũ là ghi nhầm.
 
@@ -136,6 +138,14 @@ Thêm sổ câu `web/i18n/vi/07-panels.txt`; tổng 1.959 câu (vòng 2: 1.444).
 
 Ba tệp bị loại từ trước (`src/veyra05/audit-closure`, `src/veyra05/review-r2-acceptance`, `tests/economic-network-m2`) không được chạy.
 
+### Sau khi chơi thử (nhánh `arena/3fc28afa-soul-of-hero`)
+
+Sửa dòng 32 và 33 ở bảng trên. Kiểm: `typecheck`, `typecheck:tests`, `build` sạch; 15 tệp kiểm giao diện chạy 136 bài, 135 đạt. Bài còn lại (`tests/b03-return.test.ts`, "the legacy string route…") chạy khoảng 5 giây so với giới hạn 5 giây mặc định nên quá giờ trên máy kiểm này; trên mã trước thay đổi nó cũng vậy, và với giới hạn 60 giây thì đạt. Chưa chạy lại toàn bộ bộ hồi quy cho thay đổi này. Xem bằng trình duyệt ở 1280 × 720, tiếng Việt, cả ba trang và chế độ nâng cấp, không lỗi trang.
+
+ZIP đóng lại từ bản dựng này: 64.429.971 byte, 221 tệp, SHA256 `a38fb20b7aac5ab09d1368aff48632c0611af078dd29445745a0d7e89833d43b` (thay cho số liệu ở bảng kiểm thử vòng 3).
+
+Bản kiểm thử (có danh sách cảnh dựng sẵn, phím F9): https://soul-of-hero-qa.vercel.app, project Vercel `soul-of-hero-qa`, dựng với `VITE_SOH_QA=1`.
+
 ## Chưa làm, chưa kiểm
 
 - Chưa thử trên điện thoại thật, Firefox, Safari. Máy kiểm chỉ có Chromium không màn hình và không truy cập được địa chỉ chơi thật.
@@ -145,6 +155,7 @@ Ba tệp bị loại từ trước (`src/veyra05/audit-closure`, `src/veyra05/re
 - Tên vùng và địa danh giữ tiếng Anh.
 - Chú thích khi rê chuột (`title`) không hiện trong ảnh chụp nên chỉ được kiểm bằng cách đọc chữ.
 - **HUD ban đêm và màn tử trận chưa được xem trong vòng 3.** Mọi lượt chạy trình duyệt đều nằm trong khoảng 07:30–09:11 giờ game. (Bản báo cáo gộp ở PR #67 ghi nhầm là đã xem; dòng này sửa lại.)
-- **Chế độ xây chưa được chụp lại sau khi dịch.** Ngoài ra thẻ chỉ đường còn đè lên thanh chọn trang (Nền / Tường / Mái) khi đang xây; lỗi này chưa sửa.
+- Ở cửa sổ rất nhỏ (640 × 360, 844 × 390) thông báo "Cửa sổ nhỏ" của game nằm đè lên thanh xây; chưa xử lý.
+- Khi chọn Nâng cấp / Sửa / Tháo, thẻ "Nền" vẫn sáng vì hàng ô đang hiện trang Nền.
 - Còn tiếng Anh, đã biết: ở thương nhân "Parts: {n}", "{n} Parts", "Put in pack", tiêu đề Parcel; "Ragnarok chest"; trạng thái tháp canh ("No generator", "Connection blocked", "No power", "No arrows", "Capacity allocated elsewhere"); "Open relevant action for Hunger & Thirst"; lời nhắc "Chop", "Mine"; chú thích loại lò sưởi. Danh sách câu thiếu do công cụ ghi lại ở bảng nghỉ (16 câu) và nhật ký trở về (22 câu) chưa được rà.
 - Bảng nghỉ mới xem ở trạng thái thiếu rương; luồng chọn đồ rồi nằm ngủ chỉ được kiểm bằng các bài kiểm thử tự động có sẵn, chưa xem bằng mắt.

@@ -892,7 +892,7 @@ export default function Game({
         {!panel && !combatFocus && <RagnarokStrip r={r} now={now} secured={gs.profile.securedCash} />}
         {!panel && !qaOpen && returnDigest && <ReturnDigest report={returnDigest} onExpand={() => { setPanel({ kind: 'report', lines: [], report: returnDigest }); setReturnDigest(null); }} onDismiss={() => setReturnDigest(null)} />}
         {contextCard === 'home' && <HomeStatusCard r={r} px={p.x} py={p.y} inline />}
-        {wmVisible && !panel && <Waymark touch={touchOn} view={trackView} mode={wmMode} store={journey} stamp={activeStamp} blocked={blocked} lang={lang} onToggle={() => setPeek(v => !v)} onUntrack={() => track(null)} onOpenJournal={() => setPanel({ kind: 'journey' })} onJump={handleJump} />}
+        {wmVisible && !panel && <Waymark touch={touchOn} brief={buildMode} view={trackView} mode={wmMode} store={journey} stamp={activeStamp} blocked={blocked} lang={lang} onToggle={() => setPeek(v => !v)} onUntrack={() => track(null)} onOpenJournal={() => setPanel({ kind: 'journey' })} onJump={handleJump} />}
         {!panel && !buildMode && !combatFocus && !qaOpen && !returnDigest && !touchOn && contextCard !== 'home' && fieldEval.active && !activeStamp && wmMode !== 'open' && !(trackView && ['first_landfall', 'pack_and_craft'].includes(fieldEval.active.id)) && (
           <FieldNoteCard
             note={fieldEval.active}

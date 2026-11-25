@@ -78,3 +78,21 @@ describe('the pack beside a chest keeps its action row in view', () => {
     expect(src('ui/Game.tsx')).toContain("fullScreen || sidePack ? 'hidden'");
   });
 });
+
+describe('the build bar is one tool, not two bars', () => {
+  // Playtest note: the category tabs (Foundation / Wall / Roof) sat in a bar of their own, with the status line
+  // between them and the slots they switch, so they read as two unrelated build menus.
+  const bar = src('ui/BuildBar.tsx');
+  it('the tabs and the slots they switch share one frame', () => {
+    const frame = bar.indexOf('buildbar__frame'), pages = bar.indexOf('className="buildbar__pages"'), row = bar.indexOf('className="buildbar__row"');
+    expect(frame).toBeGreaterThan(-1);
+    expect(pages).toBeGreaterThan(frame);
+    expect(row).toBeGreaterThan(pages);
+  });
+  it('the status line sits above the frame, never between tabs and slots', () => {
+    expect(bar.lastIndexOf('buildbar__status')).toBeLessThan(bar.indexOf('buildbar__frame'));
+  });
+  it('a long refusal wraps inside the bar instead of widening it', () => {
+    expect(src('index.css')).toMatch(/\.buildbar__status \{[^}]*width: 0; min-width: 100%/);
+  });
+});

@@ -600,20 +600,24 @@ input::placeholder { color: #566872; }
 /* ==========================================================================
    BUILD MODE BAR — replaces the hotbar while building
    ========================================================================== */
-.buildbar { display: flex; flex-direction: column; align-items: center; gap: 3px; }
-.buildbar__status { display: inline-flex; align-items: center; gap: 5px; padding: 2px 8px 3px; font-family: var(--f-lbl); font-size: 9px; background: rgba(8,11,14,.92); box-shadow: inset 0 0 0 1px var(--edge), 0 2px 0 #04060a; color: var(--paper); }
+.buildbar { display: flex; flex-direction: column; align-items: stretch; gap: 3px; }
+.buildbar__status { display: flex; align-items: center; gap: 5px; width: 0; min-width: 100%; box-sizing: border-box; padding: 2px 8px 3px; font-family: var(--f-lbl); font-size: 9px; background: rgba(8,11,14,.92); box-shadow: inset 0 0 0 1px var(--edge), 0 2px 0 #04060a; color: var(--paper); }
 .buildbar__status.ok { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--good) 60%, var(--edge)), 0 2px 0 #04060a; }
 .buildbar__status.no { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--bad) 70%, var(--edge)), 0 2px 0 #04060a; }
-.buildbar__status b { color: var(--brassLit); }
-.buildbar__status span { display: inline-flex; align-items: center; gap: 1px; }
+.buildbar__status b { color: var(--brassLit); white-space: nowrap; }
+.buildbar__status span { display: inline-flex; align-items: center; gap: 1px; white-space: nowrap; }
+.buildbar__status > * { flex: none; }
+.buildbar__status .buildbar__reason { flex: 1 1 0; min-width: 0; display: block; white-space: normal; line-height: 1.15; }
 .buildbar__status span.ok { color: var(--good); } .buildbar__status span.no { color: var(--bad); }
 .buildbar__status .sep { width: 1px; height: 9px; background: var(--edge); }
 .buildbar__status.no .buildbar__reason { color: var(--bad); } .buildbar__status.ok .buildbar__reason { color: var(--muted); }
-.buildbar__pages { display:flex; align-items:center; justify-content:center; flex-wrap:nowrap; gap:3px; max-width:600px; padding:2px 5px; background:rgba(6,10,13,.93); border:1px solid rgba(115,135,141,.3); }
-.buildbar__pages button { font-family: var(--f-lbl); font-size:9px; padding:2px 8px; color:var(--paper); background:#1a242b; border:1px solid #46525b; cursor:pointer; }
+/* tabs and slots share one frame: the tab strip is the head of the slot row, not a bar of its own */
+.buildbar__frame { display:flex; flex-direction:column; align-items:stretch; }
+.buildbar__pages { display:flex; align-items:center; justify-content:flex-start; flex-wrap:nowrap; gap:3px; padding:3px 3px 2px; border-bottom:1px solid rgba(57,70,79,.75); }
+.buildbar__pages button { flex:none; white-space:nowrap; font-family: var(--f-lbl); font-size:9px; padding:2px 8px; color:var(--paper); background:#1a242b; border:1px solid #46525b; cursor:pointer; }
 .buildbar__pages button.on { color:var(--brassLit); border-color:var(--brassLit); background:#332917; }
 .buildbar__pages small { font-size:8px; color:var(--muted); }
-.buildbar__pages-hint { font-size:8px; color:var(--muted); padding:0 4px; white-space:nowrap; }
+.buildbar__pages-hint { font-size:8px; color:var(--muted); padding:0 4px; margin-left:auto; white-space:nowrap; min-width:0; overflow:hidden; text-overflow:ellipsis; }
 @media(max-width:580px) { .buildbar__pages-hint { display:none; } .buildbar__pages button { padding:2px 5px; } }
 .buildbar__row { display: flex; align-items: center; gap: 2px; padding: 3px; }
 .bslot { position: relative; width: 24px; height: 24px; display: grid; place-items: center; padding: 0; background: linear-gradient(180deg, #0c1014, #151b21); border: 1px solid #05070a; box-shadow: inset 0 0 0 1px rgba(57,70,79,.6); cursor: pointer; transition: transform var(--t-fast) linear; }
@@ -1015,3 +1019,6 @@ div.map-row--mark { flex-direction: row; align-items: center; padding: 0; }
 .scroll-more::after { content: ''; display: inline-block; margin-left: 5px; border: 3px solid transparent; border-top-color: currentColor; border-bottom: 0; vertical-align: middle; }
 .scroll-more { position: sticky; bottom: 0; flex: 0 0 auto; width: 100%; padding: 2px 4px 3px; font: 700 8px var(--f-lbl); letter-spacing: .04em; color: #1a1206; background: linear-gradient(180deg, var(--brassLit), var(--brass)); border: 1px solid #05070a; cursor: pointer; text-align: center; }
 .stage--touch .scroll-more { min-height: 20px; font-size: 9px; }
+
+/* build mode: the open waymark keeps what to do and drops why / reward, so it ends above the build bar */
+.wm--brief .wm__why, .wm--brief .wm__reward { display: none; }
