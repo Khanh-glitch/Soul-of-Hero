@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { VIEW_W, VIEW_H, type RunState } from '../game/core';
+import { type RunState } from '../game/core';
+import { viewW, viewH } from '../game/viewport';
 import { SOURCES } from '../game/catalog';
 import { sourceAt } from '../game/engine';
 import { DAILY_MILESTONES, jumpTargetFor, type AnchorHint, type JourneyEvent, type JourneyStore, type QuickJumpTarget, type TrackView } from '../game/journey';
@@ -128,10 +129,10 @@ export function findAnchor(r: RunState, a: AnchorHint | undefined, now: number):
 export function WorldBeacon({ target, camX, camY, icon }: { target: { x: number; y: number; label: string } | null; camX: number; camY: number; icon: string }) {
   if (!target) return null;
   const sx = target.x - camX, sy = target.y - camY;
-  const on = sx > 8 && sx < VIEW_W - 8 && sy > 20 && sy < VIEW_H - 40;
+  const on = sx > 8 && sx < viewW - 8 && sy > 20 && sy < viewH - 40;
   if (on) return <div className="beacon" style={{ left: Math.round(sx), top: Math.round(sy) - 20 }} aria-hidden><i className="beacon__pin"><Icon k={icon} size={8} /></i>{target.label && <span>{target.label}</span>}</div>;
-  const cx = VIEW_W / 2, cy = VIEW_H / 2; const ang = Math.atan2(sy - cy, sx - cx);
-  const ex = Math.max(14, Math.min(VIEW_W - 14, cx + Math.cos(ang) * 400)), ey = Math.max(30, Math.min(VIEW_H - 46, cy + Math.sin(ang) * 400));
+  const cx = viewW / 2, cy = viewH / 2; const ang = Math.atan2(sy - cy, sx - cx);
+  const ex = Math.max(14, Math.min(viewW - 14, cx + Math.cos(ang) * 400)), ey = Math.max(30, Math.min(viewH - 46, cy + Math.sin(ang) * 400));
   const dist = Math.round(Math.hypot(sx - cx, sy - cy) / 16);
   return <div className="beacon beacon--edge" style={{ left: Math.round(ex), top: Math.round(ey) }} aria-hidden>
     <i className="beacon__chev" style={{ transform: `rotate(${ang}rad)` }} /><span>{dist}m</span>
@@ -144,7 +145,7 @@ export function WorldBeacon({ target, camX, camY, icon }: { target: { x: number;
 export function FlareLayer({ flares, camX, camY }: { flares: Flare[]; camX: number; camY: number }) {
   if (!flares.length) return null;
   return <div className="flare-layer" aria-live="polite">{flares.map((f, i) => {
-    const x = Math.max(70, Math.min(VIEW_W - 70, Math.round(f.x - camX))), y = Math.max(54, Math.min(VIEW_H - 60, Math.round(f.y - camY)));
+    const x = Math.max(70, Math.min(viewW - 70, Math.round(f.x - camX))), y = Math.max(54, Math.min(viewH - 60, Math.round(f.y - camY)));
     return <div key={f.id} className="flare" style={{ left: x, top: y - i * 30, '--accent': f.accent } as React.CSSProperties}>
       <i className="flare__burst" /><i className="flare__beam" />
       <div className="flare__plate"><span className="flare__icon"><Icon k={f.icon || 'gear'} size={14} /></span><span><b>{f.title}</b>{f.detail && <em>{f.detail}</em>}</span></div>

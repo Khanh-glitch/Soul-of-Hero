@@ -146,6 +146,58 @@ ZIP đóng lại từ bản dựng này: 64.429.971 byte, 221 tệp, SHA256 `a38
 
 Bản kiểm thử (có danh sách cảnh dựng sẵn, phím F9): https://soul-of-hero-qa.vercel.app, project Vercel `soul-of-hero-qa`, dựng với `VITE_SOH_QA=1`.
 
+## Vòng 4: cảnh QA trên Veyra và khung hình lấp kín cửa sổ (nhánh `arena/3fc28afa-soul-of-hero`)
+
+### Cảnh QA (F9) dùng bản đồ Veyra
+
+Cả 11 cảnh dựng sẵn giờ dựng trên Veyra, cạnh bãi đổ bộ, thay cho đảo cũ. Trạm, rương, giường và sinh vật thử được đặt trên đất xây được và người chơi đi bộ tới được; bài `tests/qa-sandbox-veyra.test.ts` (49 bài) kiểm điều đó cho từng cảnh.
+
+- Cảnh có sân trạm (`industry`, `full_gear`, `offline_return`): game dọn cỏ, bụi, đá trong ô sân trước khi dựng.
+- Cảnh Trưởng lão: danh sách là sáu Nguyên Thủy của Veyra, mặc định Typhon. "Awaken" thêm con được chọn, "Defeat" hạ đúng con đó.
+- Veyra không có thùng tiếp tế thả dù, nên các nút xem trước thùng thả đã bị gỡ khỏi bảng F9 khi đang ở Veyra.
+
+Xem bằng trình duyệt (bản QA, 1280 × 720): cả 11 cảnh khởi động, không lỗi trang, không lỗi console. Ảnh: `shots/r4-qa-veyra-typhon.png`.
+
+### Khung hình
+
+Trước đây game luôn vẽ 640 × 360 (16:9) rồi phóng to; cửa sổ nào không đúng 16:9 thì có viền đen. Cửa sổ trình duyệt trên màn 16:9 gần như không bao giờ đúng 16:9 vì thanh địa chỉ và thẻ chiếm chiều cao. Đo trên bản QA trước khi sửa: cửa sổ 1366 × 651 có 104 px viền mỗi bên, 1920 × 953 có 112 px mỗi bên.
+
+Giờ vùng nhìn lấy theo hình dạng cửa sổ, từ 640 × 360 tới tối đa 768 × 400:
+
+| Cửa sổ | Vùng nhìn | Viền còn lại |
+|---|---|---|
+| 1280 × 720, 1920 × 1080 (đúng 16:9) | 640 × 360, như cũ | không |
+| 1366 × 651 | 754 × 360 | 1 px mỗi bên |
+| 1920 × 953 | 724 × 360 | 1 px mỗi bên (tính, chưa chụp) |
+| 1440 × 900 (16:10) | 640 × 400 | không |
+| 844 × 390 (điện thoại nằm ngang) | 768 × 360 | 6 px mỗi bên |
+| 2560 × 1080 (21:9) | 768 × 360 | 128 px mỗi bên (tính, chưa chụp) |
+
+Những gì giữ nguyên:
+
+- **Luật chơi.** Các kỹ năng "phủ cả màn hình" (mưa thiên thạch, đóng băng, gom mục tiêu trong tầm nhìn) vẫn tính trên vùng 640 × 360 ở giữa. Khi giữ phím nhắm kỹ năng đó, khung vàng vẽ đúng vùng này. Đo trong trình duyệt: vùng luật ở cùng một toạ độ (1544, 1262) tại mọi cỡ cửa sổ đã thử.
+- **Các bảng.** Túi đồ, bản đồ, sổ hành trình, trạm, menu vẫn bố trí 640 × 360 và nằm giữa vùng nhìn; bảng toàn màn hình có nền tối bao quanh.
+- **Cửa sổ 16:9.** Vùng nhìn, tỉ lệ phóng và vị trí như trước (đo ở 1280 × 720: canvas 640 × 360, phóng 2 lần, không lệch). Chưa so từng điểm ảnh với bản cũ.
+
+Giới hạn rộng là 768 (48 ô) chứ không tới 21:9: Veyra trượt vùng bản đồ đang nạp khi người chơi cách mép 24 ô, rộng hơn thế thì thấy được mép vùng nạp. Màn 21:9 vì vậy còn viền hai bên.
+
+Cài đặt mới ở Menu → Display → "Screen shape" / "Khung hình": "Lấp kín cửa sổ" (mặc định) và "16:9 cố định" (hành vi cũ).
+
+Kèm theo, sửa một lỗi cũ: ở vài cỡ cửa sổ, sai số dấu phẩy động đặt khung game lệch lên 1 px.
+
+Đã kiểm:
+
+- `typecheck`, `typecheck:tests` sạch. 15 tệp kiểm thử liên quan, gồm `tests/viewport.test.ts` (12 bài mới): 166 bài, đạt hết. Hồi quy toàn bộ chưa chạy lại.
+- Trình duyệt, bản QA, cảnh `industry`, không lỗi trang hay console ở: 1280 × 720, 1366 × 651, 1440 × 900, 844 × 390 (cảm ứng); đổi cỡ cửa sổ khi đang chơi (1366 × 651 → 1280 × 720 → 1440 × 900); chế độ "16:9 cố định"; chế độ "Điểm ảnh nguyên" ở 1920 × 953.
+- Chuột nhắm đúng chỗ ở mọi góc vùng nhìn, kể cả dải mới thêm: sai lệch góc lớn nhất 0,002 rad.
+- Đã mở và xem ở 1366 × 651: túi đồ, bản đồ, sổ hành trình, menu, thanh xây, trạm lọc dầu, trận Typhon. Ở 1440 × 900: túi đồ. Ở 844 × 390: HUD cảm ứng, túi đồ.
+
+Ảnh: `shots/r4-ti-le-truoc-1366x651.png` (trước), `shots/r4-ti-le-sau-1366x651.png`, `shots/r4-ti-le-sau-1440x900.png`, `shots/r4-ti-le-dien-thoai-844x390.png`, `shots/r4-ti-le-tui-do-1366x651.png`.
+
+ZIP đóng lại từ bản dựng này: 64.432.602 byte, SHA256 `89668395aa77115eaf26fde0422d558a450b82308f1b67db51099b8dc56cfbc1`.
+
+Chưa kiểm ở vòng này: màn 21:9 và 1920 × 953 bằng ảnh chụp (mới tính bằng bài kiểm thử); mưa, bão, tuyết, đêm ở vùng nhìn rộng (mới xem sương mù); các kịch bản `e2e/*.mjs` (hầu hết chạy ở 640 × 360 hoặc 1280 × 720, là cỡ không đổi); màn hình tiêu đề vẫn đặt nút ngôn ngữ theo khung 640 × 360 chứ chưa sát mép.
+
 ## Chưa làm, chưa kiểm
 
 - Chưa thử trên điện thoại thật, Firefox, Safari. Máy kiểm chỉ có Chromium không màn hình và không truy cập được địa chỉ chơi thật.

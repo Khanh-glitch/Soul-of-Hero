@@ -1,7 +1,8 @@
 import * as pfx from './pixelfx';
 import * as comp from './compositor';
 // Canvas 2D renderer — draws authoritative state + observed effects. Never mutates game state.
-import { BAL, TILE, WW, WH, VIEW_W, VIEW_H, T, hash2, clamp, type GameState, type RunState, type Creature, type Entity } from './core';
+import { BAL, TILE, WW, WH, T, hash2, clamp, type GameState, type RunState, type Creature, type Entity } from './core';
+import { viewW, viewH, MAX_VIEW_W, MAX_VIEW_H } from './viewport';
 import { STRUCTS, ELDERS, PRIMORDIAL_ELDERS, lookupElderDef, CREATURES, ITEMS } from './catalog';
 import { hasCreatureAtlas, preloadCreatureAtlases, drawCreatureAtlasSprite, creatureHeadTopY } from './creature-sprites';
 import { drawNpcSprite, drawNpcShadow, preloadNpcArt, resolveNpcClip } from './npc-art';
@@ -246,7 +247,7 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
   updateActorTransition(r, time);
   syncTerrain(r, now);
   // camera
-  const tx0 = clamp(p.x - VIEW_W / 2, 0, WW * TILE - VIEW_W), ty0 = clamp(p.y - VIEW_H / 2 - 6, 0, WH * TILE - VIEW_H);
+  const tx0 = clamp(p.x - viewW / 2, 0, WW * TILE - viewW), ty0 = clamp(p.y - viewH / 2 - 6, 0, WH * TILE - viewH);
   if (!cam.init) { cam.x = tx0; cam.y = ty0; cam.init = true; } cam.x += (tx0 - cam.x) * Math.min(1, dtMs / 90); cam.y += (ty0 - cam.y) * Math.min(1, dtMs / 90);
   shake = Math.max(0, shake - dtMs * 0.02); const shk = shake * shakeScale();
   const sx = shk > 0.3 ? Math.round((Math.random() - 0.5) * shk) : 0, sy = shk > 0.3 ? Math.round((Math.random() - 0.5) * shk) : 0;
@@ -255,9 +256,9 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
   if (!creatureAtlasesBooted && typeof Image !== 'undefined') { creatureAtlasesBooted = true; preloadCreatureAtlases(); preloadNpcArt(); }
   life.setRun(r); life.beginFrame(r, now, time, cx, cy, dtMs); upgradeLivingArt(A);
   // terrain chunks
-  const c0 = Math.floor(cx / (CH * TILE)), c1 = Math.floor((cx + VIEW_W) / (CH * TILE)), r0 = Math.floor(cy / (CH * TILE)), r1 = Math.floor((cy + VIEW_H) / (CH * TILE));
+  const c0 = Math.floor(cx / (CH * TILE)), c1 = Math.floor((cx + viewW) / (CH * TILE)), r0 = Math.floor(cy / (CH * TILE)), r1 = Math.floor((cy + viewH) / (CH * TILE));
   for (let j = r0; j <= r1; j++) for (let i = c0; i <= c1; i++) if (i >= 0 && j >= 0 && i < Math.ceil(WW / CH) && j < Math.ceil(WH / CH)) g.drawImage(getChunk(r, i, j), i * CH * TILE, j * CH * TILE);
-  const vx0 = Math.max(0, Math.floor(cx / TILE) - 1), vx1 = Math.min(WW - 1, Math.floor((cx + VIEW_W) / TILE) + 1), vy0 = Math.max(0, Math.floor(cy / TILE) - 1), vy1 = Math.min(WH - 1, Math.floor((cy + VIEW_H) / TILE) + 3);
+  const vx0 = Math.max(0, Math.floor(cx / TILE) - 1), vx1 = Math.min(WW - 1, Math.floor((cx + viewW) / TILE) + 1), vy0 = Math.max(0, Math.floor(cy / TILE) - 1), vy1 = Math.min(WH - 1, Math.floor((cy + viewH) / TILE) + 3);
   // living ground: water bodies, lava flow, marsh, snow/ice, ash — each with its own cause and rhythm
   for (let ty = vy0; ty <= vy1; ty++) for (let tx = vx0; tx <= vx1; tx++) {
     const t = effTile(r, tx, ty);
@@ -267,7 +268,7 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
   }
   if (isVeyra05Layout(r.layoutId || '')) { life.drawElderGround(g, r, vx0, vx1, vy0, vy1); life.drawUnderground(g, r, vx0, vx1, vy0, vy1); }
   // footprints
-  for (const tr of r.traces) { if (tr.x < cx - 4 || tr.x > cx + VIEW_W + 4 || tr.y < cy - 4 || tr.y > cy + VIEW_H + 4) continue; const a = clamp(tr.life / 60000, 0.12, 0.6);
+  for (const tr of r.traces) { if (tr.x < cx - 4 || tr.x > cx + viewW + 4 || tr.y < cy - 4 || tr.y > cy + viewH + 4) continue; const a = clamp(tr.life / 60000, 0.12, 0.6);
     const col = tr.s === T.SNOW ? `rgba(65,85,120,${a + 0.25})` : tr.s === T.SAND ? `rgba(150,120,80,${a})` : tr.s === T.MARSH ? `rgba(30,30,20,${a + 0.1})` : tr.s === T.ASH ? `rgba(20,16,18,${a})` : tr.s === T.ROAD ? `rgba(90,60,40,${a * 0.7})` : `rgba(30,60,25,${a * 0.8})`;
     g.fillStyle = col; const px = Math.round(tr.x + Math.cos(tr.a + Math.PI / 2) * 1.5 * ((tr.t / 100) % 2 > 1 ? 1 : -1)), py = Math.round(tr.y); g.fillRect(px, py, 4, 2); g.fillRect(px + 1, py - 2, 2, 2); }
   // ground layer structures
@@ -275,11 +276,11 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
   // Coverage is world geometry, not part of the culled cabinet sprite. Canvas clips it to the viewport.
   if (o.buildType || o.reclaim) {
     const R=BAL.economy.claimRadius*TILE;
-    for(const e of ents) if(e.kind==='struct' && e.type==='claim' && e.x+R>=cx && e.x-R<=cx+VIEW_W && e.y+R>=cy && e.y-R<=cy+VIEW_H) {
+    for(const e of ents) if(e.kind==='struct' && e.type==='claim' && e.x+R>=cx && e.x-R<=cx+viewW && e.y+R>=cy && e.y-R<=cy+viewH) {
       g.save(); g.strokeStyle='rgba(255,208,64,0.8)';g.lineWidth=1;g.setLineDash([5,4]);g.beginPath();g.arc(e.x,e.y,R,0,Math.PI*2);g.fillStyle='rgba(255,208,64,0.06)';g.fill();g.stroke();g.restore();
     }
   }
-  for (const e of ents) { if (e.kind !== 'struct') continue; if (e.x < cx - 32 || e.x > cx + VIEW_W + 32 || e.y < cy - 32 || e.y > cy + VIEW_H + 48) continue; const d = STRUCTS[e.type!];
+  for (const e of ents) { if (e.kind !== 'struct') continue; if (e.x < cx - 32 || e.x > cx + viewW + 32 || e.y < cy - 32 || e.y > cy + viewH + 48) continue; const d = STRUCTS[e.type!];
     if (d.layer === 'floor') g.drawImage(A.st[e.type!], e.x - 8, e.y - 8);
     if (e.type === 'garden') { g.drawImage(A.st.garden, e.x - 8, e.y - 8); const gd = e.garden!; if (gd.water > 0) { g.fillStyle = 'rgba(40,60,90,0.35)'; g.fillRect(e.x - 7, e.y - 5, 14, 11); } if (gd.crop) { const st = gd.growth; for (let k = 0; k < 3; k++) { const X = e.x - 5 + k * 5, Y = e.y + 3; const hgt = 1 + Math.round(st * 5); g.fillStyle = '#4a9a3a'; g.fillRect(X, Y - hgt, 1, hgt); if (st > 0.4) { g.fillStyle = '#6ac04a'; g.fillRect(X - 1, Y - hgt, 3, 1); } if (st >= 1) { g.fillStyle = gd.crop === 'herb' ? '#7ad08a' : '#f0b050'; g.fillRect(X - 1, Y - 1, 3, 2); } } } }
     if (e.type === 'garden' && e.garden?.coldFrame) { g.strokeStyle='#c5e5df';g.lineWidth=1;g.strokeRect(e.x-7.5,e.y-7.5,15,13);g.fillStyle='rgba(156,211,203,.24)';g.fillRect(e.x-7,e.y-7,14,12); }
@@ -287,7 +288,7 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
   }
   // Item set v3: crude seeps — a dark pool with a slow sheen, drawn on the ground under any pump.
   if (activeFloor(r) === 0) for (const s of Object.values(r.oilSources ?? {})) {
-    const sx = s.tx * 16 + 8, sy = s.ty * 16 + 8; if (sx < cx - 16 || sx > cx + VIEW_W + 16 || sy < cy - 16 || sy > cy + VIEW_H + 16) continue;
+    const sx = s.tx * 16 + 8, sy = s.ty * 16 + 8; if (sx < cx - 16 || sx > cx + viewW + 16 || sy < cy - 16 || sy > cy + viewH + 16) continue;
     g.fillStyle = s.stock > 0 ? '#14110f' : '#3a342c'; g.beginPath(); g.ellipse(sx, sy + 1, 7, 5, 0, 0, Math.PI * 2); g.fill();
     g.fillStyle = s.stock > 0 ? '#2a2420' : '#4a443a'; g.beginPath(); g.ellipse(sx - 1, sy, 5, 3, 0, 0, Math.PI * 2); g.fill();
     if (s.stock > 0) { const k = Math.floor(time / 500) % 4; g.fillStyle = ['#6a5a8a', '#4a7a8a', '#8a7a4a', '#4a7a8a'][k]; g.fillRect(sx - 3 + k, sy - 1, 2, 1); g.fillRect(sx + 1 - k, sy + 2, 1, 1); }
@@ -304,9 +305,9 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
   for (let ty = vy0; ty <= vy1 + 1 && ty < WH; ty++) for (let tx = vx0; tx <= vx1; tx++) {
     const s = sourceAt(r, tx, ty, now); if (!s) continue; if (life.undergroundHides(r, tx * 16 + 8, ty * 16 + 8)) continue; if (s.stock <= 0 && entsAt(r, tx, ty).length) continue; list.push({ y: ty * 16 + 14, f: () => drawSource(g, r, s, tx, ty, time, p) });
   }
-  for (const e of ents) { if (e.x < cx - 40 || e.x > cx + VIEW_W + 40 || e.y < cy - 20 || e.y > cy + VIEW_H + 60) continue; if (e.kind === 'struct' && ['floor', 'roof'].includes(STRUCTS[e.type!].layer)) continue; if (e.type === 'garden' || e.type === 'spikes') continue; list.push({ y: e.y + (e.kind === 'drop' ? -2 : 6), f: () => drawEntity(g, r, e, time, now) }); }
-  for(const q of r.natureTrees||[]){const x=q.tx*TILE,y=q.ty*TILE;if(!life.undergroundHides(r,x+8,y+8)&&x>=cx-32&&x<cx+VIEW_W+32&&y>=cy-32&&y<cy+VIEW_H+32)list.push({y:y+14,f:()=>{const ta=LIVING_TREES.oak[(q.tx+q.ty)%LIVING_TREES.oak.length];life.drawLivingTree(g,ta,x+8,y+16,q.tx*7+q.ty,1,false);}});}
-  for (const m of r.creatures) { if (((m as any).floor ?? 0) !== activeFloor(r)) continue; if (life.undergroundHides(r, m.x, m.y)) continue; if (m.x < cx - 40 || m.x > cx + VIEW_W + 40 || m.y < cy - 40 || m.y > cy + VIEW_H + 60) continue; list.push({ y: m.y + 4, f: () => drawCreature(g, r, m, time, now) }); }
+  for (const e of ents) { if (e.x < cx - 40 || e.x > cx + viewW + 40 || e.y < cy - 20 || e.y > cy + viewH + 60) continue; if (e.kind === 'struct' && ['floor', 'roof'].includes(STRUCTS[e.type!].layer)) continue; if (e.type === 'garden' || e.type === 'spikes') continue; list.push({ y: e.y + (e.kind === 'drop' ? -2 : 6), f: () => drawEntity(g, r, e, time, now) }); }
+  for(const q of r.natureTrees||[]){const x=q.tx*TILE,y=q.ty*TILE;if(!life.undergroundHides(r,x+8,y+8)&&x>=cx-32&&x<cx+viewW+32&&y>=cy-32&&y<cy+viewH+32)list.push({y:y+14,f:()=>{const ta=LIVING_TREES.oak[(q.tx+q.ty)%LIVING_TREES.oak.length];life.drawLivingTree(g,ta,x+8,y+16,q.tx*7+q.ty,1,false);}});}
+  for (const m of r.creatures) { if (((m as any).floor ?? 0) !== activeFloor(r)) continue; if (life.undergroundHides(r, m.x, m.y)) continue; if (m.x < cx - 40 || m.x > cx + viewW + 40 || m.y < cy - 40 || m.y > cy + viewH + 60) continue; list.push({ y: m.y + 4, f: () => drawCreature(g, r, m, time, now) }); }
   // Humans — projected from the authoritative HumanWorld ledger, drawn once per actor.
   if (r.humanWorld) {
     const [ox, oy] = isVeyra05Layout(r.layoutId || '') ? windowOrigin(r) : [0, 0];
@@ -315,7 +316,7 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
       if (h.floor !== activeFloor(r)) continue;
       const pos = humanWorldPosition(h, now);
       const wx = (pos.gx - ox) * TILE, wy = (pos.gy - oy) * TILE;
-      if (wx < cx - 40 || wx > cx + VIEW_W + 40 || wy < cy - 40 || wy > cy + VIEW_H + 60) continue;
+      if (wx < cx - 40 || wx > cx + viewW + 40 || wy < cy - 40 || wy > cy + viewH + 60) continue;
       if (life.undergroundHides(r, wx, wy)) continue;
       const cue=watchCue(r,h,{x:wx,y:wy},now);
       if(cue && (!watch || cue.priority>watch.priority || cue.priority===watch.priority && Math.hypot(wx-p.x,wy-p.y)<Math.hypot(watch.body.x-p.x,watch.body.y-p.y)))watch=cue;
@@ -333,7 +334,7 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
     for (const trip of Object.values(r.humanWorld.evacuation)) {
       if (trip.phase !== 'BOARDING') continue; // BERTHED is the pilot's return leg, not an open dock
       const wx = (trip.siteGx - vox) * TILE, wy = (trip.siteGy - voy) * TILE;
-      if (wx < cx - 60 || wx > cx + VIEW_W + 60 || wy < cy - 60 || wy > cy + VIEW_H + 60) continue;
+      if (wx < cx - 60 || wx > cx + viewW + 60 || wy < cy - 60 || wy > cy + viewH + 60) continue;
       if (life.undergroundHides(r, wx, wy)) continue;
       const aboard = (trip.manifest ?? []).length;
       list.push({ y: wy + 8, f: () => drawEvacVessel(g, wx, wy, time, aboard, trip.capacity) });
@@ -346,7 +347,7 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
   // POI terrain walls need y-sorting vs player? They are flat tiles; fine.
   list.sort((a, b) => a.y - b.y); for (const d of list) d.f();
   // temporary terrain sprites (ice pillars, root cages)
-  for (const k in r.terrain) { const m: any = r.terrain[+k]; if (!m.until || m.t !== T.PWALL) continue; const i = +k; const X = (i % WW) * 16, Y = ((i / WW) | 0) * 16; if (X < cx - 20 || X > cx + VIEW_W || Y < cy - 30 || Y > cy + VIEW_H) continue; g.drawImage(m.by === 'grove' ? A.st.rootwall : A.st.icepillar, X, Y - 8); }
+  for (const k in r.terrain) { const m: any = r.terrain[+k]; if (!m.until || m.t !== T.PWALL) continue; const i = +k; const X = (i % WW) * 16, Y = ((i / WW) | 0) * 16; if (X < cx - 20 || X > cx + viewW || Y < cy - 30 || Y > cy + viewH) continue; g.drawImage(m.by === 'grove' ? A.st.rootwall : A.st.icepillar, X, Y - 8); }
   // projectiles
   for (const pr of PROJ) { if (pr.delay && pr.delay > 0) continue; const visual=pr.kind==='spirit_ray'?'arcane/arcane-orb':pr.kind==='fireball'?'fire/fireball':pr.kind==='fire_tornado'?'fire/fire-tornado':pr.kind==='elsa_shard'?'ice/ice-lance':null; void visual; if(!vfxDirector.ownsProj(pr))drawProj(g, pr, time); }
   // roofs — existing game geometry with VEYRA's already authored 2.5D painter.
@@ -356,7 +357,7 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
     ? new Set(w.statics.filter(q => q.kind === 'door').map(q => q.ty * WW + q.tx))
     : null;
   for (const b of w.buildings) {
-    if ((b.x + b.w) * 16 < cx || b.x * 16 > cx + VIEW_W || (b.y + b.h) * 16 < cy - 16 || b.y * 16 > cy + VIEW_H) continue;
+    if ((b.x + b.w) * 16 < cx || b.x * 16 > cx + viewW || (b.y + b.h) * 16 < cy - 16 || b.y * 16 > cy + viewH) continue;
     if (isCanonicalVeyra) {
       drawArchitecturalBuilding({g,b,art:A,roomCells:room.cells,darknessAlpha:darkness(r,now),stoneZone:w.zone,doorSet:doorSet!});
     } else {
@@ -368,7 +369,7 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
       g.globalAlpha = 1;
     }
   }
-  for (const e of ents) { if (e.kind !== 'struct' || STRUCTS[e.type!].layer !== 'roof') continue; if (e.x < cx - 20 || e.x > cx + VIEW_W + 20 || e.y < cy - 20 || e.y > cy + VIEW_H + 30) continue; g.globalAlpha = room.cells.has(e.ty! * WW + e.tx!) ? 0.15 : 1; g.drawImage(A.st[e.type!], e.x - 8, e.y - 18); if (!entsAt(r, e.tx!, e.ty! + 1).some(o => o.kind === 'struct' && STRUCTS[o.type!].layer === 'roof')) { g.fillStyle = 'rgba(0,0,0,0.3)'; g.fillRect(e.x - 8, e.y - 3, 16, 2); } g.globalAlpha = 1; }
+  for (const e of ents) { if (e.kind !== 'struct' || STRUCTS[e.type!].layer !== 'roof') continue; if (e.x < cx - 20 || e.x > cx + viewW + 20 || e.y < cy - 20 || e.y > cy + viewH + 30) continue; g.globalAlpha = room.cells.has(e.ty! * WW + e.tx!) ? 0.15 : 1; g.drawImage(A.st[e.type!], e.x - 8, e.y - 18); if (!entsAt(r, e.tx!, e.ty! + 1).some(o => o.kind === 'struct' && STRUCTS[o.type!].layer === 'roof')) { g.fillStyle = 'rgba(0,0,0,0.3)'; g.fillRect(e.x - 8, e.y - 3, 16, 2); } g.globalAlpha = 1; }
   // particles & arcs
   drawFx(g, dtMs, time);
   life.drawAir(g);
@@ -385,10 +386,10 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
   drawWeather(g, r, now, time, cx, cy);
   drawLight(g, r, now, time, cx, cy, ents);
   comp.drawPostNight(g,{x:cx,y:cy},Math.min(0.85,darkness(r,now)+(weatherAt(r,now)==='storm'?0.15:0)));
-  if (flash > 0) { g.fillStyle = `rgba(255,255,255,${flash * flashScale()})`; g.fillRect(0, 0, VIEW_W, VIEW_H); flash = Math.max(0, flash - dtMs / 400); }
-  gradeWorld(g, VIEW_W, VIEW_H, Math.min(1, darkness(r, now)));
+  if (flash > 0) { g.fillStyle = `rgba(255,255,255,${flash * flashScale()})`; g.fillRect(0, 0, viewW, viewH); flash = Math.max(0, flash - dtMs / 400); }
+  gradeWorld(g, viewW, viewH, Math.min(1, darkness(r, now)));
   if(watch){g.save();g.translate(-cx,-cy);drawWatchCue(g,watch);g.restore();}
-  if (p.hp < 30 && !p.dead) { const a = (1 - p.hp / 30) * (0.25 + Math.sin(time / 200) * 0.08); g.fillStyle = `rgba(160,0,0,${a})`; g.fillRect(0, 0, VIEW_W, 6); g.fillRect(0, VIEW_H - 6, VIEW_W, 6); g.fillRect(0, 0, 6, VIEW_H); g.fillRect(VIEW_W - 6, 0, 6, VIEW_H); }
+  if (p.hp < 30 && !p.dead) { const a = (1 - p.hp / 30) * (0.25 + Math.sin(time / 200) * 0.08); g.fillStyle = `rgba(160,0,0,${a})`; g.fillRect(0, 0, viewW, 6); g.fillRect(0, viewH - 6, viewW, 6); g.fillRect(0, 0, 6, viewH); g.fillRect(viewW - 6, 0, 6, viewH); }
 }
 
 function drawSource(g: CanvasRenderingContext2D, r: RunState, s: NonNullable<ReturnType<typeof sourceAt>>, tx: number, ty: number, time: number, p: any) {
@@ -838,32 +839,33 @@ function drawEvacVessel(g: CanvasRenderingContext2D, X: number, Y: number, time:
   if (Math.floor(time / 600) % 2) { g.fillStyle = 'rgba(232,192,96,.55)'; g.fillRect(X - 2, Y - 23 + bob, 4, 1); }
 }
 // ---------- weather ----------
-const rain: { x: number; y: number; s: number }[] = Array.from({ length: 220 }, () => ({ x: Math.random() * VIEW_W, y: Math.random() * VIEW_H, s: 0.6 + Math.random() * 0.6 }));
+const rain: { x: number; y: number; s: number }[] = Array.from({ length: 220 }, () => ({ x: Math.random() * MAX_VIEW_W, y: Math.random() * MAX_VIEW_H, s: 0.6 + Math.random() * 0.6 }));
 function drawWeather(g: CanvasRenderingContext2D, r: RunState, now: number, time: number, cx: number, cy: number) {
   const w = weatherAt(r, now); const zone = getWorld().zone[Math.floor(r.player.y / 16) * WW + Math.floor(r.player.x / 16)];
   const cold = zone === 5; const ash = zone === 6 || isRagnarok(r, now);
-  if (w === 'cloudy' || w === 'rain' || w === 'storm' || w === 'fog') { g.fillStyle = w === 'storm' ? 'rgba(20,24,40,0.28)' : 'rgba(30,36,50,0.14)'; g.fillRect(0, 0, VIEW_W, VIEW_H);
-    for (let k = 0; k < 4; k++) { const X = ((k * 230 + time / 40 - cx * 0.9) % (VIEW_W + 300) + VIEW_W + 300) % (VIEW_W + 300) - 150, Y = ((k * 137 - cy * 0.9) % (VIEW_H + 160) + VIEW_H + 160) % (VIEW_H + 160) - 80; g.fillStyle = 'rgba(10,12,30,0.12)'; for (let yy = -30; yy < 30; yy += 2) { const wd = Math.sqrt(1 - (yy / 30) ** 2) * 90; g.fillRect(Math.round(X - wd), Math.round(Y + yy), Math.round(wd * 2), 2); } } }
+  if (w === 'cloudy' || w === 'rain' || w === 'storm' || w === 'fog') { g.fillStyle = w === 'storm' ? 'rgba(20,24,40,0.28)' : 'rgba(30,36,50,0.14)'; g.fillRect(0, 0, viewW, viewH);
+    for (let k = 0; k < 4; k++) { const X = ((k * 230 + time / 40 - cx * 0.9) % (viewW + 300) + viewW + 300) % (viewW + 300) - 150, Y = ((k * 137 - cy * 0.9) % (viewH + 160) + viewH + 160) % (viewH + 160) - 80; g.fillStyle = 'rgba(10,12,30,0.12)'; for (let yy = -30; yy < 30; yy += 2) { const wd = Math.sqrt(1 - (yy / 30) ** 2) * 90; g.fillRect(Math.round(X - wd), Math.round(Y + yy), Math.round(wd * 2), 2); } } }
   if (w === 'rain' || w === 'storm') { const n = w === 'storm' ? 220 : 130; g.fillStyle = 'rgba(180,200,240,0.55)'; const wind = w === 'storm' ? 3 : 1;
-    for (let i = 0; i < n; i++) { const d = rain[i]; d.y += 7 * d.s; d.x += wind * d.s; if (d.y > VIEW_H) { d.y = -6; d.x = Math.random() * VIEW_W; if (Math.random() < 0.5) { g.fillRect(Math.round(d.x), VIEW_H - 2 - Math.random() * VIEW_H | 0, 2, 1); } } if (d.x > VIEW_W) d.x -= VIEW_W; g.fillRect(Math.round(d.x), Math.round(d.y), 1, 4); if (wind > 1) g.fillRect(Math.round(d.x) + 1, Math.round(d.y) + 2, 1, 2); }
-    for (let i = 0; i < 12; i++) { g.fillStyle = 'rgba(200,220,255,0.5)'; g.fillRect(hash2(i, Math.floor(time / 100), 1) * VIEW_W | 0, hash2(i, Math.floor(time / 100), 2) * VIEW_H | 0, 2, 1); } }
-  if (w === 'fog') { g.fillStyle = 'rgba(200,205,215,0.16)'; g.fillRect(0, 0, VIEW_W, VIEW_H); drawFogDots(g, Math.floor(time / 70 + cx * 0.5), Math.floor(cy * 0.5)); }
-  if (cold) { g.fillStyle = 'rgba(255,255,255,0.85)'; for (let i = 0; i < 90; i++) { const X = (hash2(i, 1, 1) * VIEW_W + time / 30 * (0.5 + hash2(i, 2, 2)) + Math.sin(time / 700 + i) * 6 - cx * 0.2) % VIEW_W, Y = (hash2(i, 3, 3) * VIEW_H + time / 25 * (0.6 + hash2(i, 4, 4))) % VIEW_H; g.fillRect((X + VIEW_W) % VIEW_W | 0, Y | 0, i % 7 ? 1 : 2, 1); } }
-  if (ash) { g.fillStyle = isRagnarok(r, now) ? 'rgba(255,140,80,0.7)' : 'rgba(120,110,110,0.7)'; for (let i = 0; i < 40; i++) { const X = (hash2(i, 5, 1) * VIEW_W - time / 50 * (0.5 + hash2(i, 6, 2))) % VIEW_W, Y = (hash2(i, 7, 3) * VIEW_H + time / 60) % VIEW_H; g.fillRect((X + VIEW_W) % VIEW_W | 0, Y | 0, 1, 1); } }
-  if (zone === 7) { g.fillStyle = 'rgba(140,170,40,0.08)'; g.fillRect(0, 0, VIEW_W, VIEW_H); }
+    for (let i = 0; i < n; i++) { const d = rain[i]; d.y += 7 * d.s; d.x += wind * d.s; if (d.y > viewH) { d.y = -6; d.x = Math.random() * viewW; if (Math.random() < 0.5) { g.fillRect(Math.round(d.x), viewH - 2 - Math.random() * viewH | 0, 2, 1); } } if (d.x > viewW) d.x -= viewW; g.fillRect(Math.round(d.x), Math.round(d.y), 1, 4); if (wind > 1) g.fillRect(Math.round(d.x) + 1, Math.round(d.y) + 2, 1, 2); }
+    for (let i = 0; i < 12; i++) { g.fillStyle = 'rgba(200,220,255,0.5)'; g.fillRect(hash2(i, Math.floor(time / 100), 1) * viewW | 0, hash2(i, Math.floor(time / 100), 2) * viewH | 0, 2, 1); } }
+  if (w === 'fog') { g.fillStyle = 'rgba(200,205,215,0.16)'; g.fillRect(0, 0, viewW, viewH); drawFogDots(g, Math.floor(time / 70 + cx * 0.5), Math.floor(cy * 0.5)); }
+  if (cold) { g.fillStyle = 'rgba(255,255,255,0.85)'; for (let i = 0; i < 90; i++) { const X = (hash2(i, 1, 1) * viewW + time / 30 * (0.5 + hash2(i, 2, 2)) + Math.sin(time / 700 + i) * 6 - cx * 0.2) % viewW, Y = (hash2(i, 3, 3) * viewH + time / 25 * (0.6 + hash2(i, 4, 4))) % viewH; g.fillRect((X + viewW) % viewW | 0, Y | 0, i % 7 ? 1 : 2, 1); } }
+  if (ash) { g.fillStyle = isRagnarok(r, now) ? 'rgba(255,140,80,0.7)' : 'rgba(120,110,110,0.7)'; for (let i = 0; i < 40; i++) { const X = (hash2(i, 5, 1) * viewW - time / 50 * (0.5 + hash2(i, 6, 2))) % viewW, Y = (hash2(i, 7, 3) * viewH + time / 60) % viewH; g.fillRect((X + viewW) % viewW | 0, Y | 0, 1, 1); } }
+  if (zone === 7) { g.fillStyle = 'rgba(140,170,40,0.08)'; g.fillRect(0, 0, viewW, viewH); }
 }
 // ---------- lighting ----------
 let lightCv: HTMLCanvasElement | null = null;
 function drawLight(g: CanvasRenderingContext2D, r: RunState, now: number, time: number, cx: number, cy: number, ents: Entity[]) {
   let dark = darkness(r, now); const rag = isRagnarok(r, now); const w = weatherAt(r, now); if (w === 'storm') dark = Math.min(0.85, dark + 0.15);
-  if (rag) { g.fillStyle = 'rgba(160,40,10,0.12)'; g.fillRect(0, 0, VIEW_W, VIEW_H); }
+  if (rag) { g.fillStyle = 'rgba(160,40,10,0.12)'; g.fillRect(0, 0, viewW, viewH); }
   if (dark < 0.04) return;
-  if (!lightCv) { lightCv = document.createElement('canvas'); lightCv.width = VIEW_W; lightCv.height = VIEW_H; }
-  const l = lightCv.getContext('2d')!; l.globalCompositeOperation = 'source-over'; l.clearRect(0, 0, VIEW_W, VIEW_H); l.fillStyle = `rgba(6,8,26,${dark})`; l.fillRect(0, 0, VIEW_W, VIEW_H);
+  if (!lightCv) lightCv = document.createElement('canvas');
+  if (lightCv.width !== viewW || lightCv.height !== viewH) { lightCv.width = viewW; lightCv.height = viewH; }
+  const l = lightCv.getContext('2d')!; l.globalCompositeOperation = 'source-over'; l.clearRect(0, 0, viewW, viewH); l.fillStyle = `rgba(6,8,26,${dark})`; l.fillRect(0, 0, viewW, viewH);
   const lights: [number, number, number, string][] = []; const p = r.player;
   lights.push([p.x, p.y - 6, 34, '']);
   if (activeStack(r)?.key === 'torch') lights.push([p.x, p.y - 8, 78 + Math.sin(time / 90) * 3, '#ffb040']);
-  for (const e of ents) { if (e.x < cx - 100 || e.x > cx + VIEW_W + 100 || e.y < cy - 100 || e.y > cy + VIEW_H + 100) continue;
+  for (const e of ents) { if (e.x < cx - 100 || e.x > cx + viewW + 100 || e.y < cy - 100 || e.y > cy + viewH + 100) continue;
     if (e.kind === 'struct') { const d = STRUCTS[e.type!]; if (d.light && ((e.type === 'torch_post' && (!e.workLight || workLightPowered(r,e))) || (e.station && e.station.burn > 0 && (e.type === 'campfire' || e.station.queue.length)))) lights.push([e.x, e.y - 4, d.light + Math.sin(time / 110 + e.x) * 3, '#ff9a3a']); }
     if (e.kind === 'vehicle' && e.vehicle && (e.vehicle.fuel ?? 0) > 0 && (e.hp ?? 0) > 0 && r.player.vehicle === e.id) { const a = e.vehicle.angle || 0; lights.push([e.x + Math.cos(a) * 18, e.y + Math.sin(a) * 14, 52, '#ffe89a']); lights.push([e.x + Math.cos(a) * 40, e.y + Math.sin(a) * 32, 34, '#ffd070']); }
     if (e.kind === 'evac') lights.push([e.x, e.y - 30, 40, '#ff5a3a']); if (e.kind === 'vendor') lights.push([e.x, e.y - 10, 50, '#ffd070']); if (e.kind === 'cash' && rag && !e.minted) lights.push([e.x, e.y, 30, '#ffd040']); if (e.kind === 'bag') lights.push([e.x, e.y, 20, '#ffe27a']); }

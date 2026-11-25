@@ -67,6 +67,13 @@ body {
 canvas { image-rendering: pixelated; image-rendering: crisp-edges; display: block; }
 img.px { image-rendering: pixelated; image-rendering: crisp-edges; }
 .stage { position: absolute; left: 0; top: 0; width: 640px; height: 360px; transform-origin: 0 0; overflow: hidden; }
+/* The view can be wider or taller than 640x360 (it takes the window's shape). Panels keep their 640x360 layout
+   inside this centred frame; the frame itself is not a surface, so the HUD and the world under it stay clickable.
+   :where() keeps the rule weaker than any class, so a panel that turns pointer events off itself still wins. */
+.stage-frame { position: absolute; left: 50%; top: 50%; width: 640px; height: 360px; margin: -180px 0 0 -320px; pointer-events: none; }
+:where(.stage-frame > *) { pointer-events: auto; }
+/* No z-index on purpose: it sits just under the panels (which follow it), like a panel without one. */
+.stage-scrim { position: absolute; inset: 0; background: rgba(5,7,10,.94); pointer-events: none; }
 .title-font { font-family: var(--f-lbl); }
 .lbl { font-family: var(--f-lbl); letter-spacing: .3px; }
 

@@ -8,7 +8,7 @@ import { ACHIEVEMENTS } from '../game/catalog';
 import { initAudio, sfx } from '../game/audio';
 import { QA_BUILD } from '../game/build-flags';
 import { QA_PRESETS, type QaPresetId } from '../game/qa-sandbox';
-import { computeStageFit } from '../visual/direction';
+import { computeStageView } from '../visual/direction';
 import { useVisualPrefs } from './hud';
 import { getLang, setLang, subscribeLang } from '../game/i18n';
 
@@ -21,25 +21,26 @@ const CLASSIC_REGIONS = [
 
 function useScale() {
   const vp = useVisualPrefs();
-  const [s, setS] = useState({ k: 1, x: 0, y: 0 });
+  const [s, setS] = useState({ w: VIEW_W, h: VIEW_H, k: 1, x: 0, y: 0 });
   useEffect(() => {
-    const fit = () => setS(computeStageFit(window.innerWidth, window.innerHeight, VIEW_W, VIEW_H, vp.stageScale));
+    // The backdrop takes the window's shape (no bars); the menu keeps its 640x360 layout in the middle of it.
+    const fit = () => setS(computeStageView(window.innerWidth, window.innerHeight, { stageScale: vp.stageScale, stageView: vp.stageView }));
     fit();
     window.addEventListener('resize', fit);
     return () => window.removeEventListener('resize', fit);
-  }, [vp.stageScale]);
+  }, [vp.stageScale, vp.stageView]);
   return s;
 }
-function Backdrop({ layout }: { layout: string }) {
+function Backdrop({ layout, w: W, h: H }: { layout: string; w: number; h: number }) {
   const ref = useRef<HTMLCanvasElement>(null);
   useEffect(() => { const c = ref.current!; const g = c.getContext('2d')!; g.imageSmoothingEnabled = false; const map = getMapCanvas(); let raf = 0;
-    const embers = Array.from({ length: 50 }, () => ({ x: Math.random() * VIEW_W, y: Math.random() * VIEW_H, v: 6 + Math.random() * 14 }));
-    const loop = (t: number) => { raf = requestAnimationFrame(loop); g.fillStyle = '#0a0f1e'; g.fillRect(0, 0, VIEW_W, VIEW_H);
-      const z = 4; const ox = -(Math.sin(t / 14000) * 0.5 + 0.5) * (200 * z - VIEW_W), oy = -260 + Math.sin(t / 9000) * 60; g.globalAlpha = 0.55; g.drawImage(map, Math.round(ox), Math.round(oy), 200 * z, 200 * z); g.globalAlpha = 1;
-      const gr = g.createLinearGradient(0, 0, 0, VIEW_H); gr.addColorStop(0, 'rgba(10,8,24,0.85)'); gr.addColorStop(0.5, 'rgba(20,10,30,0.35)'); gr.addColorStop(1, 'rgba(40,10,10,0.9)'); g.fillStyle = gr; g.fillRect(0, 0, VIEW_W, VIEW_H);
-      for (const e of embers) { e.y -= e.v / 60; e.x += Math.sin(t / 900 + e.v) * 0.2; if (e.y < -2) { e.y = VIEW_H + 2; e.x = Math.random() * VIEW_W; } g.fillStyle = e.v > 14 ? '#ffd070' : '#ff6a2a'; g.fillRect(Math.round(e.x), Math.round(e.y), 1, 1); } };
-    raf = requestAnimationFrame(loop); return () => cancelAnimationFrame(raf); }, [layout]);
-  return <canvas ref={ref} width={VIEW_W} height={VIEW_H} className="absolute inset-0" />;
+    const embers = Array.from({ length: 50 }, () => ({ x: Math.random() * W, y: Math.random() * H, v: 6 + Math.random() * 14 }));
+    const loop = (t: number) => { raf = requestAnimationFrame(loop); g.fillStyle = '#0a0f1e'; g.fillRect(0, 0, W, H);
+      const z = 4; const ox = -(Math.sin(t / 14000) * 0.5 + 0.5) * (200 * z - W), oy = -260 + Math.sin(t / 9000) * 60; g.globalAlpha = 0.55; g.drawImage(map, Math.round(ox), Math.round(oy), 200 * z, 200 * z); g.globalAlpha = 1;
+      const gr = g.createLinearGradient(0, 0, 0, H); gr.addColorStop(0, 'rgba(10,8,24,0.85)'); gr.addColorStop(0.5, 'rgba(20,10,30,0.35)'); gr.addColorStop(1, 'rgba(40,10,10,0.9)'); g.fillStyle = gr; g.fillRect(0, 0, W, H);
+      for (const e of embers) { e.y -= e.v / 60; e.x += Math.sin(t / 900 + e.v) * 0.2; if (e.y < -2) { e.y = H + 2; e.x = Math.random() * W; } g.fillStyle = e.v > 14 ? '#ffd070' : '#ff6a2a'; g.fillRect(Math.round(e.x), Math.round(e.y), 1, 1); } };
+    raf = requestAnimationFrame(loop); return () => cancelAnimationFrame(raf); }, [layout, W, H]);
+  return <canvas ref={ref} width={W} height={H} className="absolute inset-0" />;
 }
 function HeroPreview({ female, active }: { female: boolean; active: boolean }) {
   const ref = useRef<HTMLCanvasElement>(null);
@@ -84,8 +85,9 @@ export default function Title({
 
   const lang = useSyncExternalStore(subscribeLang, getLang, getLang);
   return <div style={{ position: 'fixed', inset: 0, background: '#05040a' }}>
-    <div className="stage" style={{ transform: `translate(${s.x}px, ${s.y}px) scale(${s.k})` }}>
-      <Backdrop layout={selectedLayout} />
+    <div className="stage" data-view={`${s.w}x${s.h}`} style={{ width: s.w, height: s.h, transform: `translate(${s.x}px, ${s.y}px) scale(${s.k})` }}>
+      <Backdrop layout={selectedLayout} w={s.w} h={s.h} />
+      <div className="stage-frame">
       <div className="absolute" data-notr style={{ right: 6, top: 6, display: 'flex', gap: 2, zIndex: 5 }} role="group" aria-label="Language / Ngôn ngữ">
         <button className={`btn sm ${lang === 'en' ? 'gold' : ''}`} aria-pressed={lang === 'en'} onClick={() => setLang('en')}>English</button>
         <button className={`btn sm ${lang === 'vi' ? 'gold' : ''}`} aria-pressed={lang === 'vi'} onClick={() => setLang('vi')}>Tiếng Việt</button>
@@ -193,6 +195,7 @@ export default function Title({
           <button className="btn" style={{ marginTop: 6 }} onClick={() => setMode('menu')}>Back</button>
         </div>}
       </>}
+      </div>
     </div>
   </div>;
 }

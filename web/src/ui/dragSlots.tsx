@@ -69,7 +69,7 @@ export function canDropInSlot(r: RunState, fromCid: string, fromSlot: number, to
 
 function stagePoint(cx: number, cy: number) {
   const st = document.querySelector('.stage') as HTMLElement | null; if (!st) return { x: cx, y: cy };
-  const r = st.getBoundingClientRect(); const k = r.width / 640;
+  const r = st.getBoundingClientRect(); const k = r.width / (st.offsetWidth || 640);   // the stage is 640 wide or more
   return { x: (cx - r.left) / k, y: (cy - r.top) / k };
 }
 

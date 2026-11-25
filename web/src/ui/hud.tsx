@@ -340,6 +340,12 @@ export function PresentationPanel() {
         ))}
       </>)}
       <div className="lbl" style={{ fontSize: 8, color: 'var(--muted)', marginTop: 2, lineHeight: '9px' }}>Whole pixels is sharper but can leave a border; in a small window it makes everything smaller.</div>
+      {group('Screen shape', <>
+        {([['wide', 'Fill window'], ['classic', 'Classic 16:9']] as const).map(([id, lbl]) => (
+          <button key={id} className={`btn sm ${(p.stageView ?? 'wide') === id ? 'gold' : ''}`} aria-pressed={(p.stageView ?? 'wide') === id} onClick={() => setPrefs({ stageView: id })}>{lbl}</button>
+        ))}
+      </>)}
+      <div className="lbl" style={{ fontSize: 8, color: 'var(--muted)', marginTop: 2, lineHeight: '9px' }}>Fill window shows a little more of the world at the sides when the window is not 16:9. Skills that reach the whole screen keep the 16:9 area.</div>
       {fullscreenSupported() && <div style={{ marginTop: 4 }}><button className={`btn sm ${fs ? 'gold' : ''}`} aria-pressed={fs} onClick={() => { void toggleFullscreen(); }}>{fs ? 'Leave full screen' : 'Full screen'}</button></div>}
       {group('HUD size', <>
         {([['auto', 'Auto'], [1, '100%'], [1.25, '125%'], [1.5, '150%']] as const).map(([id, lbl]) => (

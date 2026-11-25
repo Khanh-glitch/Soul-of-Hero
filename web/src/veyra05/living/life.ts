@@ -4,7 +4,8 @@
  * lava flow, heat, light sources and walls) and is culled to the camera view.
  * Rendering only: never mutates game state.
  */
-import { WW, WH, VIEW_W, VIEW_H, T, type RunState } from '../../game/core';
+import { WW, WH, T, type RunState } from '../../game/core';
+import { viewW, viewH } from '../../game/viewport';
 import { effTile, dayTime } from '../../game/engine';
 import { getWorld } from '../../game/world';
 import { mk, type Sprite } from '../../game/art';
@@ -183,7 +184,7 @@ export function drawLavaTile(g: G, r: RunState, tx: number, ty: number) {
 export function heatShimmer(g: G) {
   if (!lavaInView.length && !forges.length) return; const cv = g.canvas as HTMLCanvasElement; if (!cv || !cv.width) return;
   const rows = new Map<number, [number, number]>();
-  const addSrc = (sx: number, sy: number, w: number, hgt: number) => { for (let y = Math.max(0, sy - hgt); y < Math.min(VIEW_H, sy + 6); y++) { const cur = rows.get(y); const x0 = Math.max(0, sx - 4), x1 = Math.min(VIEW_W, sx + w + 4); rows.set(y, cur ? [Math.min(cur[0], x0), Math.max(cur[1], x1)] : [x0, x1]); } };
+  const addSrc = (sx: number, sy: number, w: number, hgt: number) => { for (let y = Math.max(0, sy - hgt); y < Math.min(viewH, sy + 6); y++) { const cur = rows.get(y); const x0 = Math.max(0, sx - 4), x1 = Math.min(viewW, sx + w + 4); rows.set(y, cur ? [Math.min(cur[0], x0), Math.max(cur[1], x1)] : [x0, x1]); } };
   for (const k of lavaInView) addSrc((k % WW) * 16 - F.cx, ((k / WW) | 0) * 16 - F.cy, 16, 26);
   for (const [x, y] of forges) addSrc(x - F.cx - 30, y - F.cy - 30, 60, 50);
   g.save(); g.setTransform(1, 0, 0, 1, 0, 0);
