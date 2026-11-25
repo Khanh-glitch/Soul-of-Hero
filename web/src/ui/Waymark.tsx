@@ -149,7 +149,7 @@ export function DestinationBeacon({ dest, camX, camY }: { dest: DestinationView 
   const sx = dest.x - camX, sy = dest.y - camY;
   const on = sx > 8 && sx < viewW - 8 && sy > 20 && sy < viewH - 40;
   if (on) return <div className="beacon beacon--dest" data-testid="dest-beacon" style={{ left: Math.round(sx), top: Math.round(sy) - 20 }}>
-    <i className="beacon__pin" /><span data-notr>{dest.place.name}</span>
+    <i className="beacon__pin" /><span data-notr={dest.place.custom ? undefined : true}>{dest.place.name}</span>
   </div>;
   const cx = viewW / 2, cy = viewH / 2; const ang = Math.atan2(sy - cy, sx - cx);
   // Ride an ellipse inside the view rather than its edge: the corners belong to the HUD (status, clock, journey card),
@@ -157,7 +157,7 @@ export function DestinationBeacon({ dest, camX, camY }: { dest: DestinationView 
   const ex = cx + Math.cos(ang) * (viewW / 2 - 150), ey = cy + 8 + Math.sin(ang) * (viewH / 2 - 76);
   return <div className="beacon beacon--edge beacon--dest" data-testid="dest-beacon" style={{ left: Math.round(ex), top: Math.round(ey) }}>
     <i className="beacon__chev" style={{ transform: `rotate(${ang}rad)` }} />
-    <span data-notr>{dest.place.name}<em>{formatDistance(dest.dist)}</em></span>
+    <span data-notr={dest.place.custom ? undefined : true}>{dest.place.name}<em>{formatDistance(dest.dist)}</em></span>
   </div>;
 }
 

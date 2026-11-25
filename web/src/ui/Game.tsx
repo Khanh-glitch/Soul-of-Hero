@@ -790,7 +790,7 @@ export default function Game({
   useEffect(() => {
     if (!destArrived || !dest || !r) return;
     storeDestination(r, qaMode, null);
-    toast(`Arrived: ${dest.place.name}`, 'ok');
+    toast(dest.place.custom ? 'You reached the spot you marked.' : `Arrived: ${dest.place.name}`, 'ok');
   }, [destArrived]);
   if (!r || !fieldEval) return <div className="stage" />;
   const p = r.player, ph = phaseOf(r, now); const day = Math.floor(hrs / 24) + 1;

@@ -238,6 +238,67 @@ Chưa kiểm ở vòng này:
 - Lần đầu mở chế độ "Thế giới", nền lục địa được vẽ dần trong chưa đầy 3 giây; trong lúc đó phần dưới còn trống.
 - Bộ kiểm thử đầy đủ và ba tệp chậm không chạy lại ở vòng này.
 
+## Vòng 6: thao tác bản đồ (nhánh `arena/21d47176-soul-of-hero`)
+
+Yêu cầu: thao tác với bản đồ chưa mượt; tham khảo cách các game cùng loại làm rồi áp dụng.
+
+### Các game cùng loại làm thế nào
+
+| Game | Cách thao tác bản đồ |
+|---|---|
+| Rust | Kéo để di chuyển, lăn chuột để phóng to. Bấm chuột phải lên chỗ trống để cắm điểm đánh dấu, bấm chuột phải lên điểm đó để xoá. Điểm đánh dấu hiện trên la bàn lúc chơi. |
+| Valheim | Bấm đúp để cắm ghim, chuột phải để xoá. Người chơi hay bỏ sót thứ cần tìm khi không thu nhỏ được đủ xa. |
+| Game sinh tồn trên điện thoại | Chạm đúp vào chỗ muốn đánh dấu; có nút "về vị trí của tôi" ở góc. Không tìm được tài liệu riêng về Last Island of Survival. |
+| Nguyên tắc chung | Phóng to quanh điểm đang trỏ, từng nấc nhỏ. Con trỏ đổi thành bàn tay nắm khi kéo. Có nút + / − nhìn thấy được. Phản hồi trong vòng 0,1 giây thì người chơi thấy "nhạy". |
+
+### Trước và sau
+
+| | Trước | Sau |
+|---|---|---|
+| Phóng to | 4 nấc cứng (Thế giới, 1×, 2×, 4×), nhảy vào giữa | Liền mạch từ cả lục địa tới 10 m, quanh đúng điểm con trỏ đang chỉ, có chuyển động mềm |
+| Di chuyển | Thế giới và 1× không kéo được | Kéo được ở mọi mức; buông tay lúc đang kéo nhanh thì bản đồ trôi thêm một đoạn |
+| Cảm ứng | Chưa có chụm hai ngón | Chụm hai ngón để phóng to, một ngón để kéo |
+| Đặt điểm đến | Chỉ chọn được nơi có tên, qua nút trên thẻ | Thêm: bấm đúp, chuột phải, hoặc nhấn giữ (cảm ứng) lên một nơi hay một điểm bất kỳ. Làm lại lần nữa để bỏ |
+| Vẽ lại | Mỗi lần rê chuột vẽ lại cả bảng (danh sách 75 nơi) | Kéo và phóng to chỉ vẽ lại tấm bản đồ |
+| Mở lại bản đồ | Luôn về mức Thế giới | Giữ nguyên chỗ và mức phóng đã xem (trong phiên chơi) |
+| Bàn phím | + / − đổi nấc | + / − phóng to mềm, Home về chỗ mình, mũi tên nhảy tới nơi gần nhất theo hướng, Enter đặt điểm đến |
+
+Điểm tự đánh dấu ("Điểm đã đánh dấu") dùng chung mũi tên chỉ đường trên màn hình chơi; tới trong vòng 4 ô thì tính là đã tới. Mỗi lúc chỉ có một điểm đến. Nó không được lưu vào ván chơi, chỉ lưu trong trình duyệt như điểm đến có tên.
+
+Nút "1×, 2×, 4×, Fit" trên Veyra được thay bằng "Thế giới, Khu vực, −, +, Bạn". Bản đồ cũ (không phải Veyra) giữ nguyên.
+
+### Đã kiểm
+
+| Kiểm | Kết quả |
+|---|---|
+| Kiểm thử tự động, 10 tệp liên quan tới bản đồ | 175 đạt (thêm `tests/map-feel.test.tsx`, 23 bài) |
+| `npx tsc -p .` và `npm run typecheck:tests` | Không lỗi |
+| Trình duyệt 1280 × 720, chuột | Lăn 6 nấc tại Hook Village: nơi đó vẫn nằm dưới con trỏ. Kéo: con trỏ thành bàn tay nắm. Bấm đúp chỗ trống: có "Marked spot", chuột phải lần nữa: mất. Nút Thế giới, Bạn, chọn dòng trong danh sách đều đưa bản đồ tới nơi. Không lỗi console |
+| Thời gian mỗi khung hình khi kéo và phóng to | Mức giữa 16,7 ms (60 khung hình / giây) ở mức xa, vừa và gần nhất. Mốc 95% là 16,7–16,8 ms ở 14 trong 15 phép đo, 33 ms ở một phép đo. Mỗi lượt kéo ở mức vừa có một lần khựng 200–280 ms, xem mục dưới |
+| Trình duyệt 844 × 390, cảm ứng | Chụm hai ngón, kéo một ngón, nhấn giữ, chạm đúp đều chạy; không lỗi console |
+| Tiếng Việt 1280 × 720 và 1366 × 651 | Thẻ, nút, dòng hướng dẫn, mũi tên trên màn hình chơi đều ra tiếng Việt; không lỗi console |
+| Đóng rồi mở lại bản đồ | Vẫn ở chỗ và mức phóng cũ |
+
+Ảnh: `shots/r6-map-open-vi.png`, `shots/r6-map-marked-spot-vi.png`, `shots/r6-map-marked-spot-vi-1366.png`, `shots/r6-hud-arrow-marked-spot-vi.png`, `shots/r6-map-touch-double-tap.png`, `shots/r6-map-closest-en.png`.
+
+ZIP đóng lại từ bản dựng này: 64.447.961 byte, SHA256 `87de5ad9fa8577a40f69c7e7d1b0bdd2e293756d604a5b52d56d730cf8c0529c`.
+
+### Tìm thấy khi đo, chưa sửa: game khựng 0,1–0,3 giây vài lần mỗi phút
+
+Đứng yên 45 giây ở ván QA mới, không mở bảng nào, máy đo ghi 8 lần xử lý kéo dài quá 30 ms; bốn lần dài nhất là 296, 167, 147 và 80 ms. Cả bốn đều nằm trong bước xử lý cư dân (`stepHumans`), ở phần tìm đường. Lần dài nhất đi theo chuỗi `route` → `globalCellTileAndClass` → `globalBaseGeometry` → `compileGeometryRegionPack`: cư dân hỏi về một vùng đất chưa được dựng, và game dựng vùng đó ngay trên luồng chính. Lần khựng 200–280 ms lúc kéo bản đồ cũng là việc này, không phải do bản đồ.
+
+Game đã có sẵn một luồng nền dựng trước các vùng (`region-prebuild.ts`). Máy kiểm chỉ có 2 nhân và vẽ bằng phần mềm, nên luồng nền có thể bị chậm hơn máy thật. Chưa đo được trên máy thật, nên chưa biết người chơi gặp mức nào.
+
+### Chưa kiểm ở vòng này
+
+- Cử chỉ (kéo, chụm, chạm đúp, nhấn giữ, trôi) chỉ được kiểm bằng trình duyệt tự động; kiểm thử tự động chỉ phủ phần tính toán của khung nhìn và điểm tự đánh dấu.
+- Chưa thử trên điện thoại thật, bàn rê (trackpad) thật, Firefox, Safari. Chụm hai ngón trên bàn rê chỉ có bài kiểm thử phần tính toán.
+- Chế độ chọn chỗ cho "core blink" trên bản đồ mới chỉ có bài kiểm thử dựng giao diện, chưa bấm thử trong trình duyệt.
+- Chưa đi bộ thật tới một điểm tự đánh dấu; phần "đã tới" chỉ có kiểm thử tự động.
+- Điểm tự đánh dấu đặt được cả trên mặt nước hoặc chỗ không tới được; game không cảnh báo.
+- Ở mức gần nhất, vùng chưa đi qua chỉ là mảng màu thô (4 ô một điểm ảnh) kèm lưới ô; chi tiết chỉ có ở vùng đã đi qua.
+- Bộ kiểm thử đầy đủ và các tệp chậm không chạy lại.
+
 ## Chưa làm, chưa kiểm
 
 - Chưa thử trên điện thoại thật, Firefox, Safari. Máy kiểm chỉ có Chromium không màn hình và không truy cập được địa chỉ chơi thật.

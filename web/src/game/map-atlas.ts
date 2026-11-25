@@ -63,6 +63,8 @@ export interface AtlasPlace {
   /** Global tile position on the 4000 x 2800 continent frame. */
   gtx: number; gty: number;
   visited: boolean;
+  /** True for a spot the player marked by hand: not a named place, only somewhere to walk to. */
+  custom?: boolean;
 }
 
 /** Canon names carry design tags such as " [ĐỀ XUẤT]"; the chart shows the name only. */
@@ -86,10 +88,31 @@ export function atlasPlaces(r: RunState): AtlasPlace[] {
   return out;
 }
 
+// A spot marked by hand. Other games let the player drop a marker anywhere on the map (right-click in Rust,
+// double-click in Valheim); here the mark is the destination itself, so there is exactly one at a time.
+const WAYPOINT_RE = /^at_(\d{1,4})_(\d{1,4})$/;
+const WAYPOINT_KIND: PlaceKind = { group: 'road', label: 'Your mark', blurb: 'A spot you marked on the chart. The arrow on screen leads to it.' };
+export const WAYPOINT_NAME = 'Marked spot';
+export const isWaypointId = (id: string | null | undefined): boolean => !!id && WAYPOINT_RE.test(id);
+/** The destination id for a hand-marked spot on the continent frame, or null when the point lies off the frame. */
+export function waypointId(gtx: number, gty: number): string | null {
+  const x = Math.round(gtx), y = Math.round(gty);
+  if (!(x >= 0 && y >= 0 && x < FRAME_W && y < FRAME_H)) return null;
+  return `at_${x}_${y}`;
+}
+function waypointPlace(id: string): AtlasPlace | null {
+  const m = WAYPOINT_RE.exec(id);
+  if (!m) return null;
+  const gtx = Number(m[1]), gty = Number(m[2]);
+  if (gtx >= FRAME_W || gty >= FRAME_H) return null;
+  return { id, name: WAYPOINT_NAME, arche: 'waypoint', kind: WAYPOINT_KIND, gtx, gty, visited: false, custom: true };
+}
+
 const POI_BY_ID = new Map<string, GoldPoi>(POIS.map(po => [po.id, po]));
 /** One place by id, under the same rules as atlasPlaces (called every HUD frame, so no list is built). */
 export function atlasPlace(r: RunState, id: string | null | undefined): AtlasPlace | null {
   if (!id || !r.layoutId || !isVeyra05Layout(r.layoutId)) return null;
+  if (id.charCodeAt(0) === 97 && id.startsWith('at_')) return waypointPlace(id);
   const po = POI_BY_ID.get(id);
   if (!po) return null;
   const visited = r.poiSeen.includes(id);
@@ -135,6 +158,8 @@ export function placeNear(places: AtlasPlace[], gtx: number, gty: number, reach:
 // ---------------------------------------------------------------------------
 /** Within this many tiles the player has arrived and the marker is put away. */
 export const ARRIVE_TILES = 12;
+/** A hand-marked spot is a point, not a site with grounds around it: arrival is closer. */
+export const ARRIVE_TILES_MARK = 4;
 
 const destKey = (r: RunState) => `soh.map-dest.v1:${r.id}:${r.sourceMap?.id ?? r.layoutId ?? 'shipping'}`;
 const memory = new Map<string, string | null>();
@@ -177,7 +202,7 @@ export function destinationView(r: RunState, qaSession: boolean): DestinationVie
   const dist = Math.hypot(place.gtx - px, place.gty - py);
   return {
     place, x: (place.gtx - ox) * TILE + TILE / 2, y: (place.gty - oy) * TILE + TILE / 2,
-    dist, bearing: bearing(place.gtx - px, place.gty - py), arrived: dist <= ARRIVE_TILES,
+    dist, bearing: bearing(place.gtx - px, place.gty - py), arrived: dist <= (place.custom ? ARRIVE_TILES_MARK : ARRIVE_TILES),
   };
 }
 

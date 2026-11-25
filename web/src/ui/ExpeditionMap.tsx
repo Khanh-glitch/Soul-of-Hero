@@ -13,29 +13,17 @@ import { Panel, Icon, type Api } from './common';
 import { isVeyra05Layout } from '../veyra05/scenes';
 import { windowOrigin, playerGlobalAu } from '../veyra05/continuity';
 import { activeFloor, onActiveFloor } from '../veyra05/floors';
-import { GOLD, sampleTile } from '../veyra05/reader';
+import { GOLD } from '../veyra05/reader';
 import { FRAME_W, FRAME_H } from '../veyra05/frame';
 import {
-  atlasPlaces, placesByDistance, placeNear, playerGlobalTile, readDestination, storeDestination, formatDistance,
-  GROUP_COLOR, type AtlasPlace, type PlaceGroup,
+  atlasPlaces, atlasPlace, placesByDistance, placeNear, playerGlobalTile, readDestination, storeDestination, formatDistance,
+  bearing, isWaypointId, waypointId, GROUP_COLOR, type AtlasPlace, type PlaceGroup,
 } from '../game/map-atlas';
-
-function veyraContinentTileColor(t: number): string {
-  switch (t) {
-    case T.DEEP: return '#14243a';
-    case T.SHALLOW: case T.RIVER: return '#265c84';
-    case T.SAND: return '#b8a26e';
-    case T.GRASS: case T.MEADOW: return '#426e3c';
-    case T.FOREST: return '#284a2a';
-    case T.MARSH: return '#3a5442';
-    case T.HILL: case T.CLIFF: return '#68625c';
-    case T.SNOW: return '#cad8e4';
-    case T.ASH: return '#4e3c38';
-    case T.TOXIC: return '#5a6e2e';
-    case T.ROAD: case T.FLOOR: return '#9a8462';
-    default: return '#426e3c';
-  }
-}
+import {
+  VIEW_W, VIEW_H, FIT_S, SECTOR_S, ZOOM_STEP, fitCam, clampCam, toGlobal, zoomAt, panBy, isFit, wheelRatio, easeCam, reveal,
+  scaleBar, rememberCam, recallCam, type Cam,
+} from './atlas-camera';
+import { veyraContinentTileColor, overviewSheet, detailSheet, OVERVIEW_W, OVERVIEW_H, DETAIL_TPP } from './atlas-sheet';
 
 /** Unsurveyed ground on the sector views: the lie of the land in one flat tone per 4x4 cell, never what stands on it. */
 const dimCache = new Map<string, string>();
@@ -62,66 +50,6 @@ const CANVAS_H = 260;
 type LocalZoomLevel = 1 | 2 | 4;
 type ZoomLevel = 0 | LocalZoomLevel;
 const PX_PER_TILE: Record<LocalZoomLevel, number> = { 1: 1.3, 2: 3, 4: 6 };
-const CONT_OX = 6;
-const CONT_OY = 25;
-const CONT_W = 300;
-const CONT_H = 210;
-
-// ---------------------------------------------------------------------------
-// Continent base sheet: one terrain colour per chart pixel (a pixel spans about 13 tiles), sampled from the same
-// authoritative reader the world is built from. It is the same for every run, so it is painted once per session,
-// a few rows at a time so the panel opens without a hitch.
-// ---------------------------------------------------------------------------
-let contBase: HTMLCanvasElement | null = null;
-let contRows = 0;
-let contTimer: ReturnType<typeof setTimeout> | null = null;
-const contWaiters = new Set<() => void>();
-function paintContinentRows(budgetMs: number): boolean {
-  const g = contBase?.getContext('2d');
-  if (!g) return true;
-  const t0 = performance.now();
-  while (contRows < CONT_H) {
-    const y = contRows;
-    const ty = Math.min(FRAME_H - 1, Math.floor((y + 0.5) * FRAME_H / CONT_H));
-    for (let x = 0; x < CONT_W; x++) {
-      const tx = Math.min(FRAME_W - 1, Math.floor((x + 0.5) * FRAME_W / CONT_W));
-      g.fillStyle = veyraContinentTileColor(sampleTile(tx, ty).tile);
-      g.fillRect(x, y, 1, 1);
-    }
-    contRows++;
-    if (performance.now() - t0 > budgetMs) break;
-  }
-  return contRows >= CONT_H;
-}
-/** The base sheet as far as it is painted; `onProgress` fires when more rows are ready. Null where there is no canvas (tests). */
-function continentBase(onProgress?: () => void): HTMLCanvasElement | null {
-  if (!contBase) {
-    if (typeof document === 'undefined') return null;
-    const c = document.createElement('canvas');
-    c.width = CONT_W; c.height = CONT_H;
-    let g: CanvasRenderingContext2D | null = null;
-    try { g = c.getContext('2d'); } catch { g = null; }
-    if (!g) return null;
-    g.fillStyle = '#0c141b'; g.fillRect(0, 0, CONT_W, CONT_H);
-    contBase = c;
-  }
-  if (contRows < CONT_H) {
-    if (onProgress) contWaiters.add(onProgress);
-    if (!contTimer) {
-      const step = () => {
-        contTimer = null;
-        const done = paintContinentRows(10);
-        const waiters = [...contWaiters];
-        if (done) contWaiters.clear();
-        for (const w of waiters) w();
-        if (!done) contTimer = setTimeout(step, 0);
-      };
-      contTimer = setTimeout(step, 0);
-    }
-  }
-  return contBase;
-}
-
 const REGION_LABELS = (GOLD.project.labels as { text?: string; name?: string; at: [number, number]; style?: string }[])
   .filter(l => l.style === 'region' && (l.text ?? l.name) && (l.text ?? l.name) !== 'VEYRA')
   .map(l => ({ text: (l.text ?? l.name)!.toUpperCase(), gtx: l.at[0] * 2, gty: l.at[1] * 2 }));
@@ -166,8 +94,6 @@ function drawPlate(ctx: CanvasRenderingContext2D, text: string, x: number, y: nu
   ctx.fillText(text, px + 2, py + 8);
 }
 
-/** How close (in continent tiles) a click must land to a place mark: six chart pixels. */
-const PLACE_REACH = 6 * FRAME_W / CONT_W;
 
 const TILE_LABEL: Record<number, string> = {
   [T.GRASS]: 'Grassland', [T.MEADOW]: 'Meadow', [T.FOREST]: 'Forest', [T.SAND]: 'Coast / Sand',
@@ -236,80 +162,211 @@ function viewRect(cx: number, cy: number, zoom: LocalZoomLevel) {
 }
 
 function screenToTile(mx: number, my: number, cx: number, cy: number, zoom: ZoomLevel, r?: RunState): { tx: number; ty: number; gtx?: number; gty?: number } {
-  if (zoom === 0 && r) {
-    const gtx = Math.max(0, Math.min(FRAME_W - 1, Math.floor(((mx - CONT_OX) / CONT_W) * FRAME_W)));
-    const gty = Math.max(0, Math.min(FRAME_H - 1, Math.floor(((my - CONT_OY) / CONT_H) * FRAME_H)));
-    const [ox, oy] = windowOrigin(r);
-    return {
-      tx: Math.max(0, Math.min(WW - 1, gtx - ox)),
-      ty: Math.max(0, Math.min(WH - 1, gty - oy)),
-      gtx,
-      gty,
-    };
-  }
   const v = viewRect(cx, cy, (zoom || 1) as LocalZoomLevel);
   const tx = Math.floor(v.x0 + (mx - v.ox) / v.px);
   const ty = Math.floor(v.y0 + (my - v.oy) / v.px);
   return { tx: Math.max(0, Math.min(WW - 1, tx)), ty: Math.max(0, Math.min(WH - 1, ty)) };
 }
 
-interface ContinentView {
+// ---------------------------------------------------------------------------
+// The Veyra chart: one sheet under one camera (see atlas-camera.ts). At any scale it draws, bottom to top: the
+// terrain sheets (dimmed where the player has not walked), the live picture of the sector on walked ground once the
+// view is close enough, rivers and roads, region names, everything the player owns, every place mark, the
+// destination, the player.
+// ---------------------------------------------------------------------------
+interface AtlasView {
   places: AtlasPlace[];
   hoverId: string | null;
   selectedId: string | null;
-  destId: string | null;
+  /** The chosen destination: a named place or a spot marked by hand. */
+  dest: AtlasPlace | null;
+  marks: FieldMark[];
+  selectedMarkId: string | null;
+  cursor: { tx: number; ty: number } | null;
+  hoverTile: { tx: number; ty: number } | null;
+  teleportTarget?: { x: number; y: number } | null;
+  markMode: boolean;
+  intel: Map<string, PlaceNote>;
   onProgress?: () => void;
 }
 
-function renderContinentChart(ctx: CanvasRenderingContext2D, r: RunState, view: ContinentView) {
-  ctx.imageSmoothingEnabled = false;
-  ctx.fillStyle = '#091015';
-  ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
+/** From this scale the detail terrain sheet is drawn over the overview. */
+const DETAIL_FROM = FIT_S * 1.6;
+/** From this scale walked ground shows the live picture of the sector instead of the terrain sheet. */
+const LIVE_FROM = 0.5;
+/** From this scale place names appear on their own, where there is room. */
+const LABELS_FROM = 0.2;
+/** From this scale a single tile can be picked out and inspected. */
+const TILE_FROM = 0.9;
+/** How close, in chart pixels, a click must land to a place mark. */
+const HIT_PX = 9;
 
-  const sx = CONT_W / FRAME_W;
-  const sy = CONT_H / FRAME_H;
-  const X = (gtx: number) => CONT_OX + gtx * sx;
-  const Y = (gty: number) => CONT_OY + gty * sy;
+const NO_CELLS = new Int32Array(0);
+const cellCache: { src: object | null; n: number; cells: Int32Array } = { src: null, n: -1, cells: NO_CELLS };
+/** Walked 4x4 cells anywhere on the continent, as (cx, cy) pairs. Parsed again only when their number changes. */
+function walkedCells(r: RunState): Int32Array {
+  const src = r.veyraGlobalDiscovered as Record<string, unknown> | undefined;
+  if (!src) return NO_CELLS;
+  const keys = Object.keys(src);
+  if (cellCache.src === src && cellCache.n === keys.length) return cellCache.cells;
+  const out = new Int32Array(keys.length * 2);
+  let n = 0;
+  for (const k of keys) {
+    const sep = k.indexOf(':');
+    if (sep < 0) continue;
+    const cx4 = Number(k.slice(0, sep)), cy4 = Number(k.slice(sep + 1));
+    if (Number.isFinite(cx4) && Number.isFinite(cy4)) { out[n++] = cx4; out[n++] = cy4; }
+  }
+  cellCache.src = src; cellCache.n = keys.length; cellCache.cells = out.subarray(0, n);
+  return cellCache.cells;
+}
+
+const textWidths = new Map<string, number>();
+function plateBox(ctx: CanvasRenderingContext2D, text: string, x: number, y: number): [number, number, number, number] {
+  let wTxt = textWidths.get(text);
+  if (wTxt === undefined) {
+    ctx.font = 'bold 9px monospace';
+    wTxt = Math.ceil(ctx.measureText(text).width) || text.length * 5;
+    textWidths.set(text, wTxt);
+  }
+  return [Math.max(1, Math.min(VIEW_W - wTxt - 5, x + 6)), Math.max(1, Math.min(VIEW_H - 12, y - 5)), wTxt + 4, 11];
+}
+function fillPlate(ctx: CanvasRenderingContext2D, text: string, box: [number, number, number, number], color: string) {
+  ctx.font = 'bold 9px monospace';
+  ctx.fillStyle = 'rgba(5,8,11,0.88)';
+  ctx.fillRect(box[0], box[1], box[2], box[3]);
+  ctx.fillStyle = color;
+  ctx.fillText(text, box[0] + 2, box[1] + 8);
+}
+
+function drawDiamond(ctx: CanvasRenderingContext2D, x: number, y: number, size: number, color: string) {
+  ctx.fillStyle = '#05080b';
+  for (let dy = -size - 1; dy <= size + 1; dy++) { const span = size + 1 - Math.abs(dy); ctx.fillRect(x - span, y + dy, span * 2 + 1, 1); }
+  ctx.fillStyle = color;
+  for (let dy = -size; dy <= size; dy++) { const span = size - Math.abs(dy); ctx.fillRect(x - span, y + dy, span * 2 + 1, 1); }
+}
+
+function renderAtlas(ctx: CanvasRenderingContext2D, r: RunState, cam: Cam, v: AtlasView) {
+  const s = cam.s;
+  const X = (g: number) => Math.round(VIEW_W / 2 + (g - cam.gx) * s);
+  const Y = (g: number) => Math.round(VIEW_H / 2 + (g - cam.gy) * s);
+  const gx0 = cam.gx - VIEW_W / (2 * s), gx1 = cam.gx + VIEW_W / (2 * s);
+  const gy0 = cam.gy - VIEW_H / (2 * s), gy1 = cam.gy + VIEW_H / (2 * s);
+  const onSheet = (x: number, y: number, pad = 10) => x >= -pad && y >= -pad && x <= VIEW_W + pad && y <= VIEW_H + pad;
+
+  ctx.imageSmoothingEnabled = false;
+  ctx.setLineDash([]);
+  ctx.textAlign = 'left';
+  ctx.lineWidth = 1;
+  ctx.fillStyle = '#091015';
+  ctx.fillRect(0, 0, VIEW_W, VIEW_H);
+
+  const fx = X(0), fy = Y(0), fw = X(FRAME_W) - fx, fh = Y(FRAME_H) - fy;
+  const [ox, oy] = windowOrigin(r);
+  const wx = X(ox), wy = Y(oy), ww = X(ox + WW) - wx, wh = Y(oy + WH) - wy;
+  const windowOnSheet = wx < VIEW_W && wy < VIEW_H && wx + ww > 0 && wy + wh > 0;
+  const live = s >= LIVE_FROM;
+
+  // Copy the part of a terrain sheet that is in view, snapped to whole sheet pixels so it never shimmers.
+  const blit = (img: HTMLCanvasElement, tppX: number, tppY: number) => {
+    const x0 = Math.max(0, Math.floor(gx0 / tppX)), x1 = Math.min(img.width, Math.ceil(gx1 / tppX));
+    const y0 = Math.max(0, Math.floor(gy0 / tppY)), y1 = Math.min(img.height, Math.ceil(gy1 / tppY));
+    if (x1 <= x0 || y1 <= y0) return;
+    const dx0 = X(x0 * tppX), dy0 = Y(y0 * tppY);
+    ctx.drawImage(img, x0, y0, x1 - x0, y1 - y0, dx0, dy0, X(x1 * tppX) - dx0, Y(y1 * tppY) - dy0);
+  };
+  const base = overviewSheet(v.onProgress);
+  const closeUp = s > DETAIL_FROM;
+  // Asked for at every scale so it is ready by the time the player zooms in.
+  const det = detailSheet(closeUp ? v.onProgress : undefined, cam.gy);
+  const terrain = () => {
+    if (base) blit(base, FRAME_W / OVERVIEW_W, FRAME_H / OVERVIEW_H);
+    if (det && closeUp) blit(det, DETAIL_TPP, DETAIL_TPP);
+  };
+
+  ctx.save();
+  ctx.beginPath(); ctx.rect(fx, fy, fw, fh); ctx.clip();
+  ctx.fillStyle = '#0c141b';
+  ctx.fillRect(fx, fy, fw, fh);
 
   // The whole continent from the first minute: land, water and biome everywhere, dimmed where the player has not walked.
-  ctx.fillStyle = '#0c141b';
-  ctx.fillRect(CONT_OX, CONT_OY, CONT_W, CONT_H);
-  const base = continentBase(view.onProgress);
-  if (base) {
-    ctx.drawImage(base, CONT_OX, CONT_OY);
-    ctx.fillStyle = 'rgba(9, 16, 21, 0.4)';
-    ctx.fillRect(CONT_OX, CONT_OY, CONT_W, CONT_H);
-  }
+  terrain();
+  if (base) { ctx.fillStyle = 'rgba(9, 16, 21, 0.4)'; ctx.fillRect(fx, fy, fw, fh); }
+  // Below ground the sector shows that floor only: unwalked parts of it are blank, not the surface above.
+  if (live && activeFloor(r) !== 0 && windowOnSheet) { ctx.fillStyle = '#0d161c'; ctx.fillRect(wx, wy, ww, wh); }
 
-  const [ox, oy] = windowOrigin(r);
+  // Walked ground at full strength. A cell is never thinner than one chart pixel, so a trail shows at any scale.
   if (base) {
-    // Walked ground at full strength. Several 4x4 cells share one chart pixel, so collect pixels first.
-    const lit = new Set<number>();
-    const light = (cx4: number, cy4: number) => {
-      const px = Math.floor((cx4 * 4 + 2) * sx), py = Math.floor((cy4 * 4 + 2) * sy);
-      if (px >= 0 && py >= 0 && px < CONT_W && py < CONT_H) lit.add(py * CONT_W + px);
+    ctx.save();
+    ctx.beginPath();
+    const cell = (cx4: number, cy4: number) => {
+      const gx = cx4 * 4, gy = cy4 * 4;
+      if (gx + 4 < gx0 || gx > gx1 || gy + 4 < gy0 || gy > gy1) return;
+      const x = X(gx), y = Y(gy);
+      ctx.rect(x, y, Math.max(1, X(gx + 4) - x), Math.max(1, Y(gy + 4) - y));
     };
-    if (r.veyraGlobalDiscovered) for (const k of Object.keys(r.veyraGlobalDiscovered)) {
-      const sep = k.indexOf(':');
-      if (sep < 0) continue;
-      const cx4 = Number(k.slice(0, sep)), cy4 = Number(k.slice(sep + 1));
-      if (Number.isFinite(cx4) && Number.isFinite(cy4)) light(cx4, cy4);
-    }
+    const cells = walkedCells(r);
+    for (let i = 0; i < cells.length; i += 2) cell(cells[i], cells[i + 1]);
     for (let cy4 = 0; cy4 < 50; cy4++) for (let cx4 = 0; cx4 < 50; cx4++) {
-      if (r.discovered[cy4 * 50 + cx4]) light((ox >> 2) + cx4, (oy >> 2) + cy4);
+      if (r.discovered[cy4 * 50 + cx4]) cell((ox >> 2) + cx4, (oy >> 2) + cy4);
     }
-    for (const i of lit) {
-      const px = i % CONT_W, py = (i / CONT_W) | 0;
-      ctx.drawImage(base, px, py, 1, 1, CONT_OX + px, CONT_OY + py, 1, 1);
-    }
+    ctx.clip();
+    terrain();
+    ctx.restore();
   }
 
-  // Rivers and roads from the authored centrelines (a chart pixel is too coarse to catch them by sampling).
+  // Close up, walked ground in the sector around the player shows what is really there: the live picture, tile by tile.
+  if (live && windowOnSheet) {
+    ctx.save();
+    ctx.beginPath();
+    let any = false;
+    for (let cy4 = 0; cy4 < 50; cy4++) for (let cx4 = 0; cx4 < 50; cx4++) {
+      if (!r.discovered[cy4 * 50 + cx4]) continue;
+      const x = X(ox + cx4 * 4), y = Y(oy + cy4 * 4), x2 = X(ox + cx4 * 4 + 4), y2 = Y(oy + cy4 * 4 + 4);
+      if (x2 < 0 || y2 < 0 || x > VIEW_W || y > VIEW_H) continue;
+      ctx.rect(x, y, x2 - x, y2 - y);
+      any = true;
+    }
+    if (any) {
+      ctx.clip();
+      ctx.drawImage(getMapCanvas(r), 0, 0, WW, WH, wx, wy, ww, wh);
+      if (s >= 3) {
+        for (const e of Object.values(r.entities)) {
+          if (!onActiveFloor(r, e)) continue;
+          if (e.kind !== 'struct' || e.poi || e.tx === undefined || e.ty === undefined) continue;
+          if (!discoveredCell(r, e.tx, e.ty)) continue;
+          const x = X(ox + e.tx), y = Y(oy + e.ty);
+          if (!onSheet(x, y)) continue;
+          ctx.fillStyle = e.type?.includes('wall') || e.type?.includes('door') ? '#d8c59e' : e.type?.includes('roof') ? '#7d634a' : '#4f5d66';
+          ctx.fillRect(x, y, Math.max(2, X(ox + e.tx + 1) - x), Math.max(2, Y(oy + e.ty + 1) - y));
+        }
+      }
+    }
+    ctx.restore();
+  }
+
+  // Surveyor's grid, every 25 tiles, once tiles are large enough to count; every 5 tiles up close. It runs over the
+  // whole continent, so a stretch of plain forest or open sea still shows how far the sheet has moved under the hand.
+  if (s >= TILE_FROM) {
+    const [g0x, g0y] = toGlobal(cam, 0, 0), [g1x, g1y] = toGlobal(cam, VIEW_W, VIEW_H);
+    const x0 = Math.max(0, X(0)), x1 = Math.min(VIEW_W, X(FRAME_W)), y0 = Math.max(0, Y(0)), y1 = Math.min(VIEW_H, Y(FRAME_H));
+    const rule = (step: number, alpha: number) => {
+      ctx.fillStyle = `rgba(214, 196, 158, ${alpha})`;
+      // lines sit on the sector's own grid (its corner is a grid corner)
+      for (let g = ox + Math.ceil((g0x - ox) / step) * step; g <= g1x; g += step) if (g >= 0 && g <= FRAME_W) ctx.fillRect(X(g), y0, 1, y1 - y0);
+      for (let g = oy + Math.ceil((g0y - oy) / step) * step; g <= g1y; g += step) if (g >= 0 && g <= FRAME_H) ctx.fillRect(x0, Y(g), x1 - x0, 1);
+    };
+    if (s >= 3) rule(5, 0.045);
+    rule(25, 0.09);
+  }
+
+  // Rivers and roads from the authored centrelines (the sheets are too coarse to catch them by sampling).
+  ctx.lineWidth = s >= 2 ? 2 : 1;
   const line = (pts: [number, number][], color: string, dash: number[] = []) => {
     if (pts.length < 2) return;
-    ctx.strokeStyle = color; ctx.lineWidth = 1; ctx.setLineDash(dash);
+    ctx.strokeStyle = color; ctx.setLineDash(dash);
     ctx.beginPath();
-    pts.forEach(([ax, ay], i) => { const x = Math.round(X(ax * 2)) + 0.5, y = Math.round(Y(ay * 2)) + 0.5; if (i) ctx.lineTo(x, y); else ctx.moveTo(x, y); });
+    pts.forEach(([ax, ay], i) => { const x = X(ax * 2) + 0.5, y = Y(ay * 2) + 0.5; if (i) ctx.lineTo(x, y); else ctx.moveTo(x, y); });
     ctx.stroke();
   };
   for (const rv of GOLD.project.rivers) line(rv.points, 'rgba(70, 136, 184, 0.75)');
@@ -319,56 +376,50 @@ function renderContinentChart(ctx: CanvasRenderingContext2D, r: RunState, view: 
     else line(rd.points, 'rgba(214, 190, 142, 0.38)', [2, 2]);
   }
   ctx.setLineDash([]);
+  ctx.lineWidth = 1;
 
-  // Region names, faint: they orient, the place marks carry the detail.
+  // Region names: they orient, the place marks carry the detail.
   ctx.font = '7px monospace';
   ctx.textAlign = 'center';
   for (const l of REGION_LABELS) {
-    const x = Math.round(X(l.gtx)), y = Math.round(Y(l.gty));
+    const x = X(l.gtx), y = Y(l.gty);
+    if (!onSheet(x, y, 60)) continue;
     ctx.fillStyle = 'rgba(5, 8, 11, 0.6)';
     for (const [hx, hy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) ctx.fillText(l.text, x + hx, y + hy);
-    ctx.fillStyle = 'rgba(240, 232, 208, 0.82)';
+    ctx.fillStyle = live ? 'rgba(240, 232, 208, 0.55)' : 'rgba(240, 232, 208, 0.82)';
     ctx.fillText(l.text, x, y);
   }
   ctx.textAlign = 'left';
+  ctx.restore();
 
   ctx.strokeStyle = '#475962';
-  ctx.strokeRect(CONT_OX + 0.5, CONT_OY + 0.5, CONT_W - 1, CONT_H - 1);
+  ctx.strokeRect(fx + 0.5, fy + 0.5, fw - 1, fh - 1);
+  // The sector the world is live in right now.
+  ctx.strokeStyle = live ? 'rgba(244, 208, 137, 0.3)' : 'rgba(244, 208, 137, 0.78)';
+  ctx.strokeRect(wx + 0.5, wy + 0.5, Math.max(4, ww), Math.max(4, wh));
 
-  // Active 200x200 sector window frame
-  ctx.strokeStyle = 'rgba(244, 208, 137, 0.78)';
-  ctx.strokeRect(
-    Math.round(X(ox)) + 0.5,
-    Math.round(Y(oy)) + 0.5,
-    Math.max(4, Math.round(WW * sx)),
-    Math.max(4, Math.round(WH * sy)),
-  );
-
-  const dot = (gtx: number, gty: number, col: string, s = 3) => {
-    const rx = Math.round(X(gtx));
-    const ry = Math.round(Y(gty));
+  const dot = (gtx: number, gty: number, col: string, size = 3) => {
+    const x = X(gtx), y = Y(gty);
+    if (!onSheet(x, y)) return;
     ctx.fillStyle = '#05080b';
-    ctx.fillRect(rx - 1 - (s >> 1), ry - 1 - (s >> 1), s + 2, s + 2);
+    ctx.fillRect(x - 1 - (size >> 1), y - 1 - (size >> 1), size + 2, size + 2);
     ctx.fillStyle = col;
-    ctx.fillRect(rx - (s >> 1), ry - (s >> 1), s, s);
+    ctx.fillRect(x - (size >> 1), y - (size >> 1), size, size);
   };
+  // Corners that carry something of their own (compass, scale bar, destination pill): names keep out of them.
+  const occupied: [number, number, number, number][] = [[VIEW_W - 24, 0, 24, 24], [VIEW_W - 104, VIEW_H - 24, 104, 24]];
+  if (v.dest && !v.teleportTarget) occupied.push([0, VIEW_H - 24, 176, 24]);
+  const free = (b: [number, number, number, number]) => occupied.every(o => b[0] + b[2] <= o[0] || o[0] + o[2] <= b[0] || b[1] + b[3] <= o[1] || o[1] + o[3] <= b[1]);
 
-  const [pgx, pgy] = playerGlobalTile(r);
-  const dest = view.destId ? view.places.find(p => p.id === view.destId) ?? null : null;
-  if (dest) {
-    ctx.strokeStyle = 'rgba(159, 232, 255, 0.85)'; ctx.lineWidth = 1; ctx.setLineDash([3, 2]);
-    ctx.beginPath(); ctx.moveTo(Math.round(X(pgx)) + 0.5, Math.round(Y(pgy)) + 0.5); ctx.lineTo(Math.round(X(dest.gtx)) + 0.5, Math.round(Y(dest.gty)) + 0.5); ctx.stroke();
-    ctx.setLineDash([]);
-  }
-
-  // Every place on the chart (po.at is in AU; 1 AU = 2 tiles on the 4000x2800 continent frame)
-  for (const pl of view.places) drawPlaceGlyph(ctx, Math.round(X(pl.gtx)), Math.round(Y(pl.gty)), pl.kind.group, pl.visited, GROUP_COLOR[pl.kind.group]);
-
+  // What the player owns: cabinets, carts and vehicles, the bag left where they died.
   for (const e of Object.values(r.entities)) {
     if (!onActiveFloor(r, e)) continue;
-    if (e.type === 'claim') dot(ox + e.tx!, oy + e.ty!, '#8fd45a', 4);
-    if (isOwnBag(e)) dot(ox + e.x / TILE, oy + e.y / TILE, '#ff8e7a', 3);
-    if (e.kind === 'cart' || e.kind === 'vehicle') dot(ox + e.x / TILE, oy + e.y / TILE, '#7fd8ff', 3);
+    if (e.type === 'claim' && e.tx !== undefined && e.ty !== undefined) dot(ox + e.tx + 0.5, oy + e.ty + 0.5, territoryForecast(r, e).funded ? '#8fd45a' : '#e8b23c', 4);
+    if (isOwnBag(e)) {
+      dot(ox + e.x / TILE, oy + e.y / TILE, '#ff8e7a', 4);
+      if (s >= TILE_FROM) { const b = plateBox(ctx, 'Death Bag', X(ox + e.x / TILE) + 2, Y(oy + e.y / TILE)); fillPlate(ctx, 'Death Bag', b, '#ff8e7a'); occupied.push(b); }
+    }
+    if ((e.kind === 'cart' || e.kind === 'vehicle') && discoveredCell(r, Math.floor(e.x / TILE), Math.floor(e.y / TILE))) dot(ox + e.x / TILE, oy + e.y / TILE, e.kind === 'cart' ? '#e8b36d' : '#7fd8ff', 3);
   }
   if (r.veyraOffscreenEntities) {
     for (const oe of Object.values(r.veyraOffscreenEntities)) {
@@ -380,29 +431,134 @@ function renderContinentChart(ctx: CanvasRenderingContext2D, r: RunState, view: 
     }
   }
 
-  // Player: a white diamond in a dark ring, larger than any place mark.
-  {
-    const rx = Math.round(X(pgx)), ry = Math.round(Y(pgy));
-    ctx.fillStyle = '#05080b';
-    for (let dy = -4; dy <= 4; dy++) { const wSpan = 4 - Math.abs(dy); ctx.fillRect(rx - wSpan, ry + dy, wSpan * 2 + 1, 1); }
-    ctx.fillStyle = '#fff8e5';
-    for (let dy = -3; dy <= 3; dy++) { const wSpan = 3 - Math.abs(dy); ctx.fillRect(rx - wSpan, ry + dy, wSpan * 2 + 1, 1); }
+  // The player's own notes.
+  for (const m of v.marks) {
+    if (!discoveredCell(r, m.tx, m.ty)) continue;
+    const x = X(ox + m.tx + 0.5), y = Y(oy + m.ty + 0.5);
+    if (!onSheet(x, y)) continue;
+    const meta = MARKS.find(k => k.kind === m.kind)!;
+    drawDiamond(ctx, x, y, 3, meta.color);
+    const isSel = m.id === v.selectedMarkId;
+    const isHover = !!v.hoverTile && Math.hypot(m.tx - v.hoverTile.tx, m.ty - v.hoverTile.ty) <= 1.5;
+    if (isSel) { ctx.strokeStyle = '#fff3c4'; ctx.strokeRect(x - 6.5, y - 6.5, 13, 13); }
+    if (m.label && (isSel || isHover)) { const b = plateBox(ctx, m.label, x + 2, y); fillPlate(ctx, m.label, b, meta.color); occupied.push(b); }
   }
 
+  const [pgx, pgy] = playerGlobalTile(r);
+  const dest = v.dest;
+  if (dest) {
+    ctx.strokeStyle = 'rgba(159, 232, 255, 0.85)'; ctx.setLineDash([3, 2]);
+    ctx.beginPath(); ctx.moveTo(X(pgx) + 0.5, Y(pgy) + 0.5); ctx.lineTo(X(dest.gtx + 0.5) + 0.5, Y(dest.gty + 0.5) + 0.5); ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  // Every place on the chart, the same size at every scale.
+  const shown: { pl: AtlasPlace; x: number; y: number }[] = [];
+  for (const pl of v.places) {
+    const x = X(pl.gtx + 0.5), y = Y(pl.gty + 0.5);
+    if (!onSheet(x, y)) continue;
+    drawPlaceGlyph(ctx, x, y, pl.kind.group, pl.visited, GROUP_COLOR[pl.kind.group]);
+    if (live && v.intel.has(pl.id)) { ctx.fillStyle = '#5fc8e0'; ctx.fillRect(x + 3, y - 5, 3, 3); }
+    shown.push({ pl, x, y });
+    occupied.push([x - 4, y - 4, 9, 9]);
+  }
+  if (dest?.custom) {
+    // A spot marked by hand: a small flag.
+    const x = X(dest.gtx + 0.5), y = Y(dest.gty + 0.5);
+    if (onSheet(x, y)) {
+      ctx.fillStyle = '#05080b'; ctx.fillRect(x - 1, y - 8, 7, 10);
+      ctx.fillStyle = '#9fe8ff'; ctx.fillRect(x, y - 7, 1, 8); ctx.fillRect(x + 1, y - 7, 4, 3);
+    }
+  }
+
+  if (v.teleportTarget) {
+    const x = X(ox + v.teleportTarget.x / TILE), y = Y(oy + v.teleportTarget.y / TILE);
+    if (onSheet(x, y)) {
+      ctx.fillStyle = '#05080b'; ctx.fillRect(x - 5, y - 5, 11, 11);
+      ctx.fillStyle = '#d9acff'; ctx.fillRect(x - 4, y - 1, 9, 2); ctx.fillRect(x - 1, y - 4, 2, 9);
+      const b = plateBox(ctx, 'Blink Target', x + 3, y); fillPlate(ctx, 'Blink Target', b, '#d9acff'); occupied.push(b);
+    }
+  }
+
+  // Player: a white diamond in a dark ring, larger than any place mark.
+  drawDiamond(ctx, X(pgx), Y(pgy), 3, '#fff8e5');
+  occupied.push([X(pgx) - 5, Y(pgy) - 5, 11, 11]);
+
   const ring = (pl: AtlasPlace, color: string, half: number) => {
-    const x = Math.round(X(pl.gtx)), y = Math.round(Y(pl.gty));
+    const x = X(pl.gtx + 0.5), y = Y(pl.gty + 0.5);
     ctx.strokeStyle = '#05080b'; ctx.lineWidth = 3;
     ctx.strokeRect(x - half + 0.5, y - half + 0.5, half * 2, half * 2);
     ctx.strokeStyle = color; ctx.lineWidth = 1;
     ctx.strokeRect(x - half + 0.5, y - half + 0.5, half * 2, half * 2);
   };
   if (dest) ring(dest, '#9fe8ff', 6);
-  const selected = view.selectedId ? view.places.find(p => p.id === view.selectedId) ?? null : null;
+  const selected = v.selectedId ? (v.places.find(p => p.id === v.selectedId) ?? (dest && dest.id === v.selectedId ? dest : null)) : null;
   if (selected && selected !== dest) ring(selected, '#f2cf82', 5);
-  const hovered = view.hoverId ? view.places.find(p => p.id === view.hoverId) ?? null : null;
+  const hovered = v.hoverId ? (v.places.find(p => p.id === v.hoverId) ?? (dest && dest.id === v.hoverId ? dest : null)) : null;
+
+  // Names. The destination, the selected place and the place under the pointer always carry theirs; the others get
+  // one where there is room, nearest the middle of the sheet first, and more of them the closer the view.
+  const forced: { text: string; box: [number, number, number, number]; color: string }[] = [];
+  const force = (pl: AtlasPlace, text: string, color: string) => {
+    const x = X(pl.gtx + 0.5), y = Y(pl.gty + 0.5);
+    if (!onSheet(x, y, 0)) return;
+    const box = plateBox(ctx, text, x + 3, y);
+    forced.push({ text, box, color }); occupied.push(box);
+  };
   const named = hovered ?? selected ?? null;
-  if (dest && dest !== named) drawPlate(ctx, dest.name, Math.round(X(dest.gtx)) + 3, Math.round(Y(dest.gty)), '#9fe8ff');
-  if (named) drawPlate(ctx, named.name, Math.round(X(named.gtx)) + 3, Math.round(Y(named.gty)), named === dest ? '#9fe8ff' : '#fff3c4');
+  if (dest && dest !== named && !dest.custom) force(dest, dest.name, '#9fe8ff');
+  if (named && !(named.custom && named !== hovered)) {
+    const far = Math.hypot(named.gtx - pgx, named.gty - pgy);
+    force(named, named === hovered && !named.custom ? `${named.name} · ${formatDistance(far)}` : named.custom ? formatDistance(far) : named.name, named === dest ? '#9fe8ff' : '#fff3c4');
+  }
+  if (s >= LABELS_FROM) {
+    const skip = new Set([dest?.id, named?.id]);
+    const order = shown.filter(q => !skip.has(q.pl.id)).sort((a, b) => Math.hypot(a.x - VIEW_W / 2, a.y - VIEW_H / 2) - Math.hypot(b.x - VIEW_W / 2, b.y - VIEW_H / 2));
+    for (const q of order) {
+      if (!onSheet(q.x, q.y, -2)) continue;       // a name without its mark on the sheet reads as a place that is not there
+      const box = plateBox(ctx, q.pl.name, q.x + 3, q.y);
+      if (!free(box)) continue;
+      fillPlate(ctx, q.pl.name, box, q.pl.visited ? '#e6dcc0' : '#b9b4a2');
+      occupied.push(box);
+    }
+  }
+  for (const f of forced) fillPlate(ctx, f.text, f.box, f.color);
+
+  // The tile under the pointer, and the tile being inspected, once tiles can be told apart.
+  if (s >= TILE_FROM && v.hoverTile && (!v.cursor || v.hoverTile.tx !== v.cursor.tx || v.hoverTile.ty !== v.cursor.ty)) {
+    const x = X(ox + v.hoverTile.tx + 0.5), y = Y(oy + v.hoverTile.ty + 0.5);
+    ctx.strokeStyle = discoveredCell(r, v.hoverTile.tx, v.hoverTile.ty) ? 'rgba(244,208,137,0.45)' : 'rgba(226,84,60,0.4)';
+    ctx.strokeRect(x - 5.5, y - 5.5, 11, 11);
+  }
+  if (live && v.cursor) {
+    const xx = X(ox + v.cursor.tx + 0.5), yy = Y(oy + v.cursor.ty + 0.5);
+    if (onSheet(xx, yy)) {
+      ctx.strokeStyle = '#05080b'; ctx.lineWidth = 3;
+      ctx.strokeRect(xx - 7.5, yy - 7.5, 15, 15);
+      ctx.strokeStyle = v.markMode ? '#f2cf82' : '#5fc8e0'; ctx.lineWidth = 1;
+      const b = 4;
+      ctx.beginPath();
+      ctx.moveTo(xx - 7.5, yy - 7.5 + b); ctx.lineTo(xx - 7.5, yy - 7.5); ctx.lineTo(xx - 7.5 + b, yy - 7.5);
+      ctx.moveTo(xx + 7.5 - b, yy - 7.5); ctx.lineTo(xx + 7.5, yy - 7.5); ctx.lineTo(xx + 7.5, yy - 7.5 + b);
+      ctx.moveTo(xx - 7.5, yy + 7.5 - b); ctx.lineTo(xx - 7.5, yy + 7.5); ctx.lineTo(xx - 7.5 + b, yy + 7.5);
+      ctx.moveTo(xx + 7.5 - b, yy + 7.5); ctx.lineTo(xx + 7.5, yy + 7.5); ctx.lineTo(xx + 7.5, yy + 7.5 - b);
+      ctx.stroke();
+    }
+  }
+
+  // Scale bar: how far a stretch of the sheet is on the ground (one tile reads as one metre).
+  {
+    const bar = scaleBar(s);
+    const text = formatDistance(bar.tiles).replace('.0 km', ' km');
+    ctx.font = 'bold 9px monospace';
+    const tw = Math.ceil(ctx.measureText(text).width) || text.length * 5;
+    const x1 = VIEW_W - 6, x0 = x1 - bar.px, y = VIEW_H - 7;
+    ctx.fillStyle = 'rgba(5,8,11,0.78)';
+    ctx.fillRect(Math.min(x0, x1 - tw) - 3, y - 13, Math.max(bar.px, tw) + 6, 18);
+    ctx.fillStyle = '#d8ccb0';
+    ctx.fillRect(x0, y, bar.px, 1); ctx.fillRect(x0, y - 3, 1, 4); ctx.fillRect(x1 - 1, y - 3, 1, 4);
+    ctx.fillText(text, x1 - tw, y - 4);
+  }
 }
 
 function renderChart(
@@ -655,21 +811,24 @@ export function PlaceCard({ place, dist, bearing, isDestination, onSet, onClear,
   return <div className="map-place" data-testid="map-place-card">
     <div className="map-inspector__head">
       <div>
-        <b data-notr style={{ color: GROUP_COLOR[place.kind.group] }}>{place.name}</b>
-        <span><em>{place.kind.label}</em> · {formatDistance(dist)}<DirArrow rad={bearing} /> · <em>{place.visited ? 'Visited' : 'Not visited yet'}</em></span>
+        <b data-notr={place.custom ? undefined : true} style={{ color: place.custom ? '#9fe8ff' : GROUP_COLOR[place.kind.group] }}>{place.name}</b>
+        <span><em>{place.kind.label}</em> · {formatDistance(dist)}<DirArrow rad={bearing} />{!place.custom && <> · <em>{place.visited ? 'Visited' : 'Not visited yet'}</em></>}</span>
       </div>
     </div>
     <div className="map-place__blurb">{place.kind.blurb}</div>
-    {!place.visited && <div className="map-place__blurb map-place__blurb--dim">What is inside is not on the chart. Go there to find out.</div>}
+    {!place.visited && !place.custom && <div className="map-place__blurb map-place__blurb--dim">What is inside is not on the chart. Go there to find out.</div>}
     <div className="map-place__actions">
       {isDestination
         ? <button className="btn sm" data-testid="map-dest-clear" onClick={onClear}>Clear destination</button>
         : <button className="btn sm gold" data-testid="map-dest-set" onClick={onSet}>Set destination</button>}
       {onShowWorld && <button className="btn sm ghost" onClick={onShowWorld}>Show on World</button>}
-      {onOpenSector && <button className="btn sm ghost" title="Zoom in on this place in the sector around you" onClick={onOpenSector}>Open sector</button>}
+      {onOpenSector && <button className="btn sm ghost" title="Bring this place up close on the chart" onClick={onOpenSector}>Zoom in</button>}
     </div>
   </div>;
 }
+
+// The how-to line on the sheet is shown until the player has moved the sheet once in this session.
+let hintSeen = false;
 
 export function ExpeditionMap({ api, onTeleportSelect, teleportTarget, qaSession = false }: {
   api: Api;
@@ -701,17 +860,24 @@ export function ExpeditionMap({ api, onTeleportSelect, teleportTarget, qaSession
   const [mode, setMode] = useState<'inspect' | 'mark'>('inspect');
   const [label, setLabel] = useState('');
   const [selectedMarkId, setSelectedMarkId] = useState<string | null>(null);
-  const [cursor, setCursor] = useState<{ tx: number; ty: number } | null>({ tx: ptx, ty: pty });
+  // On Veyra the chart opens on places, not on a tile: nothing is inspected until the player clicks the ground.
+  const [cursor, setCursor] = useState<{ tx: number; ty: number } | null>(isVeyra && !onTeleportSelect ? null : { tx: ptx, ty: pty });
   const [hover, setHover] = useState<{ tx: number; ty: number; gtx?: number; gty?: number } | null>(null);
   const [statusMsg, setStatusMsg] = useState<string | null>(null);
   const [filter, setFilter] = useState<'all' | 'sites' | 'marks' | 'intel'>('all');
   const [destId, setDestId] = useState<string | null>(() => readDestination(r, qaSession));
   // Opening the chart with a destination set shows that place first: where you are going, and the button to drop it.
   const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(destId);
-  const [, setBaseTick] = useState(0);
-  const alive = useRef(true);
-  useEffect(() => { alive.current = true; return () => { alive.current = false; }; }, []);
-  const onBaseProgress = useCallback(() => { if (alive.current) setBaseTick(t => t + 1); }, []);
+  const [hoverPlaceId, setHoverPlaceId] = useState<string | null>(null);
+  // How close the Veyra sheet is: decides which buttons are lit and offered. Changes rarely, unlike the camera itself.
+  const [zoomBand, setZoomBand] = useState<'fit' | 'mid' | 'near'>(() => {
+    if (!isVeyra || onTeleportSelect) return 'near';
+    const c = recallCam(r.id);
+    const [hx, hy] = windowOrigin(r);
+    return !c || isFit(c) ? 'fit' : c.s >= TILE_FROM && c.gx >= hx && c.gy >= hy && c.gx <= hx + WW && c.gy <= hy + WH ? 'near' : 'mid';
+  });
+  const [handled, setHandledState] = useState(hintSeen);
+  const setHandled = (v: boolean) => { hintSeen = hintSeen || v; setHandledState(v); };
   const dragRef = useRef<{ sx: number; sy: number; cx0: number; cy0: number; moved: boolean } | null>(null);
 
   const intel = expeditionNotes(r);
@@ -722,17 +888,20 @@ export function ExpeditionMap({ api, onTeleportSelect, teleportTarget, qaSession
   const places = atlasPlaces(r);
   const ranges = placesByDistance(r, places);
   const visitedCount = places.filter(pl => pl.visited).length;
-  const selectedPlace = selectedPlaceId ? places.find(pl => pl.id === selectedPlaceId) ?? null : null;
-  const selectedRange = selectedPlace ? ranges.find(g => g.place === selectedPlace) ?? null : null;
-  const liveDestId = destId && places.some(pl => pl.id === destId) ? destId : null;
-  const destRange = liveDestId ? ranges.find(g => g.place.id === liveDestId) ?? null : null;
+  // The destination is a named place or a spot the player marked by hand.
+  const destPlace = destId ? (places.find(pl => pl.id === destId) ?? (isWaypointId(destId) ? atlasPlace(r, destId) : null)) : null;
+  const liveDestId = destPlace?.id ?? null;
+  const [pgx, pgy] = isVeyra ? playerGlobalTile(r) : [0, 0];
+  const rangeOf = (pl: AtlasPlace) => ranges.find(g => g.place === pl) ?? { place: pl, dist: Math.hypot(pl.gtx - pgx, pl.gty - pgy), bearing: bearing(pl.gtx - pgx, pl.gty - pgy) };
+  const destRange = destPlace ? rangeOf(destPlace) : null;
+  const selectedPlace = selectedPlaceId ? (places.find(pl => pl.id === selectedPlaceId) ?? (selectedPlaceId === liveDestId ? destPlace : null)) : null;
+  const selectedRange = selectedPlace ? rangeOf(selectedPlace) : null;
   const [wox, woy] = isVeyra ? windowOrigin(r) : [0, 0];
-  const hoverPlace = zoom === 0 && hover?.gtx !== undefined && hover?.gty !== undefined ? placeNear(places, hover.gtx, hover.gty, PLACE_REACH) : null;
   const chooseDestination = (id: string | null) => {
     const set = storeDestination(r, qaSession, id);
     setDestId(set);
-    const pl = set ? places.find(q => q.id === set) : null;
-    setStatusMsg(pl ? 'Destination set. Close the chart: the arrow on screen points the way.' : id ? 'That place cannot be set as a destination.' : 'Destination cleared.');
+    setStatusMsg(set ? 'Destination set. Close the chart: the arrow on screen points the way.' : id ? 'That place cannot be set as a destination.' : 'Destination cleared.');
+    api.sfx(set ? 'jtick' : 'ui');
   };
   const offscreenCount = isVeyra && r.veyraOffscreenEntities
     ? Object.values(r.veyraOffscreenEntities).filter(oe => oe.type === 'claim' || isOwnBag(oe as any) || oe.kind === 'cart' || oe.kind === 'vehicle').length
@@ -740,15 +909,123 @@ export function ExpeditionMap({ api, onTeleportSelect, teleportTarget, qaSession
   const ownedCabinets = Object.values(r.entities).filter(e => (!isVeyra || onActiveFloor(r, e)) && e.type === 'claim' && e.tx !== undefined && e.ty !== undefined && discoveredCell(r, e.tx, e.ty));
   const rigs = Object.values(r.entities).filter(e => (!isVeyra || onActiveFloor(r, e)) && (e.kind === 'vehicle' || e.kind === 'cart') && discoveredCell(r, Math.floor(e.x / TILE), Math.floor(e.y / TILE)));
 
+  // ---- Veyra: one sheet under one camera -------------------------------------------------------------------
+  // The camera lives in a ref and the sheet is drawn straight from pointer events on the next animation frame.
+  // Dragging and zooming therefore never re-render the panel (its lists, cards and 75 rows): that was the lag.
+  const camRef = useRef<Cam>(null as unknown as Cam);
+  if (!camRef.current) {
+    camRef.current = onTeleportSelect || !isVeyra
+      ? clampCam({ gx: wox + WW / 2, gy: woy + WH / 2, s: SECTOR_S })
+      : recallCam(r.id) ?? fitCam();
+  }
+  const rafRef = useRef(0);
+  const lastFrameRef = useRef(0);
+  const animRef = useRef<{ kind: 'fly'; from: Cam; to: Cam; t0: number; dur: number } | { kind: 'zoom'; s: number; ax: number; ay: number } | null>(null);
+  const glideRef = useRef<{ vx: number; vy: number } | null>(null);
+  const hoverTileRef = useRef<{ tx: number; ty: number } | null>(null);
+  const readoutRef = useRef<HTMLSpanElement>(null);
+  const runRef = useRef(r); runRef.current = r;
+  const viewRef = useRef<AtlasView | null>(null);
+  const frameRef = useRef<(now: number) => void>(() => {});
+  const requestDraw = useCallback(() => {
+    if (rafRef.current || typeof requestAnimationFrame === 'undefined') return;
+    lastFrameRef.current = performance.now();
+    rafRef.current = requestAnimationFrame(t => frameRef.current(t));
+  }, []);
+  viewRef.current = isVeyra ? {
+    places, hoverId: hoverPlaceId, selectedId: selectedPlaceId, dest: destPlace, marks, selectedMarkId, cursor,
+    hoverTile: hoverTileRef.current, teleportTarget, markMode: mode === 'mark', intel: intelByPlace, onProgress: requestDraw,
+  } : null;
+  const calm = typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const coarse = typeof matchMedia !== 'undefined' && matchMedia('(pointer: coarse)').matches;
+  const drawAtlas = () => {
+    const ctx = ref.current?.getContext('2d');
+    const view = viewRef.current;
+    if (!ctx || !view) return;
+    view.hoverTile = hoverTileRef.current;
+    renderAtlas(ctx, runRef.current, camRef.current, view);
+  };
+  const syncBand = () => {
+    const c = camRef.current;
+    // "Sector" is lit while the sheet is close on the sector the player is in, not close on some other ground.
+    const home = c.gx >= wox && c.gy >= woy && c.gx <= wox + WW && c.gy <= woy + WH;
+    const band = isFit(c) ? 'fit' : c.s >= TILE_FROM && home ? 'near' : 'mid';
+    setZoomBand(b => (b === band ? b : band));
+  };
+  frameRef.current = (now: number) => {
+    rafRef.current = 0;
+    const dt = Math.max(1, Math.min(50, now - lastFrameRef.current));
+    lastFrameRef.current = now;
+    let moving = false;
+    const a = animRef.current;
+    if (a?.kind === 'fly') {
+      const t = (now - a.t0) / a.dur;
+      camRef.current = clampCam(easeCam(a.from, a.to, t));
+      if (t >= 1) animRef.current = null; else moving = true;
+    } else if (a?.kind === 'zoom') {
+      // Close most of the remaining gap each frame: quick to start, soft to land, and a new notch simply moves the goal.
+      const c = camRef.current;
+      let next = Math.exp(Math.log(c.s) + (Math.log(a.s) - Math.log(c.s)) * (1 - Math.exp(-dt / 55)));
+      if (Math.abs(Math.log(a.s / next)) < 0.004) { next = a.s; animRef.current = null; } else moving = true;
+      camRef.current = zoomAt(c, next, a.ax, a.ay);
+    }
+    const g = glideRef.current;
+    if (g) {
+      // The sheet keeps sliding a little after a flick, then settles.
+      camRef.current = panBy(camRef.current, g.vx * dt, g.vy * dt);
+      const keep = Math.exp(-dt / 150);
+      g.vx *= keep; g.vy *= keep;
+      if (Math.hypot(g.vx, g.vy) < 0.02) glideRef.current = null; else moving = true;
+    }
+    drawAtlas();
+    syncBand();
+    const c = camRef.current;
+    if (moving) rafRef.current = requestAnimationFrame(t => frameRef.current(t));
+    else if (isVeyra && !onTeleportSelect) rememberCam(runRef.current.id, c);
+  };
+  const stopMotion = () => { animRef.current = null; glideRef.current = null; };
+  const flyTo = (to: Cam, dur = 260) => {
+    glideRef.current = null;
+    const goal = clampCam(to);
+    if (calm) { animRef.current = null; camRef.current = goal; }
+    else animRef.current = { kind: 'fly', from: camRef.current, to: goal, t0: performance.now(), dur };
+    requestDraw();
+  };
+  const zoomTo = (ratio: number, ax = VIEW_W / 2, ay = VIEW_H / 2) => {
+    glideRef.current = null;
+    const from = animRef.current?.kind === 'zoom' ? animRef.current.s : camRef.current.s;
+    const goal = clampCam({ ...camRef.current, s: from * ratio }).s;
+    if (calm) { animRef.current = null; camRef.current = zoomAt(camRef.current, goal, ax, ay); }
+    else animRef.current = { kind: 'zoom', s: goal, ax, ay };
+    requestDraw();
+  };
+  const zoomToRef = useRef(zoomTo); zoomToRef.current = zoomTo;
+
   useEffect(() => {
+    if (isVeyra) { drawAtlas(); syncBand(); return; }
     const ctx = ref.current?.getContext('2d');
     if (!ctx) return;
-    if (zoom === 0 && isVeyra) {
-      renderContinentChart(ctx, r, { places, hoverId: hoverPlace?.id ?? null, selectedId: selectedPlaceId, destId: liveDestId, onProgress: onBaseProgress });
-    } else {
-      renderChart(ctx, r, marks, selectedMarkId, cursor, hover, center.cx, center.cy, (zoom || 1) as LocalZoomLevel, teleportTarget, mode === 'mark', intelByPlace, { places, destId: liveDestId, selectedId: selectedPlaceId });
-    }
+    renderChart(ctx, r, marks, selectedMarkId, cursor, hover, center.cx, center.cy, (zoom || 1) as LocalZoomLevel, teleportTarget, mode === 'mark', intelByPlace, { places, destId: liveDestId, selectedId: selectedPlaceId });
   });
+  useEffect(() => () => {
+    if (rafRef.current && typeof cancelAnimationFrame !== 'undefined') cancelAnimationFrame(rafRef.current);
+    rafRef.current = 0;
+  }, []);
+  // The wheel zooms the sheet on the point under the cursor. Bound natively so the page (and a trackpad pinch) is
+  // held back; a React wheel handler cannot do that.
+  useEffect(() => {
+    const el = ref.current;
+    if (!isVeyra || !el || typeof el.addEventListener !== 'function') return;
+    const onNativeWheel = (e: WheelEvent) => {
+      e.preventDefault(); e.stopPropagation();
+      const rect = el.getBoundingClientRect();
+      if (!rect.width || !rect.height) return;
+      zoomToRef.current(wheelRatio(e.deltaY, e.deltaMode, e.ctrlKey), (e.clientX - rect.left) * VIEW_W / rect.width, (e.clientY - rect.top) * VIEW_H / rect.height);
+      setHandled(true);
+    };
+    el.addEventListener('wheel', onNativeWheel, { passive: false });
+    return () => el.removeEventListener('wheel', onNativeWheel);
+  }, [isVeyra]);
 
   const focusOn = useCallback((tx: number, ty: number, minZoom?: ZoomLevel) => {
     const baseZoom = zoom === 0 ? 1 : zoom;
@@ -808,7 +1085,7 @@ export function ExpeditionMap({ api, onTeleportSelect, teleportTarget, qaSession
     }
     const mark = marks.find(m => Math.hypot(m.tx - tx, m.ty - ty) <= 2);
     setSelectedMarkId(mark?.id ?? null);
-    if (panTo) focusOn(tx, ty, 2);
+    if (panTo) { if (isVeyra) flyTo({ gx: wox + tx + 0.5, gy: woy + ty + 0.5, s: Math.max(camRef.current.s, 3) }); else focusOn(tx, ty, 2); }
   };
 
   // Build real inspection readout strictly from discovered data
@@ -844,6 +1121,244 @@ export function ExpeditionMap({ api, onTeleportSelect, teleportTarget, qaSession
     return screenToTile(mx, my, center.cx, center.cy, zoom, r);
   };
 
+  // ---- Veyra sheet: pointer, touch and keys -------------------------------------------------------------------
+  // The handling follows what players already know from other maps: drag moves the sheet, the wheel or a pinch
+  // zooms on the point under the fingers, a click picks, and a second click (or right-click, or a held press)
+  // sets the destination, on a place or on any spot.
+  const sheetPoint = (clientX: number, clientY: number) => {
+    const rect = ref.current!.getBoundingClientRect();
+    const k = rect.width ? VIEW_W / rect.width : 1;
+    const mx = (clientX - rect.left) * k, my = (clientY - rect.top) * (rect.height ? VIEW_H / rect.height : 1);
+    const [gx, gy] = toGlobal(camRef.current, mx, my);
+    return { mx, my, gx, gy, k };
+  };
+  const placeAt = (gx: number, gy: number): AtlasPlace | null => {
+    const reach = HIT_PX / camRef.current.s;
+    if (destPlace?.custom && Math.hypot(destPlace.gtx + 0.5 - gx, destPlace.gty + 0.5 - gy) <= reach) return destPlace;
+    return placeNear(places, gx - 0.5, gy - 0.5, reach);
+  };
+  const sheetTap = (clientX: number, clientY: number, how: 'pick' | 'go' | 'menu') => {
+    const { gx, gy } = sheetPoint(clientX, clientY);
+    const tx = Math.floor(gx) - wox, ty = Math.floor(gy) - woy;
+    const inSector = tx >= 0 && ty >= 0 && tx < WW && ty < WH;
+    if (mode === 'mark') {
+      if (how !== 'pick') return;
+      if (inSector) addMarkAt(tx, ty); else setStatusMsg('A note can only be left on ground you have walked.');
+      return;
+    }
+    if (onTeleportSelect) {
+      if (how !== 'pick') return;
+      if (!inSector) { setStatusMsg('Out of reach of the core. Pick ground in the sector around you.'); return; }
+      inspectTile(tx, ty);
+      const reason = spiritDestination(r, tx * TILE + 8, ty * TILE + 8);
+      if (reason) { setStatusMsg(reason); return; }
+      onTeleportSelect(tx * TILE + 8, ty * TILE + 8);
+      setStatusMsg('Core destination locked. Close map; hold and release E.');
+      return;
+    }
+    const hit = placeAt(gx, gy);
+    if (how !== 'pick') {
+      if (how === 'menu' && inSector) {
+        const near = Math.max(2, 5 / camRef.current.s);
+        const m = marks.find(mk => Math.hypot(mk.tx - tx, mk.ty - ty) <= near);
+        if (m) { removeMark(m.id); return; }
+      }
+      const id = hit ? hit.id : waypointId(Math.floor(gx), Math.floor(gy));
+      if (!id) return;
+      setCursor(null); setSelectedMarkId(null);
+      if (id === liveDestId) { chooseDestination(null); setSelectedPlaceId(hit && !hit.custom ? hit.id : null); }
+      else { chooseDestination(id); setSelectedPlaceId(id); }
+      return;
+    }
+    if (hit) { setSelectedPlaceId(hit.id); setCursor(null); setSelectedMarkId(null); setStatusMsg(null); return; }
+    if (inSector && camRef.current.s >= TILE_FROM) { inspectTile(tx, ty); return; }
+    setSelectedPlaceId(null); setCursor(null); setSelectedMarkId(null); setStatusMsg(null);
+  };
+  const sheetHover = (clientX: number, clientY: number) => {
+    const el = ref.current;
+    if (!el) return;
+    const { gx, gy } = sheetPoint(clientX, clientY);
+    const hit = placeAt(gx, gy);
+    const id = hit?.id ?? null;
+    setHoverPlaceId(h => (h === id ? h : id));
+    el.style.cursor = mode === 'mark' || onTeleportSelect ? 'crosshair' : hit ? 'pointer' : 'grab';
+    const tx = Math.floor(gx) - wox, ty = Math.floor(gy) - woy;
+    const tile = camRef.current.s >= TILE_FROM && tx >= 0 && ty >= 0 && tx < WW && ty < WH ? { tx, ty } : null;
+    const was = hoverTileRef.current;
+    if ((was?.tx ?? -1) !== (tile?.tx ?? -1) || (was?.ty ?? -1) !== (tile?.ty ?? -1)) { hoverTileRef.current = tile; requestDraw(); }
+    if (readoutRef.current) readoutRef.current.textContent = hit && !hit.custom ? hit.name : `AU ${Math.round(gx / 2)},${Math.round(gy / 2)}`;
+  };
+  const sheetLeave = () => {
+    setHoverPlaceId(h => (h === null ? h : null));
+    if (hoverTileRef.current) { hoverTileRef.current = null; requestDraw(); }
+    if (readoutRef.current) readoutRef.current.textContent = `AU ${ax.toFixed(0)},${ay.toFixed(0)}`;
+  };
+  useEffect(() => { if (isVeyra) sheetLeave(); }, []);
+  const fingers = useRef(new Map<number, { x: number; y: number }>());
+  const gesture = useRef<{ kind: 'idle' | 'press' | 'pan' | 'pinch' | 'spent'; sx: number; sy: number; x: number; y: number; t: number; vx: number; vy: number; d0: number; s0: number; mx: number; my: number }>(
+    { kind: 'idle', sx: 0, sy: 0, x: 0, y: 0, t: 0, vx: 0, vy: 0, d0: 1, s0: 1, mx: 0, my: 0 });
+  const lastTap = useRef<{ t: number; x: number; y: number } | null>(null);
+  const holdTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const sheetTapRef = useRef(sheetTap); sheetTapRef.current = sheetTap;
+  const clearHold = () => { if (holdTimer.current) { clearTimeout(holdTimer.current); holdTimer.current = null; } };
+  useEffect(() => clearHold, []);
+  const twoFingers = () => {
+    const [a, b] = [...fingers.current.values()];
+    return { d: Math.max(1, Math.hypot(a.x - b.x, a.y - b.y)), mx: (a.x + b.x) / 2, my: (a.y + b.y) / 2 };
+  };
+  const lastPointer = useRef('mouse');
+  const onSheetDown = (e: React.PointerEvent<HTMLCanvasElement>) => {
+    lastPointer.current = e.pointerType || 'mouse';
+    if (e.pointerType === 'mouse' && e.button !== 0) return;
+    const el = e.currentTarget;
+    el.focus();
+    try { el.setPointerCapture(e.pointerId); } catch { /* the gesture still works without capture */ }
+    fingers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    stopMotion();
+    setHandled(true);
+    const g = gesture.current;
+    clearHold();
+    if (fingers.current.size >= 2) {
+      const two = twoFingers();
+      Object.assign(g, { kind: 'pinch', d0: two.d, s0: camRef.current.s, mx: two.mx, my: two.my });
+      return;
+    }
+    Object.assign(g, { kind: 'press', sx: e.clientX, sy: e.clientY, x: e.clientX, y: e.clientY, t: e.timeStamp, vx: 0, vy: 0 });
+    // Under a finger, a held press does what a right-click does: the way to set a destination without a second
+    // button. A mouse has that button, and a held mouse press is usually the start of a slow drag.
+    if (e.pointerType === 'mouse') return;
+    const hx = e.clientX, hy = e.clientY;
+    holdTimer.current = setTimeout(() => {
+      holdTimer.current = null;
+      if (gesture.current.kind !== 'press') return;
+      gesture.current.kind = 'spent';
+      lastTap.current = null;
+      sheetTapRef.current(hx, hy, 'go');
+    }, 520);
+  };
+  const onSheetMove = (e: React.PointerEvent<HTMLCanvasElement>) => {
+    const f = fingers.current.get(e.pointerId);
+    if (!f) { if (e.pointerType !== 'touch') sheetHover(e.clientX, e.clientY); return; }
+    f.x = e.clientX; f.y = e.clientY;
+    const g = gesture.current;
+    const { k } = sheetPoint(e.clientX, e.clientY);
+    if (g.kind === 'pinch' && fingers.current.size >= 2) {
+      const two = twoFingers();
+      const rect = e.currentTarget.getBoundingClientRect();
+      let c = zoomAt(camRef.current, g.s0 * two.d / g.d0, (two.mx - rect.left) * k, (two.my - rect.top) * k);
+      c = panBy(c, (two.mx - g.mx) * k, (two.my - g.my) * k);
+      g.mx = two.mx; g.my = two.my;
+      camRef.current = c;
+      requestDraw();
+      return;
+    }
+    if (g.kind === 'press' && Math.hypot(e.clientX - g.sx, e.clientY - g.sy) > (e.pointerType === 'mouse' ? 4 : 9)) {
+      g.kind = 'pan';
+      clearHold();
+      e.currentTarget.style.cursor = 'grabbing';
+    }
+    if (g.kind !== 'pan') return;
+    const dx = (e.clientX - g.x) * k, dy = (e.clientY - g.y) * k;
+    const dtm = Math.max(1, e.timeStamp - g.t);
+    g.vx = g.vx * 0.5 + (dx / dtm) * 0.5; g.vy = g.vy * 0.5 + (dy / dtm) * 0.5;
+    g.x = e.clientX; g.y = e.clientY; g.t = e.timeStamp;
+    camRef.current = panBy(camRef.current, dx, dy);
+    requestDraw();
+  };
+  const onSheetUp = (e: React.PointerEvent<HTMLCanvasElement>) => {
+    if (!fingers.current.has(e.pointerId)) return;
+    fingers.current.delete(e.pointerId);
+    try { e.currentTarget.releasePointerCapture(e.pointerId); } catch { /* already released */ }
+    clearHold();
+    const g = gesture.current;
+    const was = g.kind;
+    if (was === 'pinch') {
+      const rest = [...fingers.current.values()][0];
+      if (rest) Object.assign(g, { kind: 'pan', x: rest.x, y: rest.y, sx: rest.x, sy: rest.y, t: e.timeStamp, vx: 0, vy: 0 });
+      else g.kind = 'idle';
+      return;
+    }
+    g.kind = 'idle';
+    if (was === 'pan') {
+      // Let go while still moving: the sheet glides on. Let go after stopping: it stays put.
+      if (!calm && e.timeStamp - g.t < 70 && Math.hypot(g.vx, g.vy) > 0.06) { glideRef.current = { vx: g.vx, vy: g.vy }; requestDraw(); }
+      else rememberCam(r.id, camRef.current);
+      if (e.pointerType !== 'touch') sheetHover(e.clientX, e.clientY);
+      return;
+    }
+    if (was !== 'press') return;
+    const prev = lastTap.current;
+    const twice = !!prev && e.timeStamp - prev.t < 340 && Math.hypot(e.clientX - prev.x, e.clientY - prev.y) < 16;
+    lastTap.current = twice ? null : { t: e.timeStamp, x: e.clientX, y: e.clientY };
+    sheetTap(e.clientX, e.clientY, twice ? 'go' : 'pick');
+    if (e.pointerType !== 'touch') restCursor(e.clientX, e.clientY);
+  };
+  // What lies under the cursor may just have changed (a hand-made mark set or cleared): say so at once.
+  const restCursor = (clientX: number, clientY: number) => {
+    if (!ref.current) return;
+    const { gx, gy } = sheetPoint(clientX, clientY);
+    const named = placeNear(places, gx - 0.5, gy - 0.5, HIT_PX / camRef.current.s);
+    ref.current.style.cursor = mode === 'mark' || onTeleportSelect ? 'crosshair' : named ? 'pointer' : 'grab';
+  };
+  const onSheetCancel = (e: React.PointerEvent<HTMLCanvasElement>) => {
+    fingers.current.delete(e.pointerId);
+    clearHold();
+    gesture.current.kind = fingers.current.size ? gesture.current.kind : 'idle';
+  };
+  const onSheetKey = (e: React.KeyboardEvent<HTMLCanvasElement>) => {
+    if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter', 'Space', 'Delete', 'Equal', 'Minus', 'NumpadAdd', 'NumpadSubtract', 'Home'].includes(e.code)) {
+      e.preventDefault(); e.stopPropagation();
+    }
+    if (e.code === 'Equal' || e.code === 'NumpadAdd') { zoomTo(ZOOM_STEP * ZOOM_STEP); return; }
+    if (e.code === 'Minus' || e.code === 'NumpadSubtract') { zoomTo(1 / (ZOOM_STEP * ZOOM_STEP)); return; }
+    if (e.code === 'Home') { flyTo({ gx: pgx, gy: pgy, s: Math.max(camRef.current.s, SECTOR_S) }); return; }
+    const dir: Record<string, [number, number]> = { ArrowUp: [0, -1], ArrowDown: [0, 1], ArrowLeft: [-1, 0], ArrowRight: [1, 0] };
+    if (mode === 'mark' || onTeleportSelect) {
+      // Picking a tile by keys: the cursor steps over the sector and the sheet follows it.
+      const p = cursor || { tx: ptx, ty: pty };
+      if (dir[e.code]) {
+        const step = camRef.current.s >= 4 ? 1 : camRef.current.s >= 2 ? 2 : 4;
+        const tx = Math.max(0, Math.min(WW - 1, p.tx + dir[e.code][0] * step));
+        const ty = Math.max(0, Math.min(WH - 1, p.ty + dir[e.code][1] * step));
+        inspectTile(tx, ty);
+        const to = reveal(camRef.current, wox + tx, woy + ty);
+        if (to) flyTo(to, 160);
+        return;
+      }
+      if (e.code === 'Enter' || e.code === 'Space') {
+        if (mode === 'mark') addMarkAt(p.tx, p.ty);
+        else if (onTeleportSelect) {
+          const reason = spiritDestination(r, p.tx * TILE + 8, p.ty * TILE + 8);
+          if (reason) setStatusMsg(reason);
+          else { onTeleportSelect(p.tx * TILE + 8, p.ty * TILE + 8); setStatusMsg('Core destination locked.'); }
+        }
+      }
+      return;
+    }
+    if (dir[e.code]) {
+      // Step to the nearest place lying in that direction from the selected one (or from the player).
+      const [fx, fy] = selectedPlace ? [selectedPlace.gtx, selectedPlace.gty] : [pgx, pgy];
+      const [ux, uy] = dir[e.code];
+      let best: AtlasPlace | null = null; let bd = Infinity;
+      for (const pl of places) {
+        if (pl === selectedPlace) continue;
+        const dx = pl.gtx - fx, dy = pl.gty - fy;
+        const along = dx * ux + dy * uy, across = Math.abs(dx * uy - dy * ux);
+        if (along <= 0 || across > along * 1.5) continue;
+        const score = along + across * 2;
+        if (score < bd) { bd = score; best = pl; }
+      }
+      if (best) {
+        setSelectedPlaceId(best.id); setCursor(null); setStatusMsg(null);
+        const to = reveal(camRef.current, best.gtx, best.gty);
+        if (to) flyTo(to, 200);
+      }
+      return;
+    }
+    if ((e.code === 'Enter' || e.code === 'Space') && selectedPlace) chooseDestination(selectedPlace.id === liveDestId ? null : selectedPlace.id);
+    if (e.code === 'Delete' && selectedMarkId) removeMark(selectedMarkId);
+  };
+
   const onPointerDown = (e: React.PointerEvent<HTMLCanvasElement>) => {
     if (e.button !== 0) return;
     e.currentTarget.focus();
@@ -868,24 +1383,7 @@ export function ExpeditionMap({ api, onTeleportSelect, teleportTarget, qaSession
     dragRef.current = null;
     if (d?.moved) return;
     if (e.button !== 0) return;
-    const pt = canvasXY(e.clientX, e.clientY, e.currentTarget);
-    const { tx, ty } = pt;
-    if (zoom === 0 && isVeyra) {
-      const [ox, oy] = windowOrigin(r);
-      const hit = pt.gtx !== undefined && pt.gty !== undefined ? placeNear(places, pt.gtx, pt.gty, PLACE_REACH) : null;
-      if (hit) {
-        // A place mark wins over the ground under it: this is how a destination is picked.
-        setSelectedPlaceId(hit.id);
-        setStatusMsg(null);
-      } else if (pt.gtx !== undefined && pt.gty !== undefined && pt.gtx >= ox && pt.gtx < ox + WW && pt.gty >= oy && pt.gty < oy + WH) {
-        setZoom(1);
-        inspectTile(tx, ty);
-      } else if (pt.gtx !== undefined && pt.gty !== undefined) {
-        setSelectedPlaceId(null);
-        setStatusMsg(`Continent AU ${Math.round(pt.gtx / 2)},${Math.round(pt.gty / 2)} · switch to 1× for active 200×200 sector.`);
-      }
-      return;
-    }
+    const { tx, ty } = canvasXY(e.clientX, e.clientY, e.currentTarget);
     if (mode === 'mark') { addMarkAt(tx, ty); return; }
     if (onTeleportSelect) {
       inspectTile(tx, ty);
@@ -903,35 +1401,14 @@ export function ExpeditionMap({ api, onTeleportSelect, teleportTarget, qaSession
     const anchor = canvasXY(e.clientX, e.clientY, e.currentTarget);
     const precise = { ...anchor, px: (e.clientX - rect.left) * CANVAS_W / rect.width, py: (e.clientY - rect.top) * CANVAS_H / rect.height };
     if (e.deltaY < 0) changeZoom(zoom === 0 ? 1 : zoom === 1 ? 2 : 4, precise);
-    else changeZoom(zoom === 4 ? 2 : zoom === 2 ? 1 : (isVeyra && !onTeleportSelect ? 0 : 1), precise);
+    else changeZoom(zoom === 4 ? 2 : 1, precise);
   };
   const onChartKey = (e: React.KeyboardEvent<HTMLCanvasElement>) => {
     if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter', 'Space', 'Delete', 'Equal', 'Minus'].includes(e.code)) {
       e.preventDefault(); e.stopPropagation();
     }
     if (e.code === 'Equal') { changeZoom(zoom === 0 ? 1 : zoom === 1 ? 2 : 4); return; }
-    if (e.code === 'Minus') { changeZoom(zoom === 4 ? 2 : zoom === 2 ? 1 : (isVeyra && !onTeleportSelect ? 0 : 1)); return; }
-    if (zoom === 0 && isVeyra) {
-      const dir: Record<string, [number, number]> = { ArrowUp: [0, -1], ArrowDown: [0, 1], ArrowLeft: [-1, 0], ArrowRight: [1, 0] };
-      if (dir[e.code]) {
-        // Step to the nearest place lying in that direction from the selected one (or from the player).
-        const [fx, fy] = selectedPlace ? [selectedPlace.gtx, selectedPlace.gty] : playerGlobalTile(r);
-        const [ux, uy] = dir[e.code];
-        let best: AtlasPlace | null = null; let bd = Infinity;
-        for (const pl of places) {
-          if (pl === selectedPlace) continue;
-          const dx = pl.gtx - fx, dy = pl.gty - fy;
-          const along = dx * ux + dy * uy, across = Math.abs(dx * uy - dy * ux);
-          if (along <= 0 || across > along * 1.5) continue;
-          const score = along + across * 2;
-          if (score < bd) { bd = score; best = pl; }
-        }
-        if (best) { setSelectedPlaceId(best.id); setStatusMsg(null); }
-        return;
-      }
-      if ((e.code === 'Enter' || e.code === 'Space') && selectedPlace) chooseDestination(selectedPlace.id === liveDestId ? null : selectedPlace.id);
-      return;
-    }
+    if (e.code === 'Minus') { changeZoom(zoom === 4 ? 2 : 1); return; }
     const p = cursor || { tx: ptx, ty: pty };
     const step = zoom === 4 ? 1 : zoom === 2 ? 2 : 4;
     const delta: Record<string, [number, number]> = { ArrowUp: [0, -step], ArrowDown: [0, step], ArrowLeft: [-step, 0], ArrowRight: [step, 0] };
@@ -959,18 +1436,16 @@ export function ExpeditionMap({ api, onTeleportSelect, teleportTarget, qaSession
   const [ax, ay] = isVeyra ? playerGlobalAu(r) : [0, 0];
   const totalSiteCount = sites.length + ownedCabinets.length;
   const showPlace = (pl: AtlasPlace) => {
-    // From the list: put the place in front of the player on the whole-continent sheet (the sector sheets may not hold it).
+    // From the list: select the place and bring it onto the sheet if it is not there already.
     setSelectedPlaceId(pl.id);
     setStatusMsg(null);
-    if (!onTeleportSelect) setZoom(0);
-    else {
-      const tx = pl.gtx - wox, ty = pl.gty - woy;
-      if (tx >= 0 && ty >= 0 && tx < WW && ty < WH) { setCursor({ tx, ty }); focusOn(tx, ty, 2); }
-    }
+    if (!onTeleportSelect) setCursor(null);
+    const to = reveal(camRef.current, pl.gtx, pl.gty);
+    if (to) flyTo(to);
   };
   const placeRow = (g: { place: AtlasPlace; dist: number; bearing: number }) => (
     <button key={g.place.id} data-testid={`map-place-${g.place.id}`} className={`map-row map-row--place ${selectedPlaceId === g.place.id ? 'selected' : ''} ${g.place.id === liveDestId ? 'is-dest' : ''}`} onClick={() => showPlace(g.place)}>
-      <b style={{ color: GROUP_COLOR[g.place.kind.group] }}><i aria-hidden="true" className={`pm ${g.place.id === liveDestId ? 'pm--dest' : g.place.visited ? 'pm--seen' : 'pm--new'}`} /><span data-notr>{g.place.name}</span></b>
+      <b style={{ color: GROUP_COLOR[g.place.kind.group] }}><i aria-hidden="true" className={`pm ${g.place.id === liveDestId ? 'pm--dest' : g.place.visited ? 'pm--seen' : 'pm--new'}`} /><span data-notr={g.place.custom ? undefined : true}>{g.place.name}</span></b>
       <span><em>{g.place.kind.label}</em> · {formatDistance(g.dist)}<DirArrow rad={g.bearing} />{g.place.visited && <> · <em>Visited</em></>}</span>
     </button>
   );
@@ -985,29 +1460,49 @@ export function ExpeditionMap({ api, onTeleportSelect, teleportTarget, qaSession
       <div className="chart-column">
         <div className="chart-controls">
           <div className="chart-zoom" role="group" aria-label="Map zoom">
-            {isVeyra && <button data-testid="map-mode-continent" className={`btn sm ${zoom === 0 ? 'gold' : 'ghost'}`} onClick={() => changeZoom(0)} title="The whole continent: land, roads and every named place. Ground you have not walked is dimmed.">World</button>}
-            {([1, 2, 4] as LocalZoomLevel[]).map(z => <button key={z} data-testid={isVeyra && z === 1 ? 'map-mode-local' : undefined} className={`btn sm ${zoom === z ? 'gold' : 'ghost'}`} onClick={() => changeZoom(z)} title={z === 1 ? 'Full sector overview' : z === 2 ? 'Sector zoom' : 'Tactical zoom'}>{z}×</button>)}
-            <button className="btn sm ghost" onClick={fitExplored} title="Frame explored territory">Fit</button>
-            <button className="btn sm ghost" onClick={() => { inspectTile(ptx, pty); focusOn(ptx, pty, 2); }} title="Center on player">You</button>
+            {isVeyra ? <>
+              <button data-testid="map-mode-continent" className={`btn sm ${zoomBand === 'fit' ? 'gold' : 'ghost'}`} onClick={() => flyTo(fitCam())} title="The whole continent: land, roads and every named place. Ground you have not walked is dimmed.">World</button>
+              <button data-testid="map-mode-local" className={`btn sm ${zoomBand === 'near' ? 'gold' : 'ghost'}`} onClick={() => flyTo({ gx: wox + WW / 2, gy: woy + WH / 2, s: SECTOR_S })} title="The sector around you, close enough to read the ground you have walked.">Sector</button>
+              <button className="btn sm ghost chart-zoom__step" data-testid="map-zoom-out" aria-label="Zoom out" title="Zoom out [-]" disabled={zoomBand === 'fit'} onClick={() => zoomTo(1 / (ZOOM_STEP * ZOOM_STEP))}>−</button>
+              <button className="btn sm ghost chart-zoom__step" data-testid="map-zoom-in" aria-label="Zoom in" title="Zoom in [+]" onClick={() => zoomTo(ZOOM_STEP * ZOOM_STEP)}>+</button>
+              <button className="btn sm ghost" data-testid="map-center-you" onClick={() => flyTo({ gx: pgx, gy: pgy, s: Math.max(camRef.current.s, SECTOR_S) })} title="Center on yourself [Home]">You</button>
+            </> : <>
+              {([1, 2, 4] as LocalZoomLevel[]).map(z => <button key={z} className={`btn sm ${zoom === z ? 'gold' : 'ghost'}`} onClick={() => changeZoom(z)} title={z === 1 ? 'Full sector overview' : `Zoom ${z}×`}>{z}×</button>)}
+              <button className="btn sm ghost" onClick={fitExplored} title="Frame explored territory">Fit</button>
+              <button className="btn sm ghost" onClick={() => { inspectTile(ptx, pty); focusOn(ptx, pty, 2); }} title="Center on player">You</button>
+            </>}
           </div>
-          <span className="chart-coords">
-            {zoom === 0 && isVeyra
-              ? (hoverPlace ? <span data-notr>{hoverPlace.name}</span> : hover?.gtx !== undefined && hover?.gty !== undefined ? `AU ${Math.round(hover.gtx / 2)},${Math.round(hover.gty / 2)}` : `AU ${ax.toFixed(0)},${ay.toFixed(0)}`)
-              : (hover ? (discoveredCell(r, hover.tx, hover.ty) ? `${hover.tx},${hover.ty}` : 'Uncharted') : `${ptx},${pty}`)}
-          </span>
+          {isVeyra
+            ? <span className="chart-coords" data-notr ref={readoutRef} />
+            : <span className="chart-coords">{hover ? (discoveredCell(r, hover.tx, hover.ty) ? `${hover.tx},${hover.ty}` : 'Uncharted') : `${ptx},${pty}`}</span>}
         </div>
 
         <div className="chart-frame">
-          <canvas ref={ref} width={CANVAS_W} height={CANVAS_H} className="chart-canvas" tabIndex={0} role="img"
-            aria-label="Explored island map. Drag to pan, wheel or 1x/2x/4x to zoom, arrows move cursor, Enter inspects or marks."
-            onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp}
-            onPointerLeave={() => { dragRef.current = null; setHover(null); }}
-            onWheel={onWheel} onKeyDown={onChartKey}
-            onContextMenu={e => { e.preventDefault(); const { tx, ty } = canvasXY(e.clientX, e.clientY, e.currentTarget); const m = marks.find(mk => Math.hypot(mk.tx - tx, mk.ty - ty) <= 2); if (m) removeMark(m.id); }} />
+          {isVeyra
+            ? <canvas ref={ref} width={CANVAS_W} height={CANVAS_H} className="chart-canvas chart-canvas--sheet" tabIndex={0} role="img"
+              aria-label="Chart of the continent. Drag to move, wheel or plus and minus to zoom, arrows step between places, Enter sets the destination."
+              onPointerDown={onSheetDown} onPointerMove={onSheetMove} onPointerUp={onSheetUp} onPointerCancel={onSheetCancel}
+              onPointerLeave={e => { if (!fingers.current.has(e.pointerId)) sheetLeave(); }}
+              onKeyDown={onSheetKey}
+              onContextMenu={e => {
+                e.preventDefault();
+                // A phone raises this on a held press, which the sheet has already answered itself.
+                if (lastPointer.current !== 'mouse') return;
+                setHandled(true); sheetTap(e.clientX, e.clientY, 'menu'); restCursor(e.clientX, e.clientY);
+              }} />
+            : <canvas ref={ref} width={CANVAS_W} height={CANVAS_H} className="chart-canvas" tabIndex={0} role="img"
+              aria-label="Explored island map. Drag to pan, wheel or 1x/2x/4x to zoom, arrows move cursor, Enter inspects or marks."
+              onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp}
+              onPointerLeave={() => { dragRef.current = null; setHover(null); }}
+              onWheel={onWheel} onKeyDown={onChartKey}
+              onContextMenu={e => { e.preventDefault(); const { tx, ty } = canvasXY(e.clientX, e.clientY, e.currentTarget); const m = marks.find(mk => Math.hypot(mk.tx - tx, mk.ty - ty) <= 2); if (m) removeMark(m.id); }} />}
+          {isVeyra && !handled && !onTeleportSelect && mode !== 'mark' && <div className="chart-hint" data-testid="map-hint">
+            {coarse ? 'Drag to move · pinch to zoom · double-tap to set a destination' : 'Drag to move · scroll to zoom · double-click to set a destination'}
+          </div>}
           <div className="chart-compass">N↑</div>
           {onTeleportSelect && <div className="chart-teleport-pill">CORE BLINK · select safe explored ground</div>}
           {!onTeleportSelect && destRange && <button className="chart-dest-pill" data-testid="map-dest-pill" title="Your destination. Click to show it." onClick={() => showPlace(destRange.place)}>
-            <i aria-hidden="true" className="pm pm--dest" /><span data-notr>{destRange.place.name}</span><em>{formatDistance(destRange.dist)}<DirArrow rad={destRange.bearing} /></em>
+            <i aria-hidden="true" className="pm pm--dest" /><span data-notr={destRange.place.custom ? undefined : true}>{destRange.place.name}</span><em>{formatDistance(destRange.dist)}<DirArrow rad={destRange.bearing} /></em>
           </button>}
         </div>
 
@@ -1046,11 +1541,12 @@ export function ExpeditionMap({ api, onTeleportSelect, teleportTarget, qaSession
         <div className="map-inspector" role="status">
           {selectedPlace && selectedRange && <PlaceCard place={selectedPlace} dist={selectedRange.dist} bearing={selectedRange.bearing} isDestination={selectedPlace.id === liveDestId}
             onSet={() => chooseDestination(selectedPlace.id)} onClear={() => chooseDestination(null)}
-            onShowWorld={zoom !== 0 && !onTeleportSelect ? () => setZoom(0) : undefined}
-            onOpenSector={zoom === 0 && selectedPlace.gtx >= wox && selectedPlace.gty >= woy && selectedPlace.gtx < wox + WW && selectedPlace.gty < woy + WH
-              ? () => inspectTile(selectedPlace.gtx - wox, selectedPlace.gty - woy, true) : undefined} />}
-          {zoom === 0 && isVeyra ? (
-            !selectedPlace && <div className="map-inspector__empty">Every named place is on this chart from the start. Click one to see what it is, then set it as your destination.</div>
+            onShowWorld={zoomBand !== 'fit' && !onTeleportSelect ? () => flyTo(fitCam()) : undefined}
+            onOpenSector={zoomBand !== 'near' ? () => flyTo({ gx: selectedPlace.gtx + 0.5, gy: selectedPlace.gty + 0.5, s: Math.max(camRef.current.s, SECTOR_S) }, 320) : undefined} />}
+          {isVeyra && !inspected ? (
+            !selectedPlace && <div className="map-inspector__empty">{coarse
+              ? 'Every named place is on this chart from the start. Tap one to see what it is. Double-tap or hold a place, or any spot, to set it as your destination.'
+              : 'Every named place is on this chart from the start. Click one to see what it is. Double-click or right-click a place, or any spot, to set it as your destination.'}</div>
           ) : !inspected ? (
             <div className="map-inspector__empty">Click or move cursor over explored ground to inspect terrain, sites, intel, or notes.</div>
           ) : !inspected.discovered ? (
@@ -1124,7 +1620,7 @@ export function ExpeditionMap({ api, onTeleportSelect, teleportTarget, qaSession
               const btx = Math.floor(death.bag.x / TILE), bty = Math.floor(death.bag.y / TILE);
               const offWin = isVeyra && (btx < 0 || btx >= WW || bty < 0 || bty >= WH);
               return (
-                <button className="map-row map-row--bag" onClick={() => offWin ? changeZoom(0) : inspectTile(btx, bty, true)}>
+                <button className="map-row map-row--bag" onClick={() => offWin ? flyTo({ gx: wox + btx, gy: woy + bty, s: Math.max(camRef.current.s, LIVE_FROM) }) : inspectTile(btx, bty, true)}>
                   <b>✕ Your Death Bag{offWin ? ' (distant sector)' : ''}</b>
                   <span>{offWin ? 'Continent view' : `${btx},${bty}`} · {death.stacks.length} stacks · {bearingLabel(btx - ptx, bty - pty)}</span>
                 </button>
