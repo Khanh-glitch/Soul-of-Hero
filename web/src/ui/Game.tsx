@@ -60,7 +60,8 @@ import { BuildBar, BUILD_KIT, BUILD_PAGES, type BuildTool, placeHint } from './B
 import { clearSlotInteraction, getHoverSlot, getKeyboardPick, DragGhost } from './dragSlots';
 import { loadJourney, flushJourney, ingestJourney, resolveTrack, rerollDaily, recordWorldMoment, markChronicleSeen, lessonState, type JourneyStore, type JourneyEvent, type TrackRef, type QuickJumpTarget } from '../game/journey';
 import { directCues, standingIssues, ragnarokCinematic, eldersWakeCinematic, type Flare, type Cinematic, type Issue } from '../game/attention';
-import { Waymark, WorldBeacon, FlareLayer, CinematicLayer, IssueRail, findAnchor, type WaymarkMode } from './Waymark';
+import { Waymark, WorldBeacon, DestinationBeacon, FlareLayer, CinematicLayer, IssueRail, findAnchor, type WaymarkMode } from './Waymark';
+import { destinationView, storeDestination } from '../game/map-atlas';
 import { JourneyLedger, useLang } from './Journey';
 
 export default function Game({
@@ -783,6 +784,14 @@ export default function Game({
     hurtWarnAt.current = t; setHurtBehindPanel(t);
     toast('You are losing health. The world does not stop while this is open: press Esc.', 'bad');
   });
+  // The destination picked on the chart [M]: shown while walking, put away on arrival.
+  const dest = r ? destinationView(r, qaMode) : null;
+  const destArrived = !!dest?.arrived && !!r && !r.player.dead;
+  useEffect(() => {
+    if (!destArrived || !dest || !r) return;
+    storeDestination(r, qaMode, null);
+    toast(`Arrived: ${dest.place.name}`, 'ok');
+  }, [destArrived]);
   if (!r || !fieldEval) return <div className="stage" />;
   const p = r.player, ph = phaseOf(r, now); const day = Math.floor(hrs / 24) + 1;
   const dtm = dayTime(r, now); const clock = `${String(Math.floor(dtm * 24)).padStart(2, '0')}:${String(Math.floor((dtm * 24 % 1) * 60)).padStart(2, '0')}`;
@@ -928,6 +937,7 @@ export default function Game({
 
       <FieldPickupLayer items={fieldPickups} camX={Math.round(cam.x)} camY={Math.round(cam.y)} />
       {showBeacon && <WorldBeacon target={anchor} camX={Math.round(cam.x)} camY={Math.round(cam.y)} icon={trackView!.icon} />}
+      {wmVisible && !panel && !engaged && !cine0 && dest && !dest.arrived && <DestinationBeacon dest={dest} camX={Math.round(cam.x)} camY={Math.round(cam.y)} />}
       <FlareLayer flares={flares} camX={Math.round(cam.x)} camY={Math.round(cam.y)} />
       {cine0 && !combatFocus && gateRef.current.cine && <CinematicLayer c={cine0} compact={false} reduceMotion={vp.reduceFlash} onDone={() => setCines(c => c.slice(1))} />}
       {coreAim && ['core_meteor','core_dragon','core_elsa'].includes(activeStack(r)?.key||'') && coreAim.mode==='signature' && <svg className="absolute" data-testid="signature-frame" width={view.w} height={view.h} style={{left:0,top:0,pointerEvents:'none'}}><rect x={insetX+2} y={insetY+2} width={VIEW_W-4} height={VIEW_H-4} fill="none" stroke="#ffd98a" strokeDasharray="4 3"/></svg>}

@@ -63,7 +63,7 @@ body {
 }
 /* No ligatures: the Pixelify "fi" ligature reads as a capital A ("find" looked like "And", "filter" like "Alter").
    Form controls reset font-variant through the UA `font` shorthand, hence the universal selector. */
-*, *::placeholder { font-variant-ligatures: none; }
+*, *::placeholder { font-variant-ligatures: none !important; }
 canvas { image-rendering: pixelated; image-rendering: crisp-edges; display: block; }
 img.px { image-rendering: pixelated; image-rendering: crisp-edges; }
 .stage { position: absolute; left: 0; top: 0; width: 640px; height: 360px; transform-origin: 0 0; overflow: hidden; }
@@ -908,6 +908,30 @@ div.map-row--mark { flex-direction: row; align-items: center; padding: 0; }
 .map-inspector__tag, .map-inspector__status { font-size: 9px; line-height: 1.25; }
 .map-inspector__tag { padding: 4px 5px; }
 .map-gate span, .map-gate small { font-size: 9px; line-height: 1.3; }
+/* Atlas: named places known from the start, and the chosen destination */
+.map-place { display: flex; flex-direction: column; gap: 3px; }
+.map-place + .map-inspector__head, .map-place + .map-inspector__fog { border-top: 1px solid #2d3d43; padding-top: 4px; }
+.map-inspector__head span em, .map-row span em { font-style: normal; }
+.map-place__blurb { font: 9px var(--f-lbl); line-height: 1.35; color: #e4e9dc; }
+.map-place__blurb--dim { color: #9fb0ae; }
+.map-place__actions { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 1px; }
+.map-place__actions .btn { font-size: 9px; min-height: 18px; padding: 2px 6px 3px; }
+.map-row--place b { display: flex; align-items: baseline; gap: 4px; }
+.map-row--place b i { flex: none; align-self: center; }
+/* Marks and direction are drawn, not typed: the label fonts lack ○, ➤ and the diagonal arrows. */
+.pm { display: inline-block; box-sizing: border-box; width: 6px; height: 6px; border: 1px solid currentColor; border-radius: 50%; vertical-align: middle; }
+.pm--seen { background: currentColor; }
+.pm--dest { width: 0; height: 0; border: 0; border-radius: 0; border-left: 6px solid #9fe8ff; border-top: 3px solid transparent; border-bottom: 3px solid transparent; }
+.dir-arrow { display: inline-block; margin: 0 1px 0 3px; vertical-align: -1px; }
+.map-row--place b span { font-size: inherit; color: inherit; }
+.map-row--place > span { padding-left: 10px; }
+.map-row--place.is-dest { background: rgba(60, 120, 140, .28); box-shadow: inset 2px 0 0 #9fe8ff; }
+.map-row--more { color: #9fe8ff; font-size: 8px; text-align: center; align-items: center; }
+.map-list__head { font: 8px var(--f-lbl); letter-spacing: .6px; text-transform: uppercase; color: #8fa3a2; padding: 5px 2px 2px; border-bottom: 1px solid #35444a; }
+.chart-dest-pill { position: absolute; left: 5px; bottom: 5px; max-width: 300px; display: flex; align-items: baseline; gap: 4px; padding: 2px 6px 3px; background: rgba(8, 26, 34, .92); border: 1px solid #9fe8ff; color: #e6fbff; font: 9px var(--f-lbl); cursor: pointer; z-index: 2; }
+.chart-dest-pill i { flex: none; align-self: center; }
+.chart-dest-pill span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.chart-dest-pill em { font-style: normal; color: #a9d6e2; white-space: nowrap; }
 .map-tabs button { min-height: 21px; font-size: 10px; }
 .map-tabs button:hover, .map-tabs button:focus-visible { background: #31444a; outline: 1px solid #d8bd82; outline-offset: -2px; }
 .map-row { padding: 5px 6px; gap: 2px; border-bottom: 1px solid #3f5559; }

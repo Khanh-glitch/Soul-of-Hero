@@ -198,6 +198,46 @@ ZIP đóng lại từ bản dựng này: 64.432.602 byte, SHA256 `89668395aa7711
 
 Chưa kiểm ở vòng này: màn 21:9 và 1920 × 953 bằng ảnh chụp (mới tính bằng bài kiểm thử); mưa, bão, tuyết, đêm ở vùng nhìn rộng (mới xem sương mù); các kịch bản `e2e/*.mjs` (hầu hết chạy ở 640 × 360 hoặc 1280 × 720, là cỡ không đổi); màn hình tiêu đề vẫn đặt nút ngôn ngữ theo khung 640 × 360 chứ chưa sát mép.
 
+## Vòng 5: bản đồ mở sẵn và điểm đến (nhánh `arena/3fc28afa-soul-of-hero`)
+
+Yêu cầu: bản đồ nên mở toàn bộ ngay từ đầu, để người chơi biết mình có thể đi đâu rồi tự đi tới đó.
+
+Đã làm:
+
+- **Cả lục địa hiện ngay từ lúc đặt chân.** Ở chế độ "Thế giới", địa hình, sông, đường và tên vùng được vẽ đủ; vùng chưa đi qua vẽ tối hơn, vùng đã đi qua vẽ đủ màu. Ở các mức phóng 1×, 2×, 4×, phần chưa đi qua hiện màu địa hình mờ thay cho ô đen.
+- **Mọi địa điểm có tên đều có dấu trên bản đồ**: 75 trên 81 nơi ở một ván mới. Sáu rương Ragnarok không hiện cho tới khi người chơi tự tìm ra. Dấu rỗng là chưa tới, dấu đặc là đã tới; hình và màu của dấu theo loại nơi.
+- **Bấm vào một nơi** (trên bản đồ hoặc trong danh sách) để xem tên, loại, khoảng cách, hướng, đã tới hay chưa và một dòng nói nơi đó là gì. Bên trong có gì thì bản đồ không ghi.
+- **Danh sách "Nơi gần nhất"** (5 dòng) và thẻ "Nơi N/75" liệt kê tất cả theo khoảng cách.
+- **Đặt điểm đến.** Sau khi đặt, màn hình chơi có mũi tên kèm tên nơi và khoảng cách; khi nơi đó nằm trong khung nhìn thì mũi tên đổi thành dấu ghim đứng trên nó. Tới trong vòng 12 ô thì điểm đến tự xóa và hiện thông báo "Đã tới". Mũi tên ẩn khi đang giao chiến hoặc đang chạy đoạn cắt cảnh.
+- Phím: các phím mũi tên chuyển sang nơi gần nhất theo hướng đó, Enter đặt hoặc bỏ điểm đến.
+
+Giữ nguyên: dịch chuyển bằng lõi Linh hồn và ghim ghi chú vẫn cần vùng đã đi qua; "% đã vẽ" vẫn tính theo vùng đã đi qua; điểm đến chỉ là phần hiển thị, không đổi luật chơi và không ghi vào tệp lưu ván (lưu riêng theo ván trong trình duyệt; phiên QA chỉ giữ trong bộ nhớ).
+
+Lỗi lộ ra khi xem ảnh và đã sửa: phông nhãn thiếu các ký hiệu vòng tròn rỗng, mũi tên chéo và đầu mũi tên nên chúng hiện thành ô trống (nay vẽ bằng CSS và SVG); chữ "fi", "fl" bị dính thành một ký tự lạ ở vài bảng ("find" đọc như "And"), nay đã tắt chữ ghép trên toàn giao diện; tên vùng trên bản đồ quá mờ; mũi tên điểm đến trượt vào thẻ hành trình ở góc phải (nay chạy trên một đường elip nằm trong vùng trống).
+
+| Kiểm | Kết quả |
+|---|---|
+| `tests/map-atlas.test.tsx` (mới) | 22 bài đạt |
+| 9 tệp có liên quan (`map-atlas`, `i18n-vi`, `viewport`, `ui-round2`, `ui-round3`, `gold-intake-integration`, `control-tower-audit-regressions`, `visual-readmodels`, `qa-sandbox-veyra`) | 153 bài đạt |
+| `tsc` cho mã và cho bài kiểm thử | Đạt |
+| Trình duyệt, 1280 × 720, tiếng Anh và tiếng Việt | Bản đồ, thẻ địa điểm, đặt và bỏ điểm đến, mức phóng 2×, mũi tên gần (207 m) và xa (1,3 km), bấm trực tiếp lên bản đồ, phím mũi tên và Enter; không lỗi console |
+| Trình duyệt, 1366 × 651, tiếng Việt | Bản đồ và mũi tên; không lỗi console |
+| Trình duyệt, 844 × 390, cảm ứng | Chạm vào dòng, chạm lên bản đồ, đặt điểm đến, mũi tên trên màn hình chơi; không lỗi console |
+| Tới nơi | Đặt người chơi cách Crushed Viaduct 9 ô: mũi tên biến mất, hiện "Arrived: Crushed Viaduct", thẻ đổi thành "Places 1/75" |
+
+Ảnh: `shots/r5-map-fresh-vi.png`, `shots/r5-map-place-card-vi.png`, `shots/r5-map-sector-2x-vi.png`, `shots/r5-hud-arrow-vi.png`, `shots/r5-arrived-en.png`, `shots/r5-map-after-arrival-en.png`.
+
+ZIP đóng lại từ bản dựng này: 64.440.484 byte, SHA256 `bc025c735338ca7df14b5b21483dc9f0cf3ce88a53df5945f12e0ceefdd88b9f`.
+
+Chưa kiểm ở vòng này:
+
+- Chưa đi bộ thật tới một điểm đến. Lượt thử đi về phía nam bị địa hình chặn sau 17 m, nên bước "tới nơi" được kiểm bằng cách đặt thẳng vị trí người chơi.
+- Dấu ghim khi điểm đến nằm trong khung nhìn chỉ có bài kiểm thử tự động, chưa có ảnh.
+- Mũi tên điểm đến mới được xem ở ba hướng (bắc, đông, đông nam) và chỉ ở ván mới; chưa xem cùng lúc với thanh xây, lúc trời tối, hay khi thẻ hành trình cũng đang chỉ đường.
+- Thông báo "Đã tới" bằng tiếng Việt chưa có ảnh (câu dịch có trong sổ dịch).
+- Lần đầu mở chế độ "Thế giới", nền lục địa được vẽ dần trong chưa đầy 3 giây; trong lúc đó phần dưới còn trống.
+- Bộ kiểm thử đầy đủ và ba tệp chậm không chạy lại ở vòng này.
+
 ## Chưa làm, chưa kiểm
 
 - Chưa thử trên điện thoại thật, Firefox, Safari. Máy kiểm chỉ có Chromium không màn hình và không truy cập được địa chỉ chơi thật.

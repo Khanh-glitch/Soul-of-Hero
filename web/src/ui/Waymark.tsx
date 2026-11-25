@@ -7,6 +7,7 @@ import { DAILY_MILESTONES, jumpTargetFor, type AnchorHint, type JourneyEvent, ty
 import type { Cinematic, Flare, Issue } from '../game/attention';
 import { T, type Lang } from '../game/i18n';
 import { Icon } from './common';
+import { formatDistance, type DestinationView } from '../game/map-atlas';
 
 // ---------------------------------------------------------------------------
 // WAYMARK — the smart journey tracker.
@@ -136,6 +137,27 @@ export function WorldBeacon({ target, camX, camY, icon }: { target: { x: number;
   const dist = Math.round(Math.hypot(sx - cx, sy - cy) / 16);
   return <div className="beacon beacon--edge" style={{ left: Math.round(ex), top: Math.round(ey) }} aria-hidden>
     <i className="beacon__chev" style={{ transform: `rotate(${ang}rad)` }} /><span>{dist}m</span>
+  </div>;
+}
+
+// ---------------------------------------------------------------------------
+// DESTINATION — the place the player picked on the chart [M]. On screen it is a
+// pin with the name; off screen an arrow on the edge with name and distance.
+// ---------------------------------------------------------------------------
+export function DestinationBeacon({ dest, camX, camY }: { dest: DestinationView | null; camX: number; camY: number }) {
+  if (!dest) return null;
+  const sx = dest.x - camX, sy = dest.y - camY;
+  const on = sx > 8 && sx < viewW - 8 && sy > 20 && sy < viewH - 40;
+  if (on) return <div className="beacon beacon--dest" data-testid="dest-beacon" style={{ left: Math.round(sx), top: Math.round(sy) - 20 }}>
+    <i className="beacon__pin" /><span data-notr>{dest.place.name}</span>
+  </div>;
+  const cx = viewW / 2, cy = viewH / 2; const ang = Math.atan2(sy - cy, sx - cx);
+  // Ride an ellipse inside the view rather than its edge: the corners belong to the HUD (status, clock, journey card),
+  // and the bottom to the hotbar. The arrow still sits on the side the place lies.
+  const ex = cx + Math.cos(ang) * (viewW / 2 - 150), ey = cy + 8 + Math.sin(ang) * (viewH / 2 - 76);
+  return <div className="beacon beacon--edge beacon--dest" data-testid="dest-beacon" style={{ left: Math.round(ex), top: Math.round(ey) }}>
+    <i className="beacon__chev" style={{ transform: `rotate(${ang}rad)` }} />
+    <span data-notr>{dest.place.name}<em>{formatDistance(dest.dist)}</em></span>
   </div>;
 }
 

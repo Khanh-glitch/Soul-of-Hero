@@ -13,11 +13,13 @@ import { Panel, Icon, type Api } from './common';
 import { isVeyra05Layout } from '../veyra05/scenes';
 import { windowOrigin, playerGlobalAu } from '../veyra05/continuity';
 import { activeFloor, onActiveFloor } from '../veyra05/floors';
-import { POIS, sampleTile } from '../veyra05/reader';
+import { GOLD, sampleTile } from '../veyra05/reader';
 import { FRAME_W, FRAME_H } from '../veyra05/frame';
+import {
+  atlasPlaces, placesByDistance, placeNear, playerGlobalTile, readDestination, storeDestination, formatDistance,
+  GROUP_COLOR, type AtlasPlace, type PlaceGroup,
+} from '../game/map-atlas';
 
-const continentCellColorCache = new Map<string, string>();
-const PRIMORDIAL_POI_IDS = new Set(['po_surtur', 'po_typhon', 'po_elderwood', 'po_gate', 'po_hall_eyes', 'po_necropolis']);
 function veyraContinentTileColor(t: number): string {
   switch (t) {
     case T.DEEP: return '#14243a';
@@ -33,6 +35,19 @@ function veyraContinentTileColor(t: number): string {
     case T.ROAD: case T.FLOOR: return '#9a8462';
     default: return '#426e3c';
   }
+}
+
+/** Unsurveyed ground on the sector views: the lie of the land in one flat tone per 4x4 cell, never what stands on it. */
+const dimCache = new Map<string, string>();
+function dimColor(hex: string, keep = 0.42): string {
+  let out = dimCache.get(hex);
+  if (!out) {
+    const n = parseInt(hex.slice(1), 16);
+    const mix = (c: number, base: number) => Math.round(base + (c - base) * keep);
+    out = `rgb(${mix((n >> 16) & 255, 11)},${mix((n >> 8) & 255, 19)},${mix(n & 255, 25)})`;
+    dimCache.set(hex, out);
+  }
+  return out;
 }
 
 const MARKS: { kind: MarkKind; label: string; sign: string; color: string }[] = [
@@ -51,6 +66,108 @@ const CONT_OX = 6;
 const CONT_OY = 25;
 const CONT_W = 300;
 const CONT_H = 210;
+
+// ---------------------------------------------------------------------------
+// Continent base sheet: one terrain colour per chart pixel (a pixel spans about 13 tiles), sampled from the same
+// authoritative reader the world is built from. It is the same for every run, so it is painted once per session,
+// a few rows at a time so the panel opens without a hitch.
+// ---------------------------------------------------------------------------
+let contBase: HTMLCanvasElement | null = null;
+let contRows = 0;
+let contTimer: ReturnType<typeof setTimeout> | null = null;
+const contWaiters = new Set<() => void>();
+function paintContinentRows(budgetMs: number): boolean {
+  const g = contBase?.getContext('2d');
+  if (!g) return true;
+  const t0 = performance.now();
+  while (contRows < CONT_H) {
+    const y = contRows;
+    const ty = Math.min(FRAME_H - 1, Math.floor((y + 0.5) * FRAME_H / CONT_H));
+    for (let x = 0; x < CONT_W; x++) {
+      const tx = Math.min(FRAME_W - 1, Math.floor((x + 0.5) * FRAME_W / CONT_W));
+      g.fillStyle = veyraContinentTileColor(sampleTile(tx, ty).tile);
+      g.fillRect(x, y, 1, 1);
+    }
+    contRows++;
+    if (performance.now() - t0 > budgetMs) break;
+  }
+  return contRows >= CONT_H;
+}
+/** The base sheet as far as it is painted; `onProgress` fires when more rows are ready. Null where there is no canvas (tests). */
+function continentBase(onProgress?: () => void): HTMLCanvasElement | null {
+  if (!contBase) {
+    if (typeof document === 'undefined') return null;
+    const c = document.createElement('canvas');
+    c.width = CONT_W; c.height = CONT_H;
+    let g: CanvasRenderingContext2D | null = null;
+    try { g = c.getContext('2d'); } catch { g = null; }
+    if (!g) return null;
+    g.fillStyle = '#0c141b'; g.fillRect(0, 0, CONT_W, CONT_H);
+    contBase = c;
+  }
+  if (contRows < CONT_H) {
+    if (onProgress) contWaiters.add(onProgress);
+    if (!contTimer) {
+      const step = () => {
+        contTimer = null;
+        const done = paintContinentRows(10);
+        const waiters = [...contWaiters];
+        if (done) contWaiters.clear();
+        for (const w of waiters) w();
+        if (!done) contTimer = setTimeout(step, 0);
+      };
+      contTimer = setTimeout(step, 0);
+    }
+  }
+  return contBase;
+}
+
+const REGION_LABELS = (GOLD.project.labels as { text?: string; name?: string; at: [number, number]; style?: string }[])
+  .filter(l => l.style === 'region' && (l.text ?? l.name) && (l.text ?? l.name) !== 'VEYRA')
+  .map(l => ({ text: (l.text ?? l.name)!.toUpperCase(), gtx: l.at[0] * 2, gty: l.at[1] * 2 }));
+
+/** A place mark: one shape per kind of place; hollow until the player has been there. */
+function drawPlaceGlyph(ctx: CanvasRenderingContext2D, x: number, y: number, group: PlaceGroup, visited: boolean, color: string) {
+  const big = group === 'primordial';
+  const small = group === 'road' || group === 'wild';
+  const s = big ? 3 : small ? 1 : 2;
+  const cells: [number, number][] = [];
+  const inner: [number, number][] = [];
+  for (let dy = -s; dy <= s; dy++) for (let dx = -s; dx <= s; dx++) {
+    const ax = Math.abs(dx), ay = Math.abs(dy);
+    let inShape: boolean, edge: boolean;
+    if (group === 'harbour' || group === 'primordial') { inShape = ax + ay <= s; edge = ax + ay === s; }
+    else if (group === 'works') { const half = Math.floor((dy + s) / 2); inShape = ax <= half; edge = ax === half || dy === s; }
+    else if (group === 'ruin') { inShape = !(dx >= 1 && dy <= -1); edge = ax === s || ay === s || (dx === 0 && dy <= -1) || (dy === 0 && dx >= 1); }
+    else if (group === 'science' || group === 'cache') { inShape = !(ax === s && ay === s); edge = ax === s || ay === s; }
+    else { inShape = true; edge = ax === s || ay === s; }
+    if (!inShape) continue;
+    cells.push([dx, dy]);
+    if (!edge) inner.push([dx, dy]);
+  }
+  ctx.fillStyle = '#05080b';
+  for (const [dx, dy] of cells) ctx.fillRect(x + dx - 1, y + dy - 1, 3, 3);
+  ctx.fillStyle = color;
+  for (const [dx, dy] of cells) ctx.fillRect(x + dx, y + dy, 1, 1);
+  if (!visited) {
+    ctx.fillStyle = '#0b141a';
+    for (const [dx, dy] of inner) ctx.fillRect(x + dx, y + dy, 1, 1);
+  }
+}
+
+function drawPlate(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, color: string) {
+  ctx.font = 'bold 9px monospace';
+  const wTxt = Math.ceil(ctx.measureText(text).width) || text.length * 5;
+  const px = Math.max(1, Math.min(CANVAS_W - wTxt - 5, x + 6));
+  const py = Math.max(1, Math.min(CANVAS_H - 12, y - 5));
+  ctx.fillStyle = 'rgba(5,8,11,0.88)';
+  ctx.fillRect(px, py, wTxt + 4, 11);
+  ctx.fillStyle = color;
+  ctx.fillText(text, px + 2, py + 8);
+}
+
+/** How close (in continent tiles) a click must land to a place mark: six chart pixels. */
+const PLACE_REACH = 6 * FRAME_W / CONT_W;
 
 const TILE_LABEL: Record<number, string> = {
   [T.GRASS]: 'Grassland', [T.MEADOW]: 'Meadow', [T.FOREST]: 'Forest', [T.SAND]: 'Coast / Sand',
@@ -136,53 +253,84 @@ function screenToTile(mx: number, my: number, cx: number, cy: number, zoom: Zoom
   return { tx: Math.max(0, Math.min(WW - 1, tx)), ty: Math.max(0, Math.min(WH - 1, ty)) };
 }
 
-function renderContinentChart(
-  ctx: CanvasRenderingContext2D,
-  r: RunState,
-  hoverGlobal: { gtx: number; gty: number } | null,
-) {
+interface ContinentView {
+  places: AtlasPlace[];
+  hoverId: string | null;
+  selectedId: string | null;
+  destId: string | null;
+  onProgress?: () => void;
+}
+
+function renderContinentChart(ctx: CanvasRenderingContext2D, r: RunState, view: ContinentView) {
   ctx.imageSmoothingEnabled = false;
   ctx.fillStyle = '#091015';
   ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
 
+  const sx = CONT_W / FRAME_W;
+  const sy = CONT_H / FRAME_H;
+  const X = (gtx: number) => CONT_OX + gtx * sx;
+  const Y = (gty: number) => CONT_OY + gty * sy;
+
+  // The whole continent from the first minute: land, water and biome everywhere, dimmed where the player has not walked.
   ctx.fillStyle = '#0c141b';
   ctx.fillRect(CONT_OX, CONT_OY, CONT_W, CONT_H);
-  ctx.strokeStyle = 'rgba(214, 196, 158, 0.08)';
-  ctx.lineWidth = 1;
-  for (let gx = CONT_OX + 30; gx < CONT_OX + CONT_W; gx += 30) {
-    ctx.beginPath(); ctx.moveTo(gx + 0.5, CONT_OY); ctx.lineTo(gx + 0.5, CONT_OY + CONT_H); ctx.stroke();
-  }
-  for (let gy = CONT_OY + 30; gy < CONT_OY + CONT_H; gy += 30) {
-    ctx.beginPath(); ctx.moveTo(CONT_OX, gy + 0.5); ctx.lineTo(CONT_OX + CONT_W, gy + 0.5); ctx.stroke();
+  const base = continentBase(view.onProgress);
+  if (base) {
+    ctx.drawImage(base, CONT_OX, CONT_OY);
+    ctx.fillStyle = 'rgba(9, 16, 21, 0.4)';
+    ctx.fillRect(CONT_OX, CONT_OY, CONT_W, CONT_H);
   }
 
   const [ox, oy] = windowOrigin(r);
-  const discKeys = new Set<string>(r.veyraGlobalDiscovered ? Object.keys(r.veyraGlobalDiscovered) : []);
-  for (let cy4 = 0; cy4 < 50; cy4++) {
-    for (let cx4 = 0; cx4 < 50; cx4++) {
-      if (r.discovered[cy4 * 50 + cx4]) discKeys.add(`${(ox >> 2) + cx4}:${(oy >> 2) + cy4}`);
+  if (base) {
+    // Walked ground at full strength. Several 4x4 cells share one chart pixel, so collect pixels first.
+    const lit = new Set<number>();
+    const light = (cx4: number, cy4: number) => {
+      const px = Math.floor((cx4 * 4 + 2) * sx), py = Math.floor((cy4 * 4 + 2) * sy);
+      if (px >= 0 && py >= 0 && px < CONT_W && py < CONT_H) lit.add(py * CONT_W + px);
+    };
+    if (r.veyraGlobalDiscovered) for (const k of Object.keys(r.veyraGlobalDiscovered)) {
+      const sep = k.indexOf(':');
+      if (sep < 0) continue;
+      const cx4 = Number(k.slice(0, sep)), cy4 = Number(k.slice(sep + 1));
+      if (Number.isFinite(cx4) && Number.isFinite(cy4)) light(cx4, cy4);
+    }
+    for (let cy4 = 0; cy4 < 50; cy4++) for (let cx4 = 0; cx4 < 50; cx4++) {
+      if (r.discovered[cy4 * 50 + cx4]) light((ox >> 2) + cx4, (oy >> 2) + cy4);
+    }
+    for (const i of lit) {
+      const px = i % CONT_W, py = (i / CONT_W) | 0;
+      ctx.drawImage(base, px, py, 1, 1, CONT_OX + px, CONT_OY + py, 1, 1);
     }
   }
-  const sx = CONT_W / FRAME_W;
-  const sy = CONT_H / FRAME_H;
-  const cellW = Math.max(1, Math.ceil(4 * sx));
-  const cellH = Math.max(1, Math.ceil(4 * sy));
-  for (const k of discKeys) {
-    const sep = k.indexOf(':');
-    if (sep < 0) continue;
-    const cx4 = Number(k.slice(0, sep)), cy4 = Number(k.slice(sep + 1));
-    if (!Number.isFinite(cx4) || !Number.isFinite(cy4)) continue;
-    let col = continentCellColorCache.get(k);
-    if (!col) {
-      const tx = Math.min(FRAME_W - 1, Math.max(0, cx4 * 4 + 2));
-      const ty = Math.min(FRAME_H - 1, Math.max(0, cy4 * 4 + 2));
-      col = veyraContinentTileColor(sampleTile(tx, ty).tile);
-      if (continentCellColorCache.size > 24000) continentCellColorCache.clear();
-      continentCellColorCache.set(k, col);
-    }
-    ctx.fillStyle = col;
-    ctx.fillRect(Math.floor(CONT_OX + cx4 * 4 * sx), Math.floor(CONT_OY + cy4 * 4 * sy), cellW, cellH);
+
+  // Rivers and roads from the authored centrelines (a chart pixel is too coarse to catch them by sampling).
+  const line = (pts: [number, number][], color: string, dash: number[] = []) => {
+    if (pts.length < 2) return;
+    ctx.strokeStyle = color; ctx.lineWidth = 1; ctx.setLineDash(dash);
+    ctx.beginPath();
+    pts.forEach(([ax, ay], i) => { const x = Math.round(X(ax * 2)) + 0.5, y = Math.round(Y(ay * 2)) + 0.5; if (i) ctx.lineTo(x, y); else ctx.moveTo(x, y); });
+    ctx.stroke();
+  };
+  for (const rv of GOLD.project.rivers) line(rv.points, 'rgba(70, 136, 184, 0.75)');
+  for (const rd of GOLD.project.roads) {
+    if (rd.kind === 'ferry') line(rd.points, 'rgba(127, 216, 255, 0.4)', [1, 3]);
+    else if (rd.kind === 'cart') line(rd.points, 'rgba(214, 190, 142, 0.6)');
+    else line(rd.points, 'rgba(214, 190, 142, 0.38)', [2, 2]);
   }
+  ctx.setLineDash([]);
+
+  // Region names, faint: they orient, the place marks carry the detail.
+  ctx.font = '7px monospace';
+  ctx.textAlign = 'center';
+  for (const l of REGION_LABELS) {
+    const x = Math.round(X(l.gtx)), y = Math.round(Y(l.gty));
+    ctx.fillStyle = 'rgba(5, 8, 11, 0.6)';
+    for (const [hx, hy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) ctx.fillText(l.text, x + hx, y + hy);
+    ctx.fillStyle = 'rgba(240, 232, 208, 0.82)';
+    ctx.fillText(l.text, x, y);
+  }
+  ctx.textAlign = 'left';
 
   ctx.strokeStyle = '#475962';
   ctx.strokeRect(CONT_OX + 0.5, CONT_OY + 0.5, CONT_W - 1, CONT_H - 1);
@@ -190,27 +338,31 @@ function renderContinentChart(
   // Active 200x200 sector window frame
   ctx.strokeStyle = 'rgba(244, 208, 137, 0.78)';
   ctx.strokeRect(
-    Math.round(CONT_OX + ox * sx) + 0.5,
-    Math.round(CONT_OY + oy * sy) + 0.5,
+    Math.round(X(ox)) + 0.5,
+    Math.round(Y(oy)) + 0.5,
     Math.max(4, Math.round(WW * sx)),
     Math.max(4, Math.round(WH * sy)),
   );
 
   const dot = (gtx: number, gty: number, col: string, s = 3) => {
-    const rx = Math.round(CONT_OX + gtx * sx);
-    const ry = Math.round(CONT_OY + gty * sy);
+    const rx = Math.round(X(gtx));
+    const ry = Math.round(Y(gty));
     ctx.fillStyle = '#05080b';
     ctx.fillRect(rx - 1 - (s >> 1), ry - 1 - (s >> 1), s + 2, s + 2);
     ctx.fillStyle = col;
     ctx.fillRect(rx - (s >> 1), ry - (s >> 1), s, s);
   };
 
-  // Discovered continent POIs (po.at is in AU; 1 AU = 2 tiles on the 4000x2800 continent frame)
-  for (const po of POIS) {
-    if (!r.poiSeen.includes(po.id)) continue;
-    const pCol = PRIMORDIAL_POI_IDS.has(po.id) ? '#ff7c66' : po.arche === 'port' || po.arche === 'heli' ? '#7fd8ff' : '#f4d089';
-    dot(po.at[0] * 2, po.at[1] * 2, pCol, 3);
+  const [pgx, pgy] = playerGlobalTile(r);
+  const dest = view.destId ? view.places.find(p => p.id === view.destId) ?? null : null;
+  if (dest) {
+    ctx.strokeStyle = 'rgba(159, 232, 255, 0.85)'; ctx.lineWidth = 1; ctx.setLineDash([3, 2]);
+    ctx.beginPath(); ctx.moveTo(Math.round(X(pgx)) + 0.5, Math.round(Y(pgy)) + 0.5); ctx.lineTo(Math.round(X(dest.gtx)) + 0.5, Math.round(Y(dest.gty)) + 0.5); ctx.stroke();
+    ctx.setLineDash([]);
   }
+
+  // Every place on the chart (po.at is in AU; 1 AU = 2 tiles on the 4000x2800 continent frame)
+  for (const pl of view.places) drawPlaceGlyph(ctx, Math.round(X(pl.gtx)), Math.round(Y(pl.gty)), pl.kind.group, pl.visited, GROUP_COLOR[pl.kind.group]);
 
   for (const e of Object.values(r.entities)) {
     if (!onActiveFloor(r, e)) continue;
@@ -228,14 +380,29 @@ function renderContinentChart(
     }
   }
 
-  dot(ox + r.player.x / TILE, oy + r.player.y / TILE, '#fff8e5', 4);
-
-  if (hoverGlobal) {
-    const hx = Math.round(CONT_OX + hoverGlobal.gtx * sx);
-    const hy = Math.round(CONT_OY + hoverGlobal.gty * sy);
-    ctx.strokeStyle = 'rgba(244,208,137,0.55)';
-    ctx.strokeRect(hx - 4.5, hy - 4.5, 9, 9);
+  // Player: a white diamond in a dark ring, larger than any place mark.
+  {
+    const rx = Math.round(X(pgx)), ry = Math.round(Y(pgy));
+    ctx.fillStyle = '#05080b';
+    for (let dy = -4; dy <= 4; dy++) { const wSpan = 4 - Math.abs(dy); ctx.fillRect(rx - wSpan, ry + dy, wSpan * 2 + 1, 1); }
+    ctx.fillStyle = '#fff8e5';
+    for (let dy = -3; dy <= 3; dy++) { const wSpan = 3 - Math.abs(dy); ctx.fillRect(rx - wSpan, ry + dy, wSpan * 2 + 1, 1); }
   }
+
+  const ring = (pl: AtlasPlace, color: string, half: number) => {
+    const x = Math.round(X(pl.gtx)), y = Math.round(Y(pl.gty));
+    ctx.strokeStyle = '#05080b'; ctx.lineWidth = 3;
+    ctx.strokeRect(x - half + 0.5, y - half + 0.5, half * 2, half * 2);
+    ctx.strokeStyle = color; ctx.lineWidth = 1;
+    ctx.strokeRect(x - half + 0.5, y - half + 0.5, half * 2, half * 2);
+  };
+  if (dest) ring(dest, '#9fe8ff', 6);
+  const selected = view.selectedId ? view.places.find(p => p.id === view.selectedId) ?? null : null;
+  if (selected && selected !== dest) ring(selected, '#f2cf82', 5);
+  const hovered = view.hoverId ? view.places.find(p => p.id === view.hoverId) ?? null : null;
+  const named = hovered ?? selected ?? null;
+  if (dest && dest !== named) drawPlate(ctx, dest.name, Math.round(X(dest.gtx)) + 3, Math.round(Y(dest.gty)), '#9fe8ff');
+  if (named) drawPlate(ctx, named.name, Math.round(X(named.gtx)) + 3, Math.round(Y(named.gty)), named === dest ? '#9fe8ff' : '#fff3c4');
 }
 
 function renderChart(
@@ -251,6 +418,7 @@ function renderChart(
   teleportTarget?: { x: number; y: number } | null,
   markMode = false,
   intelByPlace: Map<string, PlaceNote> = new Map(),
+  atlas: { places: AtlasPlace[]; destId: string | null; selectedId: string | null } = { places: [], destId: null, selectedId: null },
 ) {
   const isVeyra = !!r.layoutId && isVeyra05Layout(r.layoutId);
   const w = getWorld(r.layoutId || 'shipping');
@@ -285,7 +453,10 @@ function renderChart(
     }
   }
 
-  // Solid fog of war over every undiscovered 4x4 cell — never reveal terrain or entities
+  // Undiscovered 4x4 cells are covered: nothing that stands or moves there is ever drawn. On the Veyra surface the
+  // cover carries the lie of the land (one flat tone per cell, from the terrain alone) so a route can be planned;
+  // below ground, and on the legacy island, it stays solid.
+  const coarse = isVeyra && activeFloor(r) === 0;
   const startCellX = Math.max(0, Math.floor(v.x0 / 4));
   const endCellX = Math.min(49, Math.floor((v.x0 + v.wTiles) / 4));
   const startCellY = Math.max(0, Math.floor(v.y0 / 4));
@@ -295,6 +466,7 @@ function renderChart(
     for (let gx = startCellX; gx <= endCellX; gx++) {
       if (!r.discovered[gy * 50 + gx]) {
         const sc = toScreen(gx * 4, gy * 4);
+        if (coarse) ctx.fillStyle = dimColor(veyraContinentTileColor(w.tiles[Math.min(WH - 1, gy * 4 + 2) * WW + Math.min(WW - 1, gx * 4 + 2)]));
         ctx.fillRect(Math.floor(sc.x), Math.floor(sc.y), Math.ceil(4 * v.px) + 1, Math.ceil(4 * v.px) + 1);
       }
     }
@@ -363,6 +535,37 @@ function renderChart(
       const sc = toScreen(site.tx + 0.5, site.ty + 0.5);
       ctx.fillStyle = '#5fc8e0';
       ctx.fillRect(Math.round(sc.x) + 3, Math.round(sc.y) - 5, 3, 3);
+    }
+  }
+
+  // Places the atlas names but the player has not charted yet: a hollow mark and the name, nothing else.
+  const [aox, aoy] = isVeyra ? windowOrigin(r) : [0, 0];
+  const shownSites = new Set(w.places.filter(site => r.poiSeen.includes(site.id) && discoveredCell(r, site.tx, site.ty)).map(site => site.id));
+  for (const pl of atlas.places) {
+    if (shownSites.has(pl.id)) continue;
+    const tx = pl.gtx - aox, ty = pl.gty - aoy;
+    if (tx < 0 || ty < 0 || tx >= WW || ty >= WH) continue;
+    const sc = toScreen(tx + 0.5, ty + 0.5);
+    const xx = Math.round(sc.x), yy = Math.round(sc.y);
+    if (xx < -10 || yy < -10 || xx > CANVAS_W + 10 || yy > CANVAS_H + 10) continue;
+    drawPlaceGlyph(ctx, xx, yy, pl.kind.group, pl.visited, GROUP_COLOR[pl.kind.group]);
+    if (zoom >= 2 || pl.id === atlas.selectedId || pl.id === atlas.destId) drawPlate(ctx, pl.name, xx + 2, yy, pl.id === atlas.destId ? '#9fe8ff' : '#d8ccb0');
+  }
+
+  // Chosen destination: a dashed line from the player toward it, also when it lies beyond this sector.
+  const destPlace = atlas.destId ? atlas.places.find(pl => pl.id === atlas.destId) ?? null : null;
+  if (destPlace) {
+    const a = toScreen(r.player.x / TILE, r.player.y / TILE);
+    const b = toScreen(destPlace.gtx - aox + 0.5, destPlace.gty - aoy + 0.5);
+    ctx.save();
+    ctx.beginPath(); ctx.rect(v.ox, v.oy, zoom === 1 ? WW * v.px : CANVAS_W, zoom === 1 ? WH * v.px : CANVAS_H); ctx.clip();
+    ctx.strokeStyle = 'rgba(159, 232, 255, 0.85)'; ctx.lineWidth = 1; ctx.setLineDash([3, 2]);
+    ctx.beginPath(); ctx.moveTo(Math.round(a.x) + 0.5, Math.round(a.y) + 0.5); ctx.lineTo(Math.round(b.x) + 0.5, Math.round(b.y) + 0.5); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+    if (b.x >= 0 && b.y >= 0 && b.x <= CANVAS_W && b.y <= CANVAS_H) {
+      ctx.strokeStyle = '#9fe8ff'; ctx.lineWidth = 1;
+      ctx.strokeRect(Math.round(b.x) - 6.5, Math.round(b.y) - 6.5, 13, 13);
     }
   }
 
@@ -439,6 +642,35 @@ function renderChart(
   }
 }
 
+/** What the chart says about one place: its name, kind, range, one line on what it is, and the destination button. */
+/** Which way a place lies, north up, as a small arrow turned to the bearing. */
+const DirArrow = ({ rad }: { rad: number }) => <svg className="dir-arrow" aria-hidden="true" viewBox="0 0 10 10" width="9" height="9" style={{ transform: `rotate(${rad.toFixed(3)}rad)` }}>
+  <path d="M1 5h8M5.5 1.5 9 5 5.5 8.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="square" />
+</svg>;
+
+export function PlaceCard({ place, dist, bearing, isDestination, onSet, onClear, onShowWorld, onOpenSector }: {
+  place: AtlasPlace; dist: number; bearing: number; isDestination: boolean;
+  onSet: () => void; onClear: () => void; onShowWorld?: () => void; onOpenSector?: () => void;
+}) {
+  return <div className="map-place" data-testid="map-place-card">
+    <div className="map-inspector__head">
+      <div>
+        <b data-notr style={{ color: GROUP_COLOR[place.kind.group] }}>{place.name}</b>
+        <span><em>{place.kind.label}</em> · {formatDistance(dist)}<DirArrow rad={bearing} /> · <em>{place.visited ? 'Visited' : 'Not visited yet'}</em></span>
+      </div>
+    </div>
+    <div className="map-place__blurb">{place.kind.blurb}</div>
+    {!place.visited && <div className="map-place__blurb map-place__blurb--dim">What is inside is not on the chart. Go there to find out.</div>}
+    <div className="map-place__actions">
+      {isDestination
+        ? <button className="btn sm" data-testid="map-dest-clear" onClick={onClear}>Clear destination</button>
+        : <button className="btn sm gold" data-testid="map-dest-set" onClick={onSet}>Set destination</button>}
+      {onShowWorld && <button className="btn sm ghost" onClick={onShowWorld}>Show on World</button>}
+      {onOpenSector && <button className="btn sm ghost" title="Zoom in on this place in the sector around you" onClick={onOpenSector}>Open sector</button>}
+    </div>
+  </div>;
+}
+
 export function ExpeditionMap({ api, onTeleportSelect, teleportTarget, qaSession = false }: {
   api: Api;
   onTeleportSelect?: (x: number, y: number) => void;
@@ -473,13 +705,35 @@ export function ExpeditionMap({ api, onTeleportSelect, teleportTarget, qaSession
   const [hover, setHover] = useState<{ tx: number; ty: number; gtx?: number; gty?: number } | null>(null);
   const [statusMsg, setStatusMsg] = useState<string | null>(null);
   const [filter, setFilter] = useState<'all' | 'sites' | 'marks' | 'intel'>('all');
+  const [destId, setDestId] = useState<string | null>(() => readDestination(r, qaSession));
+  // Opening the chart with a destination set shows that place first: where you are going, and the button to drop it.
+  const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(destId);
+  const [, setBaseTick] = useState(0);
+  const alive = useRef(true);
+  useEffect(() => { alive.current = true; return () => { alive.current = false; }; }, []);
+  const onBaseProgress = useCallback(() => { if (alive.current) setBaseTick(t => t + 1); }, []);
   const dragRef = useRef<{ sx: number; sy: number; cx0: number; cy0: number; moved: boolean } | null>(null);
 
   const intel = expeditionNotes(r);
   const intelByPlace = useMemo(() => new Map(intel.map(n => [n.place, n])), [intel]);
   const death = deathBagView(r);
   const sites = w.places.filter(site => r.poiSeen.includes(site.id) && discoveredCell(r, site.tx, site.ty));
-  const seenContinentPois = isVeyra ? POIS.filter(po => r.poiSeen.includes(po.id)) : [];
+  // The atlas: every place a traveller can aim for, known from the first minute (secret strongboxes excepted).
+  const places = atlasPlaces(r);
+  const ranges = placesByDistance(r, places);
+  const visitedCount = places.filter(pl => pl.visited).length;
+  const selectedPlace = selectedPlaceId ? places.find(pl => pl.id === selectedPlaceId) ?? null : null;
+  const selectedRange = selectedPlace ? ranges.find(g => g.place === selectedPlace) ?? null : null;
+  const liveDestId = destId && places.some(pl => pl.id === destId) ? destId : null;
+  const destRange = liveDestId ? ranges.find(g => g.place.id === liveDestId) ?? null : null;
+  const [wox, woy] = isVeyra ? windowOrigin(r) : [0, 0];
+  const hoverPlace = zoom === 0 && hover?.gtx !== undefined && hover?.gty !== undefined ? placeNear(places, hover.gtx, hover.gty, PLACE_REACH) : null;
+  const chooseDestination = (id: string | null) => {
+    const set = storeDestination(r, qaSession, id);
+    setDestId(set);
+    const pl = set ? places.find(q => q.id === set) : null;
+    setStatusMsg(pl ? 'Destination set. Close the chart: the arrow on screen points the way.' : id ? 'That place cannot be set as a destination.' : 'Destination cleared.');
+  };
   const offscreenCount = isVeyra && r.veyraOffscreenEntities
     ? Object.values(r.veyraOffscreenEntities).filter(oe => oe.type === 'claim' || isOwnBag(oe as any) || oe.kind === 'cart' || oe.kind === 'vehicle').length
     : 0;
@@ -490,11 +744,11 @@ export function ExpeditionMap({ api, onTeleportSelect, teleportTarget, qaSession
     const ctx = ref.current?.getContext('2d');
     if (!ctx) return;
     if (zoom === 0 && isVeyra) {
-      renderContinentChart(ctx, r, hover?.gtx !== undefined && hover?.gty !== undefined ? { gtx: hover.gtx, gty: hover.gty } : null);
+      renderContinentChart(ctx, r, { places, hoverId: hoverPlace?.id ?? null, selectedId: selectedPlaceId, destId: liveDestId, onProgress: onBaseProgress });
     } else {
-      renderChart(ctx, r, marks, selectedMarkId, cursor, hover, center.cx, center.cy, (zoom || 1) as LocalZoomLevel, teleportTarget, mode === 'mark', intelByPlace);
+      renderChart(ctx, r, marks, selectedMarkId, cursor, hover, center.cx, center.cy, (zoom || 1) as LocalZoomLevel, teleportTarget, mode === 'mark', intelByPlace, { places, destId: liveDestId, selectedId: selectedPlaceId });
     }
-  }, [r, isVeyra, marks, selectedMarkId, cursor, hover, center, zoom, teleportTarget, mode, intelByPlace]);
+  });
 
   const focusOn = useCallback((tx: number, ty: number, minZoom?: ZoomLevel) => {
     const baseZoom = zoom === 0 ? 1 : zoom;
@@ -547,6 +801,7 @@ export function ExpeditionMap({ api, onTeleportSelect, teleportTarget, qaSession
   const inspectTile = (tx: number, ty: number, panTo = false) => {
     setCursor({ tx, ty });
     setStatusMsg(null);
+    setSelectedPlaceId(isVeyra ? placeNear(places, wox + tx, woy + ty, 4)?.id ?? null : null);
     if (!discoveredCell(r, tx, ty)) {
       setSelectedMarkId(null);
       return;
@@ -617,10 +872,16 @@ export function ExpeditionMap({ api, onTeleportSelect, teleportTarget, qaSession
     const { tx, ty } = pt;
     if (zoom === 0 && isVeyra) {
       const [ox, oy] = windowOrigin(r);
-      if (pt.gtx !== undefined && pt.gty !== undefined && pt.gtx >= ox && pt.gtx < ox + WW && pt.gty >= oy && pt.gty < oy + WH) {
+      const hit = pt.gtx !== undefined && pt.gty !== undefined ? placeNear(places, pt.gtx, pt.gty, PLACE_REACH) : null;
+      if (hit) {
+        // A place mark wins over the ground under it: this is how a destination is picked.
+        setSelectedPlaceId(hit.id);
+        setStatusMsg(null);
+      } else if (pt.gtx !== undefined && pt.gty !== undefined && pt.gtx >= ox && pt.gtx < ox + WW && pt.gty >= oy && pt.gty < oy + WH) {
         setZoom(1);
         inspectTile(tx, ty);
       } else if (pt.gtx !== undefined && pt.gty !== undefined) {
+        setSelectedPlaceId(null);
         setStatusMsg(`Continent AU ${Math.round(pt.gtx / 2)},${Math.round(pt.gty / 2)} · switch to 1× for active 200×200 sector.`);
       }
       return;
@@ -650,6 +911,27 @@ export function ExpeditionMap({ api, onTeleportSelect, teleportTarget, qaSession
     }
     if (e.code === 'Equal') { changeZoom(zoom === 0 ? 1 : zoom === 1 ? 2 : 4); return; }
     if (e.code === 'Minus') { changeZoom(zoom === 4 ? 2 : zoom === 2 ? 1 : (isVeyra && !onTeleportSelect ? 0 : 1)); return; }
+    if (zoom === 0 && isVeyra) {
+      const dir: Record<string, [number, number]> = { ArrowUp: [0, -1], ArrowDown: [0, 1], ArrowLeft: [-1, 0], ArrowRight: [1, 0] };
+      if (dir[e.code]) {
+        // Step to the nearest place lying in that direction from the selected one (or from the player).
+        const [fx, fy] = selectedPlace ? [selectedPlace.gtx, selectedPlace.gty] : playerGlobalTile(r);
+        const [ux, uy] = dir[e.code];
+        let best: AtlasPlace | null = null; let bd = Infinity;
+        for (const pl of places) {
+          if (pl === selectedPlace) continue;
+          const dx = pl.gtx - fx, dy = pl.gty - fy;
+          const along = dx * ux + dy * uy, across = Math.abs(dx * uy - dy * ux);
+          if (along <= 0 || across > along * 1.5) continue;
+          const score = along + across * 2;
+          if (score < bd) { bd = score; best = pl; }
+        }
+        if (best) { setSelectedPlaceId(best.id); setStatusMsg(null); }
+        return;
+      }
+      if ((e.code === 'Enter' || e.code === 'Space') && selectedPlace) chooseDestination(selectedPlace.id === liveDestId ? null : selectedPlace.id);
+      return;
+    }
     const p = cursor || { tx: ptx, ty: pty };
     const step = zoom === 4 ? 1 : zoom === 2 ? 2 : 4;
     const delta: Record<string, [number, number]> = { ArrowUp: [0, -step], ArrowDown: [0, step], ArrowLeft: [-step, 0], ArrowRight: [step, 0] };
@@ -675,7 +957,23 @@ export function ExpeditionMap({ api, onTeleportSelect, teleportTarget, qaSession
   const fl = isVeyra ? activeFloor(r) : 0;
   const floorTag = fl < 0 ? ` · Basement ${Math.abs(fl)}` : fl === 0 ? '' : ` · Floor ${fl + 1}`;
   const [ax, ay] = isVeyra ? playerGlobalAu(r) : [0, 0];
-  const totalSiteCount = (isVeyra ? Math.max(sites.length, seenContinentPois.length) : sites.length) + ownedCabinets.length;
+  const totalSiteCount = sites.length + ownedCabinets.length;
+  const showPlace = (pl: AtlasPlace) => {
+    // From the list: put the place in front of the player on the whole-continent sheet (the sector sheets may not hold it).
+    setSelectedPlaceId(pl.id);
+    setStatusMsg(null);
+    if (!onTeleportSelect) setZoom(0);
+    else {
+      const tx = pl.gtx - wox, ty = pl.gty - woy;
+      if (tx >= 0 && ty >= 0 && tx < WW && ty < WH) { setCursor({ tx, ty }); focusOn(tx, ty, 2); }
+    }
+  };
+  const placeRow = (g: { place: AtlasPlace; dist: number; bearing: number }) => (
+    <button key={g.place.id} data-testid={`map-place-${g.place.id}`} className={`map-row map-row--place ${selectedPlaceId === g.place.id ? 'selected' : ''} ${g.place.id === liveDestId ? 'is-dest' : ''}`} onClick={() => showPlace(g.place)}>
+      <b style={{ color: GROUP_COLOR[g.place.kind.group] }}><i aria-hidden="true" className={`pm ${g.place.id === liveDestId ? 'pm--dest' : g.place.visited ? 'pm--seen' : 'pm--new'}`} /><span data-notr>{g.place.name}</span></b>
+      <span><em>{g.place.kind.label}</em> · {formatDistance(g.dist)}<DirArrow rad={g.bearing} />{g.place.visited && <> · <em>Visited</em></>}</span>
+    </button>
+  );
 
   return <Panel title={<span className="map-heading">
     FIELD CHART
@@ -687,14 +985,14 @@ export function ExpeditionMap({ api, onTeleportSelect, teleportTarget, qaSession
       <div className="chart-column">
         <div className="chart-controls">
           <div className="chart-zoom" role="group" aria-label="Map zoom">
-            {isVeyra && <button data-testid="map-mode-continent" className={`btn sm ${zoom === 0 ? 'gold' : 'ghost'}`} onClick={() => changeZoom(0)} title="The whole continent. Only what you have charted is drawn.">World</button>}
+            {isVeyra && <button data-testid="map-mode-continent" className={`btn sm ${zoom === 0 ? 'gold' : 'ghost'}`} onClick={() => changeZoom(0)} title="The whole continent: land, roads and every named place. Ground you have not walked is dimmed.">World</button>}
             {([1, 2, 4] as LocalZoomLevel[]).map(z => <button key={z} data-testid={isVeyra && z === 1 ? 'map-mode-local' : undefined} className={`btn sm ${zoom === z ? 'gold' : 'ghost'}`} onClick={() => changeZoom(z)} title={z === 1 ? 'Full sector overview' : z === 2 ? 'Sector zoom' : 'Tactical zoom'}>{z}×</button>)}
             <button className="btn sm ghost" onClick={fitExplored} title="Frame explored territory">Fit</button>
             <button className="btn sm ghost" onClick={() => { inspectTile(ptx, pty); focusOn(ptx, pty, 2); }} title="Center on player">You</button>
           </div>
           <span className="chart-coords">
             {zoom === 0 && isVeyra
-              ? (hover?.gtx !== undefined && hover?.gty !== undefined ? `AU ${Math.round(hover.gtx / 2)},${Math.round(hover.gty / 2)}` : `AU ${ax.toFixed(0)},${ay.toFixed(0)}`)
+              ? (hoverPlace ? <span data-notr>{hoverPlace.name}</span> : hover?.gtx !== undefined && hover?.gty !== undefined ? `AU ${Math.round(hover.gtx / 2)},${Math.round(hover.gty / 2)}` : `AU ${ax.toFixed(0)},${ay.toFixed(0)}`)
               : (hover ? (discoveredCell(r, hover.tx, hover.ty) ? `${hover.tx},${hover.ty}` : 'Uncharted') : `${ptx},${pty}`)}
           </span>
         </div>
@@ -708,6 +1006,9 @@ export function ExpeditionMap({ api, onTeleportSelect, teleportTarget, qaSession
             onContextMenu={e => { e.preventDefault(); const { tx, ty } = canvasXY(e.clientX, e.clientY, e.currentTarget); const m = marks.find(mk => Math.hypot(mk.tx - tx, mk.ty - ty) <= 2); if (m) removeMark(m.id); }} />
           <div className="chart-compass">N↑</div>
           {onTeleportSelect && <div className="chart-teleport-pill">CORE BLINK · select safe explored ground</div>}
+          {!onTeleportSelect && destRange && <button className="chart-dest-pill" data-testid="map-dest-pill" title="Your destination. Click to show it." onClick={() => showPlace(destRange.place)}>
+            <i aria-hidden="true" className="pm pm--dest" /><span data-notr>{destRange.place.name}</span><em>{formatDistance(destRange.dist)}<DirArrow rad={destRange.bearing} /></em>
+          </button>}
         </div>
 
         <div className="map-toolbar">
@@ -715,12 +1016,17 @@ export function ExpeditionMap({ api, onTeleportSelect, teleportTarget, qaSession
             {mode === 'mark' ? 'Click chart to mark' : '+ Leave note'}
           </button>
           <button className="btn sm" title="Save note at your current position" onClick={() => addMarkAt(ptx, pty)}>Mark my spot</button>
-          <span className="map-legend" aria-hidden="true">
+          {isVeyra ? <span className="map-legend" aria-hidden="true">
+            <i style={{ color: '#fff8e5' }}>◆</i>You
+            <i className="pm pm--new" style={{ color: '#f4d089' }} />New
+            <i className="pm pm--seen" style={{ color: '#f4d089' }} />Visited
+            <i className="pm pm--dest" />Going
+          </span> : <span className="map-legend" aria-hidden="true">
             <i style={{ color: '#fff8e5' }}>◆</i>You
             <i style={{ color: '#f4d089' }}>◎</i>Site
             <i style={{ color: '#8fd45a' }}>■</i>Cab
             <i style={{ color: '#ff8e7a' }}>✕</i>Bag
-          </span>
+          </span>}
           <span className="map-key" title="Notes you have left on the chart, out of 18">{marks.length}/18</span>
         </div>
       </div>
@@ -738,18 +1044,25 @@ export function ExpeditionMap({ api, onTeleportSelect, teleportTarget, qaSession
 
         {/* Active Inspection Card */}
         <div className="map-inspector" role="status">
-          {!inspected ? (
+          {selectedPlace && selectedRange && <PlaceCard place={selectedPlace} dist={selectedRange.dist} bearing={selectedRange.bearing} isDestination={selectedPlace.id === liveDestId}
+            onSet={() => chooseDestination(selectedPlace.id)} onClear={() => chooseDestination(null)}
+            onShowWorld={zoom !== 0 && !onTeleportSelect ? () => setZoom(0) : undefined}
+            onOpenSector={zoom === 0 && selectedPlace.gtx >= wox && selectedPlace.gty >= woy && selectedPlace.gtx < wox + WW && selectedPlace.gty < woy + WH
+              ? () => inspectTile(selectedPlace.gtx - wox, selectedPlace.gty - woy, true) : undefined} />}
+          {zoom === 0 && isVeyra ? (
+            !selectedPlace && <div className="map-inspector__empty">Every named place is on this chart from the start. Click one to see what it is, then set it as your destination.</div>
+          ) : !inspected ? (
             <div className="map-inspector__empty">Click or move cursor over explored ground to inspect terrain, sites, intel, or notes.</div>
           ) : !inspected.discovered ? (
-            <div className="map-inspector__fog">
+            !selectedPlace && <div className="map-inspector__fog">
               <b>Uncharted Sector · ({inspected.tx}, {inspected.ty})</b>
-              <span>Terrain, landmarks, and structures remain hidden until explored on foot.</span>
+              <span>{isVeyra ? 'The chart shows the lie of the land here. What stands on it stays hidden until you walk it.' : 'Terrain, landmarks, and structures remain hidden until explored on foot.'}</span>
             </div>
           ) : (
             <>
               <div className="map-inspector__head">
                 <div>
-                  <b>{inspected.poi ? inspected.poi.name : inspected.bagHere ? 'Your Death Bag' : inspected.cab ? 'Territory Cabinet' : inspected.mark ? inspected.mark.label : inspected.zoneName}</b>
+                  <b>{inspected.poi && !selectedPlace ? inspected.poi.name : inspected.bagHere ? 'Your Death Bag' : inspected.cab ? 'Territory Cabinet' : inspected.mark ? inspected.mark.label : inspected.zoneName}</b>
                   <span>{inspected.zoneName} · {inspected.surface} · ({inspected.tx},{inspected.ty}) · {inspected.bearing}</span>
                 </div>
                 <button className="btn sm ghost" title="Pin a note at this tile" onClick={() => addMarkAt(inspected.tx, inspected.ty)}>+ Pin</button>
@@ -799,7 +1112,7 @@ export function ExpeditionMap({ api, onTeleportSelect, teleportTarget, qaSession
 
         {/* Connected Directory Filter */}
         <div className="map-tabs">
-          {([['all', 'All'], ['sites', `Sites ${totalSiteCount}`], ['marks', `Notes ${marks.length}`], ['intel', `Intel ${intel.length}`]] as const).map(([id, lbl]) => (
+          {([['all', 'All'], ['sites', isVeyra ? `Places ${visitedCount}/${places.length}` : `Sites ${totalSiteCount}`], ['marks', `Notes ${marks.length}`], ['intel', `Intel ${intel.length}`]] as const).map(([id, lbl]) => (
             <button key={id} className={filter === id ? 'active' : ''} onClick={() => setFilter(id)}>{lbl}</button>
           ))}
         </div>
@@ -832,19 +1145,23 @@ export function ExpeditionMap({ api, onTeleportSelect, teleportTarget, qaSession
                 <span>{ex},{ey} · {bearingLabel(ex - ptx, ey - pty)}</span>
               </button>;
             })}
-            {sites.map(site => {
+            {isVeyra && destRange && placeRow(destRange)}
+            {isVeyra && filter === 'all' && <>
+              <div className="map-list__head">Nearest places</div>
+              {ranges.filter(g => g.place.id !== liveDestId).slice(0, 5).map(placeRow)}
+              {ranges.length > 6 && <button className="map-row map-row--more" onClick={() => setFilter('sites')}>All places</button>}
+            </>}
+            {isVeyra && filter === 'sites' && <>
+              <div className="map-list__head">All places, nearest first</div>
+              {ranges.filter(g => g.place.id !== liveDestId).map(placeRow)}
+            </>}
+            {!isVeyra && sites.map(site => {
               const n = intelByPlace.get(site.id);
               return <button key={site.id} className="map-row" onClick={() => inspectTile(site.tx, site.ty, true)}>
                 <b>◎ {site.name}{n ? ` · ${n.gates.length} gate${n.gates.length === 1 ? '' : 's'}${n.blueprints.length ? ` · ${n.blueprints.length} BP` : ''}` : ''}</b>
                 <span>{site.tx},{site.ty} · {bearingLabel(site.tx - ptx, site.ty - pty)}</span>
               </button>;
             })}
-            {isVeyra && seenContinentPois.filter(po => !sites.some(s => s.id === po.id)).map(po => (
-              <button key={po.id} className="map-row" onClick={() => changeZoom(0)}>
-                <b style={{ color: PRIMORDIAL_POI_IDS.has(po.id) ? '#ff8a7a' : '#f4d089' }}>◎ {po.name}</b>
-                <span>Continent AU {po.at[0]},{po.at[1]}</span>
-              </button>
-            ))}
           </>}
 
           {(filter === 'all' || filter === 'marks') && marks.map(m => (
@@ -871,13 +1188,13 @@ export function ExpeditionMap({ api, onTeleportSelect, teleportTarget, qaSession
             </div>;
           })}
 
-          {filter === 'sites' && !sites.length && !ownedCabinets.length && !rigs.length && death.status !== 'present' &&
+          {!isVeyra && filter === 'sites' && !sites.length && !ownedCabinets.length && !rigs.length && death.status !== 'present' &&
             <div className="map-note">No charted sites yet. Explore to reveal them; unknown sites stay hidden.</div>}
           {filter === 'marks' && !marks.length &&
             <div className="map-note">No notes placed. Select “Leave note”, then click explored terrain.</div>}
           {filter === 'intel' && !intel.length &&
             <div className="map-note">No field intelligence recorded. Inspect known POIs to reveal their observed access requirements.</div>}
-          {filter === 'all' && !sites.length && !ownedCabinets.length && !rigs.length && !marks.length && !intel.length && death.status !== 'present' &&
+          {!isVeyra && filter === 'all' && !sites.length && !ownedCabinets.length && !rigs.length && !marks.length && !intel.length && death.status !== 'present' &&
             <div className="map-note">Begin exploring. The chart records only the terrain you have actually visited.</div>}
         </div>
       </div>
