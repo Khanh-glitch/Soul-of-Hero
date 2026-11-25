@@ -121,7 +121,7 @@ export function RagnarokStrip({ r, now, secured }: { r: RunState; now: number; s
         <b>{ph === 'awakening' ? 'DAY 14 · ELDERS AWAKE' : 'RAGNAROK · FINAL 72H'}</b>
       </div>
       <div className="lbl" style={{ fontSize: 8, color: 'var(--paper)', marginTop: 1 }}>
-        {rem.toFixed(1)}h until collapse{toAwake > 0 ? ` · ${toAwake.toFixed(1)}h to Dawn 14` : ''}
+        {`${rem.toFixed(1)} h until collapse${toAwake > 0 ? ` · ${toAwake.toFixed(1)} h to Dawn 14` : ''}`}
       </div>
       <div className="lbl" style={{ fontSize: 8, marginTop: 1, display: 'flex', justifyContent: 'space-between' }}>
         <span style={{ color: held > 0 ? 'var(--warn)' : 'var(--muted)' }}>At risk: <b>{held}</b></span>
@@ -239,7 +239,7 @@ export function DeathRecoveryOverlay({ gs, onRespawn }: { gs: GameState; onRespa
                 Location: ({Math.floor(bag.x / TILE)}, {Math.floor(bag.y / TILE)})
               </div>
               <div className="lbl" style={{ fontSize: 8, color: 'var(--muted)', marginTop: 1 }}>
-                {bagStacks.length} stack{bagStacks.length === 1 ? '' : 's'} present now{bagCash > 0 ? ` · ${bagCash} unsecured cash` : ''}
+                {`${bagStacks.length} stack${bagStacks.length === 1 ? '' : 's'} present now${bagCash > 0 ? ` · ${bagCash} unsecured cash` : ''}`}
               </div>
               <div style={{ display: 'flex', gap: 2, flexWrap: 'wrap', marginTop: 3 }}>
                 {bagStacks.slice(0, 6).map((s, i) => <Icon key={i} k={s!.key} size={13} />)}

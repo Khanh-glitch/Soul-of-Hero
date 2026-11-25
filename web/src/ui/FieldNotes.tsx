@@ -14,14 +14,12 @@ const CAT_COLOR: Record<FieldNoteDef['category'], string> = {
 /** Compact interactive contextual guidance card docked cleanly on the right HUD rail. */
 export function FieldNoteCard({
   note,
-  top = 78,
   onDismiss,
   onOpenJournal,
   onMute,
   onAction,
 }: {
   note: FieldNoteDef;
-  top?: number;
   onDismiss: (id: string) => void;
   onOpenJournal: () => void;
   onMute: () => void;
@@ -32,7 +30,6 @@ export function FieldNoteCard({
       className="plate field-note-card fadein"
       data-testid="field-note-card"
       data-note-id={note.id}
-      style={{ right: 4, top }}
       onMouseDown={e => e.stopPropagation()}
     >
       <div className="field-note-card__head">

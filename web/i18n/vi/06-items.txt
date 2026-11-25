@@ -39,7 +39,7 @@ A club for fights and roadside salvage; a Territory Cabinet and a campfire to st
 {} · Rise again first => {1} · Hãy đứng dậy trước
 Rise again first => Hãy đứng dậy trước
 Fallen => Đã ngã xuống
-WAKING => ĐANG TỈNH LẠI
+WAKING => THỨC TỈNH
 Ready to wake => Sẵn sàng tỉnh lại
 Rise & Recover Gear => Đứng dậy và đi lấy lại đồ
 Safe & Next Step => Thứ còn giữ và việc tiếp theo

@@ -19,7 +19,13 @@ import { Icon } from './common';
 // ---------------------------------------------------------------------------
 export type WaymarkMode = 'glyph' | 'compact' | 'open';
 
-export function Waymark({ view, mode, store, stamp, onToggle, onUntrack, onOpenJournal, onJump, blocked, lang = 'en' }: {
+/** A touch screen has no mouse or keyboard: a step names the on-screen buttons instead of keys. */
+export const touchWords = (text: string, lang: Lang): string => lang === 'vi'
+  ? text.replace(/chuột trái|\bLMB\b/g, 'nút Đánh').replace(/\bSpace\b/g, 'nút Lăn').replace(/\bWASD\b/g, 'cần điều khiển')
+  : text.replace(/\bLMB\b/g, 'the Hit button').replace(/\bSpace\b/g, 'the Roll button').replace(/\bWASD\b/g, 'the stick');
+
+export function Waymark({ view, mode, store, stamp, onToggle, onUntrack, onOpenJournal, onJump, blocked, lang = 'en', touch = false }: {
+  touch?: boolean;
   view: TrackView | null; mode: WaymarkMode; store: JourneyStore; stamp: JourneyEvent | null; blocked?: string | null; lang?: Lang;
   onToggle: () => void; onUntrack: () => void; onOpenJournal: () => void; onJump?: (t: QuickJumpTarget) => void;
 }) {
@@ -55,7 +61,7 @@ export function Waymark({ view, mode, store, stamp, onToggle, onUntrack, onOpenJ
       <div className="wm__title">{v.title}{v.target > 1 && !v.done && <span className="wm__count">{v.progress}<i>/</i>{v.target}</span>}</div>
       {v.target > 1 && <div className="wm__notches">{Array.from({ length: Math.min(v.target, 14) }, (_, i) => <i key={i} className={i < Math.round(frac * Math.min(v.target, 14)) ? 'on' : ''} />)}</div>}
       {mode === 'open' && <>
-        <div className="wm__how">{blocked ? <b className="wm__blocked">{blocked}</b> : v.how}</div>
+        <div className="wm__how">{blocked ? <b className="wm__blocked">{blocked}</b> : touch ? touchWords(v.how, lang) : v.how}</div>
         <div className="wm__why">{v.why}</div>
         {v.reward && !v.claimable && <div className="wm__reward">★ {v.reward}</div>}
         {v.claimable && <div style={{ marginTop: 3 }}><button className="btn xs gold" onClick={e => { e.stopPropagation(); onOpenJournal(); }}>{T('Open ledger [J]', 'Mở sổ [J]', lang)}</button></div>}

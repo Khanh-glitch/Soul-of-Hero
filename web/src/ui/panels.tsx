@@ -127,16 +127,17 @@ function HeroDoll({ r }: { r: RunState }) {
   return <canvas ref={ref} width={32} height={48} className="doll" />;
 }
 
-export function InventoryPanel({ api, quickTo, x = 404, top = 54, onClose, backToContainer = false }: { api: Api; quickTo?: string; x?: number; top?: number; onClose?: () => void; backToContainer?: boolean }) {
+export function InventoryPanel({ api, quickTo, x = 404, top = 8, onClose, backToContainer = false }: { api: Api; quickTo?: string; x?: number; top?: number; onClose?: () => void; backToContainer?: boolean }) {
   const r = api.gs.run!; const sel = api.sel ? C(r, api.sel.c)?.slots[api.sel.slot] ?? null : null; const w = invWeight(r); const limit = carryLimit(r);
   let armor = 0, warm = 0; for (const s of C(r, 'eq').slots) if (s) { armor += ITEMS[s.key].armor || 0; warm += ITEMS[s.key].cold || 0; }
   const used = C(r, 'inv').slots.filter(Boolean).length, total = C(r, 'inv').slots.length;
   const load = Math.min(1, w / limit);
   const cash = countItem(r, 'inv', 'rcash');
   const SLOT_G = ['scrap_helm', 'leather_armor', 'fur_cloak', 'iron_plate_pants', 'iron_plate_boots'];
-  const panelMaxH = Math.max(210, 354 - top);
+  // the pack stands beside a chest or the trader: it takes the full height of the stage (the clock plate is hidden meanwhile)
+  const panelMaxH = Math.max(210, 356 - top);
   return <Panel title={backToContainer ? 'Pack · X returns' : 'Pack'} className="inv" style={{ left: x, top, width: 228, maxHeight: panelMaxH }} onClose={onClose ?? (() => api.open(null))}>
-    <div className="scroll" style={{ maxHeight: panelMaxH - 28, overflowY: 'auto', overflowX: 'hidden' }}>
+    <div className="scroll" style={{ maxHeight: panelMaxH - 54, overflowY: 'auto', overflowX: 'hidden' }}>
       {/* paper doll: equipment slots flank the live character; numbers are chips, not sentences */}
       <div className="doll-row">
         <div className="doll-slots">
@@ -161,12 +162,13 @@ export function InventoryPanel({ api, quickTo, x = 404, top = 54, onClose, backT
       <Grid api={api} cid="inv" quickTo={quickTo} hotRow />
       <ItemInfo s={sel} known={r.knowledge.recipes} />
       {sel && ITEMS[sel.key]?.creatorCore && api.sel?.c === 'inv' && <CoreService api={api} s={sel} />}
-      <div className="actions">
+    </div>
+    {/* the action row stays on the panel's foot: it is never under the fold of the scroll area */}
+    <div className="actions">
         <button className="btn" disabled={!sel} onClick={() => { if (api.sel) { api.act('useItem', { c: api.sel.c, slot: api.sel.slot }); api.setSel(null); } }}>Use</button>
         <button className="btn" disabled={!sel || sel.qty < 2} onClick={() => api.sel && api.act('split', { c: api.sel.c, slot: api.sel.slot })}>Split</button>
         <button className="btn" disabled={!sel} onClick={() => { if (api.sel) { api.act('drop', { c: api.sel.c, slot: api.sel.slot }); api.setSel(null); } }}>Drop</button>
         <button className="btn ghost" style={{ marginLeft: 'auto' }} onClick={() => api.act('sort', { c: 'inv' })}>Sort</button>
-      </div>
     </div>
   </Panel>;
 }
@@ -252,7 +254,7 @@ export function ContainerPanel({ api, eid }: { api: Api; eid: string }) {
     </Panel>;
   }
   if (st && !compact && kind) return <StationConsole api={api} eid={eid} initialTab={api.stationConsoleTab} />;
-  if (compact && inventoryOnly) return <InventoryPanel api={api} quickTo={quickTo} x={168} top={54} backToContainer onClose={()=>{api.setSel(null);setInventoryOnly(false);}} />;
+  if (compact && inventoryOnly) return <InventoryPanel api={api} quickTo={quickTo} x={168} backToContainer onClose={()=>{api.setSel(null);setInventoryOnly(false);}} />;
   return <>
     <Panel title={title} style={{ left: 168, top: 54, width: 230, maxHeight: 286 }} onClose={() => api.open(null)} className={`scroll container-panel container-panel--${e.kind === 'struct' ? e.type : e.kind}`}>
       <div className="scroll" style={{ maxHeight: 250, overflowY: 'auto', overflowX: 'hidden' }}>
@@ -308,7 +310,7 @@ export function ContainerPanel({ api, eid }: { api: Api; eid: string }) {
         {e.kind === 'struct' && <div style={{ marginTop: 6, fontSize: 10, color: '#8a7a9a' }}>{`Durability ${Math.round(e.hp!)}/${e.maxHp}`} {owned(e) && <button className="btn ghost" style={{ marginLeft: 6 }} onClick={() => { api.act('reclaim', { eid }); api.open(null); }}>Reclaim</button>}</div>}
       </div>
     </Panel>
-    {!compact && <InventoryPanel api={api} quickTo={quickTo} top={54} />}
+    {!compact && <InventoryPanel api={api} quickTo={quickTo} />}
   </>;
 }
 function RecyclerBody({api,eid}:{api:Api;eid:string}) {
@@ -606,13 +608,13 @@ export function VendorPanel({ api, eid }: { api: Api; eid: string }) {
       <div className="console-col" style={{ borderLeft: '2px solid var(--brass)' }}>
         <div className="console-h" style={{ display: 'flex', justifyContent: 'space-between' }}>
           <span>Ragnarok Coin Exchange</span>
-          <span style={{ color: cash ? 'var(--brassLit)' : 'var(--muted)' }}>Carried: {cash}</span>
+          <span style={{ color: cash ? 'var(--brassLit)' : 'var(--muted)' }}>{`Carried: ${cash}`}</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
           <Icon k="escrow_chest" size={16} />
           <div style={{ flex: 1, lineHeight: 1.1 }}>
-            <div className="lbl" style={{ fontSize: 9, color: 'var(--paper)' }}>Escrow Chest <span style={{ color: 'var(--muted)' }}>({r.vendorStock.escrow_chest} left)</span></div>
-            <div className="lbl" style={{ fontSize: 8, color: 'var(--brassLit)' }}>{BAL.economy.escrowChestPrice} physical cash · place on owned land</div>
+            <div className="lbl" style={{ fontSize: 9, color: 'var(--paper)' }}>Escrow Chest <span style={{ color: 'var(--muted)' }}>{`(${r.vendorStock.escrow_chest} left)`}</span></div>
+            <div className="lbl" style={{ fontSize: 8, color: 'var(--brassLit)' }}>{`${BAL.economy.escrowChestPrice} Ragnarok coins · place on owned land`}</div>
           </div>
           <button className="btn gold sm" disabled={cash < BAL.economy.escrowChestPrice || r.vendorStock.escrow_chest <= 0} onClick={() => api.act('buy', { eid, item: 'escrow_chest' })}>Buy</button>
         </div>
@@ -622,13 +624,13 @@ export function VendorPanel({ api, eid }: { api: Api; eid: string }) {
       <div className="console-col">
         <div className="console-h" style={{ display: 'flex', justifyContent: 'space-between' }}>
           <span>Parts Barter (this run only)</span>
-          <span style={{ color: 'var(--paper)' }}>Parts: {countItem(r, 'inv', 'spares')}</span>
+          <span style={{ color: 'var(--paper)' }}>{`Parts: ${countItem(r, 'inv', 'spares')}`}</span>
         </div>
         {Object.entries(VENDOR_SPARES).map(([k, v]) => (
           <div key={k} className="recipe-row" style={{ cursor: 'default', padding: '2px 0' }}>
             <Icon k={k} size={13} />
-            <span className="lbl" style={{ fontSize: 9, flex: 1 }}>{ITEMS[k].name} ×{v.qty} <span style={{ color: 'var(--muted)' }}>({r.vendorStock[`spares:${k}`] || 0})</span></span>
-            <span className="chip" style={{ color: countItem(r, 'inv', 'spares') >= v.price ? 'var(--good)' : 'var(--muted)' }}>{v.price} spares</span>
+            <span className="lbl" style={{ fontSize: 9, flex: 1 }}>{`${ITEMS[k].name} ×${v.qty}`} <span style={{ color: 'var(--muted)' }} title="In stock">{`(${r.vendorStock[`spares:${k}`] || 0} left)`}</span></span>
+            <span className="chip" style={{ color: countItem(r, 'inv', 'spares') >= v.price ? 'var(--good)' : 'var(--muted)' }}>{`${v.price} Parts`}</span>
             <button className="btn sm" disabled={countItem(r, 'inv', 'spares') < v.price || !(r.vendorStock[`spares:${k}`] > 0)} onClick={() => api.act('buySpares', { eid, item: k })}>Buy</button>
           </div>
         ))}
@@ -637,24 +639,24 @@ export function VendorPanel({ api, eid }: { api: Api; eid: string }) {
       <div className="console-col">
         <div className="console-h" style={{ display: 'flex', justifyContent: 'space-between' }}>
           <span>Outfitting · paid from secured cash</span>
-          <span style={{ color: 'var(--info)' }}>Secured: {pf.securedCash}</span>
+          <span style={{ color: 'var(--info)' }}>{`Secured: ${pf.securedCash}`}</span>
         </div>
         <div className="lbl" style={{ fontSize: 9, color: 'var(--muted)' }}>Pack needs a free slot. Parcel stays physical beside Mirela if your pack is full.</div>
         {Object.entries(VENDOR_SECURED).map(([k, v]) => (
           <div key={k} className="recipe-row" style={{ cursor: 'default', padding: '2px 0' }}>
             <Icon k={k} size={13} />
-            <span className="lbl" style={{ fontSize: 9, flex: 1 }}>{ITEMS[k].name} <span style={{ color: 'var(--muted)' }}>({r.vendorStock[k]})</span></span>
+            <span className="lbl" style={{ fontSize: 9, flex: 1 }}>{ITEMS[k].name} <span style={{ color: 'var(--muted)' }} title="In stock">{`(${r.vendorStock[k]} left)`}</span></span>
             <span className="chip" style={{ color: pf.securedCash >= v.price ? 'var(--brassLit)' : 'var(--muted)' }}>{v.price}</span>
             <button className="btn sm" disabled={pf.securedCash < v.price || r.vendorStock[k] <= 0 || spaceFor(r, 'inv', k) < 1} title={spaceFor(r, 'inv', k) < 1 ? 'No space in pack; choose Parcel instead' : pf.securedCash < v.price ? 'Not enough secured cash' : 'Put in pack'} onClick={() => api.act('buy', { eid, item: k })}>Pack</button>
             <button className="btn sm" title="Spawn a physical bulk-safe Parcel beside Mirela to load into a cart" disabled={pf.securedCash < v.price || r.vendorStock[k] <= 0} onClick={() => api.act('buy', { eid, item: k, id: `parcel-${api.now()}-${k}`, freight: true })}>Parcel</button>
           </div>
         ))}
         <div className="lbl" style={{ fontSize: 8, color: 'var(--muted)', marginTop: 2 }}>
-          Waiting parcels: <b style={{ color: 'var(--brassLit)' }}>{parcels}</b> · Purchases belong to this run and are wiped when it ends.
+          <span>Waiting parcels:</span> <b style={{ color: 'var(--brassLit)' }}>{parcels}</b>{' · '}<span>Purchases belong to this run and are wiped when it ends.</span>
         </div>
       </div>
     </div>
-  </Panel><InventoryPanel api={api} top={34} /></>;
+  </Panel><InventoryPanel api={api} /></>;
 }
 
 export function EscrowPanel({ api, eid }: { api: Api; eid: string }) {
@@ -698,7 +700,7 @@ export function EvacPanel({ api, eid }: { api: Api; eid: string }) {
       {trip ? evacBerthStatus(trip) : hw ? 'No service is registered at this berth.' : 'Classic evacuation beacon · leaving ends this run.'}
     </div>
     {trip && <>
-      <div className="lbl" style={{ fontSize: 8, color: 'var(--paper)' }}>Seats free: <b>{seatsLeft}</b> of {trip.capacity} · currently aboard: {aboard}</div>
+      <div className="lbl" style={{ fontSize: 8, color: 'var(--paper)' }}>{`Seats free: ${seatsLeft} of ${trip.capacity} · currently aboard: ${aboard}`}</div>
       <div className="lbl" style={{ fontSize: 8, color: 'var(--muted)', marginTop: 2 }}>
         {trip.phase === 'BOARDING'
           ? `Sails at ${sailing} or the moment the last seat is taken. Arrival is only certified when the vessel reaches safe water (~${S.transitHours ?? 4} h at sea).`
@@ -713,28 +715,28 @@ export function EvacPanel({ api, eid }: { api: Api; eid: string }) {
       {trip.phase==='BOARDING' && trip.vessel && (()=>{
         const hold=r.custody[trip.vessel.holdId];if(!hold)return null;
         const supplies=r.custody.inv.slots.filter((s):s is Stack=>!!s && !s.production && (s.key==='berries'||s.key==='spares'||s.key==='water_flask'&&(s.charge??0)>0));
-        return <div style={{fontSize:10}}>Hull {trip.vessel.hull} · Hold: {hold.slots.filter(Boolean).map(s=>s!.key==='water_flask'?`${s!.charge??0} water`:`${ITEMS[s!.key].name} ×${s!.qty}`).join(', ')||'empty'}
-          <div>{supplies.map(s=><button className="btn sm" key={s.uid} onClick={()=>api.act('supplyEvac',{eid,stackUid:s.uid})}>Load 1 {ITEMS[s.key].name}</button>)}</div></div>;
+        return <div style={{fontSize:10}}><span>{`Vessel hull ${trip.vessel.hull}`}</span>{' · '}<span>Hold:</span>{' '}<span>{hold.slots.filter(Boolean).map(s=>s!.key==='water_flask'?`${s!.charge??0} water`:`${ITEMS[s!.key].name} ×${s!.qty}`).join(', ')||'empty'}</span>
+          <div>{supplies.map(s=><button className="btn sm" key={s.uid} onClick={()=>api.act('supplyEvac',{eid,stackUid:s.uid})}>{`Load 1 ${ITEMS[s.key].name}`}</button>)}</div></div>;
       })()}
     </>}
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 5, margin: '5px 0' }}>
       <div className="console-col">
         <div className="console-h" style={{ color: 'var(--info)' }}>Preserved on Profile</div>
-        <div className="lbl" style={{ fontSize: 9, color: 'var(--info)' }}>Secured Cash: <b>{api.gs.profile.securedCash}</b></div>
+        <div className="lbl" style={{ fontSize: 9, color: 'var(--info)' }}>{`Secured Cash: ${api.gs.profile.securedCash}`}</div>
         <div className="lbl" style={{ fontSize: 8, color: 'var(--brassLit)', marginTop: 2 }}>
-          Elder Stones: <b>{r.elderStones.length}/6</b>{r.elderStones.length >= 6 ? ' ★ Crown of Six!' : ''}
+          {`Elder Stones: ${r.elderStones.length}/6`}{r.elderStones.length >= 6 ? ' ★ ' : ''}{r.elderStones.length >= 6 ? 'Crown of Six!' : ''}
         </div>
       </div>
       <div className="console-col">
         <div className="console-h" style={{ color: 'var(--bad)' }}>Wiped at Run End</div>
         <div className="lbl" style={{ fontSize: 9, color: cash ? 'var(--bad)' : 'var(--muted)' }}>
-          Unsecured Cash: <b>{cash}</b>{cash > 0 ? ' (LOST!)' : ''}
+          {`Unsecured Cash: ${cash}`}{cash > 0 ? ' ' : ''}{cash > 0 ? '(lost if you leave now)' : ''}
         </div>
         <div className="lbl" style={{ fontSize: 8, color: 'var(--muted)', marginTop: 2 }}>Gear, Cores, recipes, structures &amp; cargo.</div>
       </div>
     </div>
     {cash > 0 && <div className="lbl" style={{ fontSize: 8, color: 'var(--warn)', marginBottom: 4 }}>
-      You are carrying {cash} unsecured coin{cash === 1 ? '' : 's'}. Deposit them in your Escrow Chest before the run ends.
+      {`You are carrying ${cash} unsecured coin${cash === 1 ? '' : 's'}. Deposit them in your Escrow Chest before the run ends.`}
     </div>}
     {playerAboard ? <div className="flex gap-1">
       <div className="lbl" style={{ flex: 1, fontSize: 8, color: 'var(--info)' }}>You hold a seat. Stay at the berth until departure. Arrival ends the run.</div>
@@ -754,7 +756,7 @@ export function EvacPanel({ api, eid }: { api: Api; eid: string }) {
         const ashore = people.filter(h => h.state !== 'DEAD' && h.state !== 'EVACUATED' && h.state !== 'ON_VESSEL').length;
         const met = people.filter(h => (h.threat?.waves ?? 0) > 0).length;
         return <div className="lbl" style={{ fontSize: 8, color: 'var(--paper)' }}>
-          Ashore {ashore} · sailed {sailed} · lost {lost} · met an Elder {met}
+          {`Ashore ${ashore} · sailed ${sailed} · lost ${lost} · met an Elder ${met}`}
         </div>;
       })()}
       {Object.values(hw.elderPressure).length === 0
@@ -763,7 +765,7 @@ export function EvacPanel({ api, eid }: { api: Api; eid: string }) {
           const contacts = (e.events ?? []).filter(ev => ev.state === 'CONTACT');
           const last = contacts[contacts.length - 1];
           return <div key={e.elderId} className="lbl" style={{ fontSize: 8, color: contacts.length ? 'var(--bad)' : 'var(--muted)' }}>
-            {e.elderId}: {last
+            <span data-notr>{e.elderId}</span>{': '}{last
               ? `struck ${last.targetPoi ?? 'a settlement'} — ${last.affected?.humans ?? 0} hurt, ${last.affected?.downed ?? 0} down, ${last.affected?.structures ?? 0} structures`
               : e.march
                 ? `${e.march.sea ? 'crossing the sea toward' : 'walking toward'} ${e.march.targetPoi} — ${Math.max(0, Math.round(e.march.length - e.march.walked))} tiles away`

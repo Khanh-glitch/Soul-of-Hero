@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect, type CSSProperties, type ReactNode } from 'react';
 import { BAL, type Entity } from '../game/core';
 import { ITEMS, RECIPES, STRUCTS, isRecipeKnown, permitsDirectedResearch, CORE_STUDY, stationBurnable } from '../game/catalog';
 import { C, countItem, recipeOutputs, spaceFor, oilAvailability, OIL_TEXT } from '../game/engine';
@@ -8,6 +8,17 @@ import { craftReadiness } from '../game/action-readiness';
 import { recoveryFits } from '../game/recycler';
 import { StationService } from './StationService';
 import { ResearchFamilies } from './ResearchFamilies';
+
+/** A scroll column that says so: while blocks lie under its lower edge, a "More below" bar sits on that edge. */
+function ScrollCol({ style, children }: { style: CSSProperties; children: ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null); const [more, setMore] = useState(false);
+  const check = () => { const el = ref.current; if (el) setMore(el.scrollHeight - el.scrollTop - el.clientHeight > 6); };
+  useEffect(check);
+  return <div ref={ref} className="scroll" style={style} onScroll={check}>
+    {children}
+    {more && <button type="button" className="scroll-more" onClick={() => ref.current?.scrollTo({ top: ref.current.scrollHeight })}>More below</button>}
+  </div>;
+}
 
 // ============================================================================
 // STATION CONSOLE — one grammar for every production machine and for Research.
@@ -177,7 +188,7 @@ export function StationConsole({ api, eid, initialTab = 'make' }: { api: Api; ei
       </div>
 
       {/* -------- right: input → output, then commit -------- */}
-      <div className="scroll" style={{ width: 132, maxHeight: 158, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 4 }}>
+      <ScrollCol style={{ width: 132, maxHeight: 158, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 4 }}>
         {!research && sel && (() => {
           const rc = RECIPES[sel];
           const readiness = craftReadiness(r, sel, api.now(), eid);
@@ -219,7 +230,7 @@ export function StationConsole({ api, eid, initialTab = 'make' }: { api: Api; ei
           <button className="btn sm" style={{ width: '100%', marginTop: 3 }} disabled={!outUsed} onClick={takeAll}>Take all</button>
           {research && outUsed > 0 && <div className="lbl" style={{ fontSize: 8, color: 'var(--brassLit)', marginTop: 2 }}>Take a blueprint, then use it in the pack to learn it.</div>}
         </div>
-      </div>
+      </ScrollCol>
     </div>}
 
     {/* ---- pack strip: physical transfer, no remote access ---- */}

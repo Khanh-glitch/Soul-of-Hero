@@ -7,6 +7,14 @@ import { barterPrice, demandableGoods, canPointOut, humanRepairOffers, humanCont
 import { BAL, type Stack } from '../game/core';
 import { CREATURES } from '../game/catalog';
 import type { HumanRecord } from '../game/humanworld';
+import { POI_ARCH } from '../veyra05/poi-arch.generated';
+
+/** Settlement ids ("po_greywater") are engine keys; a player reads the place name. */
+const placeName = (poi: string | undefined) => poi ? POI_ARCH[poi]?.name ?? poi.replace(/^po_/, '').replace(/_/g, ' ') : '';
+const namePlaces = (text: string) => text.replace(/\bpo_[a-z0-9_]+\b/g, id => placeName(id));
+const STATE_WORD: Record<string, string> = { IDLE: 'at rest', MOVING: 'on the move', WORKING: 'at work', FIGHTING: 'in a fight', DOWNED: 'down', BLOCKED: 'held up', DEAD: 'dead', EVACUATED: 'evacuated', ON_VESSEL: 'aboard the vessel' };
+const stateWord = (state: string) => STATE_WORD[state] ?? state.toLowerCase();
+const JOB_WORD = (job: string) => job.replace(/_/g, ' ');
 
 const contactActions = {
   Talk: ['Talk', 'Ask a question. This does not give an order or exchange items.'],
@@ -47,7 +55,7 @@ function ContactPanel({ api, actorId, onClose }: { api: Api; actorId: string; on
   const playerStacks = r?.custody.inv.slots.map((s, i) => s ? { s, i } : null).filter((v): v is {s: Stack; i:number} => v !== null) ?? [];
   const humanStacks = h && r ? humanPack(r, h).slots.map((s, i) => s ? { s, i } : null).filter((v): v is {s: Stack; i:number} => v !== null) : [];
   const act = (type: string, extra: Record<string, unknown> = {}) => api.act(type, { actorId, ...extra });
-  const respond = (type: string, extra: Record<string, unknown> = {}) => { const result = act(type, extra); setReply(result.ok ? result.msg ?? 'No response.' : result.reason); };
+  const respond = (type: string, extra: Record<string, unknown> = {}) => { const result = act(type, extra); setReply(namePlaces(result.ok ? result.msg ?? 'No response.' : result.reason)); };
   const selectedPlayer = playerStacks.find(v => v.i === playerSlot) ?? playerStacks[0];
   const personal=section==='Confront'||h.state==='FIGHTING'?demandableGoods(r,h):[];
   const choice=personal.find(g=>g.s.uid===demandUid);
@@ -57,7 +65,7 @@ function ContactPanel({ api, actorId, onClose }: { api: Api; actorId: string; on
     setTradePending(true);
     try {
       const result=act('humanExchange',{offer,ask,revision:review});
-      setReply(result.ok ? result.msg ?? 'Goods exchanged.' : result.reason);
+      setReply(namePlaces(result.ok ? result.msg ?? 'Goods exchanged.' : result.reason));
       if(result.ok){setReview(undefined);setOffer([]);setAsk([]);}
     } finally {setTradePending(false);}
   };
@@ -77,13 +85,13 @@ function ContactPanel({ api, actorId, onClose }: { api: Api; actorId: string; on
   const targets = visible === 'Companion' ? [...r.creatures,...Object.values(hw.people)].filter(t=>canPointOut(r,h,t,api.now())).map(t=>
     'actorId' in t ? {id:t.actorId,name:t.name} : {id:t.id,name:CREATURES[t.type]?.name??'Creature'}) : [];
   const visibleTarget = targets.find(t=>t.id===orderTarget)?.id ?? '';
-  return <Panel title={`${h.name} · ${h.occupation}`} onClose={onClose} className="scroll" style={{ right: 6, top: 42, width: 242, maxHeight: 276, overflowY: 'auto', fontSize: 11, lineHeight: 1.2 }} testId="human-panel">
+  return <Panel title={<><span data-notr>{h.name}</span>{' · '}<span>{JOB_WORD(h.occupation)}</span></>} onClose={onClose} className="scroll" style={{ right: 6, top: 42, width: 242, maxHeight: 276, overflowY: 'auto', fontSize: 11, lineHeight: 1.2 }} testId="human-panel">
     <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 5 }}>
       <HumanPortrait h={h} simSec={(r.clock.simMs ?? 0) / 1000} />
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ color: '#d9c99c', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{h.community ? hw.communities[h.community]?.poi : 'Traveler'} · {h.state.toLowerCase()}</div>
+        <div style={{ color: '#d9c99c', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}><span data-notr={h.community ? '' : undefined}>{h.community ? placeName(hw.communities[h.community]?.poi) : 'Traveler'}</span>{' · '}<span>{stateWord(h.state)}</span></div>
         <div style={{ height: 4, background: '#352d2b', margin: '3px 0' }}><div style={{ width: `${Math.max(0, 100 * h.hp / h.maxHp)}%`, height: '100%', background: h.hp < h.maxHp * 0.35 ? '#ca5a4e' : '#72a66b' }} /></div>
-        <div style={{ color: '#b8c6a8' }}>Trust {Math.round(h.trust ?? 50)} · {Math.round(h.hp)}/{h.maxHp} HP</div>
+        <div style={{ color: '#b8c6a8' }}>{`Trust ${Math.round(h.trust ?? 50)} · Health ${Math.round(h.hp)}/${h.maxHp}`}</div>
       </div>
     </div>
     {sections.length > 1 && <label style={{display:'block'}}>What do you want to do?
@@ -114,8 +122,8 @@ function ContactPanel({ api, actorId, onClose }: { api: Api; actorId: string; on
     {reply && <div role="status" aria-live="polite" style={{ color: '#ffe4a2', borderLeft: '2px solid #bd8d47', padding: '3px 5px', margin: '3px 0 5px', lineHeight: 1.25 }}>{reply}</div>}
     {visible==='Help'&&<div style={{margin:'4px 0'}}>
       <div style={{fontWeight:700}}>Help · urgent needs</div>
-      {playerStacks.filter(({s})=>!s.production && (['bandage','herb'].includes(s.key)&&(isDown||h.wounds.some(w=>!w.treated)) || ITEMS[s.key]?.food?.hunger&&h.hunger<35&&!isDown || ITEMS[s.key]?.waterContainer&&(s.charge??0)>0&&h.thirst<35&&(!isDown||downedByThirst(h)))).map(({s})=><button key={s.uid} className="btn sm" disabled={!!hw.playerAid} onClick={()=>respond('humanAid',{stackUid:s.uid})}>Offer {ITEMS[s.key].name}</button>)}
-      {humanRepairOffers(r,h,api.now()).map(({item,station,cost})=><button key={item.uid} className="btn sm" onClick={()=>respond('humanRepair',{stackUid:item.uid,eid:station.id})}>Repair {ITEMS[item.key].name} · spend {cost.map(([key,qty])=>`${qty} ${ITEMS[key].name}`).join(', ')}</button>)}
+      {playerStacks.filter(({s})=>!s.production && (['bandage','herb'].includes(s.key)&&(isDown||h.wounds.some(w=>!w.treated)) || ITEMS[s.key]?.food?.hunger&&h.hunger<35&&!isDown || ITEMS[s.key]?.waterContainer&&(s.charge??0)>0&&h.thirst<35&&(!isDown||downedByThirst(h)))).map(({s})=><button key={s.uid} className="btn sm" disabled={!!hw.playerAid} onClick={()=>respond('humanAid',{stackUid:s.uid})}>{`Offer ${ITEMS[s.key].name}`}</button>)}
+      {humanRepairOffers(r,h,api.now()).map(({item,station,cost})=><button key={item.uid} className="btn sm" onClick={()=>respond('humanRepair',{stackUid:item.uid,eid:station.id})}>{`Repair ${ITEMS[item.key].name} · spend ${cost.map(([key,qty])=>`${qty} ${ITEMS[key].name}`).join(', ')}`}</button>)}
       {hw.playerAid?.actorId===actorId&&<div role="status">Helping · remain beside them…</div>}
       {!isDown&&h.hunger>=35&&h.thirst>=35&&!h.wounds.some(w=>!w.treated)&&<div style={{opacity:.7}}>No urgent food, water or medical need.</div>}
     </div>}
@@ -127,7 +135,7 @@ function ContactPanel({ api, actorId, onClose }: { api: Api; actorId: string; on
           <TradeSide title="Their goods" stacks={humanStacks} lines={ask} onChange={lines=>{setReview(undefined);setAsk(lines);}}/>
         </div>
         <div style={{marginTop:4,color:evaluation?.ok?'#a8d8a0':'#ffe4a2'}}>{evaluation?.reason}</div>
-        {evaluation?.offeredValue!==undefined && <div>Value: offer {barterPrice(evaluation.offeredValue)} · ask {evaluation.requestedValue!==undefined&&barterPrice(evaluation.requestedValue)}</div>}
+        {evaluation?.offeredValue!==undefined && <div>{`Value: offer ${barterPrice(evaluation.offeredValue)} · ask ${evaluation.requestedValue!==undefined ? barterPrice(evaluation.requestedValue) : '—'}`}</div>}
         {evaluation?.reason.startsWith('Counter-offer') && <button className="btn sm" onClick={()=>{
           const counter=counterHumanBarter(r,h,offer,ask);
           if(!counter){setReply('No workable alternative using these goods. Change your selection.');return;}
@@ -140,7 +148,7 @@ function ContactPanel({ api, actorId, onClose }: { api: Api; actorId: string; on
       </> : <div>Both people need a carried item. Community stores are not personal trade inventory.</div>}
     </> : null}
     {visible==='Companion' && <div style={{marginTop:5,borderTop:'1px solid #66543c',paddingTop:4}}>
-      <div style={{color:'#a8d8a0'}}>Companion · {h.intent?.kind==='follow'?'Following':h.intent?.target==='home'?'Returning home':h.state.toLowerCase()}</div>
+      <div style={{color:'#a8d8a0'}}><span>Companion</span>{' · '}<span>{h.intent?.kind==='follow'?'Following':h.intent?.target==='home'?'Returning home':stateWord(h.state)}</span></div>
       <label>Order <select value={order} onChange={e=>setOrder(e.target.value as typeof order)} style={{width:'100%'}}>
         {Object.entries({follow:'Follow me',hold:'Wait here',retreat:'Fall back',home:'Return home',carry:'Follow with cargo',defend:'Guard me',engage:'Attack a nearby target'}).map(([id,label])=><option key={id} value={id}>{label}</option>)}
       </select></label>
@@ -150,18 +158,18 @@ function ContactPanel({ api, actorId, onClose }: { api: Api; actorId: string; on
       </select>}
       <button className="btn sm" disabled={order==='engage'&&!visibleTarget} onClick={()=>respond('humanOrder',order==='engage'?{order,target:visibleTarget}:{order})}>Give order</button>
       <details><summary>Manage carried items</summary>
-      <div style={{marginTop:4}}>Cargo · {cargo.slots.filter(Boolean).length}/{cargo.slots.length} slots · {cargo.slots.reduce((n,s)=>n+(s?ITEMS[s.key].w*s.qty:0),0).toFixed(1)}/{BAL.cart.maxWeight} kg</div>
+      <div style={{marginTop:4}}>{`Cargo · ${cargo.slots.filter(Boolean).length}/${cargo.slots.length} slots · ${cargo.slots.reduce((n,s)=>n+(s?ITEMS[s.key].w*s.qty:0),0).toFixed(1)}/${BAL.cart.maxWeight} kg`}</div>
       <label>Quantity <input type="number" min="1" step="1" value={cargoQty} placeholder="All" style={{width:48}} onChange={e=>setCargoQty(e.target.value)} /></label>
       {selectedPlayer&&<select aria-label="Companion cargo item" value={selectedPlayer.i} onChange={e=>setPlayerSlot(Number(e.target.value))}>{playerStacks.map(({s,i})=><option key={s.uid} value={i}>{ITEMS[s.key]?.name} ×{s.qty}</option>)}</select>}
-      {selectedPlayer&&<button className="btn sm" disabled={cargoUnavailable(selectedPlayer.s)} onClick={()=>respond('humanCargo',{direction:'give',stackUid:selectedPlayer.s.uid,qty:cargoCount(selectedPlayer.s)})}>Carry {ITEMS[selectedPlayer.s.key]?.name} ×{cargoCount(selectedPlayer.s)}</button>}
-      {r.custody[h.inv.cartId]?.slots.filter((s):s is Stack=>!!s).map(s=><button key={s.uid} className="btn sm" disabled={cargoUnavailable(s)} onClick={()=>respond('humanCargo',{direction:'return',stackUid:s.uid,qty:cargoCount(s)})}>Take back {ITEMS[s.key]?.name} ×{cargoCount(s)}</button>)}
+      {selectedPlayer&&<button className="btn sm" disabled={cargoUnavailable(selectedPlayer.s)} onClick={()=>respond('humanCargo',{direction:'give',stackUid:selectedPlayer.s.uid,qty:cargoCount(selectedPlayer.s)})}>{`Carry ${ITEMS[selectedPlayer.s.key]?.name} ×${cargoCount(selectedPlayer.s)}`}</button>}
+      {r.custody[h.inv.cartId]?.slots.filter((s):s is Stack=>!!s).map(s=><button key={s.uid} className="btn sm" disabled={cargoUnavailable(s)} onClick={()=>respond('humanCargo',{direction:'return',stackUid:s.uid,qty:cargoCount(s)})}>{`Take back ${ITEMS[s.key]?.name} ×${cargoCount(s)}`}</button>)}
       {h.community && hw.communities[h.community]?.storeEntityId && <button className="btn sm" disabled={!!h.intent?.delivery || !r.custody[h.inv.cartId]?.slots.some(Boolean)} onClick={()=>respond('humanOrder',{order:'carry',target:hw.communities[h.community!].storeEntityId})}>Deliver load to home warehouse</button>}
       {h.intent?.delivery && <div>Delivering to the warehouse · order “Wait here” to cancel</div>}
       </details>
       <button className="btn sm" onClick={()=>respond('humanDismiss')}>End companionship</button>
       {h.intent?.blockReason&&<div style={{color:'#e69484'}}>{h.intent.blockReason}</div>}
     </div>}
-    {visible==='Companion' && h.followOrder && <div style={{ opacity: .75, marginTop: 3 }}>{h.followOrder.result}: {h.followOrder.reason}</div>}
+    {visible==='Companion' && h.followOrder && <div style={{ opacity: .75, marginTop: 3 }}><span>{h.followOrder.result}</span>{': '}<span>{namePlaces(h.followOrder.reason)}</span></div>}
   </Panel>;
 }
 
@@ -174,7 +182,7 @@ function TradeSide({title,stacks,lines,onChange}:{title:string;stacks:{s:Stack;i
         <div style={{display:'flex',gap:3,alignItems:'center'}}>
           <button className="btn sm" disabled={!qty} aria-label={`${title}: remove one ${name}`} onClick={()=>change(s,qty-1)}>−</button>
           <span>{qty}</span><button className="btn sm" disabled={qty>=s.qty||!!s.production} aria-label={`${title}: add one ${name}`} onClick={()=>change(s,qty+1)}>+</button>
-          {s.dur!==undefined && <small>{s.dur} dur.</small>}{s.charge!==undefined && <small>{s.charge} charge</small>}
+          {s.dur!==undefined && <small>{`${s.dur} dur.`}</small>}{s.charge!==undefined && <small>{`${s.charge} charge`}</small>}
         </div></div>;})}
   </div>;
 }

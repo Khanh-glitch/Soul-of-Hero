@@ -756,7 +756,7 @@ export function ExpeditionMap({ api, onTeleportSelect, teleportTarget, qaSession
               </div>
 
               {inspected.bagHere && <div className="map-inspector__tag bad">
-                <b>Death Bag</b> · {inspected.bagHere.stacks.length} stack{inspected.bagHere.stacks.length === 1 ? '' : 's'} ({inspected.bagHere.cause})
+                <b>Death Bag</b>{` · ${inspected.bagHere.stacks.length} stack${inspected.bagHere.stacks.length === 1 ? '' : 's'} (${inspected.bagHere.cause})`}
               </div>}
 
               {inspected.cab && inspected.cabForecast && <div className={`map-inspector__tag ${inspected.cabForecast.funded ? 'ok' : 'warn'}`}>

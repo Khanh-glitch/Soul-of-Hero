@@ -30,7 +30,7 @@ import { sfx, setAmbience, initAudio, setVolume } from '../game/audio';
 import { save, saveSync, saveDetailed, lastSaveOutcome } from '../game/persist';
 import { prebuildRegions, regionPrebuildStats } from '../veyra05/region-prebuild';
 import { autosaveDecision, AUTOSAVE_MIN_MS, AUTOSAVE_STILL_MS } from '../game/autosave-policy';
-import { Slot, Bar, Icon, Mark, mkIntent, type Api, type PanelState } from './common';
+import { Slot, Bar, Icon, Mark, PanelGuard, mkIntent, type Api, type PanelState } from './common';
 import { Vitals, UrgentAlerts, WorldClock, Hotbar, RigStatus, ThreatBar, PresentationPanel, useVisualPrefs, Glyph } from './hud';
 import { setListener, setEnvironment, machineState, setMood, tickMusic, stopAllMachines } from '../game/audio';
 import { getPrefs, setPrefs, applyCssTheme, computeStageFit, isTouchDevice, resolveHudScale } from '../visual/direction';
@@ -818,6 +818,8 @@ export default function Game({
   //  · combat (Elder in range, Core aim) withdraws comfort cards and the airdrop strip, keeps vitals + boss bar;
   //  · at most ONE context card (heat OR home) is shown, chosen by urgency; build mode prefers home.
   const fullScreen = panel?.kind === 'inv' || panel?.kind === 'craft' || panel?.kind === 'report' || panel?.kind === 'map' || panel?.kind === 'notes' || panel?.kind === 'journey';
+  // a chest, a station or the trader opens the pack on the right, over the clock plate: the plate steps aside
+  const sidePack = panel?.kind === 'container' || panel?.kind === 'vendor';
   const combatFocus = !!engaged || !!coreAim;
   const thermal = thermalStatusView(r, thermalEnvNow(r, now), p.warmth);
   const heatUrgent = thermal.cold || thermal.warmth < thermal.coldThreshold + 12 || (thermal.warmth < 70 && thermal.heaters.some(h => h.status === 'out_of_fuel' || h.status === 'blocked_by_wall'));
@@ -840,7 +842,7 @@ export default function Game({
   if (anchorKey && (anchorCache.current.key !== anchorKey || now - anchorCache.current.t > 500)) anchorCache.current = { t: now, key: anchorKey, v: findAnchor(r, trackView!.anchor, now) };
   const anchor = anchorKey ? anchorCache.current.v : null;
   const nearAnchor = !!anchor && trackView?.anchor?.kind === 'struct' && Math.hypot(anchor.x - p.x, anchor.y - p.y) < 5 * TILE;
-  const wmMode: WaymarkMode = !calmish ? 'glyph' : peek || nearAnchor || (buildMode && !!trackView?.focus?.includes('build')) ? 'open' : 'compact';
+  const wmMode: WaymarkMode = !calmish ? 'glyph' : peek || (nearAnchor && !buildMode) || (buildMode && !!trackView?.focus?.includes('build')) ? 'open' : 'compact';
   const blocked = trackView?.anchor?.kind === 'struct' && !anchor && !trackView.done ? (lang === 'vi' ? `Cần ${STRUCTS[trackView.anchor.types[0]]?.name ?? 'trạm'} của chính bạn trước — Xây [B].` : `Needs your own ${STRUCTS[trackView.anchor.types[0]]?.name ?? 'station'} first — Build [B].`) : null;
   const shownIssues = issues.filter(i => snoozed[i.id] !== i.sig);
   const unseenCount = journey.chronicle.filter(c => !c.seen).length;
@@ -864,19 +866,19 @@ export default function Game({
       <div className="hud hud-col hud-col--left" style={{ left: 4, top: 4, visibility: fullScreen ? 'hidden' : undefined }} onMouseDown={e => e.stopPropagation()}>
         <Vitals r={r} now={now} slim={!!panel} />
         {touchOn && !panel && !p.dead && !qaOpen && <TouchScreens api={touchApi} building={buildMode || !!buildType || reclaim || repairMode || upgradeMode} />}
-        {isVeyra05 && !fullScreen && (() => { const [ax, ay] = playerGlobalAu(r); return <div className="chip" style={{ color: 'var(--info)', alignSelf: 'flex-start' }} title="Your position on the continent. The chart [M] uses the same numbers.">AU {ax.toFixed(0)}, {ay.toFixed(0)}{activeFloor(r) !== 0 ? ` · Floor ${activeFloor(r)}` : ''}{veyraWw && activeFloor(r) !== 0 ? ` · ${zone}` : ''}</div>; })()}
+        {isVeyra05 && !fullScreen && (() => { const [ax, ay] = playerGlobalAu(r); return <div className="chip" style={{ color: 'var(--info)', alignSelf: 'flex-start' }} title="Your position on the continent. The chart [M] uses the same numbers."><span data-notr>{`AU ${ax.toFixed(0)}, ${ay.toFixed(0)}`}</span>{activeFloor(r) !== 0 ? ` · Floor ${activeFloor(r)}` : ''}{veyraWw && activeFloor(r) !== 0 ? ` · ${zone}` : ''}</div>; })()}
         {!fullScreen && <UrgentAlerts r={r} cold={thermal.cold} />}
         {!fullScreen && !p.dead && <IssueRail issues={shownIssues} px={p.x} py={p.y} compact={combatFocus} onSnooze={i => setSnoozed(sn => ({ ...sn, [i.id]: i.sig }))} />}
         {contextCard === 'heat' && <ThermalStatusCard r={r} now={now} inline />}
       </div>
 
       {/* TOP-RIGHT COLUMN: Clock + Quick Controls + Ragnarok + Digest / Home / Field Notes */}
-      <div className="hud hud-col hud-col--right" style={{ right: 4, top: 4, visibility: fullScreen ? 'hidden' : undefined }} onMouseDown={e => e.stopPropagation()}>
+      <div className="hud hud-col hud-col--right" style={{ right: 4, top: 4, visibility: fullScreen || sidePack ? 'hidden' : undefined }} onMouseDown={e => e.stopPropagation()}>
         <WorldClock r={r} now={now} secured={gs.profile.securedCash} slim={!!panel} />
         <div style={{ display: panel ? 'none' : 'flex', gap: 3, alignItems: 'center' }}>
           {ph === 'calm' && hrs > 230 && <span className="chip pulse" style={{ color: 'var(--warn)' }}>RAGNAROK IN {(264 - hrs).toFixed(1)}h</span>}
           {!panel && !buildMode && contacts.length > 0 && <select aria-label="Nearby survivors" value="" className="btn sm" style={{maxWidth:120}} onChange={e => { if (e.target.value) setPanel({kind:'human', actorId:e.target.value}); }}>
-            <option value="" disabled>Survivors ({contacts.length})</option>
+            <option value="" disabled>{`Survivors (${contacts.length})`}</option>
             {contacts.map(h => <option key={h.actorId} value={h.actorId}>{h.name}{h.following ? ' · companion' : h.state === 'DOWNED' ? ' · downed' : ''}</option>)}
           </select>}
           {qaMode && <button className={`btn sm ${qaOpen ? 'gold' : ''}`} title="Visual Experience QA Lab [F9]" onClick={() => setQaOpen(v => !v)}>QA [F9]</button>}
@@ -890,7 +892,7 @@ export default function Game({
         {!panel && !combatFocus && <RagnarokStrip r={r} now={now} secured={gs.profile.securedCash} />}
         {!panel && !qaOpen && returnDigest && <ReturnDigest report={returnDigest} onExpand={() => { setPanel({ kind: 'report', lines: [], report: returnDigest }); setReturnDigest(null); }} onDismiss={() => setReturnDigest(null)} />}
         {contextCard === 'home' && <HomeStatusCard r={r} px={p.x} py={p.y} inline />}
-        {wmVisible && !panel && <Waymark view={trackView} mode={wmMode} store={journey} stamp={activeStamp} blocked={blocked} lang={lang} onToggle={() => setPeek(v => !v)} onUntrack={() => track(null)} onOpenJournal={() => setPanel({ kind: 'journey' })} onJump={handleJump} />}
+        {wmVisible && !panel && <Waymark touch={touchOn} view={trackView} mode={wmMode} store={journey} stamp={activeStamp} blocked={blocked} lang={lang} onToggle={() => setPeek(v => !v)} onUntrack={() => track(null)} onOpenJournal={() => setPanel({ kind: 'journey' })} onJump={handleJump} />}
         {!panel && !buildMode && !combatFocus && !qaOpen && !returnDigest && !touchOn && contextCard !== 'home' && fieldEval.active && !activeStamp && wmMode !== 'open' && !(trackView && ['first_landfall', 'pack_and_craft'].includes(fieldEval.active.id)) && (
           <FieldNoteCard
             note={fieldEval.active}
@@ -941,7 +943,8 @@ export default function Game({
       {!panel && !feed.length && <div className="absolute log-fallback" style={{ left: 4, bottom: `calc(${rigBottom}px * var(--hud-zoom, 1))` }}>{r.log.slice(-2).map((l, i) => { const age = now - l.t; if (age > 7500) return null; return <div key={i} className="logline" style={{ opacity: Math.max(0, 1 - age / 7500), color: l.tone === 'gold' ? 'var(--brassLit)' : l.tone === 'red' ? 'var(--bad)' : l.tone === 'blue' ? 'var(--info)' : 'var(--paper)' }}>{l.msg}</div>; })}</div>}
 
       {/* full-screen toast rail (when a modal covers the bottom hotbar) */}
-      {fullScreen && <div className="absolute toast-rail" style={{ left: 0, right: 0, top: 26, pointerEvents: 'none', zIndex: 60 }}>{toasts.filter(t => now - t.t < 3200).map(t => <div key={t.id} className={`toast toastin ${t.tone === 'bad' ? 'bad' : t.tone === 'ok' ? 'ok' : ''}`}><span className="toast__mark">{t.tone === 'bad' ? '✕' : t.tone === 'ok' ? '✓' : '•'}</span><span>{t.text}</span></div>)}</div>}
+      {/* under a full-screen panel the notices sit at the foot of the screen: the top row holds its tabs and the close button */}
+      {fullScreen && <div className="absolute toast-rail" style={{ left: 0, right: 0, bottom: 6, pointerEvents: 'none', zIndex: 60 }}>{toasts.filter(t => now - t.t < 3200).map(t => <div key={t.id} className={`toast toastin ${t.tone === 'bad' ? 'bad' : t.tone === 'ok' ? 'ok' : ''}`}><span className="toast__mark">{t.tone === 'bad' ? '✕' : t.tone === 'ok' ? '✓' : '•'}</span><span>{t.text}</span></div>)}</div>}
 
       {/* BOTTOM-CENTER STACK: Toasts -> Core Reserve Strip -> Quickbar / BuildBar */}
       <div className="hud" style={{ left: '50%', transform: 'translateX(-50%)', bottom: 4, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, zIndex: 25 }} onMouseDown={e => e.stopPropagation()}>
@@ -951,7 +954,8 @@ export default function Game({
           : !panel && !p.dead && <Hotbar r={r} onPick={i => { p.active = i; sfx({ type: 'ui' }); rerender(); }} onUse={i => act('useItem', { slot: i })} onOpenPack={() => { fieldActionsRef.current.add('survivor'); setPanel({ kind: 'inv' }); sfx({ type: 'ui' }); }} />}
       </div>
 
-      {/* panels */}
+      {/* panels: a panel that throws is closed with a notice; the island keeps running underneath */}
+      <PanelGuard resetKey={panel ? `${panel.kind}:${panel.eid ?? panel.actorId ?? ''}` : ''} onError={() => { setPanel(null); toast('That panel could not be shown and was closed. Your game is still running.', 'bad'); }}>
       {(panel?.kind === 'inv' || panel?.kind === 'craft') && <SurvivorScreen api={api} initial="all" initialView={panel.kind === 'craft' ? 'work' : 'pack'} focusRecipe={panel.recipe} />}
       {panel?.kind === 'container' && panel.eid && <ContainerPanel api={api} eid={panel.eid} />}
       {panel?.kind === 'map' && <MapPanel api={api} qaSession={qaMode} teleportTarget={spiritTarget.current?.uid===activeStack(r)?.uid?spiritTarget.current:null} onTeleportSelect={activeStack(r)?.key==='core_demon' ? (x,y)=>{const reason=spiritDestination(r,x,y);if(reason){toast(reason,'bad');return;}spiritTarget.current={uid:activeStack(r)!.uid,x,y};toast('Destination set. Close the map, then hold and release E.','ok');} : undefined} />}
@@ -982,6 +986,7 @@ export default function Game({
       {panel?.kind === 'rest' && panel.eid && <RestPanel api={api} eid={panel.eid} />}
       {panel?.kind === 'evac' && panel.eid && <EvacPanel api={api} eid={panel.eid} />}
       {panel?.kind === 'human' && panel.actorId && <HumanPanel key={panel.actorId} api={api} actorId={panel.actorId} onClose={() => setPanel(null)} />}
+      </PanelGuard>
 
       <DragGhost />
       {p.dead && <DeathRecoveryOverlay gs={gs} onRespawn={() => act('respawn')} />}

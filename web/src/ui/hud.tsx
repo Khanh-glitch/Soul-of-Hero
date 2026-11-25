@@ -162,9 +162,9 @@ export function WorldClock({ r, now, secured, slim = false }: { r: RunState; now
       </svg>
       <div style={{ lineHeight: 1 }}>
         <div className="lbl" style={{ fontSize: 11, color: 'var(--brassLit)' }}>{hh}:{mm}</div>
-        <div className="lbl" style={{ fontSize: 8, color: 'var(--muted)' }}>Day {day} / 14</div>
+        <div className="lbl" style={{ fontSize: 8, color: 'var(--muted)', whiteSpace: 'nowrap' }}>{`Day ${day} / 14`}</div>
       </div>
-      <span className="chip" style={{ color: phaseCol, marginLeft: 'auto' }}>{ph === 'calm' ? 'CALM' : ph === 'danger' ? 'WAKING' : 'RAGNAROK'}</span>
+      <span className="chip" style={{ color: phaseCol, marginLeft: 'auto', whiteSpace: 'nowrap' }}>{ph === 'calm' ? 'CALM' : ph === 'danger' ? 'WAKING' : 'RAGNAROK'}</span>
     </div>
     {!slim && <><div className="rule" style={{ margin: '3px 0 2px' }} />
     <div className="lbl" style={{ fontSize: 8, display: 'flex', justifyContent: 'space-between', color: 'var(--muted)' }}>

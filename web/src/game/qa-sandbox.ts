@@ -370,7 +370,7 @@ export function buildQaSandbox(
     r.entities[cashId] = { id: cashId, kind: 'cash', x: vendor.x + 18, y: vendor.y + 6, tx: vendor.tx, ty: vendor.ty, c: cashBox.id, minted: true, stock: { cash: 35 }, label: 'Ragnarok Cash cache · staged' };
     addItem(r, 'inv', 'rcash', 45);
     const evacSpot = findOpenTile(r, ptx, pty, 5);
-    r.entities[`qa_evac_${r.nextId++}`] = { id: `qa_evac_${r.nextId}`, kind: 'evac', x: evacSpot.tx * TILE + 8, y: evacSpot.ty * TILE + 8, tx: evacSpot.tx, ty: evacSpot.ty, label: 'Evacuation Beacon · QA' };
+    r.entities[`qa_evac_${r.nextId}`] = { id: `qa_evac_${r.nextId++}`, kind: 'evac', x: evacSpot.tx * TILE + 8, y: evacSpot.ty * TILE + 8, tx: evacSpot.tx, ty: evacSpot.ty, label: 'Evacuation Beacon · QA' };
 
     // Targets are QA-only sparring fixtures. Their combat, hitboxes and damage are live sim behavior.
     r.creatures.push(
@@ -442,17 +442,17 @@ export function buildQaSandbox(
     const chestSpot = findOpenTile(r, ptx, pty, 5);
     const cashC = mkContainer(r, 'cash', 2);
     cashC.slots[0] = mkStack(r, 'rcash', 35);
-    r.entities[`qa_cash_${r.nextId++}`] = { id: `qa_cash_${r.nextId}`, kind: 'cash', x: chestSpot.tx * TILE + 8, y: chestSpot.ty * TILE + 8, tx: chestSpot.tx, ty: chestSpot.ty, c: cashC.id, minted: true, stock: { cash: 35 } };
+    r.entities[`qa_cash_${r.nextId}`] = { id: `qa_cash_${r.nextId++}`, kind: 'cash', x: chestSpot.tx * TILE + 8, y: chestSpot.ty * TILE + 8, tx: chestSpot.tx, ty: chestSpot.ty, c: cashC.id, minted: true, stock: { cash: 35 } };
 
     // Spawn Mirela Trader, an owned Cabinet + Escrow Chest, and an Evacuation Beacon nearby
     const vSpot = findOpenTile(r, ptx, pty, 6);
-    r.entities[`qa_vendor_${r.nextId++}`] = { id: `qa_vendor_${r.nextId}`, kind: 'vendor', x: vSpot.tx * TILE + 8, y: vSpot.ty * TILE + 8, tx: vSpot.tx, ty: vSpot.ty, label: 'Mirela the Trader' };
+    r.entities[`qa_vendor_${r.nextId}`] = { id: `qa_vendor_${r.nextId++}`, kind: 'vendor', x: vSpot.tx * TILE + 8, y: vSpot.ty * TILE + 8, tx: vSpot.tx, ty: vSpot.ty, label: 'Mirela the Trader' };
 
     placeStruct(r, 'claim', ptx - 2, pty + 1, { cabinet: { credit: {}, legacy: false } });
     placeStruct(r, 'escrow', ptx - 1, pty + 1);
 
     const evSpot = findOpenTile(r, ptx, pty, 7);
-    r.entities[`qa_evac_${r.nextId++}`] = { id: `qa_evac_${r.nextId}`, kind: 'evac', x: evSpot.tx * TILE + 8, y: evSpot.ty * TILE + 8, tx: evSpot.tx, ty: evSpot.ty, label: 'Evacuation Beacon' };
+    r.entities[`qa_evac_${r.nextId}`] = { id: `qa_evac_${r.nextId++}`, kind: 'evac', x: evSpot.tx * TILE + 8, y: evSpot.ty * TILE + 8, tx: evSpot.tx, ty: evSpot.ty, label: 'Evacuation Beacon' };
 
     r.elderStones = ['stone_frost', 'stone_magma', 'stone_grove'];
     r.elderStones.forEach(sk => addItem(r, 'inv', sk, 1));
@@ -548,7 +548,7 @@ export function triggerQaEvent(
       if (m) { m.hp = 0; m.state = 'dead'; m.t = 0; }
       const dropC = mkContainer(r, 'drop', 1);
       dropC.slots[0] = mkStack(r, d.stone, 1);
-      r.entities[`qa_stone_${r.nextId++}`] = { id: `qa_stone_${r.nextId}`, kind: 'drop', x: p.x + 36, y: p.y, c: dropC.id, born: now };
+      r.entities[`qa_stone_${r.nextId}`] = { id: `qa_stone_${r.nextId++}`, kind: 'drop', x: p.x + 36, y: p.y, c: dropC.id, born: now };
       FX.push({ type: 'boom', x: p.x + 56, y: p.y });
       receipt(r, now, 'elder.defeat', key);
       return { banner: { text: `${d.name.toUpperCase()} VANQUISHED`, sub: `${ITEMS[d.stone].name} dropped · Claim it for the Crown of Six` } };

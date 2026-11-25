@@ -42,6 +42,8 @@ interface Snap {
 }
 
 const nm = (type?: string) => (type && STRUCTS[type]?.name) || type || 'Structure';
+/** A queued job in the player's words: the product's name, or "research: <name>" (job ids are "recipe" or "R:<item>"). */
+const jobName = (id: string) => id.startsWith('R:') ? `research: ${ITEMS[id.slice(2)]?.name ?? STRUCTS[id.slice(2)]?.name ?? id.slice(2).replace(/_/g, ' ')}` : ITEMS[RECIPES[id]?.out]?.name ?? STRUCTS[RECIPES[id]?.out]?.name ?? id.replace(/_/g, ' ');
 const stackList = (r: RunState, cid?: string) => {
   if (!cid) return [];
   const totals = new Map<string, number>();
@@ -102,12 +104,12 @@ function receiptRows(gs: GameState, receipts: { id: string; at: number; kind: st
     const key = `${x.kind}|${x.detail}|${x.at}`; if (seen.has(key)) continue; seen.add(key);
     const id = x.id;
     switch (x.kind) {
-      case 'job.done': { const recipe = x.detail.slice(x.detail.indexOf(':') + 1); out.production.push({ id, tone: 'ok', text: `${rel(x.at)} in: a workshop job finished (${recipe}); output waits in its container.`, receipts: [id] }); break; }
+      case 'job.done': { const recipe = x.detail.slice(x.detail.indexOf(':') + 1); out.production.push({ id, tone: 'ok', text: `${rel(x.at)} in: a workshop job finished (${jobName(recipe)}); output waits in its container.`, receipts: [id] }); break; }
       case 'vehicle.unload': { const [vuid, bagId, list] = x.detail.split(':'); const n = (list || '').split(',').filter(Boolean).length; out.loss.push({ id, tone: 'warn', text: `${rel(x.at)} in: motorbike ${vuid} cargo (${n} stack${n === 1 ? '' : 's'}) was unloaded into a ground bag beside it. Walk to the bag to take it back; nothing was copied.`, where: structAt(bagId), receipts: [id] }); break; }
       case 'station.state': {
         const [sid, change] = x.detail.split(':'); const [from, to] = (change || '').split('>');
         const e = r.entities[sid]; const w = e ? { tx: e.tx ?? 0, ty: e.ty ?? 0, name: nm(e.type) } : undefined;
-        const text = to === 'output_full' ? `${rel(x.at)} in: paused — output container full.` : to === 'fuel_out' ? `${rel(x.at)} in: paused — fuel ran out.` : to === 'running' ? `${rel(x.at)} in: running again.` : `${rel(x.at)} in: ${to}.`;
+        const text = to === 'output_full' ? `${rel(x.at)} in: paused — output container full.` : to === 'fuel_out' ? `${rel(x.at)} in: paused — fuel ran out.` : to === 'running' ? `${rel(x.at)} in: running again.` : to === 'idle' ? `${rel(x.at)} in: queue finished; the station stopped.` : `${rel(x.at)} in: ${to}.`;
         out.production.push({ id, tone: to === 'running' ? 'ok' : 'warn', text, where: w, receipts: [id] }); break;
       }
       case 'tender.state': {
@@ -194,10 +196,10 @@ export function buildOfflineReturn(gs: GameState, before: Snap | null, receipts:
     for (const [id, b] of Object.entries(before.structs)) if (!after.structs[id] && !out.loss.some(x => x.id === `gone:${id}`)) { const w = wreckageAt(r!, b.tx, b.ty); out.loss.push({ id: `lost:${id}`, tone: 'bad', text: `${b.name} at ${b.tx},${b.ty} was lost. ${w ? `Items physically present at this tile (origin not verified): ${w.join(', ') || 'empty bag'}.` : 'No container is recorded at this tile, so no items are promised.'}`, where: { tx: b.tx, ty: b.ty, name: b.name }, receipts: [] }); }
     for (const [id, s] of Object.entries(after.stations)) {
       const detail = s.out.length ? `output container: ${s.out.join(', ')}` : 'output container empty';
-      out.production.push({ id: `st:${id}`, tone: s.state === 'output_full' || s.state === 'fuel_out' ? 'warn' : 'muted', text: `${s.name} ${s.tx},${s.ty}: ${(s.state ?? 'idle').replace(/_/g, ' ')}; ${s.queue.length ? `queue ${s.queue.join(', ')}` : 'no job'}; ${detail}.`, where: { tx: s.tx, ty: s.ty, name: s.name }, receipts: [] });
+      out.production.push({ id: `st:${id}`, tone: s.state === 'output_full' || s.state === 'fuel_out' ? 'warn' : 'muted', text: `${s.name} ${s.tx},${s.ty}: ${(s.state ?? 'idle').replace(/_/g, ' ')}; ${s.queue.length ? `queue ${s.queue.map(jobName).join(', ')}` : 'no job'}; ${detail}.`, where: { tx: s.tx, ty: s.ty, name: s.name }, receipts: [] });
     }
     for (const [id, t] of Object.entries(after.tenders)) {
-      out.production.push({ id: `tn:${id}`, tone: t.paused ? 'warn' : 'ok', text: `Garden Tender ${t.tx},${t.ty}: ${t.label}${t.crop ? ` · plot ${t.crop} ${Math.round(t.growth * 100)}%` : ''} · chest: ${t.chest.join(', ') || 'empty'}.`, where: { tx: t.tx, ty: t.ty, name: 'Garden Tender' }, receipts: [] });
+      out.production.push({ id: `tn:${id}`, tone: t.paused ? 'warn' : 'ok', text: `Garden Tender ${t.tx},${t.ty}: ${t.label}${t.crop ? ` · plot ${ITEMS[t.crop]?.name ?? t.crop} ${Math.round(t.growth * 100)}%` : ''} · chest: ${t.chest.join(', ') || 'empty'}.`, where: { tx: t.tx, ty: t.ty, name: 'Garden Tender' }, receipts: [] });
     }
   }
   if (r) receiptRows(gs, receipts, start, out);

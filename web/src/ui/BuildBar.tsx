@@ -48,14 +48,14 @@ export function BuildBar({ gs, tool, onPick, hoverX, hoverY }: {
         const d=STRUCTS[key],affordable=d.cost.every(([item,n])=>have(item)>=n);
         return <button key={key} className={`bslot ${tool===key?'on':''} ${affordable?'':'no'}`}
           onClick={()=>onPick(key as BuildTool)}
-          title={`${i+1}: ${d.name} — ${d.cost.map(([item,n])=>ITEMS[item].name+' ×'+n).join(', ')}`}>
+          title={`[${KEYS[i]}] ${d.name} — needs: ${d.cost.map(([item,n])=>ITEMS[item].name+' ×'+n).join(', ')}`}>
           <span className="bslot__key">{KEYS[i]}</span><img className="px" src={iconUrl('st:'+key)} alt={d.name}/>
         </button>;
       })}
       <i className="buildbar__div"/>
       {([['upgrade','U','⬆'],['repair','V','⚒'],['reclaim','X','✂']] as const).map(([t,k,g])=>
         <button key={t} className={`bslot mode ${tool===t?'on':''}`} onClick={()=>onPick(t)}
-          title={t}><span className="bslot__key">{k}</span><span className="bslot__glyph">{g}</span></button>
+          title={t==='upgrade'?'Upgrade a placed structure [U]':t==='repair'?'Repair a placed structure [V]':'Dismantle a placed structure [X]'}><span className="bslot__key">{k}</span><span className="bslot__glyph">{g}</span></button>
       )}
       <span className="buildbar__exit"><span className="key">B</span>exit</span>
     </div>
