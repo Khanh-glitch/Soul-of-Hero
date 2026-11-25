@@ -1,16 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { BAL, TILE, WW, type Entity, type GameState, type RunState, type Creature } from '../game/core';
-import { ITEMS, ELDERS, lookupElderDef, CREATURES, STRUCTS } from '../game/catalog';
+import { ITEMS, lookupElderDef, CREATURES, STRUCTS } from '../game/catalog';
 import { C, countItem, runHours, phaseOf, isRagnarok } from '../game/engine';
 import { activeStack } from '../game/sim';
 import { coreReadout, coreAmmo } from '../game/g1b';
-import { airdropView } from '../game/airdrop';
+import { airdropView, supportsAirdrops } from '../game/airdrop';
 import { getArt } from '../game/art';
 import { drawNpcSprite, NPC_DIRECTIONS, preloadNpcArt, resolveNpcFrame } from '../game/npc-art';
 import type { HumanRecord, HumanState } from '../game/humanworld';
 import { Icon, Panel, type Api } from './common';
 import { Glyph } from './hud';
-import { QA_PRESETS, type QaPresetId } from '../game/qa-sandbox';
+import { QA_PRESETS, qaElderRoster, type QaPresetId } from '../game/qa-sandbox';
 import { deathBagView } from '../game/death-view';
 
 // ============================================================================
@@ -301,9 +301,12 @@ export function QaSandboxDrawer({
   onClose: () => void;
 }) {
   const [tab, setTab] = useState<'presets' | 'events' | 'anim' | 'assets' | 'npcs'>('presets');
-  const [elderKey, setElderKey] = useState<string>('rust');
+  const [pickedElder, setElderKey] = useState<string>('rust');
   const [zoom, setZoom] = useState<number>(2);
   const r = gs.run!;
+  // The roster is this world's own: the six Primordials on VEYRA, the legacy six on the Classic Island.
+  const roster = qaElderRoster(r);
+  const elderKey = roster[pickedElder] ? pickedElder : Object.keys(roster)[0];
   const bike = Object.values(r.entities).find(e => e.kind === 'vehicle' && e.vehicle);
 
   return (
@@ -347,8 +350,9 @@ export function QaSandboxDrawer({
               <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
                 <button className="btn sm danger" onClick={() => onTriggerEvent('ragnarok')}>QA clock → Ragnarok</button>
                 <button className="btn sm gold" onClick={() => onTriggerEvent('discover_core')}>Stage Core pickup</button>
-                <button className="btn sm" onClick={() => onTriggerEvent('spawn_airdrop')}>Stage airdrop descent</button>
-                <button className="btn sm" onClick={() => onTriggerEvent('unlock_airdrop')}>Preview unlocked crate</button>
+                {/* Airdrops exist on the Classic Island only; VEYRA has none, so the lab does not stage one there. */}
+                {supportsAirdrops(r.layoutId || '') && <button className="btn sm" onClick={() => onTriggerEvent('spawn_airdrop')}>Stage airdrop descent</button>}
+                {supportsAirdrops(r.layoutId || '') && <button className="btn sm" onClick={() => onTriggerEvent('unlock_airdrop')}>Preview unlocked crate</button>}
                 <button className="btn sm" onClick={onSimulateOffline}>Run real 6.5h engine settle</button>
                 <button className="btn sm danger" onClick={() => onTriggerEvent('fall_down')}>Stage death overlay</button>
               </div>
@@ -358,7 +362,7 @@ export function QaSandboxDrawer({
               <div className="console-h">Six Elder Bosses</div>
               <div style={{ display: 'flex', gap: 4, alignItems: 'center', marginBottom: 4 }}>
                 <select value={elderKey} onChange={e => setElderKey(e.target.value)} style={{ flex: 1 }}>
-                  {Object.entries(ELDERS).map(([k, d]) => <option key={k} value={k}>{d.name} ({d.region})</option>)}
+                  {Object.entries(roster).map(([k, d]) => <option key={k} value={k}>{d.name} ({d.region})</option>)}
                 </select>
                 <button className="btn sm gold" onClick={() => onTriggerEvent('awaken_elder', elderKey)}>Stage Elder; fight live</button>
               </div>
