@@ -92,11 +92,56 @@ Vòng 1 là commit `196d27b`. Vòng 2 là các commit sau đó trên cùng nhán
 
 **Sau lượt hồi quy còn ba chỉnh sửa nhỏ** (cỡ nút đóng trên máy cảm ứng, chú thích bản đồ, phép đếm "Offscreen markers") và thêm câu dịch. Chúng được kiểm bằng 10 tệp giao diện và các lượt trình duyệt ở trên, không chạy lại cả bộ.
 
+## Vòng 3 (nhánh `arena/04c31cb9-soul-of-hero`, mã `ddca5c5`)
+
+Vòng này làm nốt danh sách "Chưa làm, chưa kiểm" của vòng 2: mở từng bảng chưa từng mở, sửa những gì lộ ra, dịch phần còn tiếng Anh, đóng lại ZIP.
+
+### Lỗi tìm thấy khi mở các bảng chưa từng mở
+
+| # | Mức | Lỗi | Trạng thái |
+|---|---|---|---|
+| 20 | Nặng | **Bảng nghỉ ném lỗi khi mở.** Bấm E vào giường khi trong nhà không có rương hợp lệ thì bảng nghỉ gọi `countItem` với mã vật chứa không tồn tại (`Cannot read properties of undefined (reading 'slots')`). Lúc đó mã nguồn chưa có lớp chặn lỗi nào, nên lỗi khi vẽ một bảng kéo theo cả giao diện. Người chơi thật gặp được (có giường, chưa có rương). | **Đã sửa**: bảng mở bình thường và nói rõ còn thiếu rương (`r3-nghi-ngoi.png`) |
+| 21 | Nặng | Không có lớp chặn lỗi quanh các bảng. | **Đã sửa**: `PanelGuard` bọc mọi bảng; bảng lỗi tự đóng, hiện thông báo, ván chơi chạy tiếp |
+| 22 | Vừa | Túi đồ mở cạnh rương / thương nhân dài hơn khung: hàng nút Dùng / Tách / Thả / Xếp nằm dưới mép màn hình, và bảng đè lên ô đồng hồ. | **Đã sửa**: bảng cao hết khung, hàng nút ghim ở chân bảng, ô đồng hồ ẩn trong lúc túi mở cạnh rương (`r3-ruong-va-tui.png`, `r3-thuong-nhan.png`) |
+| 23 | Vừa | Nhật ký trở về ghi mã công thức thay cho tên món, chữ "NOW" lặp hai lần trên một dòng, trạm dừng ghi "idle.", máu người chơi dịch thành "Độ bền". | **Đã sửa** (`r3-nhat-ky-tro-ve.png`) |
+| 24 | Vừa | Bảng cư dân ghi mã nơi ở và mã trạng thái thay cho tên và từ thường dùng. | **Đã sửa**: tên nơi, từ chỉ trạng thái, "Tin cậy 50 · Máu 95/95" (`r3-cu-dan.png`) |
+| 25 | Vừa | Câu ghép từ nhiều mảnh: chữ "s" số nhiều đứng rời, có chỗ thiếu dấu cách giữa số và chữ, và lớp tiếng Việt không dịch được vì mỗi mảnh là một nút chữ riêng. | **Đã sửa**: mỗi câu là một chuỗi, ở bảng nghỉ, nhật ký trở về, sơ tán, hải trình, cư dân, thương nhân, tử trận, bản đồ |
+| 26 | Vừa | Cột phải của bảng trạm: khối nhiên liệu và thành phẩm nằm dưới mép cuộn, không có dấu hiệu nào cho biết. | **Đã sửa một phần**: thêm thanh "Còn nữa ở dưới", bấm là cuộn tới cuối (`r3-lo-luyen.png`). Kích thước bảng giữ nguyên vì bị cổng kiểm `pa1-research-visible-gate` khóa |
+| 27 | Nhẹ | Lời nhắc cạnh nhân vật còn tiếng Anh ở 29 / 43 mẫu thử (giao dịch, cửa, thùng tiếp tế, máy phát, bẫy, giường…). | **Đã sửa** |
+| 28 | Nhẹ | Cảnh báo khẩn "FREEZING", "DEHYDRATED", "STARVING" còn tiếng Anh. | **Đã sửa** (`r3-lanh-doi-khat.png`) |
+| 29 | Nhẹ | Chế độ xây: chú thích ô đồ và lý do không đặt được còn tiếng Anh. | **Đã sửa** (`r2-xay-dung.png` chụp lại) |
+| 30 | Nhẹ | Trên máy cảm ứng, dòng hướng dẫn của bước đang theo dõi vẫn bảo "nhấn chuột trái", "Space". | **Đã sửa** cho dòng bước đang theo dõi: đổi thành "nút Đánh", "nút Lăn", "cần điều khiển" |
+| 31 | Nội bộ | Cảnh QA "ragnarok_economy": thương nhân, trạm di tản, rương tiền hiện lời nhắc nhưng bấm E không mở (mã lưu lệch một đơn vị). Không ảnh hưởng người chơi. | **Đã sửa** |
+
+### Các bảng đã mở và xem trong vòng 3
+
+Tiếng Việt, 1280 × 720, không lỗi console: nghỉ (giường), nhật ký trở về (sau 6,5 giờ vắng mặt thật của máy game, cả hai khối "Xem"), thương nhân, trạm di tản (cả bước xác nhận), rương tiền Ragnarok, rương ký gửi, tủ lãnh thổ, lò, bàn chế tạo, bàn nghiên cứu, rương lớn, cư dân, hải trình (đang đi và mắc kẹt), tử trận, chế độ xây, HUD ban đêm (19:42 và 20:22), HUD khi lạnh / đói / khát / máu thấp. Thương nhân, di tản, rương tiền, rương ký gửi, tủ lãnh thổ được xem thêm bằng tiếng Anh.
+
+Game không có bảng "di vật"; mục đó trong danh sách cũ là ghi nhầm.
+
+### Tiếng Việt
+
+Thêm sổ câu `web/i18n/vi/07-panels.txt`; tổng 1.959 câu (vòng 2: 1.444). Tên vật phẩm, công trình, sinh vật, địa danh và tên vùng ("Lighthouse Spit", "Greywater Hamlet") giữ tiếng Anh theo quy ước cũ.
+
+### Kiểm thử vòng 3
+
+| Hạng mục | Kết quả |
+|---|---|
+| `typecheck`, `typecheck:tests`, `build` trên `ddca5c5` | Sạch |
+| Bộ hồi quy trên `ddca5c5` | 273 tệp, bỏ 3 tệp đã được loại từ trước, chạy 270 tệp (mỗi tệp một tiến trình, hai tiến trình cùng lúc): **267 tệp đạt ngay, 1.647 bài đạt, 28 bài bỏ qua, không có phép kiểm nào sai**. 3 tệp có một bài vượt giới hạn 5 giây mặc định; xem ghi chú bên dưới |
+| `tests/ui-round3.test.tsx` (mới, 21 bài) | Đạt |
+| ZIP `web/releases/Soul-of-Hero-Web.zip` | Đóng lại từ bản dựng của `ddca5c5`: 64.429.794 byte, 221 tệp, SHA256 `c7fc4807d94288734f4e2dc4295603965094769f4ae8465cd402787bd3cc45f0` |
+
+**Ba tệp vượt giới hạn 5 giây** trong lượt hồi quy: `tests/d1-d5-corrective`, `tests/wp2-power-global-obstacles`, `tests/wp3-veyra-recycler-integration`. Chạy lại riêng từng tệp: hai tệp đầu đạt (5 / 5 và 3 / 3 bài); chúng chỉ chậm khi hai tiến trình chia nhau 2 CPU. Tệp thứ ba có một bài chạy khoảng 25 giây và không khai báo giới hạn thời gian riêng, nên luôn bị tính là quá giờ ở giới hạn mặc định. Nó hành xử y hệt trên `main` (`cb39d1f`, chưa có thay đổi nào của vòng 3), và khi cho giới hạn 120 giây thì đạt mọi phép kiểm trên cả `main` lẫn nhánh này. Tệp kiểm thử này không bị sửa. Tính cả ba lượt chạy lại: 1.656 bài đạt.
+
+Ba tệp bị loại từ trước (`src/veyra05/audit-closure`, `src/veyra05/review-r2-acceptance`, `tests/economic-network-m2`) không được chạy.
+
 ## Chưa làm, chưa kiểm
 
-- Chưa thử trên điện thoại thật, Firefox, Safari.
-- Chưa mở các bảng: báo cáo khi quay lại, nghỉ, sơ tán, di vật, cư dân, hải trình. HUD ban đêm chưa xem.
+- Chưa thử trên điện thoại thật, Firefox, Safari. Máy kiểm chỉ có Chromium không màn hình và không truy cập được địa chỉ chơi thật.
+- Trên máy cảm ứng, các thẻ gợi ý và sổ tay vẫn nhắc tên phím (E, B, I, Q…). Mới đổi được chuột trái, Space, WASD ở dòng bước đang theo dõi.
+- Cột phải của bảng trạm vẫn phải cuộn mới thấy khối thành phẩm; đã có thanh báo nhưng chưa bố trí lại.
+- Nút chọn số giờ nghỉ ghi "1 h / 8 h / 24 h" ở cả hai ngôn ngữ.
+- Tên vùng và địa danh giữ tiếng Anh.
 - Chú thích khi rê chuột (`title`) không hiện trong ảnh chụp nên chỉ được kiểm bằng cách đọc chữ.
-- Bảng chọn đồ xây vẫn ghi dòng tiếng Anh dạng "1: Wood Wall — Wood ×5" (toàn tên vật phẩm).
-- Cột phải của bảng trạm phải cuộn mới thấy khối cuối khi nội dung dài.
-- ZIP phát hành `web/releases/Soul-of-Hero-Web.zip` chưa đóng lại, vẫn là bản của `384b35ad`.
+- Bảng nghỉ mới xem ở trạng thái thiếu rương; luồng chọn đồ rồi nằm ngủ chỉ được kiểm bằng các bài kiểm thử tự động có sẵn, chưa xem bằng mắt.
