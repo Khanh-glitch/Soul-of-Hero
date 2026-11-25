@@ -770,7 +770,8 @@ input::placeholder { color: #566872; }
 .chart-teleport-pill { position: absolute; left: 5px; bottom: 5px; padding: 2px 5px; background: rgba(34,16,52,.92); border: 1px solid #d9acff; color: #f0dbff; font: 8px var(--f-lbl); pointer-events: none; }
 .map-toolbar { display: flex; align-items: center; gap: 4px; min-height: 20px; }
 .map-toolbar .btn { font-size: 8px; padding: 2px 5px 3px; }
-.map-legend { display: flex; align-items: center; gap: 3px; margin-left: auto; font: 9px var(--f-lbl); color: var(--muted); }
+.map-legend { display: flex; align-items: center; gap: 3px; margin-left: auto; font: 9px var(--f-lbl); color: var(--muted); white-space: nowrap; }
+.map-toolbar .btn { white-space: nowrap; }
 .map-legend i { font-style: normal; margin-right: 1px; }
 .map-key { color: var(--muted); font: 8px var(--f-lbl); }
 .map-sidebar { display: flex; flex-direction: column; min-height: 0; background: #101b20ad; border-left: 1px solid #586568; padding-left: 7px; gap: 4px; }
@@ -1005,5 +1006,6 @@ div.map-row--mark { flex-direction: row; align-items: center; padding: 0; }
 .hurt-edge.soft { animation: none; }
 /* fingers need a larger target than the 9px close mark */
 .stage--touch .panel-x { min-width: 28px; min-height: 24px; }
-.stage--touch .sv-x { min-height: 22px; padding: 2px 8px; }
+.stage--touch .sv-top { height: 24px; margin-bottom: 3px; }
+.stage--touch .sv .btn.sm.sv-x { min-height: 24px; min-width: 52px; justify-content: center; }
 .stage--touch .btn.sm { min-height: 16px; }

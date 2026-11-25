@@ -481,7 +481,7 @@ export function ExpeditionMap({ api, onTeleportSelect, teleportTarget, qaSession
   const sites = w.places.filter(site => r.poiSeen.includes(site.id) && discoveredCell(r, site.tx, site.ty));
   const seenContinentPois = isVeyra ? POIS.filter(po => r.poiSeen.includes(po.id)) : [];
   const offscreenCount = isVeyra && r.veyraOffscreenEntities
-    ? Object.values(r.veyraOffscreenEntities).filter(oe => oe.type === 'claim' || oe.kind === 'bag' || oe.kind === 'cart' || oe.kind === 'vehicle').length
+    ? Object.values(r.veyraOffscreenEntities).filter(oe => oe.type === 'claim' || isOwnBag(oe as any) || oe.kind === 'cart' || oe.kind === 'vehicle').length
     : 0;
   const ownedCabinets = Object.values(r.entities).filter(e => (!isVeyra || onActiveFloor(r, e)) && e.type === 'claim' && e.tx !== undefined && e.ty !== undefined && discoveredCell(r, e.tx, e.ty));
   const rigs = Object.values(r.entities).filter(e => (!isVeyra || onActiveFloor(r, e)) && (e.kind === 'vehicle' || e.kind === 'cart') && discoveredCell(r, Math.floor(e.x / TILE), Math.floor(e.y / TILE)));
