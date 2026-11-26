@@ -5,6 +5,7 @@ import App from "./App";
 import { loadItemAtlas } from "./game/item-atlas";
 import { startDomI18n, setI18nAudit } from "./ui/i18n-dom";
 import { ScreenFit } from "./ui/ScreenFit";
+import { Veil } from "./ui/veil";
 
 if (import.meta.env.VITE_SOH_QA === '1') setI18nAudit(true);
 startDomI18n();
@@ -21,6 +22,7 @@ if (import.meta.env.VITE_SOH_QA === '1') {
 void loadItemAtlas().finally(() => createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <App />
+    <Veil />
     <ScreenFit />
   </StrictMode>
 ));

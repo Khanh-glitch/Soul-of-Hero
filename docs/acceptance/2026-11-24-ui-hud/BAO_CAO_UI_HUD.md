@@ -639,6 +639,78 @@ Chưa đổi gì trong luật: nhịp tính lúc vắng mặt vẫn là 1 giây 
 - Không chạy lại toàn bộ bộ kiểm thử; chỉ chạy 5 tệp nêu trên.
 - Chưa xử lý đoạn 2–8 giây từ 99% đến lúc vào game.
 
+## Vòng 12: các màn hình trước khi vào game (nhánh `arena/1fe1361c-soul-of-hero`, cùng PR #71)
+
+Vòng này chỉ sửa giao diện của những màn người chơi gặp trước khi cầm được nhân vật: lúc trang đang tải, màn hình chính, chọn nhân vật, hồ sơ và lịch sử, nhật ký ván chơi, cài đặt, màn chờ khi Chơi tiếp, màn báo lỗi bản lưu. Không đổi luật, không đổi cách tính, không đổi bản lưu.
+
+Máy kiểm vẫn là Chromium không màn hình, vẽ bằng phần mềm, 2 nhân. Các con số thời gian dưới đây chỉ dùng để so hai bản dựng trên cùng máy đó, không phải thời gian trên máy người chơi.
+
+### Trước khi sửa (bản `c3a72b5`)
+
+| Màn | Điều thấy được | Ảnh |
+|---|---|---|
+| Mở trang | Trắng trơn đến 2,8 giây, rồi một dòng chữ thường; màn hình chính hiện ở 4,9 giây | (không chụp) |
+| Màn hình chính khi có ván dang dở | Nút Chơi tiếp bị xuống dòng, không cho biết ngày thứ mấy hay đã vắng bao lâu; "Ván mới" bị mờ mà lý do chỉ nằm trong chú thích rê chuột | `shots/r12-before-title-vi.png` |
+| Hồ sơ & lịch sử | Bảng đè lên dòng phụ đề; các dòng lịch sử in nguyên chữ tiếng Anh của mã | `shots/r12-before-profile-vi.png` |
+| Chờ khi Chơi tiếp | Một bảng trơ trên nền đen, nằm ngoài khung game; thanh tiến độ màu xám mặc định của trình duyệt; nút quay lại rất nhỏ | `shots/r12-before-wait-vi.png`, `shots/r12-before-wait-vi-844.png` |
+| Bấm "Bắt đầu 14 ngày" hoặc Chơi tiếp | Không có phản hồi nào trong lúc hình đứng yên nhiều giây | (xem bảng thời gian) |
+| Lỗi bản lưu | Chữ HTML thô, chỉ có tiếng Anh | (không chụp) |
+| Cài đặt | Chưa vào game thì không mở được | |
+
+Màn chọn nhân vật vốn đã đọc được (`shots/r12-before-setup-vi.png`); chỉ thu gọn lại cho vừa cửa sổ nhỏ.
+
+### Đã sửa
+
+- **Lúc trang đang tải** (`web/index.html`): trang tự vẽ tên game, một thanh chạy và dòng "Đang tải…" / "Loading…" theo ngôn ngữ đã chọn, trước khi bất kỳ đoạn mã nào tải xong. Đo được: hiện sau 82–99 mili giây kể từ lúc mở trang. Ảnh `shots/r12-splash-vi.png`.
+- **Màn hình chính** (`web/src/ui/Title.tsx`): nút chính lớn ở giữa. Chưa có ván thì là "Ván mới". Có ván dang dở thì là "Chơi tiếp — tên nhân vật", dòng dưới ghi ngày thứ mấy và đã vắng bao lâu; lý do "Ván mới" bị khoá hiện thành chữ ngay dưới nút. Thêm "Hồ sơ & lịch sử", "Cài đặt", dòng tiền đã cất và số ván, và chân trang ghi các phím. Ảnh `shots/r12-title-new-vi.png`, `shots/r12-title-continue-vi.png`, `shots/r12-title-continue-en.png`, `shots/r12-title-continue-vi-844.png`.
+- **Chọn nhân vật**: vừa ở 640 × 360 và 844 × 390, nút "Bắt đầu 14 ngày" không còn bị che. Ảnh `shots/r12-setup-vi.png`, `shots/r12-setup-vi-844.png`, `shots/r12-setup-vi-640.png`.
+- **Hồ sơ & lịch sử**: thành tựu ghi số đã đạt trên tổng số; mỗi ván một dòng có ngày tháng, cách kết thúc (màu riêng), điểm và tiền; bấm vào một dòng thì mở lại nhật ký của ván đó. Nhãn ghi rõ đây là điểm lưu trên trình duyệt này, không phải bảng xếp hạng chung. Ảnh `shots/r12-profile-vi.png`, `shots/r12-chronicle-vi.png`.
+- **Cài đặt trước khi chơi**: cùng bảng cài đặt như trong game. Ảnh `shots/r12-settings-vi.png`.
+- **Màn chờ khi Chơi tiếp** (`web/src/App.tsx`): nằm trong khung game, trên nền của màn hình chính; số phần trăm lớn, thanh tiến độ cùng màu với giao diện, dòng trạng thái, nút "Về màn hình chính" lớn hơn. Ảnh `shots/r12-wait-vi.png`, `shots/r12-wait-vi-844.png`.
+- **Tấm che lúc game đứng hình** (`web/src/ui/veil.tsx`, mới): bấm "Bắt đầu 14 ngày" hoặc khi tính bù xong, một màn có tên game và dòng "Đang dựng hòn đảo…" / "Đang mở hòn đảo…" phủ lên cho đến khi game vẽ được khung hình đầu tiên (`web/src/ui/Game.tsx` báo). Nếu game không báo thì tấm che tự hạ sau 30 giây. Bấm lần hai trong lúc tấm che đang hiện thì bị bỏ qua.
+- **Màn báo lỗi bản lưu**: cùng kiểu với màn tải, có tiếng Việt và nút "Thử lại". Ảnh `shots/r12-load-error-vi-844.png`.
+- **Bàn phím**: vào màn nào thì nút chính của màn đó được chọn sẵn; Enter để chơi, phím mũi tên chuyển nút, trái / phải đổi nhân vật, Esc quay lại và trả tiêu điểm về nút đã bấm.
+- **Dòng "Cửa sổ nhỏ"**: ở các màn trước game, dòng này nằm một hàng ở đáy và chân trang của màn hình chính nhường chỗ cho nó. Trong game dòng này giữ nguyên như bản trước.
+- **Chữ tiếng Việt**: 30 câu mới trong `web/i18n/vi/10-before-game.txt`; sách câu hiện có 2097 câu.
+
+### Thời gian, bản mới so với `c3a72b5`, cùng máy kiểm
+
+| Trường hợp | Bản mới | `c3a72b5` |
+|---|---|---|
+| Ván mới, từ lúc bấm "Bắt đầu" | Tấm che hiện sau khoảng 0,08 giây; hình đứng 4,4 + 6,8 + 1,1 giây ở dưới tấm che; thấy game ở 12,2–12,8 giây | Không có phản hồi; hình game đứng 4,2 + 11,6 + 1,4 giây; hình chạy đều từ khoảng 17 giây |
+| Chơi tiếp, vắng 1 phút | Tấm che hiện sau 0,1–0,2 giây; hình đứng 8,2–8,9 + 4,1–4,3 + 0,7–0,8 giây ở dưới tấm che; thấy game ở 13,7–14,4 giây | Hình game đứng 10,9–11,7 + 4,8–5,6 + 1,0–1,3 giây; hình chạy đều từ khoảng 17–18 giây |
+| Chơi tiếp, vắng 1,6 giờ | Tấm che hiện ở 40,6–48,1 giây; thấy game ở 50,4–59,0 giây | Thấy hình game ở 40,7–55,3 giây, rồi hình đứng thêm 7,7 giây |
+
+Cách đọc bảng:
+
+- **Tấm che chỉ che chỗ đứng hình, không làm nó ngắn đi.** Việc nặng vẫn chạy trên luồng chính như trước.
+- Hai trường hợp chờ ngắn đến được game sớm hơn khoảng 4 giây. Nguyên nhân chưa được tách riêng.
+- Trường hợp vắng 1,6 giờ không nhanh hơn: hai bản ngang nhau trong mức dao động 5–10 giây giữa các lượt chạy. Mức trần 30 giây vẫn chưa đạt, như đã ghi ở vòng 11.
+- Mỗi ô là 2–3 lượt chạy.
+
+### Đã thử rồi bỏ
+
+- **Dòng "còn khoảng … nữa" trên màn chờ.** Ước lượng theo đường thẳng báo "còn khoảng 5 phút" khi thực tế còn 25 giây, vì tiến độ đi rất chậm trong lúc đất còn đang dựng (0–4% trong 22 giây đầu, rồi 6% → 97% trong 25 giây). Một con số sai tệ hơn không có số, nên đã gỡ. Màn chờ giữ phần trăm, số vùng đã dựng và thời gian đã chạy.
+- **Hạ tấm che khi "hình đã chạy đều".** Trên máy kiểm, phút đầu hình không bao giờ đều, nên tấm che đứng đủ 30 giây trên một game đã chơi được. Đổi sang cách game tự báo khi đã vẽ.
+- Bỏ hiệu ứng trượt của thanh tiến độ và đổi thanh chạy của màn tải sang nhảy bậc, để không tốn công vẽ trong lúc máy đang bận. Đo lại không thấy khác biệt; giữ vì không hại.
+
+### Kiểm thử
+
+- `web/tests/pregame.test.ts` (mới, 15 bài): cách viết thời gian vắng và ngày, tên cách kết thúc ván, đủ câu tiếng Việt, tên các nút mà kịch bản trình duyệt bấm, màn tải trong `index.html`, vị trí dòng "Cửa sổ nhỏ", hành vi của tấm che.
+- `web/tests/ui-readability.test.ts`: bài "tắt chữ ghép ở mọi nơi" **đã hỏng sẵn trên `main` (`cb28d27`)**, không do vòng này: tệp kiểu dáng ghi `font-variant-ligatures: none !important` còn bài kiểm tìm dạng không có `!important`. Đã sửa bài kiểm cho khớp với quy tắc đang có (quy tắc mạnh hơn, không yếu đi).
+- Đã chạy và qua: `pregame`, `continue-wait`, `i18n-vi`, `item-ontology-v2`, `ui-readability`, `viewport`, `map-atlas`, `map-feel`, `ui-round3`, `final-item-set`, `qa-sandbox-veyra`, `region-store`, `region-prebuild`; `npx tsc --noEmit` và `npm run typecheck:tests` sạch.
+- Bằng trình duyệt: chụp các màn ở 1280 × 720 (hai ngôn ngữ), 844 × 390 và 640 × 360 (tiếng Việt); đi hết các màn bằng bàn phím, không có lỗi trang; bản lưu hỏng ra màn báo lỗi; bản lưu không có ván dang dở ra màn hình chính với "Ván mới".
+
+### Chưa làm, chưa kiểm ở vòng này
+
+- **Không có ảnh của tấm che.** Trình duyệt kiểm không chụp được khi trang đang đứng hình. Việc tấm che hiện và hạ được xác nhận bằng nhật ký trạng thái ghi trong trang, không phải bằng mắt.
+- Không chạy lại toàn bộ bộ kiểm thử; chỉ các tệp nêu trên.
+- Chưa thử trên máy thật, điện thoại, Firefox, Safari.
+- Trong game, sau khoảng 27 giây của một ván mới, máy kiểm có những lần khựng 1,1–2,8 giây, cách nhau khoảng 2 giây, ở cả `cb28d27` lẫn `c3a72b5`. **Chưa rõ nguyên nhân** và chưa biết có xảy ra trên máy thật hay không; vòng này không đụng tới.
+- Nhãn "Language" trong bảng cài đặt cố ý giữ tiếng Anh (người không đọc được ngôn ngữ đang hiện vẫn tìm ra chỗ đổi).
+- Trong bản dựng QA, ba dòng "Full-Gear QA Sandbox [F9]", "Creator Inspector · world viewer", "VEYRA" còn tiếng Anh; lượt kiểm này làm trước các chỉnh sửa cuối và chưa chạy lại.
+- Màn báo lỗi bản lưu chỉ thử với một kiểu hỏng (bản lưu bị cắt nửa).
+
 ## Chưa làm, chưa kiểm
 
 - Chưa thử trên điện thoại thật, Firefox, Safari. Máy kiểm chỉ có Chromium không màn hình và không truy cập được địa chỉ chơi thật.

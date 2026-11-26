@@ -1061,3 +1061,31 @@ div.map-row--mark { flex-direction: row; align-items: center; padding: 0; }
 
 /* build mode: the open waymark keeps what to do and drops why / reward, so it ends above the build bar */
 .wm--brief .wm__why, .wm--brief .wm__reward { display: none; }
+
+/* ---------- before the game: title menu, new-run setup, profile, the wait after Continue ----------
+   The boot splash (.boot) lives in index.html so it can show before any script has run. */
+.boot--veil { z-index: 1400; transition: opacity 180ms linear; }
+.boot--leaving { opacity: 0; pointer-events: none; }
+.title-play { width: 264px; padding: 6px 8px 7px; }
+.title-play__main { display: block; font-size: 15px; line-height: 1.05; }
+.title-play__sub { display: block; font-size: 10px; line-height: 1.1; margin-top: 3px; opacity: .8; letter-spacing: .2px; }
+.title-hint { font-size: 11px; line-height: 1.15; color: #d8cdb6; text-align: center; text-shadow: 1px 1px 0 #000; }
+.title-note { font-size: 11px; line-height: 1.15; color: var(--warn); max-width: 400px; text-align: center; padding: 3px 8px; background: rgba(5,7,10,.72); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--warn) 55%, transparent); }
+.title-foot { position: absolute; left: 8px; right: 8px; bottom: 5px; display: flex; justify-content: space-between; gap: 12px; font-size: 10px; color: #a9b6bc; text-shadow: 1px 1px 0 #000; pointer-events: none; }
+.title-foot span:only-child { margin: 0 auto; }
+.hist-row { font-size: 11px; line-height: 1.25; padding: 3px 4px; border-bottom: 1px solid color-mix(in srgb, var(--edge) 60%, transparent); cursor: pointer; }
+.hist-row:hover, .hist-row:focus-visible { background: rgba(200,150,60,.1); outline: none; box-shadow: inset 0 0 0 1px var(--brass); }
+/* The wait after Continue. A native <progress> keeps its meaning for screen readers; only its look changes. */
+.wait-pct { font-family: var(--f-lbl); font-weight: 700; font-size: 26px; line-height: 1; color: var(--brassLit); text-shadow: 0 2px 0 #2a1604; min-width: 56px; }
+.wait-bar { appearance: none; -webkit-appearance: none; display: block; flex: 1; min-width: 0; height: 10px; border: 1px solid #000; background: #05070a; box-shadow: 0 0 0 1px color-mix(in srgb, var(--edge) 70%, transparent); }
+.wait-bar::-webkit-progress-bar { background: #05070a; }
+/* No transition on the bar: an animation here redraws the screen all through the wait, on the processor the
+   wait itself needs. */
+.wait-bar::-webkit-progress-value { background: linear-gradient(180deg, var(--brassLit), var(--brass) 60%, #7a5418); }
+.wait-bar::-moz-progress-bar { background: linear-gradient(180deg, var(--brassLit), var(--brass) 60%, #7a5418); }
+/* The "small window" line on the screens before the game: centred with auto margins instead of left:50% + translate.
+   The translate form may only use half the window's width, so the line wrapped to two or three rows and covered the
+   button that starts the game. In the game itself it keeps its old shape (it sits over the hotbar either way). */
+body:has([data-pregame], .boot) .fit-hint { left: 0; right: 0; margin: 0 auto; width: fit-content; box-sizing: border-box; transform: none; }
+/* While that line is showing it sits where the title screen's footer is; the footer (two lines of side information) steps aside. */
+body:has(.fit-hint) .title-foot { visibility: hidden; }

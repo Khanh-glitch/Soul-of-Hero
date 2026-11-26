@@ -32,6 +32,7 @@ import { save, saveSync, saveDetailed, lastSaveOutcome } from '../game/persist';
 import { prebuildRegions, regionPrebuildStats } from '../veyra05/region-prebuild';
 import { autosaveDecision, AUTOSAVE_MIN_MS, AUTOSAVE_STILL_MS } from '../game/autosave-policy';
 import { Slot, Bar, Icon, Mark, PanelGuard, mkIntent, type Api, type PanelState } from './common';
+import { gameDrew } from './veil';
 import { Vitals, UrgentAlerts, WorldClock, Hotbar, RigStatus, ThreatBar, PresentationPanel, useVisualPrefs, Glyph } from './hud';
 import { setListener, setEnvironment, machineState, setMood, tickMusic, stopAllMachines } from '../game/audio';
 import { getPrefs, setPrefs, applyCssTheme, computeStageView, isTouchDevice, resolveHudScale } from '../visual/direction';
@@ -622,7 +623,11 @@ export default function Game({
             : idleAcc.current > 22000 ? 'silence' : 'wild', now);
       }
     };
-    raf = requestAnimationFrame(loop); return () => cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(loop);
+    // Registered after the loop, so each of these runs after a frame of the loop: once two frames are drawn the world
+    // is on screen and the "one moment" cover the title put up (ui/veil.tsx) can come down.
+    let drew = requestAnimationFrame(() => { drew = requestAnimationFrame(gameDrew); });
+    return () => { cancelAnimationFrame(raf); cancelAnimationFrame(drew); };
   }, [gs]);
 
   const onMouseMove = (e: React.MouseEvent) => { const s = scaleRef.current; mouse.current = { x: (e.clientX - offRef.current.x) / s, y: (e.clientY - offRef.current.y) / s }; };
