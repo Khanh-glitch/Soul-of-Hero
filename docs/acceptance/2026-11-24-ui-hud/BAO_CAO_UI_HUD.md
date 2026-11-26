@@ -486,6 +486,75 @@ Vắng 24 giờ: riêng phần mô phỏng mất 231 giây (đo trong lúc máy 
 - Chưa so kết quả trên bản lưu của ván đã chơi lâu, có công trình của người chơi.
 - Chưa đo trên máy thật hay điện thoại. Chưa mở trang QA sau khi triển khai.
 
+## Vòng 10: làm nhanh tiếp phần mô phỏng cư dân, kết quả tính vẫn không đổi (nhánh `arena/d6096eae-soul-of-hero`)
+
+Vòng 9 viết rằng không còn chỗ nào chiếm riêng một phần lớn và sửa tiếp chỉ được 1–2% mỗi chỗ. Nhận định đó sai. Đo kỹ hơn thì thấy hai chỗ tốn lớn không nằm ở một dòng mã nào mà ở cách trình duyệt đọc dữ liệu cư dân.
+
+### Đã sửa (`web/src/game/humanworld.ts`, `web/src/game/sim.ts`)
+
+1. **Dùng chung một danh sách cư dân trong mỗi lượt tính.** Mỗi bước, ba nơi (trừ nhu cầu, tìm mốc thời gian kế tiếp, bước hành động) đều hỏi lại "danh sách toàn bộ cư dân", và mỗi lần hỏi trình duyệt phải dựng lại rồi sắp xếp lại 286 tên. Nay một lượt tính dựng danh sách một lần và dùng chung. Danh sách luôn đúng: cư dân chỉ được thêm ở một nơi duy nhất (nơi đó báo cho danh sách dựng lại), và không nơi nào xoá cư dân.
+2. **Chuẩn bị hồ sơ cư dân một lần trước khi tính bù.** Cư dân đọc từ bản lưu có hàng chục kiểu sắp xếp trường khác nhau (26 kiểu lúc nạp, 75–87 kiểu sau khi tính); với nhiều kiểu như vậy, mỗi lần đọc một trường của cư dân, trình duyệt phải đi đường chậm. Trước khi tính bù, game đưa mọi hồ sơ về cùng một cách lưu trong bộ nhớ. Không trường nào bị thêm, bớt, đổi giá trị hay đổi thứ tự; bản lưu ghi ra giống hệt.
+3. Trong hai vòng duyệt cư dân nóng nhất, các trường dùng nhiều lần được đọc một lần; cư dân đang đứng yên, không có việc và chưa đói khát được bỏ qua sớm, đúng như các điều kiện phía sau vốn đã bỏ qua họ. Mức lợi của mục này nhỏ (khoảng 1 giây trên 25 giây trong một đợt đo, chưa đo lặp lại xen kẽ).
+
+Đã thử và bỏ, vì không nhanh hơn ngoài mức dao động của máy kiểm: bảng nhớ chỗ trú dùng khoá số (thử hai lần); tách hàm đo thời gian. Đã thử và bỏ vì làm bản lưu khác đi: đưa mọi hồ sơ về cùng một thứ tự trường.
+
+### Kết quả tính có đổi không
+
+Không. Bốn bản lưu của vòng 9 được tính lại bằng mã mới; dấu vân tay của bản lưu trả về và của nhật ký trở về trùng với mã gốc ở cả bốn:
+
+| Bản lưu (hạt giống) | Vắng | Bản lưu | Nhật ký |
+|---|---|---|---|
+| 5 | 3 giờ | `259149f1cd94aad1` | `6064377c292bb6fe` |
+| 11 | 1 giờ | `7eaf253ca1f2d63e` | `ff6782b68c09260c` |
+| 23 | 2 giờ | `fea89333fa4471c7` | `d32bfe7ecc8fac70` |
+| 5 | 8 giờ | `ac0fe1f3a5c57408` | `c5c63ff36fff16fb` |
+
+Cả bốn vẫn là ván mới chơi 20 giây.
+
+Thêm một tệp kiểm thử cố định, `web/tests/resident-catchup-speed.test.ts` (3 bài): chuẩn bị hồ sơ không đổi trường, giá trị hay thứ tự trường; cùng một thế giới chạy 60 bước có và không có từng thay đổi cho ra cùng một bản lưu; danh sách dùng chung không bao giờ thiếu cư dân vừa được thêm. Đã thử gỡ dòng báo "có cư dân mới" khỏi mã: bài thứ ba báo hỏng, tức là bài này bắt được lỗi đó.
+
+### Số đo
+
+Riêng phần mô phỏng (Node trên máy kiểm, vùng đất đã dựng sẵn; mỗi số là một lượt chạy):
+
+| Bản lưu | Vắng | Trước vòng 9 | Sau vòng 9 | Sau vòng 10 |
+|---|---|---|---|---|
+| hạt giống 5 | 3 giờ | 37,5 s; 38,1 s | 32,1 s; 32,4 s | 24,4 s; 25,4 s |
+| hạt giống 5 | 8 giờ | 86,2 s | 73,6 s | 57,2 s |
+| hạt giống 23 | 2 giờ | 31,4 s | 28,7 s | 22,7 s |
+| hạt giống 11 | 1 giờ | 22,7 s | 20,8 s | 16,0 s |
+
+So với vòng 9: ngắn hơn 21–24%. So với trước vòng 9: ngắn hơn 28–35%. Vẫn chưa phải một nửa.
+
+Cả màn chờ trên trình duyệt (Chromium không màn hình, 2 nhân, bản lưu hạt giống 5, bấm Chơi tiếp 30 giây sau khi mở trang; "trước" là bản vòng 9, đo lại trong cùng buổi):
+
+| Vắng | Trước: vào game sau | Sau: vào game sau |
+|---|---|---|
+| 3 giờ | 48,9 s; 47,7 s; 43,3 s; 48,6 s | 44,3 s; 42,7 s; 42,7 s; 42,8 s; 42,8 s |
+| 3 giờ, bấm sau 60 giây | 45,8 s | 40,3 s |
+| 8 giờ | 83,9 s | 67,6 s |
+
+Ở mức 3 giờ, màn chờ chỉ ngắn hơn khoảng 5 giây dù phần tính ngắn hơn khoảng 8 giây (thanh tiến độ tới 99% sau 38,7–44,0 giây ở bản trước, 34,8–36,0 giây ở bản sau). Đoạn từ 99% đến lúc vào game dài hơn ở bản sau: 6,8–8 giây so với 4,6–5,7 giây. Chưa tìm ra nguyên nhân. Điều đã biết về đoạn này:
+
+- Trong đoạn này luồng chính vẽ hình cây, đá, công trình lần đầu và đọc điểm ảnh ngược lại từ bộ phận vẽ. Trên máy kiểm, bộ phận vẽ là phần mềm (không có card đồ hoạ) và chiếm trọn một nhân trong suốt màn chờ; việc đọc ngược phải đợi nó.
+- Với lần vắng ngắn (12 phút, bấm sau 20 giây), cả hai bản đều mất 37–45 giây mới vào game, trong đó luồng chính đứng đợi việc đọc ngược này 14–19 giây. Đây không phải thời gian tính cư dân.
+- Đã thử bắt các hình này vẽ bằng bộ nhớ thường: lần vắng 12 phút còn 21–24 giây. **Không giữ lại**, vì trên máy kiểm 23 trong 829 hình ra điểm ảnh khác (10 hình khác rõ ở viền, 13 hình lệch một đến ba mức màu), và chưa biết trên máy có card đồ hoạ thì lợi bao nhiêu. Đã thử giữ luồng dựng đất nghỉ thêm cho tới khi vẽ xong khung hình đầu: không ngắn hơn, không giữ lại.
+- Vì vậy các số trình duyệt ở trên chịu ảnh hưởng của việc máy kiểm vẽ bằng phần mềm. Trên máy thật con số có thể khác, theo cả hai chiều; chưa đo.
+
+### Kiểm thử
+
+- `tsc` và `typecheck:tests`: không lỗi.
+- 13 tệp `tests/npc-*.test.ts` có liên quan, 3 tệp của màn Chơi tiếp và tệp mới: 16 tệp qua, 94 bài qua; 1 tệp và 2 bài vốn được đánh dấu bỏ qua từ trước.
+
+### Chưa làm, chưa kiểm ở vòng này
+
+- Không chạy lại toàn bộ bộ kiểm thử; chỉ chạy 17 tệp nêu trên.
+- Bốn phép so dấu vân tay vẫn làm bằng công cụ tạm ngoài kho mã. Bài kiểm thử cố định mới chỉ so 60 bước trên một ván mới.
+- Chưa so trên bản lưu của ván đã chơi lâu, có công trình của người chơi. Chưa đo lần vắng trên 24 giờ.
+- Mục 2 dựa vào cách V8 (Chrome, Edge, Node) lưu đối tượng. Trên Firefox và Safari kết quả tính vẫn y nguyên, nhưng chưa đo ở đó và có thể không nhanh hơn nhờ mục này.
+- Chưa đo trên máy thật hay điện thoại. Chưa mở trang QA sau khi triển khai.
+- Chưa xử lý đoạn 5–8 giây sau khi tính xong và đoạn dựng đất ở đầu màn chờ (khoảng 18 giây cho 20% đầu ở mức vắng 3 giờ).
+
 ## Chưa làm, chưa kiểm
 
 - Chưa thử trên điện thoại thật, Firefox, Safari. Máy kiểm chỉ có Chromium không màn hình và không truy cập được địa chỉ chơi thật.

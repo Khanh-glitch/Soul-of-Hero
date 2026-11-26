@@ -505,7 +505,7 @@ export function makeHuman(r: RunState, hw: HumanWorld, opts: {
     knownRecipes: opts.occupation === 'cook' ? Object.keys(RECIPES).filter(k => RECIPES[k].station === 'campfire' && RECIPES[k].tier <= 1 && ITEMS[RECIPES[k].out]?.food) : [],
     lastCommittedAt: r.clock.lastSimAt, lastSimAt: r.clock.lastSimAt,
   };
-  hw.people[id] = h;
+  hw.people[id] = h; rosterEpoch++; // a new resident: every shared list is out of date
   return h;
 }
 
@@ -784,9 +784,44 @@ export function seedPopulation(r: RunState, hw: HumanWorld, sites: { id: string;
 /** A needs read transaction owns a single bed-claim index. It is deliberately not
  * retained across calls: migration/tests can edit assignments without markDirty. */
 export interface HumanNeedsContext { shelter: HumanShelterContext; bedClaims: Map<string, number> }
-export function humanNeedsContext(r: RunState, hw: HumanWorld): HumanNeedsContext {
+/** One resident list for a synchronous stretch of simulation. `hw.people` holds a few hundred keys, and
+ *  the engine rebuilds and re-sorts the whole key list on every Object.values() of an object that size;
+ *  the needs tick, the event boundary and the human step each asked for it in every slice of an absence.
+ *  Inside `withHumanRoster` they share one list. The list is exact: residents are added in one place only
+ *  (`makeHuman`, which drops the list), nothing removes a resident, and a different `people` object is
+ *  never served from it. Outside the scope every caller reads `hw.people` directly, as before. */
+let rosterScope: { people: HumanWorld['people']; list: HumanRecord[]; epoch: number } | undefined, rosterEpoch = 0;
+const sharedRoster = (hw: HumanWorld) => rosterScope && rosterScope.people === hw.people && rosterScope.epoch === rosterEpoch ? rosterScope.list : undefined;
+export function withHumanRoster<T>(hw: HumanWorld | undefined, work: () => T): T {
+  if (!hw || sharedRoster(hw)) return work();
+  const previous = rosterScope; rosterScope = { people: hw.people, list: Object.values(hw.people), epoch: rosterEpoch };
+  try { return work(); } finally { rosterScope = previous; }
+}
+/** Same residents in the same order as Object.values(hw.people); always a fresh array. */
+function humanRoster(hw: HumanWorld): HumanRecord[] { return sharedRoster(hw)?.slice() ?? Object.values(hw.people); }
+/** Called once before a long catch-up (Continue after an absence). It changes nothing that a rule, a save
+ *  or a report can see: every resident keeps the same fields, in the same order, with the same values.
+ *  It only tells the engine how these records are about to be used, because a catch-up reads the fields
+ *  of all residents tens of thousands of times:
+ *  1. `state` read back from a save is an ordinary text; replacing it with the equal constant from the
+ *     code lets every `h.state === 'IDLE'` be decided by identity instead of comparing characters.
+ *  2. Residents loaded from a save come in dozens of field orders, and V8 keeps a separate layout for
+ *     each; its shared lookup table then overflows and most field reads take the slow path. Adding and
+ *     removing two private symbol keys puts each record in hash-table layout, where a read costs the
+ *     same for every record. Measured on a 3 h absence of 286 residents: about 4 s of 30 s.
+ *  Other engines treat both steps as the no-ops they are. */
+const KNOWN_HUMAN_STATES = new Map<string, HumanState>((['IDLE', 'MOVING', 'WORKING', 'FIGHTING', 'DOWNED', 'DEAD', 'EVACUATED', 'BLOCKED', 'ON_VESSEL'] as HumanState[]).map(s => [s, s]));
+const LAYOUT_HINT_A = Symbol('catch-up layout hint'), LAYOUT_HINT_B = Symbol('catch-up layout hint');
+export function prepareHumansForCatchUp(hw: HumanWorld): void {
+  for (const h of Object.values(hw.people)) {
+    const state = KNOWN_HUMAN_STATES.get(h.state); if (state) h.state = state;
+    const record = h as unknown as Record<symbol, unknown>;
+    record[LAYOUT_HINT_A] = 0; record[LAYOUT_HINT_B] = 0; delete record[LAYOUT_HINT_A]; delete record[LAYOUT_HINT_B];
+  }
+}
+export function humanNeedsContext(r: RunState, hw: HumanWorld, people: HumanRecord[] = humanRoster(hw)): HumanNeedsContext {
   const bedClaims = new Map<string, number>();
-  for (const h of Object.values(hw.people)) if (h.bedId && h.state !== 'DEAD' && h.state !== 'EVACUATED')
+  for (const h of people) if (h.bedId && h.state !== 'DEAD' && h.state !== 'EVACUATED')
     bedClaims.set(h.bedId, (bedClaims.get(h.bedId) ?? 0) + 1);
   return { shelter: humanShelterContext(r), bedClaims };
 }
@@ -811,23 +846,27 @@ export function tickNeeds(r: RunState, hw: HumanWorld, now: number): void {retur
   const lastNeedsAt = hw.lastNeedsAt ?? hw.lastResolvedAt;
   const dtMs = now - lastNeedsAt;
   if (dtMs <= 0) return; // every physical interval is integrated before an actor changes activity
-  const context=humanNeedsContext(r,hw),shelterContext=context.shelter;
+  const people=humanRoster(hw),context=humanNeedsContext(r,hw,people),shelterContext=context.shelter;
   const hours = dtMs / HOUR;
   const hungerRate = BAL.player.offlineHungerPerHour;
   const thirstRate = BAL.player.offlineThirstPerHour;
-  for (const h of Object.values(hw.people)) {
-    if (h.state === 'DEAD' || h.state === 'EVACUATED') continue;
+  for (const h of people) {
+    // `state`, and the hunger and thirst just written, stay in locals until the first call that can change
+    // this resident (applyDamage below): the same values, read once instead of five to eight times.
+    const state = h.state;
+    if (state === 'DEAD' || state === 'EVACUATED') continue;
     // Active humans consume faster when working/fighting; distant use the baseline rate.
-    const active = h.state === 'WORKING' || h.state === 'FIGHTING' || h.state === 'MOVING';
+    const active = state === 'WORKING' || state === 'FIGHTING' || state === 'MOVING';
     const m = active ? 1.25 : 1.0;
     const hungerBefore=h.hunger, thirstBefore=h.thirst;
-    h.hunger = clamp(h.hunger - hungerRate * hours * m, 0, 100);
-    h.thirst = clamp(h.thirst - thirstRate * hours * m, 0, 100);
-    if ((hungerBefore>40&&h.hunger<=40)||(hungerBefore>25&&h.hunger<=25)||(hungerBefore>5&&h.hunger<=5)||(thirstBefore>40&&h.thirst<=40)||(thirstBefore>25&&h.thirst<=25)||(thirstBefore>5&&h.thirst<=5)) {
+    const hunger = clamp(hungerBefore - hungerRate * hours * m, 0, 100), thirst = clamp(thirstBefore - thirstRate * hours * m, 0, 100);
+    h.hunger = hunger;
+    h.thirst = thirst;
+    if ((hungerBefore>40&&hunger<=40)||(hungerBefore>25&&hunger<=25)||(hungerBefore>5&&hunger<=5)||(thirstBefore>40&&thirst<=40)||(thirstBefore>25&&thirst<=25)||(thirstBefore>5&&thirst<=5)) {
       h.nextThinkAt=now; h.blockedPlanCount=0;
     }
     h.warmth = clamp(h.warmth - (humanShelter(r, h.gx, h.gy, h.floor,shelterContext) ? 0 : 0.4 * hours), 20, 100);
-    if (h.hunger <= 0 || h.thirst <= 0) {
+    if (hunger <= 0 || thirst <= 0) {
       // starvation / dehydration: HP drain, work stops
       // Charge only the elapsed portion AFTER exhaustion, never the whole offline interval.
       const exhaustedMs=(before:number,rate:number)=>Math.max(0,dtMs-(before<=0?0:rate>0?before/rate*HOUR:Infinity));
@@ -3266,29 +3305,36 @@ const nextHumanBeat=(r:RunState,at:number,due:number):number=>{
 };
 export function humanEventBoundary(r:RunState,hw:HumanWorld,at:number,maximum:number,coarse=false):number {return timedWorldWork('humanEventBoundary',()=>{
  let dt=maximum;
- for(const h of Object.values(hw.people)){
-  if(h.state==='DEAD'||h.state==='EVACUATED')continue;
+ for(const h of humanRoster(hw)){
+  // This loop only reads. Each field of the resident is read once and kept in a local: the same
+  // comparisons on the same values, without asking the record for `state` eight times per slice.
+  const state=h.state;
+  if(state==='DEAD'||state==='EVACUATED')continue;
   // These are causal thresholds, not an arbitrary periodic needs tick. Continuous
   // rates are integrated by tickNeeds before movement/work can change the rate.
-  const m=(h.state==='WORKING'||h.state==='FIGHTING'||h.state==='MOVING')?1.25:1;
+  const m=(state==='WORKING'||state==='FIGHTING'||state==='MOVING')?1.25:1;
   // Only the nearest lower threshold can be the next boundary. Avoid
   // constructing eight temporary tuples/arrays per actor on every move slice.
-  if((h.spiritStep?.arriveAt??0)>at)dt=Math.min(dt,h.spiritStep!.arriveAt-at);
-  if((h.iceUntil??0)>at)dt=Math.min(dt,h.iceUntil!-at);
-  if((h.channelUntil??0)>at)dt=Math.min(dt,h.channelUntil!-at);
-  const hungerThreshold=h.hunger>40?40:h.hunger>25?25:h.hunger>5?5:0;
-  const thirstThreshold=h.thirst>40?40:h.thirst>25?25:h.thirst>5?5:0;
-  if(h.hunger>0&&BAL.player.offlineHungerPerHour>0)dt=Math.min(dt,(h.hunger-hungerThreshold)/(BAL.player.offlineHungerPerHour*m)*HOUR);
-  if(h.thirst>0&&BAL.player.offlineThirstPerHour>0)dt=Math.min(dt,(h.thirst-thirstThreshold)/(BAL.player.offlineThirstPerHour*m)*HOUR);
-  const starving=(h.hunger<=0?1:0)+(h.thirst<=0?1:0);
+  const spiritStep=h.spiritStep,iceUntil=h.iceUntil,channelUntil=h.channelUntil;
+  if((spiritStep?.arriveAt??0)>at)dt=Math.min(dt,spiritStep!.arriveAt-at);
+  if((iceUntil??0)>at)dt=Math.min(dt,iceUntil!-at);
+  if((channelUntil??0)>at)dt=Math.min(dt,channelUntil!-at);
+  const hunger=h.hunger,thirst=h.thirst;
+  const hungerThreshold=hunger>40?40:hunger>25?25:hunger>5?5:0;
+  const thirstThreshold=thirst>40?40:thirst>25?25:thirst>5?5:0;
+  if(hunger>0&&BAL.player.offlineHungerPerHour>0)dt=Math.min(dt,(hunger-hungerThreshold)/(BAL.player.offlineHungerPerHour*m)*HOUR);
+  if(thirst>0&&BAL.player.offlineThirstPerHour>0)dt=Math.min(dt,(thirst-thirstThreshold)/(BAL.player.offlineThirstPerHour*m)*HOUR);
+  const starving=(hunger<=0?1:0)+(thirst<=0?1:0);
   if(starving&&BAL.player.starveDamagePerMin>0)dt=Math.min(dt,Math.max(1,h.hp)/(starving*BAL.player.starveDamagePerMin)*60000);
   for(const w of h.wounds)if(w.bleeding&&!w.treated&&w.bleedingUntil){const due=w.bleedingUntil+12*60000;if(due>at)dt=Math.min(dt,due-at);}
-  if(h.rest<.5)dt=Math.min(dt,(.5-h.rest)*8*HOUR);
-  if((h.state==='DOWNED'||needsFollowup(h)) && h.nextMedicalReviewAt!==undefined && h.nextMedicalReviewAt>at)dt=Math.min(dt,coarse?nextHumanBeat(r,at,h.nextMedicalReviewAt):h.nextMedicalReviewAt-at);
-  if(h.state==='MOVING'&&h.intent?.route?.length)dt=Math.min(dt,coarse?nextHumanBeat(r,at,at):Math.max(.001,TILE/PROFILES[h.profile].speed*1000-(h.motion?.elapsedMs??0)));
-  if(h.following && h.state==='IDLE' && h.intent && (returningHome(h.intent)||h.intent.delivery) && h.intent.dueAt>at)dt=Math.min(dt,h.intent.dueAt-at);
-  if(h.state==='WORKING'&&h.intent&&h.intent.dueAt>at)dt=Math.min(dt,h.intent.dueAt-at);
-  if(!h.following&&h.state==='IDLE'&&(!h.intent||!!h.intent.work)){
+  const rest=h.rest;
+  if(rest<.5)dt=Math.min(dt,(.5-rest)*8*HOUR);
+  if(state==='DOWNED'||needsFollowup(h)){const review=h.nextMedicalReviewAt;if(review!==undefined && review>at)dt=Math.min(dt,coarse?nextHumanBeat(r,at,review):review-at);}
+  const intent=h.intent,following=h.following;
+  if(state==='MOVING'&&intent?.route?.length)dt=Math.min(dt,coarse?nextHumanBeat(r,at,at):Math.max(.001,TILE/PROFILES[h.profile].speed*1000-(h.motion?.elapsedMs??0)));
+  if(following && state==='IDLE' && intent && (returningHome(intent)||intent.delivery) && intent.dueAt>at)dt=Math.min(dt,intent.dueAt-at);
+  if(state==='WORKING'&&intent&&intent.dueAt>at)dt=Math.min(dt,intent.dueAt-at);
+  if(!following&&state==='IDLE'&&(!intent||!!intent.work)){
    const review=h.nextThinkAt??at;
    const due=committedRetry(h)?review:Math.max(hw.plannerAt??at,review);
    dt=Math.min(dt,coarse?nextHumanBeat(r,at,due):Math.max(1,due-at));
@@ -3549,7 +3595,7 @@ function planAutonomousWork(r: RunState, hw: HumanWorld, h: HumanRecord, now: nu
   const reports=requestedSourceReports(r,hw,h).filter(p=>allowed.has(p.key)).map(p=>({...p,distance:Math.abs(p.gx-h.gx)+Math.abs(p.gy-h.gy)}));
   candidates=[...reports,...candidates].sort((a,b)=>Number(!SOURCES[a.key].yields.some(([k])=>wantedGoods.has(k)))-Number(!SOURCES[b.key].yields.some(([k])=>wantedGoods.has(k)))||a.distance-b.distance);
   for(const p of candidates){
-    if(Object.values(hw.people).some(other=>other.actorId!==h.actorId&&other.harvestJob?.phase==='source'&&other.harvestJob.gx===p.gx&&other.harvestJob.gy===p.gy&&other.harvestJob.floor===h.floor&&!['DEAD','EVACUATED','DOWNED'].includes(other.state)))continue;
+    if(humanRoster(hw).some(other=>other.actorId!==h.actorId&&other.harvestJob?.phase==='source'&&other.harvestJob.gx===p.gx&&other.harvestJob.gy===p.gy&&other.harvestJob.floor===h.floor&&!['DEAD','EVACUATED','DOWNED'].includes(other.state)))continue;
     const s=globalSourceAt(r,p.gx,p.gy,h.floor,now);if(!s||s.key!==p.key||s.protected||!canHarvestSource(h,s))continue;
     if(s.stock<=0){h.lastWorkBlock='Known source is depleted';continue;}
     // Carry admission is immediate; warehouse admission is checked at physical
@@ -3731,7 +3777,7 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number, coarse = fa
   if (dtMs <= 0) return;
   hw.lastStepAt = now;
   stepPlayerHumanAid(r,hw,now);
-  const actors = Object.values(hw.people);
+  const actors = humanRoster(hw);
   // Offline beat: who was already walking which route when this slice began. Only they have been on the
   // move during the slice; a route chosen at this instant starts from a standstill (see section 4).
   const walkingAtSliceStart = new Map<HumanRecord, unknown>();
@@ -3913,6 +3959,14 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number, coarse = fa
   }
   let navigation: ReturnType<typeof humanNavigation>|undefined;
   actorLoop: for (const h of actors) {
+    // Most residents stand idle with no intent and no urgent need. For them every branch of the full body
+    // below is a no-op except the two immobility checks and the stamina line at the end, so do exactly
+    // those. Same result; it only avoids reading the same fields of each such resident again and again.
+    if (h.state === 'IDLE' && !h.intent && !(h.hunger < 40) && !(h.thirst < 40)) {
+      if (coreImmobilized(h, now) || (h.rootedUntil ?? 0) > now) continue;
+      h.stamina = clamp(h.stamina + dtMs / HOUR * 4, 0, h.maxStamina);
+      continue;
+    }
     if (h.state === 'DEAD' || h.state === 'EVACUATED') continue;
     if (h.state === 'ON_VESSEL') {
       // Creator delegation (ruling on build 98ee24ac): a passenger waiting at the quay eats and drinks from their own
