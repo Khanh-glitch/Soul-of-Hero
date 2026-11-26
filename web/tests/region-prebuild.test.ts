@@ -108,6 +108,73 @@ describe('title-screen warm-up list', () => {
   }, 120000);
 });
 
+describe('prebuilding gives way while Continue replays an absence', () => {
+  type Fake = { posted: unknown[]; onmessage: ((e: { data: unknown }) => void) | null; onerror: (() => void) | null; postMessage(m: unknown): void; terminate(): void };
+  const withCores = async (count: number, body: (api: typeof import('../src/veyra05/region-prebuild'), made: Fake[], r: RunState) => void) => {
+    const made: Fake[] = [];
+    vi.stubGlobal('navigator', { hardwareConcurrency: count });
+    vi.stubGlobal('Worker', function (this: Fake) { this.posted = []; this.onmessage = null; this.onerror = null; this.postMessage = m => { this.posted.push(m); }; this.terminate = () => { /* */ }; made.push(this); });
+    try {
+      vi.resetModules();
+      const api = await import('../src/veyra05/region-prebuild');
+      const { U05_WORLD_LAYOUT_ID } = await import('../src/veyra05/scenes');
+      body(api, made, { layoutId: U05_WORLD_LAYOUT_ID, sourceMap: { rules: 4 }, humanWorld: { people: { a: { gx: 1120, gy: 1120, floor: 0, state: 'IDLE' } } } } as unknown as RunState);
+    } finally { vi.unstubAllGlobals(); vi.resetModules(); }
+  };
+
+  it('on two cores the worker is paused for the wait and released after it, once each', () => withCores(2, (api, made, r) => {
+    api.prebuildRegions(r, 1_000_000);
+    const before = made[0].posted.length;
+    api.holdRegionPrebuild(true); api.holdRegionPrebuild(true);
+    expect(made[0].posted.slice(before)).toEqual([{ pause: true }]);
+    api.holdRegionPrebuild(false); api.holdRegionPrebuild(false);
+    expect(made[0].posted.slice(before)).toEqual([{ pause: true }, { pause: false }]);
+  }));
+
+  it('with more cores nothing is paused', () => withCores(8, (api, made, r) => {
+    api.prebuildRegions(r, 1_000_000);
+    const before = made[0].posted.length;
+    api.holdRegionPrebuild(true); api.holdRegionPrebuild(false);
+    expect(made[0].posted.length).toBe(before);
+  }));
+
+  it('the packs lent to the Continue worker stay in the pool for the game', () => withCores(2, (api, made, r) => {
+    api.prebuildRegions(r, 1_000_000);
+    const [layoutId, rules] = (made[0].posted[0] as { want: [string, number][] }).want[0];
+    const pack = { layoutId, rules, levels: [{}, {}] };
+    made[0].onmessage!({ data: { layoutId, rules, pack } });
+    expect(api.waitingRegionPacks()).toEqual([pack]);
+    expect(api.regionPrebuildStats().waiting).toBe(1);
+  }));
+
+  it('a paused worker finishes nothing more, keeps its list, and carries on when released', async () => {
+    const replies: string[] = [];
+    const fake = { onmessage: null as null | ((e: { data: unknown }) => void), postMessage(m: { layoutId: string }) { replies.push(m.layoutId); } };
+    vi.stubGlobal('self', fake);
+    try {
+      vi.resetModules();
+      await import('../src/veyra05/region-prebuild.worker');
+      const want = [[layoutIdAt(1024, 1024), 4], [layoutIdAt(1280, 1024), 4], [layoutIdAt(1024, 1280), 4]];
+      const until = async (done: () => boolean) => { for (let i = 0; i < 3000 && !done(); i++) await new Promise(r => setTimeout(r, 10)); };
+      fake.onmessage!({ data: { pause: true } });
+      fake.onmessage!({ data: { want, rest: 0 } });
+      await new Promise(r => setTimeout(r, 300));
+      expect(replies).toEqual([]);                                   // paused before it began: nothing compiled
+      fake.onmessage!({ data: { pause: false } });
+      await until(() => replies.length >= 1);
+      fake.onmessage!({ data: { pause: true } });                    // at most the region in hand still arrives
+      await new Promise(r => setTimeout(r, 600));
+      const whilePaused = replies.length;
+      expect(whilePaused).toBeLessThan(3);
+      await new Promise(r => setTimeout(r, 600));
+      expect(replies.length).toBe(whilePaused);
+      fake.onmessage!({ data: { pause: false } });
+      await until(() => replies.length >= 3);
+      expect(replies).toEqual(want.map(w => w[0]));                  // same list, same order, nothing twice
+    } finally { vi.unstubAllGlobals(); vi.resetModules(); }
+  }, 120000);
+});
+
 describe('prebuild worker lifetime', () => {
   it('is shut down after half a minute with nothing to compile and started again on the next request', async () => {
     type Fake = { posted: unknown[]; terminated: boolean; onmessage: ((e: { data: unknown }) => void) | null; onerror: (() => void) | null; postMessage(m: unknown): void; terminate(): void };

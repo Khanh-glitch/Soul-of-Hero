@@ -2,14 +2,14 @@ import { useEffect, useRef, useState } from 'react';
 import type { GameState } from './game/core';
 import { dispatch, markDirty, mkStack, startRun } from './game/engine';
 import { settleWithReturn, type OfflineReturnV1 } from './game/return-report';
-import type { ReturnMessage } from './game/offline-return-worker';
+import type { ReturnMessage, ReturnRequest } from './game/offline-return-worker';
 import { load, save, selectSnapshots, serializeSnapshot } from './game/persist';
 import { getArt } from './game/art';
 import { getActiveLayout, getWorld, setActiveLayout } from './game/world';
 import { U05_WORLD_LAYOUT_ID, isVeyra05Layout } from './veyra05/scenes';
 import { getWindowWorld } from './veyra05/window';
 import { syncFloor } from './veyra05/floors';
-import { prebuildRegions, warmNewGameRegions } from './veyra05/region-prebuild';
+import { holdRegionPrebuild, prebuildRegions, waitingRegionPacks, warmNewGameRegions } from './veyra05/region-prebuild';
 import Inspector from './veyra05/inspector/Inspector';
 import { resetRenderCaches, cam } from './game/render';
 import { setVolume, initAudio } from './game/audio';
@@ -53,8 +53,14 @@ export default function App() {
   }, []);
 
   const catchUp=useRef<Worker|null>(null);
-  const [progress,setProgress]=useState<number|null>(null);
-  useEffect(()=>()=>{catchUp.current?.terminate();catchUp.current=null;},[]);
+  /** The wait after Continue: share of the absence worked out, world regions made ready, when it began, how long the player was away. */
+  const [progress,setProgress]=useState<{fraction:number;regions:number;startedAt:number;awayMs:number}|null>(null);
+  const [,setBeat]=useState(0);
+  const waiting=progress!==null;
+  // The running clock on the waiting panel shows the work is alive while the bar stands still.
+  useEffect(()=>{if(!waiting)return;const timer=setInterval(()=>setBeat(b=>b+1),1000);return()=>clearInterval(timer);},[waiting]);
+  const stopCatchUp=()=>{catchUp.current?.terminate();catchUp.current=null;holdRegionPrebuild(false);setProgress(null);};
+  useEffect(()=>()=>{catchUp.current?.terminate();catchUp.current=null;holdRegionPrebuild(false);},[]);
   const savedGs = gsRef.current;
   // While the title is up, start compiling the regions residents stand on (those of the run behind Continue, or of a
   // new game), so the first minute of play does not pay for them (region-prebuild.ts; changes no game state).
@@ -146,12 +152,19 @@ export default function App() {
     setScreen('game');
   };
 
-  if(progress!==null)return <main className="panel" aria-label="Returning to the island" style={{maxWidth:390,margin:'12vh auto',padding:16}}>
-    <h1 className="title-font">While you were away</h1>
-    <p>Resolving the saved island’s food, work and travel. Your original save stays intact until this finishes.</p>
-    <progress aria-label="Island time resolved" value={progress} max={1} style={{width:'100%'}} /> {Math.floor(progress*100)}%
-    <button className="btn" onClick={()=>{catchUp.current?.terminate();catchUp.current=null;setProgress(null);}}>Back to title</button>
-  </main>;
+  if(progress!==null){
+    const away=Math.max(0,Math.round(progress.awayMs/60000)),awayText=away>=2880?`${Math.floor(away/1440)} d ${Math.floor(away%1440/60)} h`:away>=60?`${Math.floor(away/60)} h ${away%60} min`:`${away} min`;
+    const ran=Math.max(0,Math.floor((Date.now()-progress.startedAt)/1000)),ranText=`${Math.floor(ran/60)}:${String(ran%60).padStart(2,'0')}`;
+    // Each line is one string, so the Vietnamese phrase book sees whole sentences.
+    return <main className="panel" aria-label="Returning to the island" style={{maxWidth:430,margin:'12vh auto',padding:16}}>
+      <h1 className="title-font">While you were away</h1>
+      <p>{`You were away for ${awayText}. The island kept living: its food, work and travel for that time are being worked out now.`}</p>
+      <p>A long absence can take a few minutes. Your saved game stays as it was until this finishes.</p>
+      <progress aria-label="Island time resolved" value={progress.fraction} max={1} style={{width:'100%'}} />
+      <p data-testid="return-status" style={{margin:'6px 0 12px'}}>{`${Math.floor(progress.fraction*100)}% of the time away worked out · ${progress.regions} regions of land made ready · running for ${ranText}`}</p>
+      <button className="btn" onClick={stopCatchUp}>Back to title</button>
+    </main>;
+  }
   if (QA_BUILD && screen === 'inspector') {
     return <Inspector gs={savedGs} initialMode="creator" onClose={closeInspector} onLaunchCreatorInspect={launchInspection} />;
   }
@@ -178,19 +191,24 @@ export default function App() {
             finish(savedGs,settleWithReturn(savedGs,now));return;
           }
           if(catchUp.current)return;
-          const fail=(reason:string)=>{catchUp.current?.terminate();catchUp.current=null;setProgress(null);setNote(`Continue did not finish. Your previous save is unchanged. ${reason}`);};
+          const fail=(reason:string)=>{stopCatchUp();setNote(`Continue did not finish. Your previous save is unchanged. ${reason}`);};
           try {
-            const w=new Worker(new URL('./game/offline-return-worker.ts',import.meta.url),{type:'module'});catchUp.current=w;setProgress(0);
+            const w=new Worker(new URL('./game/offline-return-worker.ts',import.meta.url),{type:'module'});catchUp.current=w;
+            setProgress({fraction:0,regions:0,startedAt:Date.now(),awayMs:now-savedGs.run.clock.lastSimAt});
             w.onerror=e=>{if(catchUp.current===w)fail(e.message);};
             w.onmessage=({data}:{data:ReturnMessage})=>{
               if(catchUp.current!==w)return;
-              if(data.kind==='progress'){setProgress(data.fraction);return;}
+              if(data.kind==='progress'){setProgress(p=>p&&{...p,fraction:data.fraction,regions:data.regions});return;}
               if(data.kind==='failed'){fail(data.reason);return;}
               try{const next=selectSnapshots([data.snapshot]).gs;if(!next)throw Error('Invalid return snapshot.');
-                w.terminate();catchUp.current=null;setProgress(null);finish(next,data.result);
+                stopCatchUp();finish(next,data.result);
               }catch(e){fail(String(e));}
             };
-            w.postMessage({snapshot:serializeSnapshot(savedGs),now});
+            // Regions the title screen has compiled ahead of need go along. They are copied: the pool keeps its own
+            // for the game that starts afterwards. On a two-core machine the prebuild worker stands down meanwhile.
+            const request:ReturnRequest={snapshot:serializeSnapshot(savedGs),now,packs:waitingRegionPacks()};
+            holdRegionPrebuild(true);
+            w.postMessage(request);
           }catch(e){fail(String(e));}
         }}
         onStart={(c, region, layoutId) => {

@@ -52,6 +52,22 @@ let idleSince: number | null = null;
 const stats = { requested: 0, received: 0, served: 0, dropped: 0, released: 0, shutdowns: 0, missLate: 0, missUsed: 0, missUnasked: 0 };
 /** Packs given back to make room (see `prebuildRegions`); forgotten when requested again. */
 const released = new Set<string>();
+/** The packs that wait right now, for a thread that is about to do the same world's work
+ * (Continue after an absence, offline-return-worker.ts). The caller posts them WITHOUT a transfer list, so they are
+ * copied and the pool keeps its own. */
+export const waitingRegionPacks = (): GeometryRegionPack[] => [...pool.values()];
+
+/** While the player waits for the Continue worker to replay an absence, a machine with two cores or fewer pauses
+ * prebuilding, so that worker is not slowed by this one (measured in a 2-core browser, 3 h away, Continue pressed
+ * 5 s after the page opened: 57 s without the pause, 45 s with it). The prebuild worker keeps its list and carries
+ * on from the same place when released; packs already waiting stay. With more cores this does nothing. */
+let held = false;
+export function holdRegionPrebuild(on: boolean): void {
+  if (cores > 2 || held === on) return;
+  held = on;
+  worker?.postMessage({ pause: on } as PrebuildRequest);
+}
+
 /** Counters for tests and measurements. */
 export const regionPrebuildStats = () => ({ ...stats, waiting: pool.size, waitingFloors: pooledFloors });
 
@@ -78,6 +94,7 @@ function start(): Worker | null {
       else stats.missUnasked++;
       return pack;
     });
+    if (held) w.postMessage({ pause: true } as PrebuildRequest);
     return worker = w;
   } catch { return worker = null; }
 }

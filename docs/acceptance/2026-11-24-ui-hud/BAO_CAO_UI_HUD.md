@@ -365,6 +365,61 @@ ZIP đóng lại từ bản dựng này: 64.448.524 byte, SHA256 `4c25cd5adc8101
 - Mỗi tình huống chỉ đo một lượt trước và một lượt sau, nên con số ở các dòng "8 giây" chỉ cho biết chiều hướng.
 - Bộ kiểm thử đầy đủ và các tệp chậm không chạy lại; vòng này chỉ sửa bốn tệp `web/src/veyra05/region-*.ts`.
 
+## Vòng 8: màn chờ "Khi bạn vắng mặt" lúc bấm Chơi tiếp (nhánh `arena/d6096eae-soul-of-hero`)
+
+Người chơi báo: bấm Chơi tiếp thì màn "KHI BẠN VẮNG MẶT" đứng ở 0% rất lâu, chữ lẫn tiếng Anh với tiếng Việt. Luồng Chơi tiếp chưa từng được đo ở vòng 6 và vòng 7 (khi đó chỉ ghi ở mục "chưa kiểm").
+
+### Nguyên nhân (đã đo)
+
+1. Phần tính thời gian vắng mặt chạy ở một luồng riêng. Luồng này bắt đầu mà chưa dựng vùng đất nào, nên phải tự dựng khoảng 180–200 vùng trước khi qua được 1–2%. Trong lúc đó màn hình chỉ có số 0%.
+2. Phần còn lại là mô phỏng 286 cư dân theo từng phút vắng mặt. Phần này dài theo số giờ vắng (khoảng 8–10 giây cho mỗi giờ vắng trên máy kiểm).
+3. Ở vòng 7, lúc mở trang game dựng sẵn 288 vùng (trước là 121), xong trước giây 27. Trên máy 2 nhân, nếu bấm Chơi tiếp trong khoảng đó thì hai việc tranh nhau bộ xử lý: bản cũ chờ 57–60 giây khi bấm sau 5 giây, 42 giây khi bấm sau 30 giây. Chưa đo lại bản trước vòng 7 nên chưa khẳng định được vòng 7 làm chậm bao nhiêu.
+4. Bốn chuỗi trên màn chờ chưa có trong sổ dịch. Số phần trăm và nút nằm dính nhau ("0%Back to title").
+
+### Đã sửa
+
+- Những vùng màn hình chính đã dựng sẵn được chép sang cho luồng tính thời gian vắng mặt. Vùng nào chưa có thì luồng đó tự dựng như cũ.
+- Trên máy 2 nhân, việc dựng sẵn tạm dừng trong lúc chờ và chạy tiếp đúng chỗ cũ khi chờ xong.
+- Màn chờ ghi rõ: đã vắng bao lâu, đang làm gì, đã tính bao nhiêu phần trăm, đã dựng bao nhiêu vùng đất, đã chạy bao lâu. Số vùng và đồng hồ nhích ngay từ giây đầu.
+- Toàn bộ chữ trên màn chờ có tiếng Việt, kể cả câu báo lỗi "Chưa chơi tiếp được…". Nút nằm riêng một dòng.
+- Thêm tiếng Việt cho 4 chuỗi gặp trong nhật ký trở về và màn tỉnh lại: "exposure while offline", "your bag", "Recovering breath…", "Safe Landing Site".
+
+### Số đo (Chromium không màn hình, máy kiểm 2 nhân, tiếng Việt; mỗi dòng là một lượt chạy)
+
+| Vắng | Bấm Chơi tiếp sau khi mở trang | Trước: vào được game sau | Sau: vào được game sau | Trước: số % đầu tiên | Sau: số % đầu tiên |
+|---|---|---|---|---|---|
+| 3 giờ | 5 giây | 56,7 s; 59,5 s | 47,7 s; 54,1 s | 14,2 s; 16,3 s | 9,3 s; 8,2 s |
+| 3 giờ | 30 giây | 42,0 s | 39,1 s | 10,2 s | 3,8 s |
+| 8 giờ | 5 giây | chưa đo trên trình duyệt | 80,8 s | chưa đo | 15,3 s |
+
+Ở bản sau, số vùng đất trên màn chờ đã là 68–106 ở giây thứ 8 trong mọi lượt.
+
+**Kết luận thẳng:** thời gian chờ chỉ ngắn đi khoảng 3–10 giây. Phần lớn thời gian chờ (mô phỏng cư dân) chưa được làm nhanh hơn. Cái đổi rõ là màn chờ không còn im ở 0% và không còn tiếng Anh.
+
+### Kết quả tính có đổi không
+
+Không. Bài kiểm `tests/continue-wait.test.ts` chạy cùng một bản lưu hai lần, một lần tự dựng mọi vùng, một lần nhận 60 vùng dựng sẵn: bản lưu trả về giống nhau từng byte, số vùng yêu cầu bằng nhau.
+
+### Kiểm thử
+
+- `tests/continue-wait.test.ts`: 3 bài (kết quả giống nhau từng byte và có báo tiến độ trước 1%; bản lưu hỏng thì báo lỗi; mọi dòng trên màn chờ có tiếng Việt).
+- `tests/region-prebuild.test.ts`: 15 bài (thêm 4: tạm dừng trên máy 2 nhân, không tạm dừng khi nhiều nhân hơn, vùng cho mượn vẫn còn trong kho, luồng dựng sẵn dừng và chạy tiếp đúng danh sách).
+- `tests/i18n-vi.test.ts`: 7 bài. `tsc` và `typecheck:tests`: không lỗi.
+
+### Ảnh
+
+- `shots/r8-continue-before.png`: bản cũ, 1%, hai dòng tiếng Anh, nút dính vào số phần trăm.
+- `shots/r8-continue-after.png`: bản mới, vắng 8 giờ, giây thứ 8: "Đã tính 0% thời gian vắng mặt · đã dựng 106 vùng đất · đã chạy 0:08", nút ở dòng riêng.
+
+### Chưa làm, chưa kiểm ở vòng này
+
+- Chưa làm nhanh phần mô phỏng cư dân, là phần chiếm nhiều thời gian chờ nhất. Vắng 8 giờ vẫn chờ khoảng 80 giây trên máy kiểm; vắng lâu hơn chưa đo.
+- Chưa đo trên máy thật, điện thoại, máy nhiều nhân. Chưa đo bản lưu của ván đã chơi lâu (chỉ đo ván mới chơi 15 giây).
+- Chưa đo game có khựng trong mấy giây đầu sau khi Chơi tiếp hay không.
+- Trong lượt thử, nhân vật của ván mới chết sau 1 giờ 21 phút vắng mặt vì không có chỗ trú. Đây là luật game sẵn có, không đụng tới.
+- Không chạy lại `tests/b03-return.test.ts` và toàn bộ bộ kiểm thử; `sim.ts` và `return-report.ts` không đổi.
+- Thanh tiến độ vẫn là thanh mặc định của trình duyệt (xám, xanh lá), chưa vẽ theo kiểu của game.
+
 ## Chưa làm, chưa kiểm
 
 - Chưa thử trên điện thoại thật, Firefox, Safari. Máy kiểm chỉ có Chromium không màn hình và không truy cập được địa chỉ chơi thật.

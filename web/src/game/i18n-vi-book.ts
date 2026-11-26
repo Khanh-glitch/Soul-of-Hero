@@ -2107,4 +2107,22 @@ Zoom out => Thu nhỏ
 Center on yourself [Home] => Về vị trí của bạn [Home]
 Bring this place up close on the chart => Đưa nơi này lại gần trên bản đồ
 Chart of the continent. Drag to move, wheel or plus and minus to zoom, arrows step between places, Enter sets the destination. => Bản đồ lục địa. Kéo để di chuyển, lăn chuột hoặc phím cộng trừ để phóng to thu nhỏ, phím mũi tên để chuyển giữa các nơi, Enter để đặt điểm đến đến.
+# ---- the wait after Continue, while the time away is worked out (App.tsx) ----
+You were away for {}. The island kept living: its food, work and travel for that time are being worked out now. => Bạn đã vắng {1}. Hòn đảo vẫn sống trong lúc đó: game đang tính phần ăn uống, công việc và đi lại của quãng thời gian ấy.
+A long absence can take a few minutes. Your saved game stays as it was until this finishes. => Vắng lâu thì việc này có thể mất vài phút. Bản lưu của bạn giữ nguyên cho tới khi tính xong.
+{n}% of the time away worked out · {n} regions of land made ready · running for {n} => Đã tính {1}% thời gian vắng mặt · đã dựng {2} vùng đất · đã chạy {3}
+{n} d {n} h => {1} ngày {2} giờ
+Back to title => Về màn hình chính
+Returning to the island => Trở lại đảo
+Island time resolved => Phần thời gian vắng mặt đã tính xong
+Continue did not finish. Your previous save is unchanged. {} => Chưa chơi tiếp được. Bản lưu trước của bạn vẫn nguyên. {1}
+Invalid Continue checkpoint. => Bản lưu để chơi tiếp không hợp lệ.
+Missing saved island. => Không tìm thấy hòn đảo đã lưu.
+# ---- the return report and the wake screen after dying while away ----
+exposure while offline => kiệt sức vì đói, khát hoặc lạnh trong lúc vắng mặt
+radiation => phóng xạ
+gave up => bỏ cuộc
+your bag => túi đồ của bạn
+Recovering breath… => Đang lấy lại hơi thở…
+Safe Landing Site => Bãi đáp an toàn
 `;
