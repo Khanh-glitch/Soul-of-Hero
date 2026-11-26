@@ -6,18 +6,21 @@
  * output for that region, and a region the worker has not finished is compiled on the game thread as before.
  *
  * Which regions are asked for is decided in region-demand.ts. Before a run exists (title screen, no save to continue)
- * the worker works out the regions a new game opens with on its own, so they are ready when the game starts.
+ * the worker works out the regions a new game needs first on its own (region-warmup.ts), so they are ready when the
+ * game starts.
  */
 import type { RunState } from '../game/core';
 import { isVeyra05Layout } from './scenes';
-import { regionsWanted } from './region-demand';
+import { regionsWanted, residentDistance } from './region-demand';
 import { GEOMETRY_REGION_LIMIT, geometryRegionCount, hasGeometryRegion, setPrebuiltRegionSource, type GeometryRegionPack, type VeyraPlacementRules } from './window';
 import type { PrebuildReply, PrebuildRequest } from './region-prebuild.worker';
 
 /** Finished packs wait in a pool until a resident asks. The pool is bounded together with the geometry cache: both
  * hold floor regions in the same compact form (about 0.1 MB each), and together they stay within the cache's own
- * limit plus `POOL_EXTRA`; the pool may always keep `POOL_FLOOR` for the next few requests. */
-const POOL_EXTRA = 256;
+ * limit plus `POOL_EXTRA`; the pool may always keep `POOL_FLOOR` for the next few requests.
+ * A new game asks for about 290 regions of about 3 floors each (120 under residents, 170 beside them): 448 lets all
+ * of them wait at once. When the pool is full, packs no resident is near any more give their room back. */
+const POOL_EXTRA = 448;
 const POOL_FLOOR = 40;
 /** A region is requested once; it may be requested again after this long (it was used and has since left the cache). */
 const REQUEST_AGAIN_MS = 5 * 60000;
@@ -43,7 +46,12 @@ const pending = new Set<string>();
 let worker: Worker | null | undefined;
 let lastWant = '';
 let idleSince: number | null = null;
-const stats = { requested: 0, received: 0, served: 0, dropped: 0, shutdowns: 0 };
+/** Each miss is a region compiled on the game thread. `missLate`: the game asked while the worker still had it on
+ * its list; `missUsed`: delivered earlier and since used up or given back; `missUnasked`: never on a request list of
+ * this thread (the title-screen warm-up keeps its list in the worker: what it has not finished counts here too). */
+const stats = { requested: 0, received: 0, served: 0, dropped: 0, released: 0, shutdowns: 0, missLate: 0, missUsed: 0, missUnasked: 0 };
+/** Packs given back to make room (see `prebuildRegions`); forgotten when requested again. */
+const released = new Set<string>();
 /** Counters for tests and measurements. */
 export const regionPrebuildStats = () => ({ ...stats, waiting: pool.size, waitingFloors: pooledFloors });
 
@@ -63,8 +71,11 @@ function start(): Worker | null {
     };
     w.onerror = () => { try { w.terminate(); } catch { /* */ } worker = null; pool.clear(); pooledFloors = 0; pending.clear(); };
     setPrebuiltRegionSource((layoutId, rules) => {
-      const pack = drop(keyOf(layoutId, rules));
+      const key = keyOf(layoutId, rules), pack = drop(key);
       if (pack) stats.served++;
+      else if (pending.has(key)) stats.missLate++;
+      else if (requestedAt.has(key) || released.has(key)) stats.missUsed++;
+      else stats.missUnasked++;
       return pack;
     });
     return worker = w;
@@ -85,21 +96,40 @@ export function prebuildRegions(r: RunState, nowMs: number, framesLate = false):
   if (worker === null) return;
   const rules: VeyraPlacementRules = r.sourceMap?.rules === 4 ? 4 : 3;
   const want: [string, VeyraPlacementRules][] = [];
+  const { urgent, nearby } = regionsWanted(r);
   // A floor region count is only known once a region is compiled; four per region is the usual size.
   let waitingReplies = 0; for (const key of pending) if (!pool.has(key)) waitingReplies++;
-  const room = Math.floor((poolAllowance() - pooledFloors) / 4) - waitingReplies;
+  const roomNow = () => Math.floor((poolAllowance() - pooledFloors) / 4) - waitingReplies;
+  const isNew = (lid: string) => {
+    const key = keyOf(lid, rules);
+    return !pool.has(key) && !hasGeometryRegion(lid, rules) && !pending.has(key) && nowMs - (requestedAt.get(key) ?? -Infinity) >= REQUEST_AGAIN_MS;
+  };
+  // The pool is kept for what residents want now. When new requests do not fit, waiting packs give their room back:
+  // first those no resident is near any more (farthest from every resident first), then, for a region a resident
+  // stands on, the farthest guesses. A pack given back is only a region compiled when asked, as before this module.
+  const newUrgent = Math.min(WANT_LIMIT, urgent.filter(isNew).length), newNearby = Math.min(WANT_LIMIT, nearby.filter(isNew).length);
+  if (roomNow() < newUrgent + 2 * newNearby) {
+    const wanted = new Set<string>(); for (const lid of urgent) wanted.add(keyOf(lid, rules)); for (const lid of nearby) wanted.add(keyOf(lid, rules));
+    // `again`: the pack may be requested again as soon as a resident comes near (false: only after the usual wait).
+    const release = (key: string, again: boolean) => { if (!drop(key)) return; stats.released++; released.add(key); if (again) requestedAt.delete(key); else requestedAt.set(key, nowMs); };
+    const stale: string[] = [], staleIds: string[] = [];
+    for (const [key, pack] of pool) if (!wanted.has(key)) { stale.push(key); staleIds.push(pack.layoutId); }
+    const far = residentDistance(r, staleIds), order = stale.map((_, i) => i).sort((a, b) => far[b] - far[a]);
+    for (const i of order) { if (roomNow() >= newUrgent + 2 * newNearby) break; release(stale[i], true); }
+    for (let i = nearby.length - 1; i >= 0 && roomNow() < newUrgent; i--) release(keyOf(nearby[i], rules), false);
+  }
+  const room = roomNow();
   let fresh = 0;
   const consider = (lid: string, limit: number) => {
     if (want.length >= WANT_LIMIT) return;
     const key = keyOf(lid, rules);
     if (pool.has(key) || hasGeometryRegion(lid, rules)) return;
     if (pending.has(key)) { want.push([lid, rules]); return; }      // already on the worker's list: keep its place
-    // Delivered once and since used up or dropped: leave it for a while, so an unused region is not recompiled in a loop.
+    // Delivered once and since used up: leave it for a while, so an unused region is not recompiled in a loop.
     if (nowMs - (requestedAt.get(key) ?? -Infinity) < REQUEST_AGAIN_MS) return;
     if (fresh >= limit) return;
     fresh++; want.push([lid, rules]);
   };
-  const { urgent, nearby } = regionsWanted(r);
   for (const lid of urgent) consider(lid, room);
   // Neighbours are a guess: they only use half of the room that is left.
   const guessLimit = fresh + Math.floor(Math.max(0, room - fresh) / 2);
@@ -113,7 +143,7 @@ export function prebuildRegions(r: RunState, nowMs: number, framesLate = false):
   if (text === lastWant) return;
   lastWant = text;
   const listed = new Set<string>();
-  for (const [lid] of want) { const key = keyOf(lid, rules); listed.add(key); if (!pending.has(key)) { pending.add(key); requestedAt.set(key, nowMs); stats.requested++; } }
+  for (const [lid] of want) { const key = keyOf(lid, rules); listed.add(key); if (!pending.has(key)) { pending.add(key); requestedAt.set(key, nowMs); released.delete(key); stats.requested++; } }
   // The new list replaces the worker's queue: what fell off it is no longer on its way.
   for (const key of pending) if (!listed.has(key)) { pending.delete(key); requestedAt.delete(key); }
   if (!want.length && worker === undefined) return;   // nothing to ask for: do not start a worker for it
