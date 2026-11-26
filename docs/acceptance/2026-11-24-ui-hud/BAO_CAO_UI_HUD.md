@@ -271,7 +271,7 @@ Nút "1×, 2×, 4×, Fit" trên Veyra được thay bằng "Thế giới, Khu v�
 
 | Kiểm | Kết quả |
 |---|---|
-| Kiểm thử tự động, 10 tệp liên quan tới bản đồ | 175 đạt (thêm `tests/map-feel.test.tsx`, 23 bài) |
+| Kiểm thử tự động, 10 tệp liên quan tới bản đồ | 175 đạt (thêm `tests/map-feel.test.tsx`, 22 bài; bản báo cáo trước ghi nhầm 23) |
 | `npx tsc -p .` và `npm run typecheck:tests` | Không lỗi |
 | Trình duyệt 1280 × 720, chuột | Lăn 6 nấc tại Hook Village: nơi đó vẫn nằm dưới con trỏ. Kéo: con trỏ thành bàn tay nắm. Bấm đúp chỗ trống: có "Marked spot", chuột phải lần nữa: mất. Nút Thế giới, Bạn, chọn dòng trong danh sách đều đưa bản đồ tới nơi. Không lỗi console |
 | Thời gian mỗi khung hình khi kéo và phóng to | Mức giữa 16,7 ms (60 khung hình / giây) ở mức xa, vừa và gần nhất. Mốc 95% là 16,7–16,8 ms ở 14 trong 15 phép đo, 33 ms ở một phép đo. Mỗi lượt kéo ở mức vừa có một lần khựng 200–280 ms, xem mục dưới |
@@ -283,11 +283,13 @@ Nút "1×, 2×, 4×, Fit" trên Veyra được thay bằng "Thế giới, Khu v�
 
 ZIP đóng lại từ bản dựng này: 64.447.961 byte, SHA256 `87de5ad9fa8577a40f69c7e7d1b0bdd2e293756d604a5b52d56d730cf8c0529c`.
 
-### Tìm thấy khi đo, chưa sửa: game khựng 0,1–0,3 giây vài lần mỗi phút
+### Tìm thấy khi đo: game khựng 0,1–0,3 giây vài lần mỗi phút (đã xử lý ở vòng 7)
 
 Đứng yên 45 giây ở ván QA mới, không mở bảng nào, máy đo ghi 8 lần xử lý kéo dài quá 30 ms; bốn lần dài nhất là 296, 167, 147 và 80 ms. Cả bốn đều nằm trong bước xử lý cư dân (`stepHumans`), ở phần tìm đường. Lần dài nhất đi theo chuỗi `route` → `globalCellTileAndClass` → `globalBaseGeometry` → `compileGeometryRegionPack`: cư dân hỏi về một vùng đất chưa được dựng, và game dựng vùng đó ngay trên luồng chính. Lần khựng 200–280 ms lúc kéo bản đồ cũng là việc này, không phải do bản đồ.
 
 Game đã có sẵn một luồng nền dựng trước các vùng (`region-prebuild.ts`). Máy kiểm chỉ có 2 nhân và vẽ bằng phần mềm, nên luồng nền có thể bị chậm hơn máy thật. Chưa đo được trên máy thật, nên chưa biết người chơi gặp mức nào.
+
+Đính chính sau khi đo ở vòng 7: luồng nền không chậm. Các vùng gây khựng chưa bao giờ được đưa vào danh sách cho luồng nền dựng.
 
 ### Chưa kiểm ở vòng này
 
@@ -298,6 +300,70 @@ Game đã có sẵn một luồng nền dựng trước các vùng (`region-preb
 - Điểm tự đánh dấu đặt được cả trên mặt nước hoặc chỗ không tới được; game không cảnh báo.
 - Ở mức gần nhất, vùng chưa đi qua chỉ là mảng màu thô (4 ô một điểm ảnh) kèm lưới ô; chi tiết chỉ có ở vùng đã đi qua.
 - Bộ kiểm thử đầy đủ và các tệp chậm không chạy lại.
+
+## Vòng 7: game khựng khi đứng yên (nhánh `arena/21d47176-soul-of-hero`)
+
+Yêu cầu: sửa việc game khựng 0,1–0,3 giây vài lần mỗi phút, tìm thấy ở vòng 6.
+
+### Nguyên nhân
+
+Cư dân hỏi game về mặt đất quanh họ theo từng vùng 64 × 64 ô. Vùng nào chưa dựng thì game dựng ngay trên luồng chính, mất 0,1–0,3 giây, và màn hình đứng lại trong lúc đó. Game có một luồng nền dựng trước các vùng, nhưng danh sách gửi cho luồng nền thiếu ba nhóm:
+
+1. Vùng bên cạnh mà cư dân đứng cách 9 ô trở lên. Danh sách cũ chỉ lấy vùng bên cạnh khi cư dân đứng cách không quá 8 ô. Trong 16 lần khựng ghi được, cư dân gần nhất đứng cách vùng đó 9–21 ô, và 15 lần người đó đang đứng không. Cư dân tìm việc và tìm đường vòng xa hơn mép vùng của mình, kể cả khi đang đứng không.
+2. Ba vùng game đọc ngay lúc tạo ván mới (lúc bấm "Begin the 14 days"). Luồng nền không biết tới ba vùng này.
+3. Vùng bên cạnh cư dân của ván mới. Lúc còn ở màn hình tiêu đề, luồng nền chỉ dựng vùng ngay dưới chân cư dân của một ván thử. Vị trí cư dân mỗi ván một khác: đo trên ba ván, 24–31 trong khoảng 120 vùng dưới chân cư dân không trùng với ván thử.
+
+Luồng nền không chậm: trong mọi lượt đo trước khi sửa, chỉ có 1 vùng bị hỏi lúc luồng nền chưa dựng xong.
+
+### Đã sửa
+
+- Vùng bên cạnh được dựng trước khi có cư dân đứng cách không quá 24 ô (trước là 8). Đo trên ba ván mới, mỗi ván 4 phút: cư dân hỏi khoảng 50 vùng bên cạnh; mức 8 ô phủ 25–37 vùng, mức 16 ô thêm 12–13, mức 24 ô thêm 3–4, còn lại 0–3 vùng nằm xa hơn.
+- Ở màn hình tiêu đề, luồng nền dựng theo thứ tự: các vùng game đọc lúc tạo ván, vùng dưới chân cư dân, rồi vùng bên cạnh. Tổng cộng 288 vùng (trước là 121). Tệp mới: `web/src/veyra05/region-warmup.ts`.
+- Chỗ chứa các vùng dựng sẵn tăng từ 768 lên 960 tầng. Khi chỗ chứa đầy, vùng nào không còn cư dân ở gần sẽ nhường chỗ, vùng xa cư dân nhất nhường trước. Trước đây chỗ chứa đầy thì game ngừng gửi yêu cầu mới, kể cả cho vùng cư dân đang đứng.
+- Cách game trả lời về mặt đất không đổi. Vùng dựng ở luồng nền là đúng kết quả của bộ dựng trên luồng chính; bài kiểm thử so sánh hai bên từng ô vẫn đạt. Không sửa tệp nào thuộc luật chơi.
+
+### Trước và sau
+
+Cùng một máy kiểm (2 nhân, Chromium không màn hình), cùng bản dựng QA không nén, nhân vật đứng yên, không mở bảng nào. "Lần khựng" là một lần luồng chính bận liền quá 50 ms. Mỗi dòng là một lượt chạy; các lượt chênh nhau khá nhiều vì cư dân mỗi ván làm việc khác nhau.
+
+| Tình huống | Trước | Sau |
+|---|---|---|
+| Ván mới, bấm chơi 8 giây sau khi mở trang, đứng 180 giây | 9 lần khựng (8 lần quá 80 ms), dài nhất 277 ms, tổng 1222 ms; 13 vùng dựng trên luồng chính | 9 lần (4 lần quá 80 ms), dài nhất 233 ms, tổng 1058 ms; 4 vùng |
+| Ván mới, bấm chơi 8 giây sau khi mở trang, đứng 150 giây | 9 lần (6 lần quá 80 ms), dài nhất 316 ms, tổng 1378 ms; 12 vùng | 7 lần (3 lần quá 80 ms), dài nhất 228 ms, tổng 756 ms; 3 vùng |
+| Ván QA `fresh`, vào chơi 2 giây sau khi mở trang, đứng 60 giây | 5 lần (cả 5 quá 80 ms), dài nhất 280 ms, tổng 916 ms; 9 vùng | 3 lần (2 lần quá 80 ms), dài nhất 284 ms, tổng 524 ms; 5 vùng |
+| Ván mới, bấm chơi khoảng nửa phút sau khi mở trang (trước: 32 giây, sau: 27 giây) | Đứng 30 giây: 1 lần 168 ms; 6 vùng | Đứng 240 giây: không lần nào quá 50 ms, khoảng cách dài nhất giữa hai khung hình là 33 ms; 1 vùng, dựng lúc tạo ván |
+
+Thời gian mỗi khung hình ở mức giữa là 16,7 ms cả trước và sau.
+
+Đọc bảng:
+
+- Ở lượt bấm chơi 27 giây sau khi mở trang, luồng nền đã dựng xong cả 288 vùng. Lượt này không có lần khựng nào trong 4 phút.
+- Bấm chơi 8 giây sau khi mở trang thì 6 giây đầu vẫn khựng 2 lần, mỗi lần 0,15–0,23 giây, như trước: lúc bấm, luồng nền mới dựng được 95–106 vùng. Sau 30 giây đầu còn 1–2 lần khựng quá 80 ms mỗi lượt; ở lượt 150 giây trước khi sửa là 3 lần.
+- Còn lại ba nguồn chưa xử lý: vùng mà cư dân hỏi khi đứng cách hơn 24 ô (0–2 lần trong 3–4 phút); vùng quanh chỗ người chơi xuất hiện, vì chỗ đó chỉ biết sau khi ván đã tạo; và vùng đã nhường chỗ rồi lại bị hỏi (1 lần ở lượt 150 giây).
+
+### Cái giá
+
+- Bộ nhớ: lúc mới vào ván có khoảng 820–870 tầng dựng sẵn nằm chờ, trước là 470–540. Mỗi tầng khoảng 0,1 MB (đo trên 8 vùng: 0,099 MB), tức nhiều hơn khoảng 30–35 MB lúc cao nhất. Mức trần của chỗ chứa cộng bộ nhớ đệm tăng từ khoảng 77 MB lên khoảng 96 MB.
+- Ở màn hình tiêu đề, luồng nền chạy lâu hơn trên một nhân vì phải dựng 288 vùng thay cho 121. Trên máy kiểm, nó xong trước giây thứ 27 sau khi mở trang; chưa đo chính xác hơn.
+
+### Đã kiểm
+
+| Kiểm | Kết quả |
+|---|---|
+| `tests/region-prebuild.test.ts` | 11 đạt (5 bài mới: mức 24 ô, danh sách ở màn hình tiêu đề, ba bài về nhường chỗ) |
+| `npx tsc -p .` và `npm run typecheck:tests` | Không lỗi |
+| Trình duyệt, bản dựng QA không nén | 8 lượt đo ở bảng trên, không lỗi console |
+| Trình duyệt, bản dựng QA nén như bản phát hành | Bấm chơi 27 giây sau khi mở trang, đứng 60 giây: không lần nào quá 50 ms, không vùng nào dựng trên luồng chính, không lỗi console |
+
+ZIP đóng lại từ bản dựng này: 64.448.524 byte, SHA256 `4c25cd5adc8101e654a4cb483a7fce71808cef2dffa788fbc3a33229c3181a64`.
+
+### Chưa kiểm ở vòng này
+
+- Mọi lượt đo đều đứng yên, dài nhất 4 phút. Chưa đo lúc đi bộ, lúc đánh nhau, hay chơi lâu hàng giờ.
+- Chưa đo ván chơi tiếp từ bản lưu (Continue). Phần này dùng chung danh sách với ván đang chạy nên cũng được mức 24 ô, nhưng chưa có số đo.
+- Chưa thử trên máy thật hay điện thoại. Phần bộ nhớ tăng thêm chưa được thử trên máy ít bộ nhớ. Bộ nhớ riêng của luồng nền chưa đo.
+- Mỗi tình huống chỉ đo một lượt trước và một lượt sau, nên con số ở các dòng "8 giây" chỉ cho biết chiều hướng.
+- Bộ kiểm thử đầy đủ và các tệp chậm không chạy lại; vòng này chỉ sửa bốn tệp `web/src/veyra05/region-*.ts`.
 
 ## Chưa làm, chưa kiểm
 

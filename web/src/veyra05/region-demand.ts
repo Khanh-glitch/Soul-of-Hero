@@ -1,12 +1,16 @@
 /**
  * Which world regions the residents of a run are about to ask the compiler for. Pure reads of run state.
  *
- * Measured on a new game and on an hour-8 save: of the regions residents needed in their first five minutes, 2 in 3
- * lie under a resident and 9 in 10 under a resident or right beside one; of the neighbouring ones, half had a
- * resident within 8 tiles of them. Hence, most urgent first:
+ * Most urgent first:
  *   1. the region under each living resident,
  *   2. the region at the far end of each route search in progress,
  *   3. neighbouring regions, nearest first, up to `NEIGHBOUR_REACH` tiles from a resident.
+ *
+ * Measured on new games (three seeds, four minutes each, player standing still): residents asked for about 100
+ * regions of class 1 and about 50 neighbouring ones. Of the neighbouring ones a resident stood within 8 tiles of
+ * 25 to 37, within 16 tiles of another 12 or 13, within 24 tiles of another 3 or 4, and farther away from 0 to 3.
+ * Residents look for work and for a way round obstacles well beyond the edge of the region they stand in, also
+ * while idle. Every region left out is compiled on the game thread when asked, a stall of 0.1 to 0.3 s.
  */
 import type { RunState } from '../game/core';
 import { WW, WH } from '../game/core';
@@ -15,7 +19,7 @@ import { FRAME_W, FRAME_H } from './frame';
 import { layoutIdAt } from './scenes';
 
 /** A neighbouring region counts only while a resident stands this close (tiles) to it. */
-const NEIGHBOUR_REACH = 8;
+const NEIGHBOUR_REACH = 24;
 const originOf = (g: number, frame: number, span: number) => Math.max(0, Math.min(frame - span, Math.floor((g - 68) / 64) * 64));
 
 /** `urgent`: classes 1 and 2 above; `nearby`: class 3, nearest first. */
@@ -46,4 +50,21 @@ export function regionsWanted(r: RunState): { urgent: string[]; nearby: string[]
   const nearby: string[] = [];
   for (const [lid] of [...near].sort((a, b) => a[1] - b[1])) if (!first.has(lid) && !second.has(lid)) nearby.push(lid);
   return { urgent, nearby };
+}
+
+/** For each region: tiles from the nearest living resident to the ground it answers for (0: one stands on it;
+ * Infinity: no residents, or not a region id). */
+export function residentDistance(r: RunState, layoutIds: readonly string[]): number[] {
+  const people = r.humanWorld?.people, at: number[] = [];
+  if (people) for (const id in people) { const h = people[id]; if (h.state !== 'DEAD' && h.state !== 'EVACUATED') at.push(h.gx, h.gy); }
+  return layoutIds.map(lid => {
+    const m = /-at-(\d+)-(\d+)$/.exec(lid); if (!m) return Infinity;
+    const x0 = +m[1] + 68, x1 = x0 + 63, y0 = +m[2] + 68, y1 = y0 + 63;
+    let best = Infinity;
+    for (let i = 0; i < at.length; i += 2) {
+      const gx = at[i], gy = at[i + 1], d = Math.max(gx < x0 ? x0 - gx : gx > x1 ? gx - x1 : 0, gy < y0 ? y0 - gy : gy > y1 ? gy - y1 : 0);
+      if (d < best) best = d;
+    }
+    return best;
+  });
 }
