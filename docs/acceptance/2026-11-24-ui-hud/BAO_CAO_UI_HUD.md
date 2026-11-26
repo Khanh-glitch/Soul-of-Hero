@@ -365,6 +365,196 @@ ZIP đóng lại từ bản dựng này: 64.448.524 byte, SHA256 `4c25cd5adc8101
 - Mỗi tình huống chỉ đo một lượt trước và một lượt sau, nên con số ở các dòng "8 giây" chỉ cho biết chiều hướng.
 - Bộ kiểm thử đầy đủ và các tệp chậm không chạy lại; vòng này chỉ sửa bốn tệp `web/src/veyra05/region-*.ts`.
 
+## Vòng 8: màn chờ "Khi bạn vắng mặt" lúc bấm Chơi tiếp (nhánh `arena/d6096eae-soul-of-hero`)
+
+Người chơi báo: bấm Chơi tiếp thì màn "KHI BẠN VẮNG MẶT" đứng ở 0% rất lâu, chữ lẫn tiếng Anh với tiếng Việt. Luồng Chơi tiếp chưa từng được đo ở vòng 6 và vòng 7 (khi đó chỉ ghi ở mục "chưa kiểm").
+
+### Nguyên nhân (đã đo)
+
+1. Phần tính thời gian vắng mặt chạy ở một luồng riêng. Luồng này bắt đầu mà chưa dựng vùng đất nào, nên phải tự dựng khoảng 180–200 vùng trước khi qua được 1–2%. Trong lúc đó màn hình chỉ có số 0%.
+2. Phần còn lại là mô phỏng 286 cư dân theo từng phút vắng mặt. Phần này dài theo số giờ vắng (khoảng 8–10 giây cho mỗi giờ vắng trên máy kiểm).
+3. Ở vòng 7, lúc mở trang game dựng sẵn 288 vùng (trước là 121), xong trước giây 27. Trên máy 2 nhân, nếu bấm Chơi tiếp trong khoảng đó thì hai việc tranh nhau bộ xử lý: bản cũ chờ 57–60 giây khi bấm sau 5 giây, 42 giây khi bấm sau 30 giây. Chưa đo lại bản trước vòng 7 nên chưa khẳng định được vòng 7 làm chậm bao nhiêu.
+4. Bốn chuỗi trên màn chờ chưa có trong sổ dịch. Số phần trăm và nút nằm dính nhau ("0%Back to title").
+
+### Đã sửa
+
+- Những vùng màn hình chính đã dựng sẵn được chép sang cho luồng tính thời gian vắng mặt. Vùng nào chưa có thì luồng đó tự dựng như cũ.
+- Trên máy 2 nhân, việc dựng sẵn tạm dừng trong lúc chờ và chạy tiếp đúng chỗ cũ khi chờ xong.
+- Màn chờ ghi rõ: đã vắng bao lâu, đang làm gì, đã tính bao nhiêu phần trăm, đã dựng bao nhiêu vùng đất, đã chạy bao lâu. Số vùng và đồng hồ nhích ngay từ giây đầu.
+- Toàn bộ chữ trên màn chờ có tiếng Việt, kể cả câu báo lỗi "Chưa chơi tiếp được…". Nút nằm riêng một dòng.
+- Thêm tiếng Việt cho 4 chuỗi gặp trong nhật ký trở về và màn tỉnh lại: "exposure while offline", "your bag", "Recovering breath…", "Safe Landing Site".
+
+### Số đo (Chromium không màn hình, máy kiểm 2 nhân, tiếng Việt; mỗi dòng là một lượt chạy)
+
+| Vắng | Bấm Chơi tiếp sau khi mở trang | Trước: vào được game sau | Sau: vào được game sau | Trước: số % đầu tiên | Sau: số % đầu tiên |
+|---|---|---|---|---|---|
+| 3 giờ | 5 giây | 56,7 s; 59,5 s | 47,7 s; 54,1 s | 14,2 s; 16,3 s | 9,3 s; 8,2 s |
+| 3 giờ | 30 giây | 42,0 s | 39,1 s | 10,2 s | 3,8 s |
+| 8 giờ | 5 giây | chưa đo trên trình duyệt | 80,8 s | chưa đo | 15,3 s |
+
+Ở bản sau, số vùng đất trên màn chờ đã là 68–106 ở giây thứ 8 trong mọi lượt.
+
+**Kết luận thẳng:** thời gian chờ chỉ ngắn đi khoảng 3–10 giây. Phần lớn thời gian chờ (mô phỏng cư dân) chưa được làm nhanh hơn. Cái đổi rõ là màn chờ không còn im ở 0% và không còn tiếng Anh.
+
+### Kết quả tính có đổi không
+
+Không. Bài kiểm `tests/continue-wait.test.ts` chạy cùng một bản lưu hai lần, một lần tự dựng mọi vùng, một lần nhận 60 vùng dựng sẵn: bản lưu trả về giống nhau từng byte, số vùng yêu cầu bằng nhau.
+
+### Kiểm thử
+
+- `tests/continue-wait.test.ts`: 3 bài (kết quả giống nhau từng byte và có báo tiến độ trước 1%; bản lưu hỏng thì báo lỗi; mọi dòng trên màn chờ có tiếng Việt).
+- `tests/region-prebuild.test.ts`: 15 bài (thêm 4: tạm dừng trên máy 2 nhân, không tạm dừng khi nhiều nhân hơn, vùng cho mượn vẫn còn trong kho, luồng dựng sẵn dừng và chạy tiếp đúng danh sách).
+- `tests/i18n-vi.test.ts`: 7 bài. `tsc` và `typecheck:tests`: không lỗi.
+
+### Ảnh
+
+- `shots/r8-continue-before.png`: bản cũ, 1%, hai dòng tiếng Anh, nút dính vào số phần trăm.
+- `shots/r8-continue-after.png`: bản mới, vắng 8 giờ, giây thứ 8: "Đã tính 0% thời gian vắng mặt · đã dựng 106 vùng đất · đã chạy 0:08", nút ở dòng riêng.
+
+### Chưa làm, chưa kiểm ở vòng này
+
+- Chưa làm nhanh phần mô phỏng cư dân, là phần chiếm nhiều thời gian chờ nhất. Vắng 8 giờ vẫn chờ khoảng 80 giây trên máy kiểm; vắng lâu hơn chưa đo. (Vòng 9 làm tiếp phần này.)
+- Chưa đo trên máy thật, điện thoại, máy nhiều nhân. Chưa đo bản lưu của ván đã chơi lâu (chỉ đo ván mới chơi 15 giây).
+- Chưa đo game có khựng trong mấy giây đầu sau khi Chơi tiếp hay không.
+- Trong lượt thử, nhân vật của ván mới chết sau 1 giờ 21 phút vắng mặt vì không có chỗ trú. Đây là luật game sẵn có, không đụng tới.
+- Không chạy lại `tests/b03-return.test.ts` và toàn bộ bộ kiểm thử; `sim.ts` và `return-report.ts` không đổi.
+- Thanh tiến độ vẫn là thanh mặc định của trình duyệt (xám, xanh lá), chưa vẽ theo kiểu của game.
+
+## Vòng 9: làm nhanh phần mô phỏng cư dân lúc vắng mặt (nhánh `arena/d6096eae-soul-of-hero`)
+
+Mục tiêu: rút ngắn phần chiếm nhiều thời gian nhất của màn chờ, với điều kiện kết quả tính không đổi một byte nào.
+
+### Đã sửa (`web/src/game/humanworld.ts`)
+
+1. Bỏ một phép tính không ai dùng. Mỗi lượt cư dân lập kế hoạch, game dựng một danh sách ô "được bảo vệ" từ mọi vật trong ván (bản lưu thử có 17 vật gần và 734 vật ở xa) rồi truyền cho hàm lập kế hoạch, nhưng hàm đó không đọc danh sách này ở đâu cả. Phép tính này chiếm khoảng 7% thời gian mô phỏng.
+2. Câu hỏi "cư dân này còn hàng chưa giao không" được hỏi cho mọi cư dân ở mọi bước; trước đây mỗi lần hỏi phải tạo một mảng tạm, nay duyệt thẳng. Câu trả lời giống hệt.
+
+### Kết quả tính có đổi không
+
+Không. Bốn bản lưu được tính lại bằng mã trước và mã sau, rồi so dấu vân tay (SHA-256, 16 ký tự đầu) của bản lưu trả về và của nhật ký trở về:
+
+| Bản lưu (hạt giống) | Vắng | Bản lưu trước = sau | Nhật ký trước = sau |
+|---|---|---|---|
+| 5 | 3 giờ | `259149f1cd94aad1` | `6064377c292bb6fe` |
+| 11 | 1 giờ | `7eaf253ca1f2d63e` | `ff6782b68c09260c` |
+| 23 | 2 giờ | `fea89333fa4471c7` | `d32bfe7ecc8fac70` |
+| 5 | 8 giờ | `ac0fe1f3a5c57408` | `c5c63ff36fff16fb` |
+
+Cả bốn đều là ván mới chơi 20 giây. Chưa có bản lưu của ván chơi lâu để so.
+
+### Số đo
+
+Riêng phần mô phỏng (chạy bằng Node trên máy kiểm, vùng đất đã dựng sẵn; mỗi số là một lượt chạy):
+
+| Bản lưu | Vắng | Trước | Sau |
+|---|---|---|---|
+| hạt giống 5 | 3 giờ | 37,5 s; 38,1 s | 32,1 s; 32,4 s |
+| hạt giống 5 | 8 giờ | 86,2 s | 73,6 s |
+| hạt giống 23 | 2 giờ | 31,4 s | 28,7 s |
+| hạt giống 11 | 1 giờ | 22,7 s | 20,8 s |
+
+Tức là nhanh hơn khoảng 8–15%, không phải gấp đôi.
+
+Cả màn chờ trên trình duyệt (Chromium không màn hình, 2 nhân, cùng bản lưu hạt giống 5, bấm Chơi tiếp 30 giây sau khi mở trang; "trước" là bản vòng 8):
+
+| Vắng | Trước: vào game sau | Sau: vào game sau |
+|---|---|---|
+| 3 giờ | 52,6 s; 54,4 s | 48,8 s; 45,7 s |
+| 8 giờ | 95,3 s | 86,2 s |
+
+Các số này không so được với bảng vòng 8: bản lưu khác và máy kiểm đã được khởi động lại.
+
+Vắng 24 giờ: riêng phần mô phỏng mất 231 giây (đo trong lúc máy còn chạy kiểm thử song song, nên số thật thấp hơn một ít). Tức là vắng một ngày thì vẫn chờ vài phút.
+
+### Vì sao không nhanh hơn được nhiều mà vẫn giữ nguyên kết quả
+
+- Ba giờ vắng mặt là khoảng 15.000 bước tính. Mỗi bước, game đi qua cả 286 cư dân: trừ đói, khát, ấm, xét chỗ trú, xét việc đang làm.
+- Sau khi bỏ phép tính thừa ở trên, không còn chỗ nào chiếm riêng một phần lớn: dòng mã tốn nhất chỉ chiếm 2,6% thời gian. Phần còn lại rải ra nhiều vòng duyệt 286 cư dân, lặp lại ở mỗi bước. Sửa tiếp từng chỗ như vậy ước chừng được thêm 1–2% mỗi chỗ; vòng này chưa làm.
+- Muốn nhanh hơn hẳn thì phải giảm số bước hoặc bỏ qua cư dân đang đứng yên. Cả hai cách đều làm kết quả tính khác đi, nên không làm khi chưa có quyết định của chủ game.
+- Đã thử để biết, không giữ lại: khi người chơi vắng, nhịp tính của cư dân là 5 giây thay vì 1 giây. Mô phỏng 3 giờ còn 17,8 giây (trước 37,5), số bước giảm từ 15.137 xuống 6.459, nhưng bản lưu trả về khác bản hiện nay. Chưa xem khác ở những điểm nào. Nhịp 1 giây là quyết định của chủ game ngày 21/11/2026, nên đây là việc chủ game quyết.
+
+### Kiểm thử
+
+- 13 tệp `tests/npc-*.test.ts` có liên quan (thu hoạch, giao hàng, nhịp vắng mặt, nhu cầu): 12 tệp qua, 64 bài qua; 1 tệp và 2 bài vốn được đánh dấu bỏ qua từ trước.
+- `tests/continue-wait.test.ts`, `tests/b03-return.test.ts`, `tests/region-prebuild.test.ts`: 27 bài qua.
+- `tsc` và `typecheck:tests`: không lỗi.
+
+### Chưa làm, chưa kiểm ở vòng này
+
+- Không chạy lại toàn bộ bộ kiểm thử (269 tệp trong `tests/`); chỉ chạy 16 tệp nêu trên.
+- Phép so dấu vân tay ở trên làm bằng công cụ tạm, không nằm trong kho mã và chưa thành bài kiểm thử cố định.
+- Chưa so kết quả trên bản lưu của ván đã chơi lâu, có công trình của người chơi.
+- Chưa đo trên máy thật hay điện thoại. Chưa mở trang QA sau khi triển khai.
+
+## Vòng 10: làm nhanh tiếp phần mô phỏng cư dân, kết quả tính vẫn không đổi (nhánh `arena/d6096eae-soul-of-hero`)
+
+Vòng 9 viết rằng không còn chỗ nào chiếm riêng một phần lớn và sửa tiếp chỉ được 1–2% mỗi chỗ. Nhận định đó sai. Đo kỹ hơn thì thấy hai chỗ tốn lớn không nằm ở một dòng mã nào mà ở cách trình duyệt đọc dữ liệu cư dân.
+
+### Đã sửa (`web/src/game/humanworld.ts`, `web/src/game/sim.ts`)
+
+1. **Dùng chung một danh sách cư dân trong mỗi lượt tính.** Mỗi bước, ba nơi (trừ nhu cầu, tìm mốc thời gian kế tiếp, bước hành động) đều hỏi lại "danh sách toàn bộ cư dân", và mỗi lần hỏi trình duyệt phải dựng lại rồi sắp xếp lại 286 tên. Nay một lượt tính dựng danh sách một lần và dùng chung. Danh sách luôn đúng: cư dân chỉ được thêm ở một nơi duy nhất (nơi đó báo cho danh sách dựng lại), và không nơi nào xoá cư dân.
+2. **Chuẩn bị hồ sơ cư dân một lần trước khi tính bù.** Cư dân đọc từ bản lưu có hàng chục kiểu sắp xếp trường khác nhau (26 kiểu lúc nạp, 75–87 kiểu sau khi tính); với nhiều kiểu như vậy, mỗi lần đọc một trường của cư dân, trình duyệt phải đi đường chậm. Trước khi tính bù, game đưa mọi hồ sơ về cùng một cách lưu trong bộ nhớ. Không trường nào bị thêm, bớt, đổi giá trị hay đổi thứ tự; bản lưu ghi ra giống hệt.
+3. Trong hai vòng duyệt cư dân nóng nhất, các trường dùng nhiều lần được đọc một lần; cư dân đang đứng yên, không có việc và chưa đói khát được bỏ qua sớm, đúng như các điều kiện phía sau vốn đã bỏ qua họ. Mức lợi của mục này nhỏ (khoảng 1 giây trên 25 giây trong một đợt đo, chưa đo lặp lại xen kẽ).
+
+Đã thử và bỏ, vì không nhanh hơn ngoài mức dao động của máy kiểm: bảng nhớ chỗ trú dùng khoá số (thử hai lần); tách hàm đo thời gian. Đã thử và bỏ vì làm bản lưu khác đi: đưa mọi hồ sơ về cùng một thứ tự trường.
+
+### Kết quả tính có đổi không
+
+Không. Bốn bản lưu của vòng 9 được tính lại bằng mã mới; dấu vân tay của bản lưu trả về và của nhật ký trở về trùng với mã gốc ở cả bốn:
+
+| Bản lưu (hạt giống) | Vắng | Bản lưu | Nhật ký |
+|---|---|---|---|
+| 5 | 3 giờ | `259149f1cd94aad1` | `6064377c292bb6fe` |
+| 11 | 1 giờ | `7eaf253ca1f2d63e` | `ff6782b68c09260c` |
+| 23 | 2 giờ | `fea89333fa4471c7` | `d32bfe7ecc8fac70` |
+| 5 | 8 giờ | `ac0fe1f3a5c57408` | `c5c63ff36fff16fb` |
+
+Cả bốn vẫn là ván mới chơi 20 giây.
+
+Thêm một tệp kiểm thử cố định, `web/tests/resident-catchup-speed.test.ts` (3 bài): chuẩn bị hồ sơ không đổi trường, giá trị hay thứ tự trường; cùng một thế giới chạy 60 bước có và không có từng thay đổi cho ra cùng một bản lưu; danh sách dùng chung không bao giờ thiếu cư dân vừa được thêm. Đã thử gỡ dòng báo "có cư dân mới" khỏi mã: bài thứ ba báo hỏng, tức là bài này bắt được lỗi đó.
+
+### Số đo
+
+Riêng phần mô phỏng (Node trên máy kiểm, vùng đất đã dựng sẵn; mỗi số là một lượt chạy):
+
+| Bản lưu | Vắng | Trước vòng 9 | Sau vòng 9 | Sau vòng 10 |
+|---|---|---|---|---|
+| hạt giống 5 | 3 giờ | 37,5 s; 38,1 s | 32,1 s; 32,4 s | 24,4 s; 25,4 s |
+| hạt giống 5 | 8 giờ | 86,2 s | 73,6 s | 57,2 s |
+| hạt giống 23 | 2 giờ | 31,4 s | 28,7 s | 22,7 s |
+| hạt giống 11 | 1 giờ | 22,7 s | 20,8 s | 16,0 s |
+
+So với vòng 9: ngắn hơn 21–24%. So với trước vòng 9: ngắn hơn 28–35%. Vẫn chưa phải một nửa.
+
+Cả màn chờ trên trình duyệt (Chromium không màn hình, 2 nhân, bản lưu hạt giống 5, bấm Chơi tiếp 30 giây sau khi mở trang; "trước" là bản vòng 9, đo lại trong cùng buổi):
+
+| Vắng | Trước: vào game sau | Sau: vào game sau |
+|---|---|---|
+| 3 giờ | 48,9 s; 47,7 s; 43,3 s; 48,6 s | 44,3 s; 42,7 s; 42,7 s; 42,8 s; 42,8 s |
+| 3 giờ, bấm sau 60 giây | 45,8 s | 40,3 s |
+| 8 giờ | 83,9 s | 67,6 s |
+
+Ở mức 3 giờ, màn chờ chỉ ngắn hơn khoảng 5 giây dù phần tính ngắn hơn khoảng 8 giây (thanh tiến độ tới 99% sau 38,7–44,0 giây ở bản trước, 34,8–36,0 giây ở bản sau). Đoạn từ 99% đến lúc vào game dài hơn ở bản sau: 6,8–8 giây so với 4,6–5,7 giây. Chưa tìm ra nguyên nhân. Điều đã biết về đoạn này:
+
+- Trong đoạn này luồng chính vẽ hình cây, đá, công trình lần đầu và đọc điểm ảnh ngược lại từ bộ phận vẽ. Trên máy kiểm, bộ phận vẽ là phần mềm (không có card đồ hoạ) và chiếm trọn một nhân trong suốt màn chờ; việc đọc ngược phải đợi nó.
+- Với lần vắng ngắn (12 phút, bấm sau 20 giây), cả hai bản đều mất 37–45 giây mới vào game, trong đó luồng chính đứng đợi việc đọc ngược này 14–19 giây. Đây không phải thời gian tính cư dân.
+- Đã thử bắt các hình này vẽ bằng bộ nhớ thường: lần vắng 12 phút còn 21–24 giây. **Không giữ lại**, vì trên máy kiểm 23 trong 829 hình ra điểm ảnh khác (10 hình khác rõ ở viền, 13 hình lệch một đến ba mức màu), và chưa biết trên máy có card đồ hoạ thì lợi bao nhiêu. Đã thử giữ luồng dựng đất nghỉ thêm cho tới khi vẽ xong khung hình đầu: không ngắn hơn, không giữ lại.
+- Vì vậy các số trình duyệt ở trên chịu ảnh hưởng của việc máy kiểm vẽ bằng phần mềm. Trên máy thật con số có thể khác, theo cả hai chiều; chưa đo.
+
+### Kiểm thử
+
+- `tsc` và `typecheck:tests`: không lỗi.
+- 13 tệp `tests/npc-*.test.ts` có liên quan, 3 tệp của màn Chơi tiếp và tệp mới: 16 tệp qua, 94 bài qua; 1 tệp và 2 bài vốn được đánh dấu bỏ qua từ trước.
+
+### Chưa làm, chưa kiểm ở vòng này
+
+- Không chạy lại toàn bộ bộ kiểm thử; chỉ chạy 17 tệp nêu trên.
+- Bốn phép so dấu vân tay vẫn làm bằng công cụ tạm ngoài kho mã. Bài kiểm thử cố định mới chỉ so 60 bước trên một ván mới.
+- Chưa so trên bản lưu của ván đã chơi lâu, có công trình của người chơi. Chưa đo lần vắng trên 24 giờ.
+- Mục 2 dựa vào cách V8 (Chrome, Edge, Node) lưu đối tượng. Trên Firefox và Safari kết quả tính vẫn y nguyên, nhưng chưa đo ở đó và có thể không nhanh hơn nhờ mục này.
+- Chưa đo trên máy thật hay điện thoại. Chưa mở trang QA sau khi triển khai.
+- Chưa xử lý đoạn 5–8 giây sau khi tính xong và đoạn dựng đất ở đầu màn chờ (khoảng 18 giây cho 20% đầu ở mức vắng 3 giờ).
+
 ## Chưa làm, chưa kiểm
 
 - Chưa thử trên điện thoại thật, Firefox, Safari. Máy kiểm chỉ có Chromium không màn hình và không truy cập được địa chỉ chơi thật.

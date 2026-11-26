@@ -25,7 +25,7 @@ import { computeCreatureEnvFactors } from '../veyra05/ecosystem';
 import { stepHusbandry, inspectPenAt } from './husbandry';
 import { stepPrimordialHost, damagePrimordialSummonsMelee, damagePrimordialSummonsProjectile, damagePrimordialSummonsAoE } from './primordials/host-bridge';
 import { beginDailyOfflineSettle, dateKey, endDailyOfflineSettle, syncRunDailyLedger } from './journey';
-import { humanContact, tickNeeds, witnessPlayerDefense, advanceElderPressure, advanceEvacuation, playerAtSea, playerVoyage, elderCanonicalCreature, elderBodyArchived, recordArchivedElderDefeat, stepHumans, humanEventBoundary, humansMayWait, stepHumanCombat, applyDamage as applyHumanDamage, humanWorldPosition, type ElderVolleyShot, type HumanShot } from './humanworld';
+import { humanContact, tickNeeds, withHumanRoster, prepareHumansForCatchUp, witnessPlayerDefense, advanceElderPressure, advanceEvacuation, playerAtSea, playerVoyage, elderCanonicalCreature, elderBodyArchived, recordArchivedElderDefeat, stepHumans, humanEventBoundary, humansMayWait, stepHumanCombat, applyDamage as applyHumanDamage, humanWorldPosition, type ElderVolleyShot, type HumanShot } from './humanworld';
 import { stepG1b, settleCoreOwed, g1bGateOf, g1bDoorLabel, g1bEta, coreCastBlock, coreCastCommit, ensureOilSeeps, regrowNote, settleRegrowthAt, irSensorStatus, irSensorDownstream, restStep, dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, stepTenders, stepTenderStates, tenderBoundary, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit, carryLimit, invWeight, clearInteraction, clearPhysicalLine, withRunEntityRead, allRunEntities, stepBasePower, basePowerBoundary, powerAllocation, turretStatus, syncElectricDoors, electricDoorPowered, electricInterior, stepLootRespawn, migrateLootRespawn, initializeCabinets, territoryBoundary, territoryForecast, stepTerritory, spawnDrop } from './engine';
 
 export interface Input { up: boolean; down: boolean; left: boolean; right: boolean; mx: number; my: number; attack: boolean; attackPressed: boolean; roll: boolean; cancel: boolean; skill?: 'refined' | 'signature'; skillAim?: { uid:string; slot:number; mx:number; my:number; viewX:number; viewY:number }; viewX?: number; viewY?: number }
@@ -1606,7 +1606,7 @@ export function commitSeasonBoundaries(r: RunState, from: number, to: number): n
 }
 /** Advance existing autonomous helpers at weather and finite fire/terrain boundaries.
  * Physical actors, spread, damage, lightning and player input are deliberately not replayed. */
-function advanceWorld(gs: GameState, start: number, end: number, report?: string[], visual = true) {return timedWorldWork('advanceWorld',()=>{
+function advanceWorld(gs: GameState, start: number, end: number, report?: string[], visual = true) {return timedWorldWork('advanceWorld',()=>withHumanRoster(gs.run!.humanWorld,()=>{
   const r = gs.run!; let t = start; const slotMs = BAL.weather.slotMinutes * 60000;
   initializeCabinets(r);
   const syncPoi=(at:number)=>{const events=advancePoiAccess(r,at);if(events.closed.length)markDirty();for(const id of events.expired)receipt(r,at,'poi.power.expire',id);for(const id of events.closed)receipt(r,at,'poi.door.close',id);};
@@ -1720,7 +1720,7 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
   }
   stepTenders(gs, end);
   stepTenderStates(r, end);
-});}
+}));}
 
 /** Bring the single run clock forward before a frame or an input transaction. */
 export function syncWorld(gs: GameState, now: number): boolean {
@@ -1870,6 +1870,7 @@ export function settle(gs: GameState, now: number, silent = false, interruptTran
   // No target observation/windup playback is certified during absence. A
   // paid shot can finish; an uncommitted swing must be telegraphed anew.
   if(markOffline && r.humanWorld)for(const h of Object.values(r.humanWorld.people))if(h.intent){delete h.intent.swing;delete h.intent.coreCast;}
+  if(markOffline && r.humanWorld)prepareHumansForCatchUp(r.humanWorld);
   migrateLootRespawn(r, end);
   if (start > r.clock.lastSimAt && now >= start) r.clock.lastSimAt = start;
   const report: string[] = []; const B = BAL.player; const p = r.player;
