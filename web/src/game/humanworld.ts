@@ -3238,12 +3238,6 @@ function canHarvestSource(h: HumanRecord, s: NonNullable<ReturnType<typeof sourc
   const power = s.def.harvestBy ? (s.def.harvestBy[tool] ?? 0) : (ITEMS[tool]?.power?.[s.def.mat] ?? 0);
   return power > 0 && occupationCanHarvest(h, s.key, s.def.mat);
 }
-function plannerSources(r: RunState): Set<string> {
-  const protectedTiles = new Set<string>();
-  for (const e of Object.values(r.entities)) if (e.tx !== undefined && e.ty !== undefined && (e.g1b || (e.kind === 'loot' && !e.g1b))) protectedTiles.add(`${e.tx}:${e.ty}`);
-  for (const e of Object.values(r.g1b?.far ?? {})) if (e.g1b && e.tx !== undefined && e.ty !== undefined) protectedTiles.add(`${e.tx}:${e.ty}`);
-  return protectedTiles;
-}
 /** Next proven human event bounds the shared world integrator; distant movement uses
  * the same tile duration as visible movement, never one tile per weather slot. */
 /** A committed delivery or job retries on its own clock. Only discretionary
@@ -3252,7 +3246,12 @@ function committedRetry(h:HumanRecord){
   // A full warehouse suspends delivery of the cargo, not a different
   // accepted occupation (notably a medic fetching a dose). The work retry
   // below neither unloads that pack nor releases its deliveryWait.
-  return !!h.intent?.work || !h.deliveryWait && !!(h.harvestJob || h.recipeBoardPending || h.workOutputs && Object.values(h.workOutputs).some(q=>q>0));
+  if(h.intent?.work)return true;
+  if(h.deliveryWait)return false;
+  if(h.harvestJob||h.recipeBoardPending)return true;
+  // Same answer as Object.values(...).some(q=>q>0), without building an array for every resident in every slice.
+  for(const k in h.workOutputs)if(h.workOutputs[k]>0)return true;
+  return false;
 }
 /** Offline settlement (absence, long catch-up) resolves the three dense, latency-tolerant human
  *  instants — plan reviews, medical reviews and tile arrivals — on one shared one-second beat of the
@@ -3428,7 +3427,7 @@ function commitHumanWater(r:RunState,h:HumanRecord,now:number):boolean {
  receipt(r,now,'human.water',`${h.actorId}:${gx},${gy}:${flask?.uid??'direct-drink'}`);
  h.intent=undefined;h.state='IDLE';h.nextThinkAt=now+1000;return true;
 }
-function planAutonomousWork(r: RunState, hw: HumanWorld, h: HumanRecord, now: number, grid: Uint8Array, ox: number, oy: number, occupied: Set<string>, protectedTiles: Set<string>): void {return timedWorldWork('planAutonomousWork',()=>{
+function planAutonomousWork(r: RunState, hw: HumanWorld, h: HumanRecord, now: number, grid: Uint8Array, ox: number, oy: number, occupied: Set<string>): void {return timedWorldWork('planAutonomousWork',()=>{
   if(h.state==='IDLE'&&Object.values(h.workOutputs??{}).some(q=>q>0)){
     if(h.intent?.work?.phase==='travel'){receipt(r,now,'human.work.defer',`${h.actorId}:${h.intent.intentId}:deliver committed output first`);h.intent=undefined;}
     if(h.harvestJob?.phase==='source'){receipt(r,now,'human.harvest.cancel',`${h.harvestJob.id}:deliver prior committed output first`);delete h.harvestJob;}
@@ -3833,7 +3832,6 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number, coarse = fa
   }
   if (wantsPlan) withHumanNavigationRead(r,()=>{
     countWorldWork('plannerActivations');
-    const protectedTiles = plannerSources(r);
     let cursor = (hw.plannerCursor ?? 0) % Math.max(1, actors.length), planned = 0, distantPlanned=0;
     const startCursor=cursor;let deferredCursor:number|undefined;
     for (let n = 0; n < actors.length && planned < 8; n++) {
@@ -3844,7 +3842,7 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number, coarse = fa
         if(distant)distantPlanned++;
         countWorldWork('actorPlans');
         h.routeSearch=undefined;
-        planAutonomousWork(r, hw, h, now, grid, ox, oy, occupied, protectedTiles);
+        planAutonomousWork(r, hw, h, now, grid, ox, oy, occupied);
         finishHumanPlanReview(h,now);
         if ((h.nextThinkAt ?? 0) > now) planned++;
         cursor = (i + 1) % actors.length;

@@ -413,12 +413,78 @@ Không. Bài kiểm `tests/continue-wait.test.ts` chạy cùng một bản lưu 
 
 ### Chưa làm, chưa kiểm ở vòng này
 
-- Chưa làm nhanh phần mô phỏng cư dân, là phần chiếm nhiều thời gian chờ nhất. Vắng 8 giờ vẫn chờ khoảng 80 giây trên máy kiểm; vắng lâu hơn chưa đo.
+- Chưa làm nhanh phần mô phỏng cư dân, là phần chiếm nhiều thời gian chờ nhất. Vắng 8 giờ vẫn chờ khoảng 80 giây trên máy kiểm; vắng lâu hơn chưa đo. (Vòng 9 làm tiếp phần này.)
 - Chưa đo trên máy thật, điện thoại, máy nhiều nhân. Chưa đo bản lưu của ván đã chơi lâu (chỉ đo ván mới chơi 15 giây).
 - Chưa đo game có khựng trong mấy giây đầu sau khi Chơi tiếp hay không.
 - Trong lượt thử, nhân vật của ván mới chết sau 1 giờ 21 phút vắng mặt vì không có chỗ trú. Đây là luật game sẵn có, không đụng tới.
 - Không chạy lại `tests/b03-return.test.ts` và toàn bộ bộ kiểm thử; `sim.ts` và `return-report.ts` không đổi.
 - Thanh tiến độ vẫn là thanh mặc định của trình duyệt (xám, xanh lá), chưa vẽ theo kiểu của game.
+
+## Vòng 9: làm nhanh phần mô phỏng cư dân lúc vắng mặt (nhánh `arena/d6096eae-soul-of-hero`)
+
+Mục tiêu: rút ngắn phần chiếm nhiều thời gian nhất của màn chờ, với điều kiện kết quả tính không đổi một byte nào.
+
+### Đã sửa (`web/src/game/humanworld.ts`)
+
+1. Bỏ một phép tính không ai dùng. Mỗi lượt cư dân lập kế hoạch, game dựng một danh sách ô "được bảo vệ" từ mọi vật trong ván (bản lưu thử có 17 vật gần và 734 vật ở xa) rồi truyền cho hàm lập kế hoạch, nhưng hàm đó không đọc danh sách này ở đâu cả. Phép tính này chiếm khoảng 7% thời gian mô phỏng.
+2. Câu hỏi "cư dân này còn hàng chưa giao không" được hỏi cho mọi cư dân ở mọi bước; trước đây mỗi lần hỏi phải tạo một mảng tạm, nay duyệt thẳng. Câu trả lời giống hệt.
+
+### Kết quả tính có đổi không
+
+Không. Bốn bản lưu được tính lại bằng mã trước và mã sau, rồi so dấu vân tay (SHA-256, 16 ký tự đầu) của bản lưu trả về và của nhật ký trở về:
+
+| Bản lưu (hạt giống) | Vắng | Bản lưu trước = sau | Nhật ký trước = sau |
+|---|---|---|---|
+| 5 | 3 giờ | `259149f1cd94aad1` | `6064377c292bb6fe` |
+| 11 | 1 giờ | `7eaf253ca1f2d63e` | `ff6782b68c09260c` |
+| 23 | 2 giờ | `fea89333fa4471c7` | `d32bfe7ecc8fac70` |
+| 5 | 8 giờ | `ac0fe1f3a5c57408` | `c5c63ff36fff16fb` |
+
+Cả bốn đều là ván mới chơi 20 giây. Chưa có bản lưu của ván chơi lâu để so.
+
+### Số đo
+
+Riêng phần mô phỏng (chạy bằng Node trên máy kiểm, vùng đất đã dựng sẵn; mỗi số là một lượt chạy):
+
+| Bản lưu | Vắng | Trước | Sau |
+|---|---|---|---|
+| hạt giống 5 | 3 giờ | 37,5 s; 38,1 s | 32,1 s; 32,4 s |
+| hạt giống 5 | 8 giờ | 86,2 s | 73,6 s |
+| hạt giống 23 | 2 giờ | 31,4 s | 28,7 s |
+| hạt giống 11 | 1 giờ | 22,7 s | 20,8 s |
+
+Tức là nhanh hơn khoảng 8–15%, không phải gấp đôi.
+
+Cả màn chờ trên trình duyệt (Chromium không màn hình, 2 nhân, cùng bản lưu hạt giống 5, bấm Chơi tiếp 30 giây sau khi mở trang; "trước" là bản vòng 8):
+
+| Vắng | Trước: vào game sau | Sau: vào game sau |
+|---|---|---|
+| 3 giờ | 52,6 s; 54,4 s | 48,8 s; 45,7 s |
+| 8 giờ | 95,3 s | 86,2 s |
+
+Các số này không so được với bảng vòng 8: bản lưu khác và máy kiểm đã được khởi động lại.
+
+Vắng 24 giờ: riêng phần mô phỏng mất 231 giây (đo trong lúc máy còn chạy kiểm thử song song, nên số thật thấp hơn một ít). Tức là vắng một ngày thì vẫn chờ vài phút.
+
+### Vì sao không nhanh hơn được nhiều mà vẫn giữ nguyên kết quả
+
+- Ba giờ vắng mặt là khoảng 15.000 bước tính. Mỗi bước, game đi qua cả 286 cư dân: trừ đói, khát, ấm, xét chỗ trú, xét việc đang làm.
+- Sau khi bỏ phép tính thừa ở trên, không còn chỗ nào chiếm riêng một phần lớn: dòng mã tốn nhất chỉ chiếm 2,6% thời gian. Phần còn lại rải ra nhiều vòng duyệt 286 cư dân, lặp lại ở mỗi bước. Sửa tiếp từng chỗ như vậy ước chừng được thêm 1–2% mỗi chỗ; vòng này chưa làm.
+- Muốn nhanh hơn hẳn thì phải giảm số bước hoặc bỏ qua cư dân đang đứng yên. Cả hai cách đều làm kết quả tính khác đi, nên không làm khi chưa có quyết định của chủ game.
+- Đã thử để biết, không giữ lại: khi người chơi vắng, nhịp tính của cư dân là 5 giây thay vì 1 giây. Mô phỏng 3 giờ còn 17,8 giây (trước 37,5), số bước giảm từ 15.137 xuống 6.459, nhưng bản lưu trả về khác bản hiện nay. Chưa xem khác ở những điểm nào. Nhịp 1 giây là quyết định của chủ game ngày 21/11/2026, nên đây là việc chủ game quyết.
+
+### Kiểm thử
+
+- 13 tệp `tests/npc-*.test.ts` có liên quan (thu hoạch, giao hàng, nhịp vắng mặt, nhu cầu): 12 tệp qua, 64 bài qua; 1 tệp và 2 bài vốn được đánh dấu bỏ qua từ trước.
+- `tests/continue-wait.test.ts`, `tests/b03-return.test.ts`, `tests/region-prebuild.test.ts`: 27 bài qua.
+- `tsc` và `typecheck:tests`: không lỗi.
+
+### Chưa làm, chưa kiểm ở vòng này
+
+- Không chạy lại toàn bộ bộ kiểm thử (269 tệp trong `tests/`); chỉ chạy 16 tệp nêu trên.
+- Phép so dấu vân tay ở trên làm bằng công cụ tạm, không nằm trong kho mã và chưa thành bài kiểm thử cố định.
+- Chưa so kết quả trên bản lưu của ván đã chơi lâu, có công trình của người chơi.
+- Chưa đo trên máy thật hay điện thoại. Chưa mở trang QA sau khi triển khai.
 
 ## Chưa làm, chưa kiểm
 
