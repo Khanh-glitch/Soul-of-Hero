@@ -1,5 +1,6 @@
 // One independent world per Continue. No storage writes in this worker: the
 // title screen owns the save and can cancel without applying half a settlement.
+// (It reads this build's kept regions, region-store.ts; it keeps none itself.)
 //
 // The absence is replayed on a thread that has compiled nothing yet, and residents ask for well over a hundred world
 // regions in its first simulated minutes. `packs` are regions the title screen already had compiled ahead of need
@@ -8,11 +9,13 @@
 import { selectSnapshots, serializeSnapshot } from './persist';
 import { settleWithReturn } from './return-report';
 import { setActiveLayout } from './world';
-import { getWindowWorld, setPrebuiltRegionSource, type GeometryRegionPack } from '../veyra05/window';
+import { getWindowWorld, setPrebuiltRegionSource, type GeometryRegionPack, type VeyraPlacementRules } from '../veyra05/window';
+import { regionStore } from '../veyra05/region-store';
 import { isVeyra05Layout } from '../veyra05/scenes';
 import { syncFloor } from '../veyra05/floors';
 import { markDirty } from './engine';
-export type ReturnRequest = {snapshot:string;now:number;packs?:GeometryRegionPack[]};
+/** `kept`: regions to read back from this build's region store before the replay starts (region-store.ts). */
+export type ReturnRequest = {snapshot:string;now:number;packs?:GeometryRegionPack[];kept?:{build:string;wanted:[string,VeyraPlacementRules][]}};
 /** `regions`: world regions made ready so far; `packsUsed`: how many of them came ready from the title screen. */
 export type ReturnMessage = {kind:'progress'; fraction:number; regions:number} | {kind:'complete';snapshot:string;result:ReturnType<typeof settleWithReturn>;regions:number;packsUsed:number} | {kind:'failed';reason:string};
 /** The whole job, apart from the worker plumbing, so a test can run it on its own thread. */
@@ -35,4 +38,14 @@ export function runReturn(data:ReturnRequest,send:(msg:ReturnMessage)=>void):voi
     send({kind:'complete',snapshot:serializeSnapshot(gs),result,regions,packsUsed});
   }catch(e){send({kind:'failed',reason:e instanceof Error?e.message:String(e)});}
 }
-if(typeof self!=='undefined'&&typeof (self as unknown as {document?:unknown}).document==='undefined')self.onmessage=({data}:{data:ReturnRequest})=>runReturn(data,msg=>self.postMessage(msg));
+/** The packs to start with: those handed over, then those this build kept from an earlier visit. Reading the store
+ * can only add packs; if it fails or is empty the regions compile during the replay as before. */
+export async function withKeptRegions(data:ReturnRequest,store=data.kept?regionStore(data.kept.build):undefined):Promise<ReturnRequest> {
+  if(!data.kept||!store)return data;
+  const kept=(await store.load(data.kept.wanted)).filter((p):p is GeometryRegionPack=>!!p);
+  return kept.length?{...data,packs:[...(data.packs??[]),...kept]}:data;
+}
+if(typeof self!=='undefined'&&typeof (self as unknown as {document?:unknown}).document==='undefined')self.onmessage=({data}:{data:ReturnRequest})=>{
+  const send=(msg:ReturnMessage)=>self.postMessage(msg);
+  withKeptRegions(data).catch(()=>data).then(ready=>runReturn(ready,send));
+};

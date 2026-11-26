@@ -555,6 +555,90 @@ Cả màn chờ trên trình duyệt (Chromium không màn hình, 2 nhân, bản
 - Chưa đo trên máy thật hay điện thoại. Chưa mở trang QA sau khi triển khai.
 - Chưa xử lý đoạn 5–8 giây sau khi tính xong và đoạn dựng đất ở đầu màn chờ (khoảng 18 giây cho 20% đầu ở mức vắng 3 giờ).
 
+## Vòng 11: giữ lại phần đất đã dựng giữa các lần mở game; so cách tính thưa với cách tính hiện nay (nhánh `arena/1fe1361c-soul-of-hero`)
+
+Sau khi gộp vòng 10, người làm game thử trên máy tính thật: vắng hơn một giờ, bấm Chơi tiếp, sau 30 giây thanh mới ở 6%. Mức trần đặt ra là 30 giây cho cả đoạn từ lúc bấm đến lúc vào game. Vòng này làm một việc không đổi luật và đo một việc cần người làm game quyết định.
+
+### Đã sửa: phần đất đã dựng được giữ lại cho lần mở game sau
+
+Mỗi lần Chơi tiếp, cư dân hỏi về khoảng 180 vùng đất ngay trong những phút đầu được tính, và mỗi vùng phải dựng lại từ đầu (0,1–0,3 giây một vùng). Trên máy kiểm đoạn này chiếm khoảng 18–25 giây, bất kể vắng bao lâu. Một vùng đất chỉ phụ thuộc vào bản đồ và mã của game, không phụ thuộc vào ván chơi, nên dựng một lần là đủ.
+
+- `web/src/veyra05/region-store.ts` (mới): kho giữ các vùng đã dựng trong bộ nhớ lưu trữ của trình duyệt (IndexedDB, kho `soh.regions.v1`).
+- `web/src/veyra05/region-prebuild.worker.ts`: luồng dựng đất chạy nền hỏi kho trước; có thì lấy ra, chưa có thì dựng rồi cất vào kho.
+- `web/src/game/offline-return-worker.ts`, `web/src/App.tsx`, `web/src/veyra05/region-prebuild.ts`: luồng tính bù lúc Chơi tiếp đọc từ kho những vùng nó cần mà màn hình chính chưa kịp đưa sang. Luồng này chỉ đọc kho, không ghi.
+
+Kho chỉ dùng được cho đúng bản mã đã tạo ra nó. Tên của kho lấy từ tên tệp của luồng dựng đất trong bản dựng (`region-prebuild.worker-<mã>.js`); tên tệp này đổi khi và chỉ khi phần mã dựng đất đổi. Bản cập nhật chỉ sửa giao diện hay phần mô phỏng cư dân thì kho vẫn dùng được (đã thử: sửa luồng tính bù, tên tệp luồng dựng đất giữ nguyên). Bản cập nhật có sửa phần dựng đất thì kho tự xoá và lần Chơi tiếp đầu tiên sau đó chậm như trước. Mỗi vùng trong kho còn được ghi kèm tên bản mã, để hai thẻ trình duyệt chạy hai bản khác nhau không lấy nhầm đất của nhau.
+
+Mọi trục trặc của bộ nhớ lưu trữ (trình duyệt không cho dùng, hết chỗ, đọc lỗi, bản ghi hỏng) chỉ dẫn đến "không có sẵn": vùng đó được dựng lại như trước.
+
+**Kết quả tính không đổi.** Trong trình duyệt, cùng một bản lưu và cùng một thời điểm, bản lưu sau khi tính bù có cùng dấu vân tay (`e5d7124cd89c5e3e`) ở cả ba trường hợp: dựng toàn bộ tại chỗ (0 vùng có sẵn), 173 vùng do màn hình chính đưa sang, và 118 vùng đọc từ kho.
+
+### Đo trong trình duyệt
+
+Máy kiểm: 2 nhân, Chromium không màn hình, vẽ bằng phần mềm. Bản lưu: ván mới, hạt giống 5, 286 cư dân, đã chơi 20 giây. Bấm Chơi tiếp 3 giây sau khi màn hình chính hiện. Số đo là từ lúc bấm đến lúc vào game.
+
+| Vắng | Trước (bản `cb28d27`) | Sau, lần đầu (kho rỗng) | Sau, các lần kế (kho đã có đất) |
+|---|---|---|---|
+| 0,3 giờ | 38,0 và 39,6 giây | chưa đo | 18,2 và 18,3 giây |
+| 1,5 giờ | 49,6 – 50,1 giây (3 lượt) | 45,2 – 55,3 giây (5 lượt, 4 lượt trong khoảng 45–48) | 25,6 – 32,1 giây (8 lượt) |
+| 3 giờ | 51,3 và 58,5 giây | chưa đo | 41,7 và 43,3 giây |
+
+- Lần đầu không nhanh hơn: kho rỗng, đất vẫn phải dựng.
+- Kho đầy dần: luồng dựng đất chạy trong lúc màn hình chính đang hiện và trong lúc chơi. Trên máy 2 nhân nó dừng trong lúc tính bù, nên sau một lần Chơi tiếp bấm sớm kho mới có khoảng 50 vùng, sau hai lần khoảng 90, sau ba lần khoảng 130. Để màn hình chính hiện 45–60 giây thì kho có đủ khoảng 275 vùng.
+- Ở lượt mà kho đang được làm đầy (đợi 45–60 giây ở màn hình chính rồi mới bấm): 37,6 – 39,6 giây (4 lượt).
+- Đọc 115 vùng từ kho mất 0,14 giây.
+- Với kho đầy, ở mức vắng 1,5 giờ: khoảng 4–6 giây đến 1%, khoảng 19–25 giây tính phần còn lại, 2–5 giây từ 99% đến lúc vào game. Phần còn lại gần như toàn bộ là mô phỏng cư dân, khoảng 11–13 giây cho mỗi giờ vắng trên máy kiểm.
+
+Kho chiếm chỗ: mỗi vùng khoảng 0,34 MB, một ván cần khoảng 280 vùng, tức gần 100 MB bộ nhớ lưu trữ của trình duyệt trên máy người chơi. Kho tự xoá khi vượt 600 vùng. Nén thử bằng gzip thì còn khoảng 1/12 (0,029 MB một vùng); chưa làm.
+
+### So cách tính thưa với cách tính hiện nay (chỉ đo, chưa đưa vào game)
+
+Hiện nay trong lúc vắng mặt, cứ mỗi giây được tính game cho một cư dân ở xa nghĩ xem nên làm gì. 15 giờ vắng là 54.000 lượt như vậy và 62.136 bước tính. Thử nghiệm: giãn khoảng cách giữa hai lượt nghĩ, và mỗi lượt cho nhiều cư dân nghĩ hơn để tổng số lần nghĩ không đổi. Đo bằng công cụ `web/scripts/absence-bench/` (Node, cùng bản lưu, kho đất có sẵn, mỗi dòng một hoặc hai lượt).
+
+Vắng 15 giờ:
+
+| Cách tính | Thời gian | Chết | Gục | Cư dân ở chỗ khác so với cách hiện nay | Tổng hàng trong kho | `berries` trong kho | `crop` trong kho |
+|---|---|---|---|---|---|---|---|
+| Hiện nay (1 giây, 1 người mỗi lượt) | 148,5 – 152,2 giây | 36 | 10 | – | 3.770 | 185 | 0 |
+| Phép thử độ nhạy: 1,001 giây | 172,0 giây | 33 | 12 | 102 | 3.808 | 195 | 0 |
+| 15 giây, 15 người mỗi lượt | 42,5 – 46,9 giây | 27 | 8 | 134 | 3.727 | 122 | 33 |
+| 60 giây, 60 người mỗi lượt | 37,0 – 38,9 giây | 34 | 8 | 135 | 3.767 | 116 | 46 |
+| 60 giây, 8 người mỗi lượt | 25,3 giây | 28 | 12 | 168 | chưa đo | chưa đo | chưa đo |
+| 60 giây, 1 người mỗi lượt | 21,4 giây | 43 | 5 | 209 | chưa đo | chưa đo | chưa đo |
+
+Vắng 1,5 giờ: hiện nay 22,2 – 23,8 giây; 5 giây và 5 người mỗi lượt 16,6 – 17,5 giây (83 cư dân ở chỗ khác, tổng hàng 3.230 → 3.213, `crop` 0 → 9); phép thử độ nhạy 25,3 giây (49 cư dân ở chỗ khác, tổng hàng 3.230 → 3.179).
+
+Đọc bảng:
+
+1. **Số phận từng cư dân vốn đã không ổn định.** Chỉ đổi bước tính từ 1 giây thành 1,001 giây, sau 15 giờ đã có 102 cư dân đứng ở chỗ khác, số chết 33 thay vì 36. Vậy không thể đòi cách tính thưa cho đúng từng người; chỉ so được các con số tổng.
+2. Với cách "giãn khoảng nghĩ, giữ nguyên số lần nghĩ" (15 hoặc 60 giây), số chết (27, 34), số gục và tổng hàng nằm cùng cỡ với mức dao động ở dòng độ nhạy. Có hai chỗ lệch rõ, lặp lại ở cả hai mức thử 15 giờ: `berries` trong kho ít hơn (185 → 116–122) và có `crop` trong kho (0 → 33–46; ở mức 1,5 giờ cũng đã thấy 0 → 9). Dòng độ nhạy không có hai chỗ lệch này. Chưa tìm nguyên nhân.
+3. Cách "nghĩ ít lần hơn" (60 giây, 1 người mỗi lượt) nhanh nhất nhưng làm cư dân sống tệ hơn rõ: 43 chết thay vì 36, chỉ số no trung bình 33 thay vì 44 (cao là no). Không nên dùng.
+4. Cách tính thưa giúp nhiều cho lần vắng dài (15 giờ: nhanh gấp 3–4 lần) và ít cho lần vắng ngắn (1,5 giờ: nhanh hơn khoảng 25%).
+5. Ngoài lề: ở mọi cách tính, 27–43 trong 286 cư dân chết sau 15 giờ vắng và 20–25 người gục sau 1,5 giờ. Đây là kết quả của luật hiện có, không phải của vòng này.
+
+Chưa đổi gì trong luật: nhịp tính lúc vắng mặt vẫn là 1 giây (`OFFLINE_HUMAN_BEAT_MS`), theo quyết định ngày 21/11/2026. Mã thử nghiệm đã gỡ khỏi kho mã.
+
+### Công cụ đo đưa vào kho mã
+
+`web/scripts/absence-bench/`: `scn.ts` (tính bù một lần vắng đúng như luồng Chơi tiếp, in thời gian, số bước và dấu vân tay; có chế độ ghi bảng thống kê cư dân và kho hàng), `build.sh` (dựng công cụ từ mã hiện tại), `census-diff.mjs` (so hai bảng thống kê). Vòng 9 và 10 dùng công cụ tạm ngoài kho mã và đã mất; từ nay phép so dấu vân tay làm lại được.
+
+### Kiểm thử
+
+- Mới: `web/tests/region-store.test.ts`, 11 bài. Vùng lấy từ kho giống hệt vùng đã cất, kể cả sau khi bản gốc đã chuyển sang luồng khác; bản mã khác không dùng được kho cũ; hai thẻ chạy hai bản mã không lấy nhầm của nhau; không có tên bản mã thì không giữ gì; mọi kiểu lỗi lưu trữ đều thành "không có sẵn"; bản ghi hỏng hay sai vùng không bao giờ được trả ra; luồng dựng đất trả lời từ kho mà không dựng lại; luồng tính bù nhận thêm vùng từ kho. IndexedDB trong bài kiểm thử do gói `fake-indexeddb` (mới thêm, chỉ dùng khi kiểm thử) đóng vai.
+- Chạy lại 5 tệp: `region-store`, `region-prebuild`, `continue-wait`, `resident-catchup-speed`, `npc-offline-beat`: 34 bài đạt. (Lượt chạy này có trước khi thêm bài "hai thẻ" và việc ghi tên bản mã vào từng bản ghi; sau thay đổi đó chạy lại `region-store` và `region-prebuild`: 26 bài đạt.)
+- `tsc` và `typecheck:tests`: không lỗi.
+
+### Chưa làm, chưa kiểm ở vòng này
+
+- **Chưa biết vì sao máy của người làm game mới được 6% sau 30 giây.** Trên máy kiểm, bản cũ ở cùng mức vắng đạt khoảng 20–25% sau 30 giây. Chưa có bản lưu thật hay số đo từ máy đó, nên chưa biết kho đất giúp được bao nhiêu ở đó.
+- Trần 30 giây chưa đạt cho lần vắng dài: trên máy kiểm 3 giờ vẫn mất khoảng 42 giây, lần đầu sau khi kho bị xoá mất 45–55 giây ở mức 1,5 giờ.
+- Chưa đo trên máy thật, điện thoại, Firefox, Safari. Chưa thử trình duyệt ở chế độ riêng tư hay khi bộ nhớ lưu trữ đầy (chỉ có bài kiểm thử tự động cho các trường hợp đó).
+- Chưa nén kho (gần 100 MB mỗi người chơi).
+- Luồng tính bù không ghi vào kho; vùng nào chỉ nó dựng thì phải đợi luồng dựng đất dựng lại trong lúc chơi mới vào kho.
+- Bảng so cách tính thưa chỉ làm trên một bản lưu (ván mới, hạt giống 5), mỗi dòng một hoặc hai lượt; chưa thử bản lưu của ván đã chơi lâu.
+- Không chạy lại toàn bộ bộ kiểm thử; chỉ chạy 5 tệp nêu trên.
+- Chưa xử lý đoạn 2–8 giây từ 99% đến lúc vào game.
+
 ## Chưa làm, chưa kiểm
 
 - Chưa thử trên điện thoại thật, Firefox, Safari. Máy kiểm chỉ có Chromium không màn hình và không truy cập được địa chỉ chơi thật.

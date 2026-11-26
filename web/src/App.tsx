@@ -9,7 +9,7 @@ import { getActiveLayout, getWorld, setActiveLayout } from './game/world';
 import { U05_WORLD_LAYOUT_ID, isVeyra05Layout } from './veyra05/scenes';
 import { getWindowWorld } from './veyra05/window';
 import { syncFloor } from './veyra05/floors';
-import { holdRegionPrebuild, prebuildRegions, waitingRegionPacks, warmNewGameRegions } from './veyra05/region-prebuild';
+import { holdRegionPrebuild, keptRegionsWanted, prebuildRegions, waitingRegionPacks, warmNewGameRegions } from './veyra05/region-prebuild';
 import Inspector from './veyra05/inspector/Inspector';
 import { resetRenderCaches, cam } from './game/render';
 import { setVolume, initAudio } from './game/audio';
@@ -206,7 +206,8 @@ export default function App() {
             };
             // Regions the title screen has compiled ahead of need go along. They are copied: the pool keeps its own
             // for the game that starts afterwards. On a two-core machine the prebuild worker stands down meanwhile.
-            const request:ReturnRequest={snapshot:serializeSnapshot(savedGs),now,packs:waitingRegionPacks()};
+            const packs=waitingRegionPacks();
+            const request:ReturnRequest={snapshot:serializeSnapshot(savedGs),now,packs,kept:keptRegionsWanted(savedGs.run,packs)};
             holdRegionPrebuild(true);
             w.postMessage(request);
           }catch(e){fail(String(e));}
