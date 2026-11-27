@@ -4,6 +4,7 @@ import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 import { externalVfxPages } from "./scripts/vfx-assets-plugin";
+import { buildStampDefine } from "./scripts/build-stamp";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -12,6 +13,7 @@ const __dirname = path.dirname(__filename);
 export default defineConfig({
   server: { host: '0.0.0.0', allowedHosts: true },
   plugins: [externalVfxPages(), react(), tailwindcss()],
+  define: buildStampDefine(__dirname),
   build: { assetsInlineLimit: 0 },
   resolve: {
     alias: {

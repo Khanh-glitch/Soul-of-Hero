@@ -3,7 +3,9 @@ import type { GameState } from './game/core';
 import { dispatch, markDirty, mkStack, startRun } from './game/engine';
 import { settleWithReturn, type OfflineReturnV1 } from './game/return-report';
 import type { ReturnMessage, ReturnRequest } from './game/offline-return-worker';
-import { load, save, selectSnapshots, serializeSnapshot } from './game/persist';
+import { load, restoreSnapshot, save, selectSnapshots, serializeSnapshot } from './game/persist';
+import { backupProblemLine, writeSide, type ReadBackup } from './game/backup';
+import { abandonSavedRun } from './game/title-actions';
 import { getArt } from './game/art';
 import { getActiveLayout, getWorld, setActiveLayout } from './game/world';
 import { U05_WORLD_LAYOUT_ID, isVeyra05Layout } from './veyra05/scenes';
@@ -21,6 +23,9 @@ import Title, { TitleShell } from './ui/Title';
 import { awayLabel, clockLabel } from './ui/pregame';
 import { afterPaint, behindVeil, hideVeil, settleVeil, showVeil, veilLine } from './ui/veil';
 import Game from './ui/Game';
+
+/** One line carried across the reload that follows a restore, shown once on the title. */
+const RESTORED_NOTE = 'soh.restored-note';
 
 export default function App() {
   const gsRef = useRef<GameState | null>(null);
@@ -47,7 +52,9 @@ export default function App() {
       setActiveLayout(gs.run?.layoutId || U05_WORLD_LAYOUT_ID);
       getWorld();
       gsRef.current = gs;
-      setNote(note);
+      let restored: string | null = null;
+      try { restored = sessionStorage.getItem(RESTORED_NOTE); sessionStorage.removeItem(RESTORED_NOTE); } catch { /* no session storage */ }
+      setNote([restored, note].filter(Boolean).join(' ') || undefined);
       setVolume(gs.profile.settings.volume, gs.profile.settings.muted);
       setScreen('title');
     })();
@@ -167,6 +174,74 @@ export default function App() {
     setScreen('game');
   };
 
+  /** Continue, or end the run from the title. Both first work out the time the player was away (the same way, with the
+   *  same wait screen); 'play' then opens the game, 'abandon' ends the run instead and shows its chronicle. */
+  const resume = (purpose: 'play' | 'abandon') => {
+    if (veilLine() !== null) return;   // a second press while the first is still opening the game
+    initAudio();
+    resetQaSandboxFlags();
+    setQaMode(false);
+    setInitialBanner(null);
+    const now=Date.now();
+    const finish=(next:GameState,rep:ReturnType<typeof settleWithReturn>)=>{
+      gsRef.current=next;save(next);
+      if(!next.run){hideVeil();setSummary(next.profile.history[0]);return;}
+      if(purpose==='abandon'){
+        // The run is up to date now; end it with the same command the Esc menu sends (game/title-actions.ts).
+        const done=abandonSavedRun(next,Date.now());
+        hideVeil();
+        if(done.ok){save(next);setNote(undefined);setSummary(next.profile.history[0]||null);}
+        else setNote(`The run was not abandoned. It is saved as it stands now. ${done.reason}`);
+        return;
+      }
+      setReport(rep.lines.length||(rep.report&&!rep.report.away.quiet)?rep:null);enter(next);
+    };
+    if(!savedGs.run || now-savedGs.run.clock.lastSimAt<120000 || typeof Worker==='undefined'){
+      behindVeil(purpose==='abandon'?'Ending the run…':'Opening the island…',()=>finish(savedGs,settleWithReturn(savedGs,now)));return;
+    }
+    if(catchUp.current)return;
+    const fail=(reason:string)=>{stopCatchUp();setNote(purpose==='abandon'?`The run was not abandoned. Your previous save is unchanged. ${reason}`:`Continue did not finish. Your previous save is unchanged. ${reason}`);};
+    try {
+      const w=new Worker(new URL('./game/offline-return-worker.ts',import.meta.url),{type:'module'});catchUp.current=w;
+      setProgress({fraction:0,regions:0,startedAt:Date.now(),awayMs:now-savedGs.run.clock.lastSimAt});
+      w.onerror=e=>{if(catchUp.current===w)fail(e.message);};
+      w.onmessage=({data}:{data:ReturnMessage})=>{
+        if(catchUp.current!==w)return;
+        if(data.kind==='progress'){setProgress(p=>p&&{...p,fraction:data.fraction,regions:data.regions});return;}
+        if(data.kind==='failed'){fail(data.reason);return;}
+        // The result is in. Opening it holds the page for a few seconds (the world is put together and its
+        // first frame drawn), so the cover goes up and is painted before that starts.
+        showVeil(purpose==='abandon'?'Ending the run…':'Opening the island…');
+        afterPaint(()=>{
+          if(catchUp.current!==w){hideVeil();return;}   // the player went back to the title meanwhile
+          try{const next=selectSnapshots([data.snapshot]).gs;if(!next)throw Error('Invalid return snapshot.');
+            stopCatchUp();finish(next,data.result);settleVeil();
+          }catch(e){hideVeil();fail(String(e));}
+        });
+      };
+      // Regions the title screen has compiled ahead of need go along. They are copied: the pool keeps its own
+      // for the game that starts afterwards. On a two-core machine the prebuild worker stands down meanwhile.
+      const packs=waitingRegionPacks();
+      const request:ReturnRequest={snapshot:serializeSnapshot(savedGs),now,packs,kept:keptRegionsWanted(savedGs.run,packs)};
+      holdRegionPrebuild(true);
+      w.postMessage(request);
+    }catch(e){fail(String(e));}
+  };
+
+  /** Put a checked backup in place of the save (Title → Saved game), then load the page again so it goes through
+   *  the whole of load(). Resolves to null when the page is about to reload, or to the line to show when nothing was
+   *  written. */
+  const restore = async (backup: Extract<ReadBackup, { ok: true }>): Promise<string | null> => {
+    if (veilLine() !== null || catchUp.current) return 'Wait for the current step to finish.';
+    const outcome = await restoreSnapshot(backup.saveText, savedGs.revision);
+    if (!outcome.ok) return outcome.category === 'invalid-state' ? backupProblemLine('not-a-save') : 'The backup could not be written to this browser. Your save is unchanged.';
+    let lost = 0;
+    try { lost = writeSide(backup.side, localStorage); } catch { lost = Object.keys(backup.side).length; }
+    try { sessionStorage.setItem(RESTORED_NOTE, lost ? 'Backup restored. Some notes in it could not be stored: the storage of this browser is full.' : 'Backup restored.'); } catch { /* the note is a courtesy */ }
+    window.location.reload();
+    return null;
+  };
+
   if(progress!==null){
     const awayText=awayLabel(progress.awayMs),ranText=clockLabel(Date.now()-progress.startedAt);
     // Each line is one string, so the Vietnamese phrase book sees whole sentences.
@@ -199,49 +274,9 @@ export default function App() {
         summary={summary}
         clearSummary={() => setSummary(null)}
         onInspect={QA_BUILD ? openInspector : undefined}
-        onContinue={() => {
-          if (veilLine() !== null) return;   // a second press while the first is still opening the game
-          initAudio();
-          resetQaSandboxFlags();
-          setQaMode(false);
-          setInitialBanner(null);
-          const now=Date.now();
-          const finish=(next:GameState,rep:ReturnType<typeof settleWithReturn>)=>{
-            gsRef.current=next;save(next);
-            if(!next.run){hideVeil();setSummary(next.profile.history[0]);return;}
-            setReport(rep.lines.length||(rep.report&&!rep.report.away.quiet)?rep:null);enter(next);
-          };
-          if(!savedGs.run || now-savedGs.run.clock.lastSimAt<120000 || typeof Worker==='undefined'){
-            behindVeil('Opening the island…',()=>finish(savedGs,settleWithReturn(savedGs,now)));return;
-          }
-          if(catchUp.current)return;
-          const fail=(reason:string)=>{stopCatchUp();setNote(`Continue did not finish. Your previous save is unchanged. ${reason}`);};
-          try {
-            const w=new Worker(new URL('./game/offline-return-worker.ts',import.meta.url),{type:'module'});catchUp.current=w;
-            setProgress({fraction:0,regions:0,startedAt:Date.now(),awayMs:now-savedGs.run.clock.lastSimAt});
-            w.onerror=e=>{if(catchUp.current===w)fail(e.message);};
-            w.onmessage=({data}:{data:ReturnMessage})=>{
-              if(catchUp.current!==w)return;
-              if(data.kind==='progress'){setProgress(p=>p&&{...p,fraction:data.fraction,regions:data.regions});return;}
-              if(data.kind==='failed'){fail(data.reason);return;}
-              // The result is in. Opening it holds the page for a few seconds (the world is put together and its
-              // first frame drawn), so the cover goes up and is painted before that starts.
-              showVeil('Opening the island…');
-              afterPaint(()=>{
-                if(catchUp.current!==w){hideVeil();return;}   // the player went back to the title meanwhile
-                try{const next=selectSnapshots([data.snapshot]).gs;if(!next)throw Error('Invalid return snapshot.');
-                  stopCatchUp();finish(next,data.result);settleVeil();
-                }catch(e){hideVeil();fail(String(e));}
-              });
-            };
-            // Regions the title screen has compiled ahead of need go along. They are copied: the pool keeps its own
-            // for the game that starts afterwards. On a two-core machine the prebuild worker stands down meanwhile.
-            const packs=waitingRegionPacks();
-            const request:ReturnRequest={snapshot:serializeSnapshot(savedGs),now,packs,kept:keptRegionsWanted(savedGs.run,packs)};
-            holdRegionPrebuild(true);
-            w.postMessage(request);
-          }catch(e){fail(String(e));}
-        }}
+        onContinue={() => resume('play')}
+        onAbandon={() => resume('abandon')}
+        onRestore={restore}
         onStart={(c, region, layoutId) => { if (veilLine() !== null) return; initAudio(); behindVeil('Raising the island…', () => {
           resetQaSandboxFlags();
           setQaMode(false);

@@ -11,7 +11,10 @@ import { QA_PRESETS, type QaPresetId } from '../game/qa-sandbox';
 import { computeStageView, isTouchDevice } from '../visual/direction';
 import { runHours } from '../game/engine';
 import { PresentationPanel, useVisualPrefs } from './hud';
-import { continueLine, endingLabel } from './pregame';
+import { endingLabel, savedRunLine } from './pregame';
+import { AbandonPanel, HelpPanel, SavePanel, runIsOver, type GoodBackup } from './TitlePanels';
+import { buildStamp } from './build-info';
+import { fullscreenSupported, toggleFullscreen, useFullscreen } from './ScreenFit';
 import { getLang, setLang, subscribeLang } from '../game/i18n';
 
 const CLASSIC_REGIONS = [
@@ -84,12 +87,14 @@ export function TitleShell({ layout = '', still = false, children }: { layout?: 
   </div>;
 }
 
-type Mode = 'menu' | 'select' | 'history' | 'settings' | 'qa';
+type Mode = 'menu' | 'select' | 'history' | 'settings' | 'help' | 'save' | 'abandon' | 'qa';
 type RunRecord = GameState['profile']['history'][number];
 
 export default function Title({
   gs,
   onContinue,
+  onAbandon,
+  onRestore,
   onStart,
   onStartQa,
   onInspect,
@@ -99,6 +104,10 @@ export default function Title({
 }: {
   gs: GameState;
   onContinue: () => void;
+  /** End the run in progress without opening the game (the time away is worked out first, as for Continue). */
+  onAbandon: () => void;
+  /** Replace the save with a backup file that has been read and checked. Resolves to a line to show on failure. */
+  onRestore: (backup: GoodBackup) => Promise<string | null>;
   onStart: (c: 'male' | 'female', region: number | null, layoutId?: string) => void;
   onStartQa?: (preset: QaPresetId, c: 'male' | 'female') => void;
   onInspect?: () => void;
@@ -134,6 +143,12 @@ export default function Title({
   const closeChronicle = () => { click(); if (summary) clearSummary(); else setViewed(null); };
   const achievementKeys = Object.keys(ACHIEVEMENTS);
   const achieved = achievementKeys.filter(k => pf.achievements[k]).length;
+  const fs = useFullscreen();
+  const stamp = buildStamp();
+  const over = !!run && runIsOver(run, now);
+  // Where a panel was opened from, so Back and Esc return there (Abandon is reached from the menu and from Saved game).
+  const [cameFrom, setCameFrom] = useState<Mode>('menu');
+  const openAbandon = (from: Mode) => { click(); setCameFrom(from); setMode('abandon'); };
 
   // Keyboard: the menus can be used without a mouse. The button that carries the screen forward takes the focus
   // when a screen opens, so Enter or Space plays; Esc steps back; the arrow keys move between buttons.
@@ -146,6 +161,7 @@ export default function Title({
       const inField = !!at && (at.tagName === 'INPUT' || at.tagName === 'SELECT' || at.tagName === 'TEXTAREA');
       if (e.key === 'Escape') {
         if (shown) { e.preventDefault(); closeChronicle(); }
+        else if (mode === 'abandon') { e.preventDefault(); setMode(cameFrom); }
         else if (mode !== 'menu') { e.preventDefault(); setMode('menu'); }
         return;
       }
@@ -170,7 +186,7 @@ export default function Title({
   return <TitleShell layout={selectedLayout}>
     <div ref={frame} className="absolute inset-0">
       {shown ? <div className="panel absolute fadein scroll" role="dialog" aria-label="Run chronicle" style={{ left: 120, top: 24, width: 400, maxHeight: 312, overflowY: 'auto', padding: 10 }}>
-        <div className="lbl" style={{ fontSize: 9, color: 'var(--muted)', letterSpacing: 1 }}>{summary ? 'RUN CHRONICLE · 14-DAY CYCLE CONCLUDED' : `RUN CHRONICLE · ${dateText(shown.endedAt)}`}</div>
+        <div className="lbl" style={{ fontSize: 9, color: 'var(--muted)', letterSpacing: 1 }}>{!summary ? `RUN CHRONICLE · ${dateText(shown.endedAt)}` : shown.ending === 'expired' ? 'RUN CHRONICLE · 14-DAY CYCLE CONCLUDED' : 'RUN CHRONICLE · THE RUN HAS ENDED'}</div>
         <div className="title-font" style={{ fontSize: 22, color: shown.ending === 'evacuated' ? 'var(--info)' : shown.ending === 'expired' ? 'var(--bad)' : 'var(--paper)' }}>
           {shown.ending === 'evacuated' ? 'Evacuated from the Island' : shown.ending === 'expired' ? 'Consumed by Ragnarok' : 'Run Abandoned'}
         </div>
@@ -204,19 +220,34 @@ export default function Title({
         {mode === 'menu' && <nav aria-label="Main menu" className="absolute flex flex-col items-center fadein" style={{ left: 0, right: 0, top: 112, gap: 5 }}>
           {run && <button data-primary className="btn gold title-play" onClick={() => { click(); onContinue(); }}>
             <span className="title-play__main">{`Continue — ${heroName(run.character)}`}</span>
-            <span className="title-play__sub">{continueLine(runHours(run, now), now - run.clock.lastSimAt, Math.round(BAL.run.maxRunHours / 24))}</span>
+            <span className="title-play__sub">{savedRunLine(runHours(run, now), now - run.clock.lastSimAt, Math.round(BAL.run.maxRunHours / 24))}</span>
           </button>}
           <button data-primary={run ? undefined : true} className={run ? 'btn' : 'btn gold'} style={{ fontSize: 15, width: 264, padding: run ? undefined : '7px 8px 8px' }} disabled={!!run} title={run ? 'Finish (evacuate/abandon) your current run first' : ''} onClick={openSelect}>New run</button>
-          {run && <div className="title-hint" style={{ maxWidth: 330 }}>One run at a time. To start over, continue this run and end it from the Esc menu: Abandon run…</div>}
+          {run && (over
+            ? <div className="title-hint" style={{ maxWidth: 330 }}>The 14 days of this run are over. Continue to see how it ended.</div>
+            : <div className="title-hint" style={{ display: 'flex', alignItems: 'center', gap: 6 }}><span>One run at a time.</span><button className="btn sm" onClick={() => openAbandon('menu')}>Abandon this run…</button></div>)}
           <div style={{ display: 'flex', gap: 5, width: 264 }}>
             <button className="btn" style={{ fontSize: 12, flex: 1, padding: '5px 4px 6px' }} onClick={() => { click(); setMode('history'); }}>Profile &amp; history</button>
             <button className="btn" style={{ fontSize: 12, flex: 1, padding: '5px 4px 6px' }} onClick={() => { click(); setMode('settings'); }}>Settings</button>
           </div>
-          {onStartQa && <button className="btn gold" style={{ fontSize: 12, width: 264 }} onClick={() => { click(); setMode('qa'); }}>Full-Gear QA Sandbox [F9]</button>}
-          {onInspect && <button className="btn ghost" style={{ fontSize: 11, width: 264, color: '#9ae0ff' }} onClick={() => { click(); onInspect(); }}>Creator Inspector · world viewer</button>}
-          <div style={{ fontSize: 11, color: 'var(--paper)', marginTop: 2, textShadow: '1px 1px 0 #000' }}>Secured Ragnarok cash: <b style={{ color: 'var(--info)' }}>{pf.securedCash}</b> · Runs: {pf.history.length}</div>
+          <div style={{ display: 'flex', gap: 5, width: 264 }}>
+            <button className="btn" style={{ fontSize: 12, flex: 1, padding: '5px 4px 6px' }} onClick={() => { click(); setMode('help'); }}>How to play</button>
+            <button className="btn" style={{ fontSize: 12, flex: 1, padding: '5px 4px 6px' }} onClick={() => { click(); setMode('save'); }}>Saved game</button>
+          </div>
+          {(onStartQa || onInspect) && <div style={{ display: 'flex', gap: 5, width: 372 }}>
+            {onStartQa && <button className="btn gold" style={{ fontSize: 9, flex: 1, padding: '2px 4px 3px', whiteSpace: 'nowrap' }} onClick={() => { click(); setMode('qa'); }}>Full-Gear QA Sandbox [F9]</button>}
+            {onInspect && <button className="btn ghost" style={{ fontSize: 9, flex: 1, padding: '2px 4px 3px', whiteSpace: 'nowrap', color: '#9ae0ff' }} onClick={() => { click(); onInspect(); }}>Creator Inspector · world viewer</button>}
+          </div>}
           {note && <div role="alert" className="title-note">{note}</div>}
+          <div style={{ fontSize: 11, color: 'var(--paper)', marginTop: 2, textShadow: '1px 1px 0 #000' }}>Secured Ragnarok cash: <b style={{ color: 'var(--info)' }}>{pf.securedCash}</b> · Runs: {pf.history.length}</div>
         </nav>}
+        {mode === 'menu' && <div className="title-corner">
+          {fullscreenSupported() && <button className={`btn sm ${fs ? 'gold' : ''}`} aria-pressed={fs} onClick={() => { click(); void toggleFullscreen(); }}>{fs ? 'Leave full screen' : 'Full screen'}</button>}
+          {stamp && <div className="title-build" data-testid="title-build">{`Build ${stamp}`}</div>}
+        </div>}
+        {mode === 'help' && <HelpPanel onBack={() => { click(); setMode('menu'); }} />}
+        {mode === 'save' && <SavePanel gs={gs} lang={lang} click={click} onBack={() => { click(); setMode('menu'); }} onAbandon={() => openAbandon('save')} onRestore={onRestore} />}
+        {mode === 'abandon' && <AbandonPanel gs={gs} onBack={() => { click(); setMode(cameFrom); }} onConfirm={() => { click(); setMode('menu'); onAbandon(); }} />}
         {mode === 'menu' && <div className="title-foot">
           <span>Offline · single-player · saves in this browser only</span>
           {!isTouchDevice() && <span>Enter: play · Esc: back · arrow keys: move</span>}

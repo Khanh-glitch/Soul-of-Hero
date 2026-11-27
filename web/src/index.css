@@ -1089,3 +1089,16 @@ div.map-row--mark { flex-direction: row; align-items: center; padding: 0; }
 body:has([data-pregame], .boot) .fit-hint { left: 0; right: 0; margin: 0 auto; width: fit-content; box-sizing: border-box; transform: none; }
 /* While that line is showing it sits where the title screen's footer is; the footer (two lines of side information) steps aside. */
 body:has(.fit-hint) .title-foot { visibility: hidden; }
+
+/* ---- the title screen's own functions: how to play, the save as a file, abandon, full screen, build stamp ---- */
+.title-corner { position: absolute; left: 6px; top: 6px; display: flex; flex-direction: column; align-items: flex-start; gap: 3px; z-index: 5; }
+.title-build { font-size: 9px; line-height: 1; color: #8f9ca3; text-shadow: 1px 1px 0 #000; letter-spacing: .2px; }
+.help-list { margin: 2px 0 0; padding: 0 0 0 14px; font-size: 11px; line-height: 1.22; color: #e8dcc8; list-style: square; }
+.help-list--num { list-style: decimal; padding-left: 16px; }
+.help-list li { margin: 0 0 3px; }
+.help-list li::marker { color: var(--brassLit); }
+.help-keys { display: grid; grid-template-columns: 1fr; gap: 1px; margin-top: 2px; }
+.help-key { display: flex; align-items: baseline; gap: 6px; font-size: 11px; line-height: 1.2; color: #e8dcc8; }
+.help-key kbd { flex: none; min-width: 74px; font: inherit; color: var(--brassLit); }
+.save-confirm { margin-top: 6px; padding: 2px 8px 8px; background: rgba(5,7,10,.5); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--warn) 55%, transparent); }
+.save-line { font-size: 11px; line-height: 1.25; margin-top: 6px; overflow-wrap: anywhere; }

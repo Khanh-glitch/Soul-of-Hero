@@ -2,7 +2,6 @@
 Opening the island… => Đang mở hòn đảo…
 Day {n} of {n} => Ngày {1} / {2}
 Day {n} of {n} · away {} => Ngày {1} / {2} · đã vắng {3}
-One run at a time. To start over, continue this run and end it from the Esc menu: Abandon run… => Mỗi lần chỉ chơi một ván. Muốn chơi lại từ đầu, hãy vào ván này rồi kết thúc nó trong menu Esc: Bỏ ván…
 Settings => Cài đặt
 Enter: play · Esc: back · arrow keys: move => Enter: chơi · Esc: quay lại · phím mũi tên: chuyển nút
 Main menu => Menu chính

@@ -31,3 +31,56 @@ export function continueLine(runHoursNow: number, awayMs: number, totalDays = 14
 export function endingLabel(ending: 'evacuated' | 'abandoned' | 'expired'): string {
   return ending === 'evacuated' ? 'Evacuated' : ending === 'expired' ? 'Lost to Ragnarok' : 'Abandoned';
 }
+
+/** Under Continue, and in the summary of a backup: like continueLine, but a run whose days are used up says so
+ *  (opening it shows how it ended; it can no longer be played or abandoned). */
+export function savedRunLine(runHoursNow: number, awayMs: number, totalDays = 14): string {
+  if (runHoursNow >= totalDays * 24) return `The ${totalDays} days have run out · away ${awayLabel(awayMs)}`;
+  return continueLine(runHoursNow, awayMs, totalDays);
+}
+
+// ---- "How to play" on the title screen ---------------------------------------------------------------------------
+// Every line states something the game already does (the rule or the key is in the code and in the Esc menu); none of
+// it is a new rule. Whole sentences, one per entry, for the Vietnamese overlay.
+
+/** What a run is, in the order a newcomer needs it. */
+export const HELP_RULES: readonly string[] = [
+  'A run lasts 14 real days. The island keeps living while the game is closed.',
+  'Gather wood and stone, build a shelter, craft better gear, explore. The handbook in the game (J) teaches each part, in any order.',
+  'The last 72 hours are Ragnarok: sealed vaults open and the Elders stir.',
+  'When the run ends, everything on the island is wiped: gear, home, recipes and the cash you carry.',
+  'Only Ragnarok cash deposited in an Escrow Chest stays in your profile for later runs.',
+  'If you fall, what you carry stays in a bag there. You wake at your bed or on a safe shore, and the run goes on.',
+];
+
+/** Keyboard and mouse: the key as printed on it, and what it does. */
+export const HELP_KEYS: readonly (readonly [string, string])[] = [
+  ['W A S D', 'walk'],
+  ['Mouse', 'aim'],
+  ['Left button', 'strike, or use what is in hand'],
+  ['Space', 'dodge roll'],
+  ['E', 'use what is in front of you'],
+  ['1–8', 'pick a quick slot'],
+  ['I', 'pack'],
+  ['C', 'craft'],
+  ['B', 'build'],
+  ['M', 'map'],
+  ['J', 'journey and handbook'],
+  ['N', 'notes'],
+  ['Tab', 'skills'],
+  ['Esc', 'menu, save and quit'],
+];
+
+/** Touch screens: the same actions on the screen itself. */
+export const HELP_TOUCH: readonly string[] = [
+  'Drag on the left half of the screen to walk.',
+  'Tap the world to aim and strike there.',
+  'Bottom right: Hit, Use, Roll.',
+  'Under the status plate: Pack, Map, Build.',
+];
+
+/** Whose work is in the game besides its own code (THIRD_PARTY.md). */
+export const CREDIT_LINES: readonly string[] = [
+  'Fonts: VT323 by Peter Hull, Pixelify Sans by Stefie Justprince, Noto Sans Symbols by the Noto Project Authors (SIL Open Font License 1.1).',
+  'Every picture and every sound is made by the code of the game itself. No outside art or sound files are used.',
+];

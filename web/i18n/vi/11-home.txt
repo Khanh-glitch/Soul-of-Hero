@@ -1,0 +1,80 @@
+# ---- the title screen's own functions: how to play, the save as a file, abandon from the title, build stamp ----
+How to play => Hướng dẫn chơi
+Saved game => Bản lưu
+One run at a time. => Mỗi lần chỉ chơi một ván.
+Abandon this run… => Bỏ ván này…
+Abandon this run? => Bỏ ván này?
+The 14 days of this run are over. Continue to see how it ended. => 14 ngày của ván này đã hết. Bấm Chơi tiếp để xem nó kết thúc ra sao.
+The {n} days have run out · away {} => {1} ngày đã hết · đã vắng {2}
+Build {} => Bản dựng {1}
+Ending the run… => Đang kết thúc ván…
+
+# how to play
+The 14 days => 14 ngày
+Keyboard and mouse => Bàn phím và chuột
+Touch screen => Màn hình cảm ứng
+About this game => Về game này
+A run lasts 14 real days. The island keeps living while the game is closed. => Một ván kéo dài 14 ngày thật. Hòn đảo vẫn sống tiếp khi bạn tắt game.
+Gather wood and stone, build a shelter, craft better gear, explore. The handbook in the game (J) teaches each part, in any order. => Kiếm gỗ và đá, dựng chỗ trú, chế đồ tốt hơn, đi khám phá. Sổ tay trong game (phím J) dạy từng phần, theo thứ tự nào cũng được.
+The last 72 hours are Ragnarok: sealed vaults open and the Elders stir. => 72 giờ cuối là Ragnarok: các hầm niêm phong mở ra và các Elder thức dậy.
+When the run ends, everything on the island is wiped: gear, home, recipes and the cash you carry. => Khi ván kết thúc, mọi thứ trên đảo bị xóa: đồ, nhà, công thức và số tiền bạn đang mang.
+Only Ragnarok cash deposited in an Escrow Chest stays in your profile for later runs. => Chỉ Ragnarok Cash đã gửi vào Escrow Chest mới ở lại hồ sơ cho các ván sau.
+If you fall, what you carry stays in a bag there. You wake at your bed or on a safe shore, and the run goes on. => Nếu bạn gục, đồ đang mang nằm lại trong một cái túi tại đó. Bạn tỉnh dậy ở giường hoặc trên một bờ biển an toàn, và ván vẫn tiếp tục.
+Mouse => Chuột
+Left button => Chuột trái
+walk => đi
+aim => ngắm
+strike, or use what is in hand => đánh, hoặc dùng món đang cầm
+dodge roll => lăn né
+use what is in front of you => dùng thứ ở trước mặt
+pick a quick slot => chọn ô nhanh
+craft => chế tạo
+build => xây
+map => bản đồ
+journey and handbook => hành trình và sổ tay
+notes => ghi chú
+skills => kỹ năng
+menu, save and quit => menu, lưu và thoát
+Drag on the left half of the screen to walk. => Kéo ở nửa trái màn hình để đi.
+Tap the world to aim and strike there. => Chạm vào thế giới để ngắm và đánh vào chỗ đó.
+Bottom right: Hit, Use, Roll. => Góc dưới bên phải: Đánh, Dùng, Lăn.
+Under the status plate: Pack, Map, Build. => Dưới bảng chỉ số: Túi, Bản đồ, Xây.
+Fonts: VT323 by Peter Hull, Pixelify Sans by Stefie Justprince, Noto Sans Symbols by the Noto Project Authors (SIL Open Font License 1.1). => Phông chữ: VT323 của Peter Hull, Pixelify Sans của Stefie Justprince, Noto Sans Symbols của The Noto Project Authors (giấy phép SIL Open Font License 1.1).
+Every picture and every sound is made by the code of the game itself. No outside art or sound files are used. => Mọi hình ảnh và âm thanh đều do chính mã của game tạo ra. Game không dùng tệp hình hay tệp âm thanh nào từ bên ngoài.
+
+# saved game
+No run in progress. => Không có ván nào đang chơi.
+Secured Ragnarok cash: {n} · finished runs: {n} => Tiền Ragnarok đã cất giữ: {1} · số ván đã xong: {2}
+The save is kept in this browser only. Clearing the data of this browser deletes it; a backup file does not depend on the browser. => Bản lưu chỉ nằm trong trình duyệt này. Xóa dữ liệu của trình duyệt là mất bản lưu; tệp sao lưu thì không phụ thuộc vào trình duyệt.
+In this browser now => Đang có trong trình duyệt này
+In the backup file => Trong tệp sao lưu
+Backup made: {} => Sao lưu lúc: {1}
+Backup file => Tệp sao lưu
+Download a backup file => Tải tệp sao lưu về
+Restore from a backup file… => Khôi phục từ tệp sao lưu…
+A backup holds the run, the profile and your map notes. Sound, screen and language settings stay with each device. => Tệp sao lưu chứa ván đang chơi, hồ sơ và các ghi chú trên bản đồ. Cài đặt âm thanh, màn hình và ngôn ngữ thì theo từng máy.
+Backup file made: {}. Look in the downloads folder of this device. => Đã tạo tệp sao lưu: {1}. Hãy xem trong thư mục tải về của máy này.
+The backup file could not be made. => Không tạo được tệp sao lưu.
+Restoring replaces the save in this browser with the backup. This cannot be undone: download a backup of the current save first if you may want it back. => Khôi phục sẽ thay bản lưu trong trình duyệt này bằng tệp sao lưu. Không hoàn tác được: nếu có thể cần lại bản lưu hiện tại, hãy tải nó về trước.
+The run clock is real time: the restored run continues from now, as if you had been away since the backup was made. => Đồng hồ của ván chạy theo giờ thật: ván được khôi phục sẽ tiếp tục từ bây giờ, như thể bạn đã vắng mặt từ lúc sao lưu.
+Replace my save with this backup => Thay bản lưu của tôi bằng tệp này
+Replace the save with this backup? => Thay bản lưu bằng tệp sao lưu này?
+Restoring… => Đang khôi phục…
+Run in progress => Ván đang chơi
+Ends the run without opening the game. You are asked once more. => Kết thúc ván mà không cần vào game. Bạn sẽ được hỏi lại một lần nữa.
+This file is too large to be a Soul of Hero save. => Tệp này quá lớn, không thể là bản lưu của Soul of Hero.
+This backup was made by a newer version of the game. Update the game, then restore it. => Tệp sao lưu này do phiên bản game mới hơn tạo ra. Hãy cập nhật game rồi khôi phục lại.
+This file could not be read as a save: it is not a Soul of Hero backup, or it is damaged. => Không đọc được tệp này như một bản lưu: nó không phải tệp sao lưu của Soul of Hero, hoặc đã bị hỏng.
+This file is not a save this version of the game can open. Nothing was changed. => Tệp này không phải bản lưu mà phiên bản game này mở được. Chưa có gì bị thay đổi.
+The backup could not be written to this browser. Your save is unchanged. => Không ghi được tệp sao lưu vào trình duyệt này. Bản lưu của bạn vẫn nguyên.
+Wait for the current step to finish. => Hãy đợi bước đang chạy xong.
+Backup restored. => Đã khôi phục từ tệp sao lưu.
+Backup restored. Some notes in it could not be stored: the storage of this browser is full. => Đã khôi phục từ tệp sao lưu. Một số ghi chú trong tệp không lưu được vì bộ nhớ của trình duyệt này đã đầy.
+
+# abandon from the title
+Secured cash, achievements and the run history stay in your profile. The run is listed there as abandoned. => Tiền đã cất, thành tựu và lịch sử các ván vẫn ở trong hồ sơ. Ván này được ghi ở đó là đã bỏ.
+The time you were away is worked out first, as for Continue; then the run ends. => Game tính phần thời gian bạn vắng mặt trước, giống như khi Chơi tiếp; sau đó ván mới kết thúc.
+This cannot be undone. => Không hoàn tác được.
+The run was not abandoned. It is saved as it stands now. {} => Chưa bỏ được ván. Ván được lưu đúng như hiện giờ. {1}
+The run was not abandoned. Your previous save is unchanged. {} => Chưa bỏ được ván. Bản lưu trước của bạn vẫn nguyên. {1}
+RUN CHRONICLE · THE RUN HAS ENDED => NHẬT KÝ VÁN CHƠI · VÁN ĐÃ KẾT THÚC

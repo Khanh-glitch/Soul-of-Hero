@@ -44,7 +44,8 @@ describe('words before the game', () => {
     expect(translateVi('RUN CHRONICLE · 04/11/2026')).toBe('NHẬT KÝ VÁN CHƠI · 04/11/2026');
     const title = read('../src/ui/Title.tsx'), app = read('../src/App.tsx');
     const fixed: [string, string][] = [
-      [title, 'One run at a time. To start over, continue this run and end it from the Esc menu: Abandon run…'],
+      // Since 2026-11-27 a run can be abandoned from the title itself, so the reason is short and the button sits beside it.
+      [title, 'One run at a time.'], [title, 'Abandon this run…'], [title, 'The 14 days of this run are over. Continue to see how it ended.'],
       [title, 'Settings'], [title, 'Enter: play · Esc: back · arrow keys: move'], [title, 'Main menu'], [title, 'Run chronicle'],
       [title, 'Open the chronicle of this run'], [title, 'Evacuated from the Island'], [title, 'Consumed by Ragnarok'], [title, 'Run Abandoned'],
       [title, 'local score'], [title, 'Starter kit'], [title, 'Offline · single-player · saves in this browser only'],

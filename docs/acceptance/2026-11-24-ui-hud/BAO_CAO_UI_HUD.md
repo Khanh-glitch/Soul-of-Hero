@@ -711,6 +711,68 @@ Cách đọc bảng:
 - Trong bản dựng QA, ba dòng "Full-Gear QA Sandbox [F9]", "Creator Inspector · world viewer", "VEYRA" còn tiếng Anh; lượt kiểm này làm trước các chỉnh sửa cuối và chưa chạy lại.
 - Màn báo lỗi bản lưu chỉ thử với một kiểu hỏng (bản lưu bị cắt nửa).
 
+## Vòng 13: năm chức năng còn thiếu ở màn hình chính (nhánh `arena/1fe1361c-soul-of-hero`, cùng PR #71)
+
+Yêu cầu ngày 27/11/2026: màn hình chính còn thiếu chức năng. Người chơi đã chọn làm cả năm: hướng dẫn chơi, sao lưu và khôi phục bản lưu, bỏ ván ngay từ màn hình chính, nút toàn màn hình, số phiên bản và ghi công.
+
+Vòng này không đổi luật chơi, không đổi cách tính, không đổi định dạng bản lưu. Bỏ ván từ màn hình chính dùng đúng lệnh "bỏ ván" mà menu Esc trong game vẫn dùng.
+
+Máy kiểm vẫn là Chromium không màn hình, 2 nhân. Trước vòng này (bản `d78a36d`), màn hình chính chỉ có Chơi tiếp, Ván mới, Hồ sơ & lịch sử, Cài đặt (ảnh `shots/r12-title-continue-vi.png`).
+
+### Đã làm
+
+| Chức năng | Người chơi thấy gì | Ảnh |
+|---|---|---|
+| Màn hình chính | Thêm hàng nút "Hướng dẫn chơi" và "Bản lưu". Góc trên bên trái có nút "Toàn màn hình" và dòng "Bản dựng …". Khi đang có ván: dưới nút "Ván mới" (bị khóa) có câu "Mỗi lần chỉ chơi một ván." và nút "Bỏ ván này…". | `r13-01-menu-chua-co-van.png`, `r13-02-menu-co-van.png` |
+| Hướng dẫn chơi | Sáu điều về 14 ngày (ván dài bao lâu, làm gì, Ragnarok, mất gì khi hết ván, giữ được gì, gục thì sao), bảng 14 phím, phần điều khiển cảm ứng, và mục "Về game này". Bảng dài hơn khung nên có thanh "Còn nữa ở dưới". | `r13-03-huong-dan.png`, `r13-17-huong-dan-cuoi-trang-640.png` |
+| Sao lưu | Bảng "Bản lưu" → "Tải tệp sao lưu về": trình duyệt tải một tệp `soul-of-hero-save-<ngày>-<giờ>.json`. Tệp chứa ván đang chơi, hồ sơ, ghi chú bản đồ và sổ ghi của ván đó. Cài đặt âm thanh, màn hình, ngôn ngữ không nằm trong tệp. | `r13-04-ban-luu.png` |
+| Khôi phục | "Khôi phục từ tệp sao lưu…" → chọn tệp → game đọc và kiểm tệp, hiện tóm tắt (nhân vật, ngày thứ mấy, tiền đã cất, sao lưu lúc nào) và hỏi lại. Bấm "Thay bản lưu của tôi bằng tệp này" thì trang tải lại và báo "Đã khôi phục từ tệp sao lưu." | `r13-08-hoi-lai-khoi-phuc.png`, `r13-09-da-khoi-phuc.png` |
+| Tệp không hợp lệ | Bị từ chối bằng một câu nói rõ lý do; bản lưu trong trình duyệt không bị đụng tới. | `r13-05-tep-bi-tu-choi.png` |
+| Bỏ ván từ màn hình chính | "Bỏ ván này…" → bảng hỏi lại nói rõ mất gì, giữ gì → "Xác nhận bỏ ván" → nhật ký ván chơi ghi "Đã bỏ ván". Nút mặc định của bảng là "Quay lại": bấm Enter không bao giờ bỏ ván. | `r13-06-hoi-lai-bo-van.png`, `r13-07-nhat-ky-da-bo-van.png` |
+| Ván đã hết 14 ngày | Không còn nút bỏ ván; thay bằng câu "14 ngày của ván này đã hết. Bấm Chơi tiếp để xem nó kết thúc ra sao." | `r13-13-van-da-het-14-ngay.png` |
+| Toàn màn hình | Nút ở góc trên bên trái, đổi thành "Thoát toàn màn hình" khi đang bật. | `r13-02-menu-co-van.png` |
+| Phiên bản và ghi công | Game chưa có số phiên bản, nên hiện ngày giờ dựng (giờ UTC) và mã commit. Mục "Về game này" ghi công ba phông chữ (giấy phép SIL OFL 1.1) và ghi rõ mọi hình, tiếng đều do mã của game tạo ra. | `r13-17-huong-dan-cuoi-trang-640.png` |
+| Cửa sổ nhỏ, tiếng Anh, bản QA | Các bảng dừng phía trên dòng "Cửa sổ nhỏ". | `r13-10-menu-640.png`, `r13-11-huong-dan-640.png`, `r13-12-khoi-phuc-640.png`, `r13-14-en-menu.png`, `r13-15-en-how-to-play.png`, `r13-16-ban-qa-640.png` |
+
+Sửa kèm: nhật ký của một ván bị bỏ trước đây mang tiêu đề "ĐÃ KẾT THÚC 14 NGÀY" dù ván mới ở ngày 1. Nay tiêu đề đó chỉ dùng cho ván hết hạn; các ván khác ghi "VÁN ĐÃ KẾT THÚC".
+
+### Hai điều người chơi cần biết
+
+1. **Khôi phục không quay ngược thời gian.** Đồng hồ của ván chạy theo giờ thật. Một ván khôi phục từ tệp sao lưu ba ngày trước sẽ tiếp tục từ bây giờ, như thể người chơi đã vắng ba ngày. Tệp sao lưu của một ván đã quá 14 ngày chỉ mở ra phần kết thúc của ván đó. Bảng hỏi lại có ghi điều này.
+2. **Bỏ ván sau khi vắng lâu vẫn phải chờ.** Game tính xong quãng thời gian vắng mặt (như khi bấm Chơi tiếp) rồi mới kết thúc ván, để kết quả giống hệt bỏ ván từ trong game. Trên máy kiểm: vắng 30 phút thì từ lúc xác nhận tới lúc hiện nhật ký là 23 giây (một lần đo). Vắng nhiều giờ sẽ lâu như Chơi tiếp. Trong lúc chờ có nút "Về màn hình chính" để thôi; khi đó ván chưa bị bỏ.
+
+### Kiểm thử
+
+- `web/tests/title-functions.test.ts` (mới, 14 bài):
+  - tệp sao lưu chứa đúng từng ký tự của bản lưu, và chỉ kèm các mục thuộc ván đó (mục của ván khác, cài đặt máy, khóa lạ đều bị loại, kể cả khi ai đó cài vào tệp);
+  - các tệp sai bị từ chối đúng lý do: không phải JSON, mảng, `null`, sai dạng, thiếu phần bản lưu, bản lưu bị cắt nửa, một con số bị sửa tay (sai mã kiểm), bản của phiên bản mới hơn, tệp quá lớn;
+  - khôi phục thắng bản lưu mới hơn đang nằm trong trình duyệt, ở cả hai nơi lưu, và trạng thái sau khôi phục giống bản sao lưu trừ số thứ tự lần lưu;
+  - văn bản không phải bản lưu thì không ghi gì cả;
+  - bỏ ván từ màn hình chính cho cùng kết cục, điểm và tiền đã cất như bỏ ván bằng lệnh của menu Esc ở cùng thời điểm; gọi lần hai không đổi gì;
+  - nút xác nhận bỏ ván không phải nút mặc định;
+  - mọi câu trên các bảng mới đều có dòng tiếng Việt và thật sự có trong mã giao diện.
+- `web/tests/pregame.test.ts`: một dòng kiểm câu cũ "Muốn chơi lại từ đầu, hãy … menu Esc" được thay bằng các câu mới, vì câu cũ không còn đúng (nay bỏ ván được ngay tại màn hình chính).
+- Đã chạy trên mã cuối cùng và qua, 112 bài trong 10 tệp: `title-functions` 14, `pregame` 15, `ui-round3` 24, `i18n-vi` 7, `ui-readability` 5, `viewport` 12, `continue-wait` 3, `b1-storage` 10, `b1-integrity` 16, `b05-save-diagnostics` 6. `npx tsc --noEmit` và `npm run typecheck:tests` sạch.
+- Bằng trình duyệt, tiếng Việt ở 1280 × 720 và 640 × 360, tiếng Anh ở 1280 × 720 (cả ba lượt trên bản dựng cuối), không có lỗi trang:
+  - chơi một ván, lưu, tải tệp sao lưu về (tệp khoảng 0,87 MB);
+  - đưa bốn tệp sai vào: cả bốn bị từ chối, số thứ tự bản lưu không đổi;
+  - bỏ ván từ màn hình chính: hồ sơ ghi một ván "đã bỏ", không còn ván dang dở;
+  - khôi phục tệp sao lưu: đúng ván cũ trở lại, lịch sử trở về như lúc sao lưu, bấm Chơi tiếp vào được game.
+- Một lượt riêng ở 1280 × 720: nút toàn màn hình bật rồi tắt được; phím mũi tên đi qua các nút mới; Esc ở bảng hỏi lại quay về đúng nơi đã mở nó (màn hình chính hoặc bảng "Bản lưu"); tệp 33 MB bị từ chối; bỏ ván sau 30 phút vắng; ván quá 14 ngày không có nút bỏ ván.
+- Bản dựng QA, bật công cụ soát chữ chưa dịch, mở hết các bảng mới: không có câu mới nào thiếu tiếng Việt. Các mục còn tiếng Anh là hai nút QA và tên riêng trong game ("VEYRA", tên vật phẩm, tên cây), vốn giữ tiếng Anh theo quy ước.
+
+### Chưa làm, chưa kiểm ở vòng này
+
+- **Chưa thử tải và chọn tệp trên máy thật, điện thoại, Firefox, Safari.** Riêng Safari trên iPhone có cách xử lý tệp tải về khác; chưa biết ở đó nút "Tải tệp sao lưu về" có ra tệp hay không.
+- Chưa thử bỏ ván từ màn hình chính khi nhân vật đang nằm nghỉ (mã có xử lý: đánh thức rồi mới bỏ), và chưa thử sau khi vắng hơn 30 phút.
+- Chưa bấm Chơi tiếp trên ván đã quá 14 ngày ở vòng này; chỉ xem màn hình chính và bảng "Bản lưu" của nó.
+- Chưa thử khôi phục trên một trình duyệt đang có ván khác. Khi đó các ghi chú bản đồ của ván cũ vẫn nằm lại trong trình duyệt (không ai đọc tới, không gây lỗi), chưa dọn.
+- Chưa thử trường hợp bộ nhớ trình duyệt đầy lúc khôi phục.
+- Ở 844 × 390 có một lượt chụp bị dừng giữa chừng vì trang đứng hình lúc quay về màn hình chính (hiện tượng đã ghi ở vòng 12); các lượt 844 × 390 sau đó chạy hết, nhưng không phải trên bản dựng cuối cùng.
+- Các câu trong "Hướng dẫn chơi" được đối chiếu với mã (bảng phím, luật khi gục, Escrow Chest), không phải bằng cách chơi thử từng điều.
+- Tệp ZIP trong `web/releases` được dựng trước khi tạo commit nên dòng "Bản dựng" của nó chỉ có ngày giờ, không có mã commit. Bản trên Vercel được viết để có cả hai (lấy mã commit từ Vercel); máy kiểm không mở được địa chỉ đó nên chưa tự xem.
+- Không chạy lại toàn bộ bộ kiểm thử; chỉ 10 tệp nêu trên.
+
 ## Chưa làm, chưa kiểm
 
 - Chưa thử trên điện thoại thật, Firefox, Safari. Máy kiểm chỉ có Chromium không màn hình và không truy cập được địa chỉ chơi thật.
