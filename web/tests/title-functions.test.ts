@@ -40,15 +40,16 @@ function fakeStorage(entries: Record<string, string> = {}) {
 }
 function fakeIDB() {
   const state: { value: string | null } = { value: null };
+  const self = { failWrites: false };
   const database = { transaction: () => {
     const tx: any = { objectStore: () => ({
       get: () => { const rq: any = {}; queueMicrotask(() => { rq.result = state.value; rq.onsuccess?.(); }); return rq; },
-      put: (v: string) => { queueMicrotask(() => { state.value = v; tx.oncomplete?.(); }); },
+      put: (v: string) => { queueMicrotask(() => { if (self.failWrites) { tx.onabort?.(); return; } state.value = v; tx.oncomplete?.(); }); },
       delete: () => { queueMicrotask(() => { state.value = null; tx.oncomplete?.(); }); },
     }) };
     return tx;
   } };
-  return { state, indexedDB: { open: () => { const rq: any = { result: database }; queueMicrotask(() => rq.onsuccess?.()); return rq; } } };
+  return { state, get failWrites() { return self.failWrites; }, set failWrites(v: boolean) { self.failWrites = v; }, indexedDB: { open: () => { const rq: any = { result: database }; queueMicrotask(() => rq.onsuccess?.()); return rq; } } };
 }
 afterEach(() => { vi.unstubAllGlobals(); vi.resetModules(); });
 
@@ -165,6 +166,83 @@ describe('restore', () => {
   });
 });
 
+describe('restore, the cases a browser walk had not covered (round 14)', () => {
+  it('puts the backed-up run in place of a different, newer run, and brings back the notes of the backed-up run only', async () => {
+    const local = fakeStorage(), idb = fakeIDB(); vi.stubGlobal('localStorage', local); vi.stubGlobal('indexedDB', idb.indexedDB);
+    const p = await import('../src/game/persist');
+    const { makeBackup, readBackup, writeSide } = await import('../src/game/backup');
+    const { abandonSavedRun } = await import('../src/game/title-actions');
+    const { startRun } = await import('../src/game/engine');
+    const gs = await playedRun(); const first = gs.run!.id;
+    local.setItem(`soh.field-notes.v1:${first}`, 'notes of the first run');
+    expect(await p.save(gs)).toBe(true);
+    const backup = makeBackup(p.serializeSnapshot(gs), first, local, T0 + PLAYED, '');
+    // the first run is abandoned, a second run is started and saved, with notes of its own
+    expect(abandonSavedRun(gs, T0 + PLAYED + 1000).ok).toBe(true);
+    expect(startRun(gs, 'male', T0 + PLAYED + 2000, null, 6).ok).toBe(true);
+    const second = gs.run!.id; expect(second).not.toBe(first);
+    local.removeItem(`soh.field-notes.v1:${first}`); local.setItem(`soh.field-notes.v1:${second}`, 'notes of the second run');
+    expect(await p.save(gs)).toBe(true);
+    const held = (await p.load()).gs!; expect(held.run!.id).toBe(second);
+
+    const file = readBackup(backup); expect(file.ok).toBe(true); if (!file.ok) return;
+    const out = await p.restoreSnapshot(file.saveText, held.revision);
+    expect(out.ok).toBe(true);
+    expect(writeSide(file.side, local)).toBe(0);
+    const restored = (await p.load()).gs!;
+    expect(restored.run!.id).toBe(first); expect(restored.run!.character).toBe('female');
+    // the profile is the one in the file too: the abandoned first run is not in its history
+    expect(restored.profile.history.length).toBe(0);
+    expect(local.getItem(`soh.field-notes.v1:${first}`)).toBe('notes of the first run');
+    // the second run's notes are left alone (they belong to a run that no longer exists, and are never read again)
+    expect(local.getItem(`soh.field-notes.v1:${second}`)).toBe('notes of the second run');
+  });
+
+  it('still restores when one of the two stores is full, and the restored state is the one that loads', async () => {
+    const local = fakeStorage(), idb = fakeIDB(); vi.stubGlobal('localStorage', local); vi.stubGlobal('indexedDB', idb.indexedDB);
+    const p = await import('../src/game/persist');
+    const { makeBackup, readBackup, writeSide } = await import('../src/game/backup');
+    const { abandonSavedRun } = await import('../src/game/title-actions');
+    const gs = await playedRun(); const id = gs.run!.id;
+    local.setItem(`soh.field-notes.v1:${id}`, 'notes');
+    expect(await p.save(gs)).toBe(true);
+    const backup = makeBackup(p.serializeSnapshot(gs), id, local, T0 + PLAYED, '');
+    expect(abandonSavedRun(gs, T0 + PLAYED + 1000).ok).toBe(true); expect(await p.save(gs)).toBe(true);
+    const held = (await p.load()).gs!; const before = local.getItem('soh.state.v3');
+    // from here on the small store refuses every write, as a full localStorage does
+    local.setItem = () => { throw new DOMException('full', 'QuotaExceededError'); };
+    const file = readBackup(backup); expect(file.ok).toBe(true); if (!file.ok) return;
+    const out = await p.restoreSnapshot(file.saveText, held.revision);
+    expect(out.ok).toBe(true); expect(out.localStatus).toBe('local-write'); expect(out.idbStatus).toBe('ok');
+    expect(local.getItem('soh.state.v3')).toBe(before);           // the small store still holds the older state …
+    expect((await p.load()).gs!.run!.id).toBe(id);                // … and the restored one, being newer, is what loads
+    expect(writeSide(file.side, local)).toBe(Object.keys(file.side).length);   // the notes could not be stored; the player is told
+    expect(Object.keys(file.side).length).toBeGreaterThan(0);
+  });
+
+  it('changes nothing and says so when neither store can be written', async () => {
+    const local = fakeStorage(), idb = fakeIDB(); vi.stubGlobal('localStorage', local); vi.stubGlobal('indexedDB', idb.indexedDB);
+    const p = await import('../src/game/persist');
+    const { makeBackup, readBackup } = await import('../src/game/backup');
+    const { abandonSavedRun } = await import('../src/game/title-actions');
+    const gs = await playedRun(); const id = gs.run!.id;
+    expect(await p.save(gs)).toBe(true);
+    const backup = makeBackup(p.serializeSnapshot(gs), id, local, T0 + PLAYED, '');
+    expect(abandonSavedRun(gs, T0 + PLAYED + 1000).ok).toBe(true); expect(await p.save(gs)).toBe(true);
+    const held = (await p.load()).gs!; const localBefore = local.getItem('soh.state.v3'), idbBefore = idb.state.value;
+    local.setItem = () => { throw new DOMException('full', 'QuotaExceededError'); };
+    idb.failWrites = true;
+    const file = readBackup(backup); expect(file.ok).toBe(true); if (!file.ok) return;
+    const out = await p.restoreSnapshot(file.saveText, held.revision);
+    expect(out.ok).toBe(false); expect(out.revision).toBeNull();
+    expect(local.getItem('soh.state.v3')).toBe(localBefore); expect(idb.state.value).toBe(idbBefore);
+    expect((await p.load()).gs!.run).toBeNull();                  // the browser still holds what it held
+    // App.tsx shows this line for that outcome
+    expect(read('../src/App.tsx')).toContain("'The backup could not be written to this browser. Your save is unchanged.'");
+    expect(translateVi('The backup could not be written to this browser. Your save is unchanged.')).toBeTruthy();
+  });
+});
+
 describe('abandon from the title', () => {
   it('ends the run as "abandoned" by the engine\'s own command and keeps the profile', async () => {
     const { abandonSavedRun } = await import('../src/game/title-actions');
@@ -191,6 +269,22 @@ describe('abandon from the title', () => {
     expect(JSON.parse(record(fromTitle)).score).toEqual(JSON.parse(record(fromMenu)).score);
     expect(fromTitle.profile.securedCash).toBe(fromMenu.profile.securedCash);
   });
+
+  it('after forty minutes away, works out the absence first and then ends the run at that moment (round 14)', async () => {
+    const { abandonSavedRun } = await import('../src/game/title-actions');
+    const { dispatch } = await import('../src/game/engine');
+    const { settleWithReturn } = await import('../src/game/return-report');
+    const now = T0 + PLAYED + 40 * 60_000;
+    const fromTitle = await playedRun(); const id = fromTitle.run!.id;
+    expect(abandonSavedRun(fromTitle, now)).toEqual({ ok: true, ending: 'abandoned' });
+    expect(fromTitle.run).toBeNull();
+    expect(fromTitle.profile.history[0]).toMatchObject({ runId: id, ending: 'abandoned', endedAt: now });
+    // the same forty minutes, then the Esc menu's command: the same record of what became of the islanders
+    const fromMenu = await playedRun(); settleWithReturn(fromMenu, now);
+    expect(dispatch(fromMenu, { id: 'abandon-menu-40m', type: 'abandon' } as never, now).ok).toBe(true);
+    expect(fromTitle.profile.humanRunHistory![0].outcomes).toEqual(fromMenu.profile.humanRunHistory![0].outcomes);
+    expect(fromTitle.profile.history[0].score).toEqual(fromMenu.profile.history[0].score);
+  }, 900_000);   // two absences are worked out here, with no regions compiled ahead
 
   it('is wired on the title screen behind a second, explicit confirmation', () => {
     const title = read('../src/ui/Title.tsx'), panels = read('../src/ui/TitlePanels.tsx'), app = read('../src/App.tsx');

@@ -78,8 +78,13 @@ describe('Continue after time away', () => {
 
   it('has every line of the waiting panel in Vietnamese', () => {
     const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8');
-    const fixed = ['While you were away', 'A long absence can take a few minutes. Your saved game stays as it was until this finishes.', 'Back to title', 'Returning to the island', 'Island time resolved'];
+    const fixed = ['While you were away', 'A long absence can take a few minutes. Your saved game stays as it was until this finishes.', 
+      // from a day and a half away on, the panel no longer promises "a few minutes" (15 days away took 47 minutes, report round 14)
+      'After days away this takes much longer than a few minutes: up to most of an hour after the full 14 days. Keep this page open: going back to the title starts it over. Your saved game stays as it was until this finishes.',
+      'Back to title', 'Returning to the island', 'Island time resolved'];
     for (const line of fixed) { expect(app, line).toContain(line); expect(translateVi(line), line).toBeTruthy(); }
+    expect(app).toContain('progress.awayMs>=LONG_ABSENCE_MS');
+    expect(app).toContain('const LONG_ABSENCE_MS=36*3600_000;');
     // Templates: the exact wording in App.tsx, then one filled-in instance of each.
     expect(app).toContain('You were away for ${awayText}. The island kept living: its food, work and travel for that time are being worked out now.');
     expect(app).toContain('% of the time away worked out · ${progress.regions} regions of land made ready · running for ${ranText}');

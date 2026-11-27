@@ -623,6 +623,8 @@ input::placeholder { color: #566872; }
 .buildbar__pages { display:flex; align-items:center; justify-content:flex-start; flex-wrap:nowrap; gap:3px; padding:3px 3px 2px; border-bottom:1px solid rgba(57,70,79,.75); }
 .buildbar__pages button { flex:none; white-space:nowrap; font-family: var(--f-lbl); font-size:9px; padding:2px 8px; color:var(--paper); background:#1a242b; border:1px solid #46525b; cursor:pointer; }
 .buildbar__pages button.on { color:var(--brassLit); border-color:var(--brassLit); background:#332917; }
+/* Upgrade / Repair / Dismantle is the chosen tool: the page whose slots are on show is outlined, not lit. */
+.buildbar__pages button.shown { border-color:#7d8a93; }
 .buildbar__pages small { font-size:8px; color:var(--muted); }
 .buildbar__pages-hint { font-size:8px; color:var(--muted); padding:0 4px; margin-left:auto; white-space:nowrap; min-width:0; overflow:hidden; text-overflow:ellipsis; }
 @media(max-width:580px) { .buildbar__pages-hint { display:none; } .buildbar__pages button { padding:2px 5px; } }

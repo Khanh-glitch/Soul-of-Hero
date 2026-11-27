@@ -40,6 +40,8 @@ function useWindowSize() {
 
 /** Stage scale below which 8px labels are under 10 screen pixels tall. */
 const SMALL = 1.25;
+/** How long the small-window line stays up once the game itself is on screen. */
+export const HINT_SECONDS_IN_GAME = 12;
 
 export function ScreenFit() {
   const { w, h } = useWindowSize();
@@ -48,6 +50,18 @@ export function ScreenFit() {
   const fs = useFullscreen();
   const touch = isTouchDevice();
   const scale = Math.min(w / 640, h / 360);
+  const hint = !touch && scale < SMALL && !hidden && !fs;
+  // Before the game the line has a place of its own (the title footer steps aside). In the game it lies over the
+  // build bar, so there it is shown for a while and then takes itself away; "Hide" still removes it at once.
+  useEffect(() => {
+    if (!hint) return;
+    let inGame = 0;
+    const id = window.setInterval(() => {
+      if (document.querySelector('[data-pregame], .boot')) { inGame = 0; return; }
+      if (++inGame >= HINT_SECONDS_IN_GAME) setHidden(true);
+    }, 1000);
+    return () => window.clearInterval(id);
+  }, [hint]);
 
   if (touch && h > w * 1.15 && !upright) {
     return <div className="fit-gate" role="dialog" aria-label="Turn your phone sideways">
@@ -58,7 +72,7 @@ export function ScreenFit() {
       <button className="fit-gate__btn" onClick={() => setUpright(true)}>Play upright anyway</button>
     </div>;
   }
-  if (!touch && scale < SMALL && !hidden && !fs) {
+  if (hint) {
     return <div className="fit-hint" role="status">
       <span>{fullscreenSupported() ? 'Small window: the text is hard to read at this size. Enlarge the window or go full screen.' : 'Small window: the text is hard to read at this size. Enlarge the window.'}</span>
       {fullscreenSupported() && <button onClick={() => { void toggleFullscreen(); }}>Full screen</button>}

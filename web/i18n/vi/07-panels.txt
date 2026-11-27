@@ -138,7 +138,7 @@ In stock => Còn trong kho
 
 # --- evacuation ---
 Classic evacuation beacon => Trạm di tản kiểu cũ
-leaving ends this run => rời đảo là kết thúc lượt chơi
+leaving ends this run => rời đảo là kết thúc ván
 No service is registered at this berth. => Bến này chưa có chuyến tàu nào.
 Seats free: {n} of {n} => Chỗ trống: {1} trên {2}
 currently aboard: {n} => đang trên tàu: {1}
@@ -146,8 +146,8 @@ Sails at {} or the moment the last seat is taken. Arrival is only certified when
 You are aboard, crossing to safe water. => Bạn đang trên tàu, đi tới vùng nước an toàn.
 The vessel is at sea; the berth is empty until it returns. => Tàu đang ngoài biển; bến trống cho tới khi tàu quay lại.
 The vessel is on its way back; the berth reopens at {}. => Tàu đang quay về; bến mở lại lúc {1}.
-The service opens on day {n} of the run. => Chuyến tàu mở từ ngày {1} của lượt chơi.
-This service will not sail again in this run. => Chuyến này không chạy nữa trong lượt chơi này.
+The service opens on day {n} of the run. => Chuyến tàu mở từ ngày {1} của ván.
+This service will not sail again in this run. => Chuyến này không chạy nữa trong ván này.
 Vessel hull {n} => Thân tàu {1}
 Vessel hull — => Thân tàu —
 Hold: => Khoang hàng:
@@ -158,13 +158,13 @@ Elder Stones: {n}/{n} => Đá Elder: {1}/{2}
 Crown of Six! => Đủ sáu viên!
 (lost if you leave now) => (sẽ mất nếu rời đi lúc này)
 Gear, Cores, recipes, structures & cargo. => Trang bị, Core, công thức, công trình và hàng hóa.
-You are carrying {n} unsecured coin. Deposit them in your Escrow Chest before the run ends. => Bạn đang mang {1} xu chưa cất. Hãy bỏ vào Escrow Chest trước khi lượt chơi kết thúc.
-You are carrying {n} unsecured coins. Deposit them in your Escrow Chest before the run ends. => Bạn đang mang {1} xu chưa cất. Hãy bỏ vào Escrow Chest trước khi lượt chơi kết thúc.
+You are carrying {n} unsecured coin. Deposit them in your Escrow Chest before the run ends. => Bạn đang mang {1} xu chưa cất. Hãy bỏ vào Escrow Chest trước khi ván kết thúc.
+You are carrying {n} unsecured coins. Deposit them in your Escrow Chest before the run ends. => Bạn đang mang {1} xu chưa cất. Hãy bỏ vào Escrow Chest trước khi ván kết thúc.
 Request a Seat… => Xin một chỗ…
 Leave the Island… => Rời đảo…
 Board the Vessel => Lên tàu
 Confirm evacuation => Xác nhận di tản
-Confirm before ending this run => Xác nhận trước khi kết thúc lượt chơi
+Confirm before ending this run => Xác nhận trước khi kết thúc ván
 The berth is not taking passengers => Bến chưa nhận khách
 No free seat => Hết chỗ
 Take a physical seat => Nhận một chỗ ngồi trên tàu
@@ -184,7 +184,7 @@ Taking passengers => Đang nhận khách
 Vessel returning => Tàu đang quay về
 At sea => Đang ngoài biển
 Service failed: {} => Chuyến tàu thất bại: {1}
-No further sailings this run. => Lượt chơi này không còn chuyến nào nữa.
+No further sailings this run. => Ván này không còn chuyến nào nữa.
 
 # --- sea passage ---
 the western quay => bến phía tây
@@ -355,7 +355,7 @@ Away {}. {n} timed event recorded; observed changes and current conditions are s
 Away {}. {n} timed events recorded; observed changes and current conditions are separated below. => Vắng {1}. Ghi nhận {2} sự kiện có giờ; thay đổi quan sát được và tình trạng hiện tại ghi riêng bên dưới.
 No recorded production or asset changes during {} away. Current condition is shown separately. => Không ghi nhận thay đổi nào về sản xuất hay tài sản trong {1} vắng mặt. Tình trạng hiện tại ghi riêng.
 Your evacuation vessel reached safe water while you were away. => Tàu di tản của bạn đã tới vùng nước an toàn khi bạn vắng mặt.
-The 336-hour run ended while you were away. => Lượt chơi 336 giờ đã kết thúc khi bạn vắng mặt.
+The 336-hour run ended while you were away. => Ván 336 giờ đã kết thúc khi bạn vắng mặt.
 {n} background event was recorded on the island; none of them changed your stock, your home or your condition. => Trên đảo ghi nhận {1} sự kiện nền; không sự kiện nào làm đổi kho, nhà hay tình trạng của bạn.
 {n} background events were recorded on the island; none of them changed your stock, your home or your condition. => Trên đảo ghi nhận {1} sự kiện nền; không sự kiện nào làm đổi kho, nhà hay tình trạng của bạn.
 No timed events or stock deltas occurred during your absence. => Khi bạn vắng mặt không có sự kiện có giờ hay thay đổi kho nào.

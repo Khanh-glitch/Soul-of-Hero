@@ -27,6 +27,8 @@ import Game from './ui/Game';
 /** One line carried across the reload that follows a restore, shown once on the title. */
 const RESTORED_NOTE = 'soh.restored-note';
 
+/** Time away from which the wait screen stops promising "a few minutes". Measured on the test machine: 24 h away takes about 4 minutes; 15 days took 47 minutes with the test suite running beside it. */
+const LONG_ABSENCE_MS=36*3600_000;
 export default function App() {
   const gsRef = useRef<GameState | null>(null);
   const qaGsRef = useRef<GameState | null>(null);
@@ -247,7 +249,7 @@ export default function App() {
     // Each line is one string, so the Vietnamese phrase book sees whole sentences.
     // The backdrop stands still here: the processor belongs to the work the player is waiting for.
     return <TitleShell still layout={savedGs.run?.layoutId||''}>
-      <main className="panel absolute fadein" aria-label="Returning to the island" style={{left:120,top:54,width:400,padding:14}}>
+      <main className="panel absolute fadein" aria-label="Returning to the island" style={{left:120,top:progress.awayMs>=LONG_ABSENCE_MS?40:54,width:400,padding:14}}>
         <h1 className="panel-h" style={{fontSize:15,margin:0}}>While you were away</h1>
         <p style={{fontSize:13,lineHeight:1.2,margin:'6px 0 10px'}}>{`You were away for ${awayText}. The island kept living: its food, work and travel for that time are being worked out now.`}</p>
         <div style={{display:'flex',alignItems:'center',gap:10}}>
@@ -258,7 +260,10 @@ export default function App() {
             estimate said "about 5 minutes" when 25 seconds were left (measured, report round 12). */}
         <p data-testid="return-status" style={{fontSize:12,lineHeight:1.2,margin:'8px 0 0'}}>{`${Math.floor(progress.fraction*100)}% of the time away worked out · ${progress.regions} regions of land made ready · running for ${ranText}`}</p>
         <div className="rule" style={{margin:'10px 0 8px'}} />
-        <p style={{fontSize:11,lineHeight:1.2,margin:'0 0 9px',color:'var(--muted)'}}>A long absence can take a few minutes. Your saved game stays as it was until this finishes.</p>
+        {/* Past a day and a half "a few minutes" is no longer true (figures at LONG_ABSENCE_MS, report round 14), and the player must know that leaving this screen starts the work over. */}
+        <p data-testid="return-advice" style={{fontSize:11,lineHeight:1.2,margin:'0 0 9px',color:'var(--muted)'}}>{progress.awayMs>=LONG_ABSENCE_MS
+          ? 'After days away this takes much longer than a few minutes: up to most of an hour after the full 14 days. Keep this page open: going back to the title starts it over. Your saved game stays as it was until this finishes.'
+          : 'A long absence can take a few minutes. Your saved game stays as it was until this finishes.'}</p>
         <button className="btn" style={{fontSize:12,padding:'5px 12px 6px'}} onClick={stopCatchUp}>Back to title</button>
       </main>
     </TitleShell>;
