@@ -2,22 +2,29 @@
 
 Ngày lập: 28/11/2026. Nhánh `arena/1fe1361c-soul-of-hero`.
 
-Tài liệu này trả lời ba câu hỏi: game cần những tiếng gì, mỗi tiếng hoạt động ra sao, và bạn giao folder SFX thế nào để tôi xếp vào.
+Tài liệu này trả lời bốn câu hỏi: game cần những tiếng gì, mỗi tiếng hoạt động ra sao, slot nào đã có file, và làm thế nào để thêm hoặc đổi file.
+
+Cập nhật 28/11/2026: đã xếp đợt file đầu tiên, lấy từ thư viện Sonniss trên Google Drive của bạn. Xem mục 1 và mục 10.
 
 Bảng đầy đủ từng slot nằm ở `docs/sfx/BANG_SLOT_SFX.md` (đọc trên GitHub) và `docs/sfx/slots.csv` (mở bằng Excel hoặc Google Sheets).
 
 ## 1. Tình trạng hiện nay
 
-- Game chưa dùng file âm thanh nào. Mọi tiếng đang do máy tự tổng hợp.
-- Tôi đã vạch **360 slot**. Mỗi slot là một chỗ trống có tên, chờ file. Đủ số bản thì cần **793 file**.
-- Chưa có file nào trong slot. Trong lúc chờ: 239 slot phát tiếng tổng hợp tạm, 121 slot im lặng.
-- Hệ thống phát file đã chạy được. Tôi đã thử bằng 13 file tạm trong trình duyệt thật: game tải danh sách, tải file, phát đúng lúc, không lỗi. Sau đó tôi đã xóa 13 file tạm.
+- Có **360 slot**. Mỗi slot là một chỗ có tên cho một tiếng. Đủ số bản thì cần **793 file**.
+- **252 slot đã có file riêng: 489 file, 8,9 MB.** Tất cả cắt từ thư viện Sonniss #GameAudioGDC của bạn.
+- 45 slot mượn file của slot gần nghĩa. 21 slot vẫn dùng tiếng tổng hợp cũ. 42 slot im lặng.
+- **Tôi không nghe được âm thanh.** Tôi chọn theo tên file và theo số đo: độ dài, độ to, đường bao, phổ tần. Vì vậy bạn cần nghe lại trên bảng `#sfx` (mục 8). Mục 10 nêu những nhóm tôi kém chắc nhất.
 
-| Mức ưu tiên | Số slot | Số file | Ý nghĩa |
-|---|---|---|---|
-| P1 | 128 | 292 | Nghe thấy liên tục khi chơi. Nên có trước. |
-| P2 | 148 | 295 | Làm thế giới dày hơn. Nên có. |
-| P3 | 84 | 206 | Thêm cho đẹp. Thiếu thì game vẫn ổn. |
+| Mức ưu tiên | Số slot | Có file riêng | Mượn | Tổng hợp | Im lặng |
+|---|---|---|---|---|---|
+| P1: nghe liên tục khi chơi | 128 | 115 | 3 | 9 | 1 |
+| P2: làm thế giới dày hơn | 148 | 99 | 30 | 7 | 12 |
+| P3: thêm cho đẹp | 84 | 38 | 12 | 5 | 29 |
+
+Slot P1 còn thiếu file:
+
+- Im lặng: `npc.talk`. Thư viện không có tiếng người nói lầm rầm trung tính.
+- Tổng hợp: `cr.tell`, `cr.die`, `haz.hit`, `fire.ignite` và năm slot `core.windup.*`. Các slot này giữ tiếng tổng hợp cũ, nghe vẫn đúng lúc.
 
 ## 2. Các nhóm slot
 
@@ -110,9 +117,7 @@ Có một bài kiểm tra tự động bảo đảm: slot nào cũng có thứ k
 - **Rời ván về màn hình chính thì tiếng mưa, gió, máy tắt hẳn.** Trước đây chúng vẫn kêu tiếp.
 - **Máy ở xa tắt tiếng hẳn** khi bạn đi khỏi tầm nghe.
 
-30 slot mức P1 hiện im lặng vì chưa từng có tiếng tổng hợp. Đây là nhóm nên có file sớm nhất:
-
-`player.fall`, `warn.hp`, `swing.heavy`, `swing.blade`, `elder.emerge`, `elder.defeat`, `elder.phase`, `core.spirit.depart`, `core.spirit.arrive`, `build.collapse`, `box.airdrop.signal`, `station.trap.snap`, `farm.rest.start`, `farm.rest.end`, `ride.evac.open`, `ride.evac.depart`, `ride.evac.board`, `npc.talk`, `amb.bird`, `amb.thunder`, `amb.rag`, `amb.storm.start`, `bed.meadow`, `bed.forest`, `bed.night`, `bed.rain.roof`, `loop.campfire`, `loop.bike.idle`, `loop.bike.run`, `loop.heartbeat`.
+Trước đợt file đầu tiên, 30 slot mức P1 im lặng vì chưa từng có tiếng tổng hợp. Nay 29 slot trong số đó đã có file; chỉ còn `npc.talk`.
 
 ## 6. Cách giao folder SFX
 
@@ -125,20 +130,32 @@ Bạn giao folder theo cách nào cũng được. Không bắt buộc đặt tê
 - **Giấy phép:** cho tôi biết nguồn và giấy phép của từng gói. Tôi sẽ ghi vào `web/THIRD_PARTY.md`.
 - **Nếu muốn đặt tên sẵn:** `<nhóm>/<tên slot>__NN.<đuôi>`, NN bắt đầu từ 01. Ví dụ `step/step.grass__01.ogg`. File đặt tên như vậy vào thẳng slot, không cần xét.
 
-Giới hạn của tôi ở máy làm việc này: không có công cụ cắt, đổi định dạng hay đo độ to của file âm thanh. Tôi xếp file, đặt mức âm lượng theo slot và theo file, nhưng không sửa được nội dung file. File nào cần cắt hoặc đổi định dạng thì tôi sẽ liệt kê lại cho bạn.
+Tôi cắt, đổi định dạng và cân độ to được (mục 10). Điều tôi không làm được là **nghe**: file nào hợp tai hay không thì bạn quyết định trên bảng `#sfx`.
 
-## 7. Việc tôi làm khi nhận folder
+## 7. Cách thêm hoặc đổi một tiếng
 
-1. `node scripts/sfx.mjs sort <folder>`: đọc tên file và tên folder con, đề xuất slot cho từng file. Lệnh này không chép gì, chỉ ghi ra một bảng đề xuất.
-2. Tôi xem lại bảng. Tên file hiếm khi đủ rõ, nên phần lớn dòng cần người quyết định. Chạy thử trên thư viện 116 file có sẵn ở phía Godot: 17 dòng chắc chắn, 96 dòng cần xem lại, 3 dòng không tìm được slot.
-3. `node scripts/sfx.mjs apply <bảng>`: chép file vào `web/public/sfx/<nhóm>/` với tên đúng. Không ghi đè file đã có.
-4. `node scripts/sfx.mjs index`: lập danh sách file cho game, báo slot nào còn trống, file nào quá nặng hoặc sai kiểu.
-5. Nghe thử trên bảng slot, chỉnh âm lượng.
-6. Báo lại cho bạn: slot nào đã đầy, slot nào còn trống theo P1, P2, P3.
+Có hai đường. Cả hai đều kết thúc bằng `node scripts/sfx.mjs index`.
+
+**Đường A: bạn đã có file cắt sẵn.** Đặt tên `<nhóm>/<tên slot>__NN.ogg` rồi chép vào `web/public/sfx/`. Hoặc giao cả folder, tôi chạy `sort` để đề xuất slot, xem lại, rồi `apply`.
+
+**Đường B: cắt từ thư viện (cách tôi đã làm đợt đầu).**
+
+1. Mỗi tiếng là một dòng trong `web/scripts/sfx-build/recipe.txt`: `tên slot | đầu tên file gốc | cách cắt`. Ví dụ `ui.back | MECHLtch_Click Deep Mechanism Latch | max=0.1`.
+2. `make.py` đọc công thức, cắt, cân độ to, xuất OGG. `place.py` chép vào `web/public/sfx/` và ghi nguồn. `credits.py` lập lại `docs/sfx/NGUON_AM_THANH.md`.
+3. `node scripts/sfx.mjs index` lập danh sách cho game và báo slot nào còn trống.
+
+Muốn đổi một tiếng bạn không ưng: cho tôi tên slot và số bản (bảng `#sfx` ghi rõ), kèm tên file gốc bạn muốn thay nếu có. Tôi sửa một dòng công thức và chạy lại.
+
+File WAV gốc không nằm trong kho mã. Chúng ở thư viện của bạn; công cụ đọc từ thư mục làm việc ngoài kho (`SFX_WORK`, mặc định `~/sfxwork/src`).
 
 ## 8. Bảng nghe thử
 
-Mở địa chỉ game và thêm `#sfx` vào cuối. Bảng liệt kê cả 360 slot, cho biết mỗi slot đang có file, mượn file, dùng tiếng tổng hợp hay im lặng, và có nút **Nghe** cho từng slot. Lọc được theo tình trạng, theo mức ưu tiên, theo tên.
+Mở địa chỉ game và thêm `#sfx` vào cuối.
+
+- Bảng liệt kê cả 360 slot: đang có file, mượn file, dùng tiếng tổng hợp hay im lặng. Lọc được theo tình trạng, mức ưu tiên, tên.
+- Nút **Nghe** phát một bản ngẫu nhiên. Nút **bản 01**, **bản 02**… phát đúng bản đó.
+- Dưới mỗi bản ghi **tên file gốc trong thư viện** và cách cắt. Nhờ vậy bạn biết ngay tiếng đó lấy từ đâu.
+- Dòng đầu bảng cho biết đã tải bao nhiêu file ở mỗi đợt và bộ nhớ đang dùng.
 
 ## 9. Các file liên quan
 
@@ -147,9 +164,67 @@ Mở địa chỉ game và thêm `#sfx` vào cuối. Bảng liệt kê cả 360 
 | `web/src/game/sfx/slots.ts` | Danh mục 360 slot. Muốn thêm, bớt, đổi thông số thì sửa ở đây. |
 | `web/src/game/sfx/route.ts` | Sự kiện nào phát slot nào. |
 | `web/src/game/sfx/director.ts` | Phần quan sát mỗi giây: nền, vòng lặp, cảnh báo, tiếng điểm. |
-| `web/src/game/sfx/bank.ts` | Tải file, chọn bản, thứ tự dự phòng. |
+| `web/src/game/sfx/bank.ts` | Tải file theo đợt, giữ bộ nhớ trong hạn mức, chọn bản, thứ tự dự phòng. |
 | `web/src/game/audio.ts` | Phát âm thanh; tiếng tổng hợp cũ vẫn nằm ở đây. |
 | `web/src/ui/SfxBoard.tsx` | Bảng nghe thử. |
-| `web/scripts/sfx.mjs` | Công cụ: `table`, `folders`, `sort`, `apply`, `index`, `status`. |
-| `web/public/sfx/` | 24 folder nhóm đang trống và `index.json`. |
+| `web/scripts/sfx.mjs` | Công cụ: `table`, `folders`, `sort`, `apply`, `index`, `status`, `dump`. |
+| `web/scripts/sfx-build/` | Công thức cắt (`recipe.txt`) và công cụ Python: `make.py`, `place.py`, `credits.py`. |
+| `web/public/sfx/` | 24 folder nhóm với 489 file OGG, `index.json` (danh sách, mức chỉnh độ to, dung lượng), `sources.json` (nguồn từng file). |
+| `docs/sfx/NGUON_AM_THANH.md` | Từng file lấy từ bản thu nào, thư viện nào, của ai. |
+| `web/THIRD_PARTY.md` | Giấy phép Sonniss. |
 | `web/tests/sfx-slots.test.ts` | 20 bài kiểm tra cho danh mục và đường đi của tiếng. |
+| `web/tests/sfx-bank.test.ts` | 21 bài kiểm tra cho việc tải theo đợt, bộ nhớ, dung lượng file, nguồn. |
+
+## 10. Đợt file đầu tiên (28/11/2026)
+
+### Nguồn và giấy phép
+
+- 489 file cắt từ 235 bản thu của 26 nhà làm âm thanh, trong các gói Sonniss #GameAudioGDC trên Drive của bạn.
+- Giấy phép Sonniss cho dùng miễn phí bản quyền trong dự án cá nhân và thương mại, được chỉnh sửa, không bắt buộc ghi công.
+- Giấy phép cấm: bán lại tiếng ở dạng nguyên gốc, và dùng tiếng để huấn luyện AI. Tôi chỉ cắt và xử lý tín hiệu thông thường.
+- File WAV gốc không đưa vào kho mã.
+
+### Xử lý
+
+- Tiếng một lần: mono, 44,1 kHz, cắt sát đầu, có đoạn tắt dần ở cuối.
+- Nền: stereo, 48 kHz, nối vòng bằng đoạn chuyển 2 giây. Vòng lặp: mono, đoạn chuyển 0,5 giây.
+- Độ to: mỗi nhóm có một mức đích (bước chân nhỏ nhất, Elder và lửa to nhất). Mức chỉnh của từng file nằm trong `index.json`, nên đổi độ to không cần xuất lại file.
+
+### Tải theo đợt
+
+Mục tiêu: màn hình đầu không chờ âm thanh, và tiếng dùng nhiều nhất có sẵn trước cú bấm đầu tiên.
+
+| Đợt | Nội dung | File | Tải về | Lúc nào |
+|---|---|---|---|---|
+| 0 | Tiếng P1 của chính người chơi: nút bấm, đồ, bước chân, đòn đánh, thu hoạch, cảnh báo | 110 | 0,71 MB | Ngay khi màn hình chính hiện xong, trước khi bấm |
+| 1 | Các tiếng P1 còn lại | 128 | 1,71 MB | Chạy nền sau cú bấm đầu tiên |
+| 2 | Tiếng P2 | 161 | 1,77 MB | Chạy nền, lúc máy rảnh |
+| 3 | Tiếng P3, nền và vòng lặp | 90 | 4,74 MB | Chỉ khi game cần tới |
+
+- Ba đợt đầu cộng lại là 4,2 MB. Nền và vòng lặp nặng gần bằng chừng đó (4,15 MB cho 25 file), nên game chỉ tải nền và vòng lặp của nơi bạn đang đứng.
+- Khi file đang trên đường tới, slot đó im chứ không phát tiếng tổng hợp thay. Lý do: tránh một tiếng nghe hai kiểu khác nhau.
+- Mạng yếu (2G, chế độ tiết kiệm dữ liệu) hoặc máy rất ít bộ nhớ: chỉ tải đợt 0, còn lại tải khi cần.
+- Bộ nhớ: âm thanh đã giải mã được giữ trong hạn mức 112 MB (80 MB trên máy 4 GB trở xuống). Vượt hạn mức thì bỏ nền và vòng lặp đã ngừng trước, rồi tới tiếng P2 và P3 lâu chưa dùng. Tiếng P1 không bao giờ bị bỏ.
+- Trình duyệt không phát được Ogg Vorbis (Safari cũ) giữ nguyên tiếng tổng hợp.
+
+### Những nhóm tôi kém chắc nhất
+
+Bạn nên nghe các nhóm này trước:
+
+| Slot | Vì sao kém chắc |
+|---|---|
+| `step.*` (bước chân) | Thư viện không có gói bước chân. Tôi cắt từ tiếng gần giống: lá cây, cành khô, cát, vật ướt, mặt nước; gỗ và đá lấy từ quân cờ nhựa hạ cao độ. |
+| `ride.evac.open`, `ride.evac.depart` (còi tàu) | Không có còi tàu. Tôi dùng còi xe máy làm chậm còn 36 đến 38 phần trăm. |
+| `loop.heartbeat` (nhịp tim) | Không có tiếng tim. Tôi lọc một cú đánh trầm thành nhịp đôi. |
+| `warn.hp`, `warn.stamina`, `player.respawn` | Tiếng thở dốc của một giọng nam. Có thể không hợp nhân vật. |
+| `player.death` | Một đoạn nhạc "thất bại" làm chậm lại; dài 1,0 giây, ngắn hơn mức mong muốn 1,5 đến 2,5 giây. |
+| `swing.bow.shot`, `hit.arrow` | Lấy từ gói "Cartoon Arrow". Có thể nghe hơi hoạt hình. |
+| `box.airdrop.descent` | Tiếng trực thăng Chinook, không phải máy bay thả dù. |
+| `core.cast.spirit` bản 02, `ui.deny` | File gốc rất to; tôi đã hạ mức, nhưng nên nghe lại. |
+| `loop.geiger`, `loop.recycler`, `bed.ash`, `bed.ragnarok` | Vòng ngắn (2,2 đến 13,5 giây). Có thể nghe ra sự lặp lại. |
+
+### Còn thiếu
+
+- `npc.*` (7 slot): không có giọng người phù hợp. `npc.recruit` giữ tiếng tổng hợp cũ, sáu slot kia im lặng hoặc mượn.
+- `bed.room`, `loop.cart`, `swing.torch`, và các tiếng chung của sinh vật (`cr.tell`, `cr.hurt`, `cr.die`, `cr.idle`): chưa tìm được nguồn hợp.
+- 36 trong 71 slot sinh vật chưa có tiếng riêng. Phần lớn mượn tiếng của loài gần giống; số còn lại dùng tiếng tổng hợp hoặc im.

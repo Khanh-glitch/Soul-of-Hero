@@ -71,8 +71,7 @@ export function initAudio() {
   for (let i = 0; i < pd.length; i++) { const w = Math.random() * 2 - 1; b0 = 0.99765 * b0 + w * 0.0990460; b1 = 0.96300 * b1 + w * 0.2965164; b2 = 0.57000 * b2 + w * 1.0526913; pd[i] = (b0 + b1 + b2 + w * 0.1848) * 0.22; }
   buildAmbience();
   applyMix(0.01);
-  const device = ctx;
-  void bank.load(bytes => new Promise<AudioBuffer>((resolve, reject) => { void device.decodeAudioData(bytes, resolve, reject); }));
+  void startBank();
 }
 
 export function setVolume(v: number, m: boolean) { vol = v; muted = m; applyMix(); }
@@ -397,7 +396,51 @@ function synth(e: any): boolean {
 // Each of them plays a delivered file when the slot has one and the synthesized
 // stand-in when it has none. Nothing here decides anything about the game.
 // ---------------------------------------------------------------------------
-const bank = new SfxBank(`${import.meta.env.BASE_URL}sfx/`);
+// Files are decoded by an offline device: that needs no click, so the sounds of the first click are ready before it.
+let decoder: BaseAudioContext | null = null;
+function decodeBytes(bytes: ArrayBuffer): Promise<AudioBuffer> {
+  if (!decoder) {
+    const Offline = window.OfflineAudioContext || (window as any).webkitOfflineAudioContext;
+    decoder = Offline ? new Offline(1, 1, 48000) : ctx;
+  }
+  const device = decoder;
+  if (!device) return Promise.reject(new Error('no audio device'));
+  return new Promise<AudioBuffer>((resolve, reject) => { void device.decodeAudioData(bytes, resolve, reject); });
+}
+/** Background loading waits for a spare moment between files, so it never competes with a frame. */
+function idleMoment(): Promise<void> {
+  return new Promise<void>(resolve => {
+    const ric = (window as any).requestIdleCallback as ((fn: () => void, o?: { timeout: number }) => number) | undefined;
+    if (ric) ric(() => resolve(), { timeout: 400 }); else setTimeout(resolve, 30);
+  });
+}
+function leanDevice(): boolean {
+  if (typeof navigator === 'undefined') return false;
+  const c = (navigator as any).connection;
+  return !!c?.saveData || /(^|-)2g$/.test(c?.effectiveType ?? '') || ((navigator as any).deviceMemory ?? 8) <= 2;
+}
+// Decoded audio the bank may hold. Measured on the shipped files: every one-shot of stages 0 to 2 decodes to about
+// 60 MB and one stereo bed to about 9 MB, so 112 MB holds all the short sounds plus the beds and loops of one place.
+// A phone that reports 4 GB or less gets 80 MB: its second-priority sounds give way to the beds that are playing and
+// are fetched again when the game next asks for them.
+const PCM_BUDGET = (typeof navigator !== 'undefined' && ((navigator as any).deviceMemory ?? 8) <= 4 ? 80 : 112) * 1024 * 1024;
+const bank = new SfxBank(`${import.meta.env.BASE_URL}sfx/`, { decode: decodeBytes, idle: idleMoment, lean: leanDevice(), budget: PCM_BUDGET });
+/** Which delivered files this browser can decode. Ogg Vorbis is missing on older Safari: there the game stays on synthesized sound. */
+let canOgg: boolean | null = null;
+function usableFile(f: string): boolean {
+  if (!/\.ogg$/i.test(f)) return true;
+  if (canOgg === null) { try { canOgg = !!document.createElement('audio').canPlayType('audio/ogg; codecs="vorbis"'); } catch { canOgg = false; } }
+  return canOgg;
+}
+function startBank(): Promise<void> { return bank.loadIndex(usableFile).then(() => bank.start()); }
+/** Fetch and decode what the first minute needs, once the page is idle. Needs no click and never blocks a frame. */
+export function prefetchSfx() {
+  if (typeof window === 'undefined') return;
+  void idleMoment().then(() => bank.loadIndex(usableFile)).then(() => bank.prefetch());
+}
+/** Slots whose sound must land on the frame of the action: a late start is worse than none. */
+const TIGHT_GROUPS = new Set(['ui', 'item', 'step', 'player', 'swing', 'hit', 'gather']);
+const LATE_MS = 280;
 const NO_CTX: RouteCtx = {
   creatureNear: () => null, heldKey: () => null, floorAt: () => null, itemClass: () => null, consumeKind: () => 'eat',
   structMaterial: () => 'wood', entity: () => null, human: () => null, player: () => ({ x: listener.x, y: listener.y, character: 'male' }),
@@ -416,12 +459,12 @@ function placed(slot: { spatial: boolean; range: number }, x: number | undefined
   const ref = slot.range * 0.33;
   return { g: 1 / (1 + (d / ref) * (d / ref)), pan: Math.max(-0.8, Math.min(0.8, dx / 300)) };
 }
-function playOne(p: SfxPlay, orig: any): 'file' | 'synth' | 'none' {
+function playOne(p: SfxPlay, orig: any, late = false, pick?: number): 'file' | 'synth' | 'none' {
   const slot = SFX_SLOT[p.slot];
   if (!ctx || !slot || slot.mode !== 'shot') return 'none';
   if (p.chance !== undefined && Math.random() > p.chance) return 'none';
   const now = performance.now();
-  const sample = bank.take(p.slot, Math.random());
+  const sample = bank.take(p.slot, Math.random(), pick);
   if (sample) {
     if (slotAt[p.slot] && now - slotAt[p.slot] < slot.cd) return 'none';
     if ((slotLive[p.slot] ?? 0) >= slot.voices) return 'none';
@@ -435,6 +478,13 @@ function playOne(p: SfxPlay, orig: any): 'file' | 'synth' | 'none' {
     src.onended = () => { slotLive[p.slot] = Math.max(0, (slotLive[p.slot] ?? 1) - 1); };
     src.start(); release(slot.bus, sample.buffer.duration / rate);
     return 'file';
+  }
+  if (bank.load(p.slot) === 'loading') {
+    // The slot has a real sound that is still on its way (bank.take just asked for it). Playing the synthesized
+    // stand-in now would make one event sound two different ways, so it stays quiet; a sound that is not tied to
+    // a single frame may still start if the file lands within a moment.
+    if (!late && !TIGHT_GROUPS.has(slot.group)) bank.whenReady(p.slot, LATE_MS, () => { playOne(p, orig, true); });
+    return 'none';
   }
   if (p.layer) return 'none';
   // No file yet. An event the synthesizer always knew keeps its exact old cue; anything else uses the slot's stand-in.
@@ -470,8 +520,9 @@ export function playAll(plays: readonly SfxPlay[]): boolean {
 // --- loops and beds ---------------------------------------------------------
 interface LoopVoice { slot: string; src: AudioBufferSourceNode; gain: GainNode; pan: StereoPannerNode | null; stopAt: number; seen: number }
 const loops = new Map<string, LoopVoice>();
-/** Hold a looping file at `level` (0..1) under a caller-chosen key. Returns false when the slot has no file ready:
- *  the caller then keeps its synthesized stand-in, if it has one. Level 0 fades the loop out and frees it. */
+/** Hold a looping file at `level` (0..1) under a caller-chosen key. Returns true when a delivered file owns this
+ *  role, also while that file is still on its way (the loop then fades in when it lands), and false when the slot has
+ *  no file: the caller then keeps its synthesized stand-in, if it has one. Level 0 fades the loop out and frees it. */
 export function loopLevel(key: string, slotId: string, level: number, at?: { x: number; y: number }, rate = 1, fade = 0.4): boolean {
   const slot = SFX_SLOT[slotId];
   if (!ctx || !slot || slot.mode === 'shot') return false;
@@ -480,9 +531,11 @@ export function loopLevel(key: string, slotId: string, level: number, at?: { x: 
   const sp = at ? placed(slot, at.x, at.y) : { g: 1, pan: 0 };
   const target = Math.max(0, Math.min(1, level)) * (sp ? sp.g : 0) * slot.vol;
   if (!v) {
-    if (target <= 0.0005) return bank.status(slotId) === 'file' || bank.status(slotId) === 'borrowed';
+    if (target <= 0.0005) return bank.load(slotId) !== 'none';
     const sample = bank.take(slotId, Math.random());
-    if (!sample) return false;
+    // On its way: the file already owns this role, so the caller's synthesized stand-in stays off and the loop
+    // fades in when it lands. Only a slot with no file at all hands the role back.
+    if (!sample) return bank.load(slotId) === 'loading';
     const bus = buses[slot.bus]; if (!bus) return false;
     const src = ctx.createBufferSource(); src.buffer = sample.buffer; src.loop = true;
     const gain = ctx.createGain(); gain.gain.value = 0;
@@ -493,6 +546,7 @@ export function loopLevel(key: string, slotId: string, level: number, at?: { x: 
     v = { slot: slotId, src, gain, pan, stopAt: 0, seen: 0 }; loops.set(key, v);
   }
   v.seen = performance.now();
+  if (target > 0.0005) bank.touch(slotId);
   v.src.playbackRate.setTargetAtTime(rate, ctx.currentTime, 0.2);
   if (v.pan && sp) v.pan.pan.setTargetAtTime(sp.pan, ctx.currentTime, 0.2);
   v.gain.gain.setTargetAtTime(target, ctx.currentTime, fade);
@@ -543,20 +597,20 @@ export function stopWorldAudio() {
 // --- for the sound test board ------------------------------------------------
 export function slotStatus(id: string): SlotStatus { return bank.status(id); }
 /** Read the list of delivered files without opening the audio device (the board shows it before the first click). */
-export function loadSfxIndex() { return bank.loadIndex(); }
+export function loadSfxIndex() { return bank.loadIndex(usableFile); }
 export function bankCounts() { return { loaded: bank.loaded, ...bank.counts(), failures: bank.failures() }; }
 export function onBankChange(fn: () => void) { return bank.onChange(fn); }
-/** Audition a slot from the board: one-shots play once, loops and beds sound for three seconds. */
-export function audition(id: string): 'file' | 'synth' | 'none' | 'loading' {
+/** Audition a slot from the board: one-shots play once (`pick` chooses the take), loops and beds sound for three seconds. */
+export function audition(id: string, pick?: number): 'file' | 'synth' | 'none' | 'loading' {
   const slot = SFX_SLOT[id]; if (!ctx || !slot) return 'none';
-  const hasFile = bank.status(id) === 'file' || bank.status(id) === 'borrowed';
+  if (bank.load(id) === 'loading') { bank.request(id); return 'loading'; }   // asked for; the board tries again when it arrives
   if (slot.mode === 'shot') {
     delete slotAt[id];
-    if (hasFile && !bank.take(id, Math.random())) return 'loading';   // asked for; the board tries again when it arrives
-    return playOne({ slot: id }, null);
+    if (pick !== undefined && !bank.take(id, 0, pick)) { bank.request(id); return 'loading'; }
+    return playOne({ slot: id }, null, false, pick);
   }
   const key = `audition:${id}`;
-  if (!loopLevel(key, id, 1, undefined, 1, 0.15)) return hasFile ? 'loading' : 'none';
+  if (!loopLevel(key, id, 1, undefined, 1, 0.15)) return 'none';
   setTimeout(() => { loopLevel(key, id, 0, undefined, 1, 0.3); setTimeout(() => stopLoops(key), 1500); }, 3000);
   return 'file';
 }

@@ -1,0 +1,535 @@
+# Soul of Hero: which library sound fills which slot. One take per line: slot | source prefix | options (see tools/make.py)
+# Chosen from file names and measured envelope / spectrum only; nothing here was auditioned.
+
+# ---- ui ----------------------------------------------------------------------------------------------------------
+ui.click        | UIClick_UI Click 33
+ui.click        | Bluezone_BC0301_tiny_gears_small_mechanism_click_003
+ui.back         | MECHLtch_Click Deep Mechanism Latch          | max=0.1
+ui.tab          | Pop 41                                       | max=0.08
+ui.panel.open   | Woosh Sweep Slide Infographics
+ui.panel.open   | UIMvmt_Window Open Thin 05                   | max=0.25
+ui.panel.close  | Woosh Sweep Slide Infographics               | rev max=0.2 fi=0.03
+ui.panel.close  | UIMvmt_Window Open Thin 05                   | rev max=0.2 fi=0.03
+ui.map.open     | A4 Printing Paper Rattle Page Turn           | max=0.4
+ui.map.open     | Newspaper Static Foley Rummage               | at=0.6 len=0.4 raw fi=0.03 fo=0.12
+ui.map.close    | Encyclopedia Glossy Page Turn                | max=0.3 rate=1.1
+ui.book.open    | Encyclopedia Glossy Page Turn                | max=0.4
+ui.book.open    | A4 Printing Paper Rattle Page Turn           | max=0.4 rate=0.88
+ui.build.enter  | Bluezone_BC0302_industrial_lever_switch_small | max=0.3
+ui.build.exit   | Bluezone_BC0301_tiny_gears_small_mechanism_click_complex | max=0.2
+ui.hotbar       | OBJLug_Handle_Movement15                     | ev=0
+ui.hotbar       | OBJLug_Handle_Movement15                     | ev=1
+ui.deny         | Deny Muted                                   | max=0.45
+ui.coin         | Foley Coin Flip Single Fast                  | max=0.35
+ui.coin         | handling_coins_7
+ui.coin         | many_coins_12                                | max=0.35
+ui.buy          | Ting Coins                                   | max=0.45
+ui.buy          | coins_9                                      | max=0.4
+ui.pin          | Bluezone_BC0301_tiny_gears_small_mechanism_click_complex | max=0.12 rate=1.2
+ui.title.start  | UIAlert_Confirm Middle 12
+
+# ---- item --------------------------------------------------------------------------------------------------------
+item.pickup     | Pop 31
+item.pickup     | Pop 41                                       | rate=0.9
+item.pickup     | FOLYClth_SinglePats04                        | max=0.2
+item.move       | medium_wooden_pieces_on_cardboard_7          | max=0.16
+item.move       | plastic_pawns_on_cardboard_more_steps_4      | ev=0
+item.move       | plastic_pawns_on_cardboard_more_steps_4      | ev=1
+item.metal      | Iron - Thick - HIT - Hammer                  | ev=4 lp=7000
+item.metal      | Chain Metal Drop On Floor_VS 02              | max=0.2
+item.wood       | medium_wooden_pieces_on_cardboard_7          | max=0.2 rate=0.85
+item.wood       | WOODImpt_Impact Wood 23                      | ev=1
+item.stone      | Drop Rock On Rock Debris_RBD 03              | ev=1 max=0.2
+item.stone      | Bluezone_BC0297_stone_impact_steel_bar_01    | max=0.2
+item.cloth      | FOLYClth_SinglePats04                        | max=0.2 rate=0.9
+item.cloth      | FOLYClth_ClothMovement24                     | ev=1 max=0.2
+item.food       | Bread,Pizza,Curst,Crunch                     | max=0.2
+item.food       | Celery,Bite,Crunch,Slow                      | max=0.2
+item.liquid     | OBJCont_Flask,gourd,oblong
+item.liquid     | WATRDrip_SingleDrip03
+item.drop       | OBJLug_CaseDown_Concrete12                   | max=0.25
+item.drop       | medium_wooden_pieces_on_cardboard_7          | max=0.25 rate=0.75
+item.equip      | METLFric_Designed Metal Sword Sheath 04      | max=0.4
+item.equip      | OBJLug_Case_Closed06
+item.sort       | plastic_pawns_on_cardboard_more_steps_4      | ev=2 pat=0:1,0.11:0.75,0.21:0.9
+item.repair     | Iron - Thick - HIT - Hammer                  | ev=0 pat=0:1,0.24:0.8,0.48:0.9
+item.repair     | Bluezone_BC0301_tiny_gears_small_mechanism_sequence_spinning | ev=0 max=0.9
+
+# ---- progress stingers ---------------------------------------------------------------------------------------------
+prog.tick       | CLOCKTick_Steampunk Loopable Clock 08        | ev=0 max=0.06
+prog.stamp      | OBJLug_Case_Closed06                         | rate=0.85
+prog.milestone  | Button Arp Twinkle
+prog.capability | UIMisc_Feedback 36 up
+prog.relic      | Enchanting_Bells_4                           | at=0 len=2.0 fo=0.9
+prog.epic       | Discovery_01-03_Organ-A_WET                  | max=3.0 fo=1.2
+prog.rare       | Harp_Glissando_10b                           | max=1.2 fo=0.5
+prog.recipe     | UIMisc_Kalimba 3 Up
+prog.achievement | Impact Hit Rapid Chord Reverb               | max=1.5 fo=0.6
+prog.discover   | Mystery_01-11_Ensemble-Large_WET             | max=1.6 fo=0.7
+prog.region     | WHSH_Airy-Whoosh Wind Gust 11                | max=1.5 fi=0.25 fo=0.7 lp=3500 T=-29
+prog.banner     | DSGNImpt_Metal Hit Thud Thump Low Ring       | max=1.1 fo=0.6 pat=0:1,0.5:0.85
+prog.day14      | DSGNBram**Huge-32                            | max=3.0 fo=1.2
+prog.ragnarok   | EffectiveTrailer_Booms_Vol2_011              | max=4.0 fo=1.8
+prog.runend     | Bluezone_BC0294_modern_cinematic_impact_boom_003 | max=4.0 fo=2.0
+
+# ---- footsteps (weakest group: the library has no footstep pack; cut from related foley) ----------------------------
+step.grass      | Bluezone_BC0279_forest_tree_branch_leaf_foliage | grain=0/5 glen=0.15 lp=6000
+step.grass      | Bluezone_BC0279_forest_tree_branch_leaf_foliage | grain=1/5 glen=0.15 lp=6000
+step.grass      | Bluezone_BC0279_forest_tree_branch_leaf_foliage | grain=2/5 glen=0.15 lp=6000
+step.grass      | Bluezone_BC0279_forest_tree_branch_leaf_foliage | grain=3/5 glen=0.15 lp=6000
+step.grass      | Bluezone_BC0279_forest_tree_branch_leaf_foliage | grain=4/5 glen=0.15 lp=6000
+step.forest     | DESTRCrsh_rummaging through compact wood dry | grain=0/5 glen=0.15
+step.forest     | DESTRCrsh_rummaging through compact wood dry | grain=1/5 glen=0.15
+step.forest     | DESTRCrsh_rummaging through compact wood dry | grain=2/5 glen=0.15
+step.forest     | DESTRCrsh_rummaging through compact wood dry | grain=3/5 glen=0.15
+step.forest     | DESTRCrsh_rummaging through compact wood dry | grain=4/5 glen=0.15
+step.sand       | DESTRCrsh_sand falling on scrapwood          | grain=0/5 glen=0.14 hp=250
+step.sand       | DESTRCrsh_sand falling on scrapwood          | grain=1/5 glen=0.14 hp=250
+step.sand       | DESTRCrsh_sand falling on scrapwood          | grain=2/5 glen=0.14 hp=250
+step.sand       | DESTRCrsh_sand falling on scrapwood          | grain=3/5 glen=0.14 hp=250
+step.sand       | DESTRCrsh_sand falling on scrapwood          | grain=4/5 glen=0.14 hp=250
+step.snow       | Ice,Creak,Sheet,Crunch,Step,Snow             | max=0.2
+step.snow       | Ice,Creak,Sheet,Crunch,Step,Snow             | max=0.2 rate=1.12
+step.snow       | Ice,Creak,Sheet,Crunch,Step,Snow             | at=0.25 len=0.22 raw fi=0.01
+step.snow       | Ice,Impact,Throw,Snowball                    | max=0.2
+step.snow       | ICEBrk_FROZEN FARMLAND Footstep              | max=0.2 rate=0.9
+step.ice        | ICEBrk_FROZEN FARMLAND Footstep              | max=0.18
+step.ice        | ICEBrk_FROZEN FARMLAND Footstep              | max=0.18 rate=1.1
+step.ice        | ICEBrk_FROZEN FARMLAND Ice Crack thin ice    | ev=0
+step.ice        | Ice,Impact,Throw,Snowball                    | max=0.18 rate=1.15
+step.mud        | Drenched Manipulation_VM 03                  | grain=0/5 glen=0.16
+step.mud        | Drenched Manipulation_VM 03                  | grain=1/5 glen=0.16
+step.mud        | Drenched Manipulation_VM 03                  | grain=2/5 glen=0.16
+step.mud        | Drenched Manipulation_VM 03                  | grain=3/5 glen=0.16
+step.mud        | Drenched Manipulation_VM 03                  | grain=4/5 glen=0.16
+step.water      | WATRLap_Summer Tennessee Lake Dock           | at=5 len=60 grain=0/5 glen=0.18 sep=1 hp=200
+step.water      | WATRLap_Summer Tennessee Lake Dock           | at=5 len=60 grain=1/5 glen=0.18 sep=1 hp=200
+step.water      | WATRLap_Summer Tennessee Lake Dock           | at=5 len=60 grain=2/5 glen=0.18 sep=1 hp=200
+step.water      | WATRLap_Summer Tennessee Lake Dock           | at=5 len=60 grain=3/5 glen=0.18 sep=1 hp=200
+step.water      | WATRLap_Summer Tennessee Lake Dock           | at=5 len=60 grain=4/5 glen=0.18 sep=1 hp=200
+step.wood       | plastic_pawns_on_cardboard_more_steps_4      | ev=0 rate=0.62 lp=3500
+step.wood       | plastic_pawns_on_cardboard_more_steps_4      | ev=2 rate=0.62 lp=3500
+step.wood       | plastic_pawns_on_cardboard_more_steps_4      | ev=3 rate=0.62 lp=3500
+step.wood       | plastic_pawns_on_cardboard_more_steps_4      | ev=5 rate=0.62 lp=3500
+step.wood       | medium_wooden_pieces_on_cardboard_7          | max=0.16 rate=0.8
+step.stone      | plastic_pawns_on_cardboard_more_steps_4      | ev=1 rate=0.85
+step.stone      | plastic_pawns_on_cardboard_more_steps_4      | ev=4 rate=0.85
+step.stone      | plastic_pawns_on_cardboard_more_steps_4      | ev=6 rate=0.85
+step.stone      | plastic_pawns_on_cardboard_more_steps_4      | ev=3 rate=0.9
+step.stone      | plastic_pawns_on_cardboard_more_steps_4      | ev=0 rate=0.9
+
+# ---- player ----------------------------------------------------------------------------------------------------------
+player.roll     | FOLYClth_ClothMovement24                     | ev=0 max=0.35
+player.roll     | FOLYClth_ClothMovement24                     | ev=1 max=0.35
+player.roll     | FOLYClth_ClothMovement24                     | ev=0 at=0.5 len=0.35 raw fi=0.02
+player.dodge    | WHSH_InsJ_Whooshing_Low_Double               | ev=0@0.05
+player.dodge    | WHSH_InsJ_Whooshing_Low_Double               | ev=1@0.05
+player.hurt     | EFX SD GORE Punch 02                         | ev=0
+player.hurt     | EFX SD GORE Punch 02                         | ev=1
+player.hurt     | EFX SD GORE Punch 02                         | ev=2
+player.hurt     | EFX SD GORE Punch 02                         | ev=3
+player.death    | Failure_01-10_Ensemble-Small_DRY             | rate=0.8 fo=0.5
+player.fall     | HKAP2 Whoosh land 1a
+player.respawn  | HMNBrth_Panting Male 02 04                   | ev=2
+player.eat      | Bread,Curst,Bite,Mouth                       | max=0.6
+player.eat      | Bread,Curst,Bite,Mouth                       | at=0.6 len=0.6 raw fi=0.02 fo=0.15
+player.eat      | Bread,Pizza,Curst,Crunch                     | max=0.6
+player.drink    | OBJCont_Flask,glass,figuredbottle            | ev=0 max=0.7
+player.drink    | OBJCont_Flask,aluminum,canteen               | ev=1 max=0.7
+player.drink    | OBJCont_Flask,wood,canteen                   | ev=0 max=0.7
+player.heal     | RIPS AND TEARS T-Shirt Rip 02                | ev=3
+player.heal     | FOLYClth_ClothMovement29                     | max=0.8
+
+# ---- warnings ------------------------------------------------------------------------------------------------------
+warn.hp         | HMNBrth_Panting Male 02 04                   | ev=4
+warn.stamina    | HMNBrth_Panting Male 02 04                   | ev=3
+warn.stamina    | HMNBrth_Panting Male 02 04                   | ev=6 pat=0:1,0.62:0.8
+warn.rad        | Bluezone_BC0299_electricity_texture_sizzling | at=0.2 len=0.9 raw fi=0.03 fo=0.3
+
+# ---- swings ----------------------------------------------------------------------------------------------------------
+swing.start     | FOLYClth_SinglePats04                        | max=0.12 rate=1.15 T=-31
+swing.start     | FOLYClth_ClothMovement24                     | ev=1 max=0.14 T=-31
+swing.bow.shot  | Cartoon Arrow 44                             | max=0.25 fo=0.08
+swing.heavy     | SWSH_Swing 3 Large 03                        | max=0.32
+swing.heavy     | HKAP2 Seq2.13 Whoosh 6
+swing.heavy     | HKAP2 Seq2.13 Whoosh 7
+swing.heavy     | HKAP2 Spin Whoosh 2a
+swing.blade     | Fast Action Swish_HW 05                      | ev=0
+swing.blade     | Fast Action Swish_HW 05                      | ev=1
+swing.blade     | Fast Action Swish_HW 05                      | ev=2
+swing.blade     | Fast Action Swish_HW 05                      | ev=3
+swing.spear     | HKAP2 Seq2.13 Whoosh 5                       | ev=0
+swing.spear     | HKAP2 Seq2.13 Whoosh 5                       | ev=1
+swing.spear     | HKAP2 Seq2.13 Whoosh 5                       | ev=2
+swing.fist      | Seq 2.1 whoosh #1
+swing.fist      | Seq1.15 whoosh #1
+swing.fist      | Seq 2.1 whoosh #1                            | rate=1.12
+
+# ---- hits ------------------------------------------------------------------------------------------------------------
+hit.flesh       | Seq 2.1 Hit #1
+hit.flesh       | Seq 2.1 Hit #2
+hit.flesh       | Seq 2.1 Hit #3
+hit.flesh       | Seq1.15 Hit #1
+hit.flesh       | Seq1.15 Hit #2
+hit.big         | HKAP2 Seq2.13 Hit 1                          | ev=0 max=0.4
+hit.big         | HKAP2 Seq2.13 Hit 2                          | ev=0 max=0.4
+hit.big         | HKAP2 Seq2.13 Hit 3                          | ev=0 max=0.4
+hit.kill        | Juicy Burst_VM 03                            | max=0.4
+hit.kill        | WOODImpt_Hit Blood Spill Splat
+hit.arrow       | Cartoon Arrow 09                             | max=0.18
+hit.arrow       | Cartoon Arrow 09                             | max=0.16 rate=1.1
+hit.arrow       | WOODImpt_Impact Wood 23                      | ev=1 rate=1.1
+hit.rock        | Bluezone_BC0297_stone_impact_steel_bar_01    | max=0.25
+hit.rock        | Hit Rock Debris_RBD 02                       | max=0.25
+hit.stun        | Bluezone_BC0286_invader_debris_impact_011    | max=0.5
+
+# ---- gathering -------------------------------------------------------------------------------------------------------
+gather.wood     | WOODImpt_Impact Wood 23                      | ev=0 max=0.22
+gather.wood     | WOODImpt_Impact Wood 23                      | ev=0 max=0.22 rate=0.92
+gather.wood     | WOODImpt_Impact Wood 23                      | ev=0 max=0.2 rate=1.08
+gather.wood     | Bluezone_BC0279_forest_wood_log_debris_falling | grain=0/3 glen=0.2 sep=0.3
+gather.wood     | Bluezone_BC0279_forest_wood_log_debris_falling | grain=1/3 glen=0.2 sep=0.3
+gather.stone    | Bluezone_BC0297_stone_impact_hammer_015      | max=0.22
+gather.stone    | Bluezone_BC0297_stone_impact_015             | max=0.22
+gather.stone    | Bluezone_BC0297_stone_impact_041             | ev=0 max=0.22
+gather.stone    | Bluezone_BC0297_stone_impact_steel_bar_01    | max=0.22 rate=0.92
+gather.stone    | Hit Rock Debris_RBD 02                       | max=0.22
+gather.ore      | Iron - Thick - HIT - Hammer                  | ev=0
+gather.ore      | Iron - Thick - HIT - Hammer                  | ev=1
+gather.ore      | Iron - Thick - HIT - Hammer                  | ev=2
+gather.ore      | Iron - Thick - HIT - Hammer                  | ev=3
+gather.scrap    | Toolbox - DROP                               | ev=0 max=0.28
+gather.scrap    | Toolbox - DROP                               | ev=1 max=0.28
+gather.scrap    | Metal Shelf Hit 02                           | max=0.28
+gather.scrap    | Chain Metal Drop On Floor_VS 02              | max=0.28
+gather.plant    | Bluezone_BC0279_forest_tree_branch_texture_1 | grain=0/4 glen=0.18 sep=0.3
+gather.plant    | Bluezone_BC0279_forest_tree_branch_texture_1 | grain=1/4 glen=0.18 sep=0.3
+gather.plant    | Bluezone_BC0279_forest_tree_branch_texture_1 | grain=2/4 glen=0.18 sep=0.3
+gather.plant    | Bluezone_BC0279_forest_tree_branch_texture_1 | grain=3/4 glen=0.18 sep=0.3
+gather.deplete  | Debris Brick_RBD 02                          | max=0.5
+gather.deplete  | Drop Rock On Rock Debris_RBD 03              | ev=0 max=0.5
+gather.fell     | WOODCrsh_Designed Wood Crash And Debris 13
+gather.fell     | Bluezone_BC0279_forest_wood_log_debris_falling | max=1.5
+gather.fell     | Bluezone_BC0279_forest_tree_wood_texture_creaking | max=1.5
+gather.clank    | Spade - HIT - Drumstick                      | ev=0 max=0.18
+gather.clank    | Spade - HIT - Drumstick                      | ev=1 max=0.18
+gather.clank    | Spade - HIT - Drumstick                      | ev=2 max=0.18
+gather.toolbreak | Celery,Bite,Crunch,Slow                     | max=0.6
+gather.toolbreak | Break and Crack_VM 03                       | max=0.6
+gather.carcass  | EFX INT Knife Cutting 05                     | ev=2
+gather.carcass  | EFX INT Knife Cutting 05                     | ev=3
+gather.carcass  | EFX SD GORE Flesh Pry 05                     | max=0.7
+
+# ---- creatures (only where the library has a voice that fits the family) ---------------------------------------------
+cr.boar.tell    | EFX SD Pig 02 Snort 18                       | max=0.5
+cr.boar.tell    | EFX SD Pig 02 Snort 12                       | ev=0 max=0.5
+cr.boar.hurt    | EFX SD Pig 08 Squeal 03                      | max=0.35
+cr.boar.hurt    | EFX SD Pig 08 Squeal 03                      | at=1.5 len=0.35 raw fi=0.01
+cr.boar.hurt    | EFX SD Pig 08 Squeal 03                      | at=3.0 len=0.35 raw fi=0.01
+cr.boar.die     | EFX SD Pig 08 Squeal 03                      | at=4.0 len=0.9 raw fi=0.02 fo=0.4
+cr.boar.die     | EFX SD Pig 08 Squeal 03                      | at=2.0 len=0.9 raw fi=0.02 fo=0.4
+cr.boar.idle    | EFX SD Pig 02 Snort 12                       | ev=1 max=0.9
+cr.boar.idle    | EFX SD Pig 02 Snort 12                       | ev=2 max=0.9
+cr.boar.idle    | EFX SD Pig 02 Snort 18                       | at=0.5 len=0.9 raw fi=0.03
+cr.wolf.tell    | EFX INT Dog Snarling 24                      | ev=0 max=0.5
+cr.wolf.tell    | EFX INT Mutt Growl 42                        | ev=0 max=0.5
+cr.wolf.hurt    | EFX INT Dog Wimper 06                        | max=0.35
+cr.wolf.hurt    | EFX INT Dog Wimper 06                        | at=1.0 len=0.35 raw fi=0.01
+cr.wolf.die     | EFX INT Dog Wimper 06                        | max=0.9
+cr.wolf.die     | EFX INT Dog Wimper 06                        | at=1.2 len=0.9 raw fi=0.02
+cr.wolf.idle    | EFX INT Dog Growl 33                         | at=1 len=0.9 raw fi=0.1 fo=0.3
+cr.wolf.idle    | EFX INT Dog Growl 33                         | at=5 len=0.9 raw fi=0.1 fo=0.3
+cr.wolf.idle    | EFX INT Mutt Growl 42                        | ev=1 max=0.9
+cr.greyback.tell | Growl Dry 14                                | max=0.5
+cr.greyback.tell | Roar Dry 5                                  | max=0.5
+cr.greyback.die | Creature Roar 13                             | max=0.9 rate=0.9
+cr.greyback.die | Roar Dry 5                                   | max=0.9 rate=0.85
+cr.toad.tell    | CREAAqua_Aquatic Creature Gurgling 2         | max=0.5
+cr.toad.tell    | CREAAqua_Aquatic Creature Gurgling 2         | at=1.5 len=0.5 raw fi=0.02
+cr.toad.die     | CREAAqua_Aquatic Creature Gurgling 2         | at=2.6 len=0.9 raw fi=0.02 rate=0.85
+cr.toad.idle    | CREAAqua_Aquatic Creature Gurgling 2         | at=0.8 len=0.8 raw fi=0.05 rate=1.1
+cr.crawler.tell | CREAInsc_Insectoid Creature Tremble Attack   | max=0.5
+cr.crawler.tell | Creature Hiss 4                              | max=0.5
+cr.crawler.die  | Creature Screeches 12                        | max=0.9
+cr.crawler.die  | CREAInsc_Insectoid Creature Tremble Attack   | at=1.3 len=0.9 raw fi=0.02
+cr.beetle.tell  | CREAInsc_Insectoid Creature Tremble Attack   | at=0.6 len=0.5 raw fi=0.02 rate=1.25
+cr.beetle.tell  | Hisses Dry 16                                | max=0.5 rate=1.2
+cr.beetle.die   | Creature Screeches 12                        | at=1.5 len=0.9 raw fi=0.02 rate=1.2
+cr.crab.tell    | Bone Cracking 18
+cr.crab.tell    | Bone Cracking 34                             | max=0.5
+cr.vampire.tell | Hisses Dry 11                                | max=0.5
+cr.vampire.tell | Creature Hiss 4                              | at=0.5 len=0.5 raw fi=0.02
+cr.vampire.die  | CREAEthr_Ethereal Entity Grim Pain Long 4    | max=0.9
+cr.orc.tell     | CREAHmn_Designed Orc Male Attack Long        | max=0.5
+cr.orc.tell     | MonsterPack2_Monster06_Attack13              | max=0.5
+cr.orc.hurt     | CREAHmn_Violent Humanoid Creature Exhale Short 4 | max=0.35
+cr.orc.die      | MonsterPack2_Monster09_Death02               | max=0.9
+cr.slime.tell   | Drenched Manipulation_VM 03                  | at=0.9 len=0.5 raw fi=0.02
+cr.slime.hurt   | Juicy Crack and Break_VM 01                  | max=0.3
+cr.slime.die    | Juicy Burst_VM 03
+cr.slime.die    | Juicy Crack and Break_VM 01                  | max=0.9
+cr.ronin.tell   | METLFric_Designed Metal Sword Sheath 04      | max=0.5
+cr.ronin.tell   | METLFric_SWING SCRAPE Swift Melee            | max=0.5
+cr.tidemarshal.tell | CREAMnstr_Designed Sea Beast Creature Pain | max=0.5
+cr.tidemarshal.die | CREAMnstr_Designed Sea Beast Creature Pain | at=1.5 len=0.9 raw fi=0.02
+cr.custodian.tell | RIPS AND TEARS DESIGNED Robot Arm Rotation | max=0.5
+cr.custodian.die | Bluezone_BC0305_steampunk_machine_mechanical_texture_heavy_impact | max=0.9
+cr.shoot        | Bluezone_BC0286_invader_weapon_scifi_shot_002 | max=0.25
+cr.shoot        | Bluezone_BC0286_invader_weapon_scifi_shot_002 | max=0.25 rate=1.15
+cr.tongue       | WEAPWhip_WHIP Snap Crack 05                  | max=0.3
+cr.tongue       | WEAPWhip_WHIP Snap Crack 05                  | max=0.3 rate=0.88
+cr.snip         | EFX INT Knife Cutting 05                     | ev=1
+cr.snip         | Bluezone_BC0301_tiny_gears_small_mechanism_click_complex | max=0.18 rate=0.9
+cr.emerge       | Woosh Debris                                 | max=0.6
+cr.emerge       | Smash Rock On Debris_RBD 04                  | ev=0 max=0.6
+
+# ---- elders ----------------------------------------------------------------------------------------------------------
+elder.awaken    | DSGNBram**Huge-67                            | max=3.5 fo=1.5
+elder.engage    | Monster 20
+elder.engage    | Creature Roar 13                             | max=2.0 fo=0.7
+elder.tell      | MonsterPack2_Monster10_Call09                | max=0.9
+elder.tell      | MonsterPack2_LargeMonster11_Roar03           | max=0.9
+elder.frost.tell | Bluezone_BC0278_ice_crack_break_078
+elder.frost.tell | ICEBrk_FROZEN FARMLAND Ice Crack hammer pull
+elder.bog.tell  | CREAAqua_Aquatic Creature Gurgling 2         | at=0.3 len=1.0 raw fi=0.03 rate=0.7
+elder.tide.tell | WHSH_Watery-Whoosh FIzzy Fast 03             | max=1.0
+elder.rust.tell | Metal Moans 04                               | max=1.0
+elder.grove.tell | Bluezone_BC0279_forest_tree_wood_texture_creaking | max=1.0
+elder.typhon.tell | WHSH_Airy-Whoosh Wind Gust 11              | at=0.6 len=1.0 raw fi=0.08 fo=0.4
+elder.emerge    | Smash Rock On Debris_RBD 04                  | ev=1
+elder.emerge    | Drop Rock On Rock Debris_RBD 03              | ev=0
+elder.submerge  | Scree Rock_RBD 06                            | at=1.0 len=1.0 raw fi=0.05 fo=0.5
+elder.submerge  | Scree Rock_RBD 06                            | at=4.0 len=1.0 raw fi=0.05 fo=0.5
+elder.brood     | RIPS AND TEARS DESIGNED Humanoid Guts 04     | max=1.0
+elder.brood     | Juicy Crack and Break_VM 01                  | max=1.0 rate=0.85
+elder.drain     | W_a_P_Spell_Whoosh_19                        | rev fi=0.3
+elder.drain     | WHSH_Watery-Whoosh FIzzy Fast 03             | max=1.2 rev fi=0.3
+elder.defeat    | ANMLRept_T Rex                               | max=3.0 fo=1.2
+elder.phase     | Roar Dry 5
+
+# ---- hazards ---------------------------------------------------------------------------------------------------------
+haz.fire        | Bluezone_BC0296_steampunk_weapon_flare_shot  | ev=0
+haz.fire        | Bluezone_BC0296_steampunk_weapon_flare_shot  | ev=1 max=0.7
+haz.quake       | Hit Rock Debris_RBD 02                       | max=0.7
+haz.quake       | Smash Rock On Debris_RBD 04                  | ev=0 max=0.7
+haz.quake       | Debris Brick_RBD 02                          | max=0.7
+haz.frost       | ICEBrk_Skill Freeze Whoosh Break             | max=0.7
+haz.frost       | Bluezone_BC0278_ice_crack_break_078          | max=0.7
+haz.frost       | ice, block of ice crushed                    | max=0.7
+haz.water       | Bluezone_BC0298_designed_water_impact_006    | max=0.7
+haz.water       | Bluezone_BC0298_designed_water_transition_impact | max=0.7
+haz.water       | MagicPack2_WaterExplosions_Explosion2-004    | max=0.7
+haz.root        | Bluezone_BC0279_forest_tree_branch_texture_1 | max=0.7
+haz.root        | Tear and Break_VM 12                         | at=1.0 len=0.7 raw fi=0.02
+haz.beam        | Bluezone_BC0286_invader_weapon_scifi_shot_002 | max=0.7
+haz.beam        | Bluezone_BC0299_electricity_surge_discharge  | max=0.7
+haz.beam        | MagicPack2_ElectricitySpells_Spell2-002      | max=0.7
+haz.blade       | SWSH_Sword Slash Impact V2 Assorted 18       | max=0.7
+haz.blade       | DSGNStngr_Action Deploy Units Sword Slice    | max=0.7
+haz.blade       | METLImpt_METAL SWING HIT                     | max=0.7
+
+# ---- cores -----------------------------------------------------------------------------------------------------------
+core.cast.fire  | Bluezone_BC0296_steampunk_weapon_flare_shot  | ev=0 rate=0.92
+core.cast.fire  | Bluezone_BC0296_steampunk_weapon_flare_shot  | ev=1 max=0.7 rate=1.05
+core.cast.frost | ICEBrk_Skill Freeze Whoosh Break             | max=0.7 rate=1.06
+core.cast.frost | Bluezone_BC0278_ice_crack_break_078          | max=0.7 rate=0.94
+core.cast.frost | ice, crack, ice block snapping               | ev=1
+core.cast.storm | MagicPack2_ElectricitySpells_Spell2-002      | max=0.7 rate=1.06
+core.cast.storm | Bluezone_BC0299_electricity_surge_discharge  | max=0.7 rate=0.94
+core.cast.storm | Bluezone_BC0299_electricity_electronic_lighter | max=0.7
+core.cast.earth | Smash Rock On Debris_RBD 04                  | ev=0 max=0.7 rate=0.9
+core.cast.earth | Bluezone_BC0297_stone_impact_015             | max=0.7
+core.cast.earth | Bluezone_BC0286_invader_debris_impact_011    | max=0.7
+core.cast.spirit | CREAEthr_Aztec Death Whistle DryPitch12     | max=0.7
+core.cast.spirit | CREAEthr_Aztec Death Whistle Distortion_02  | max=0.7
+core.blast.signature | EXPLReal_Medium Realistic Explosion 15
+core.meteor.signature | MagicPack2_Earth_MeteorShower003       | max=2.5 fo=1.0
+core.dragon.signature | ANMLRept_Large Herbivore Roar 01       | ev=0 max=2.5 fo=0.9
+core.elsa.signature | ice, block of ice crushed
+core.earthmother.signature | Scree Rock_RBD 06                 | at=0.1 len=2.5 raw fo=1.0
+core.mjolnir.signature | THUN_InsJ_Thunder_Extremely-Close_03  | ev=0 max=2.5 fo=1.0
+core.demon.signature | magic, action gesture, evil presence    | max=2.5 fo=1.0
+core.fizzle     | Bluezone_BC0299_electricity_texture_sizzling | at=1.2 len=0.4 raw fi=0.01 fo=0.2
+core.fizzle     | Bluezone_BC0299_electricity_texture_sizzling | at=1.8 len=0.35 raw fi=0.01 fo=0.2
+core.bolt       | W_a_P_Sci_Fi_Hit_3                           | max=0.35
+core.bolt       | MagicPack2_ElectricitySpells_Spell2-002      | max=0.3 rate=1.2
+core.spirit.depart | W_a_P_Epic_Whoosh_8                       | max=1.5 rev fi=0.5 fo=0.05
+core.spirit.arrive | W_a_P_Spell_Whoosh_19
+core.spirit.hit | W_a_P_Sci_Fi_Hit_3                           | max=0.4 rate=0.85
+
+# ---- fire ------------------------------------------------------------------------------------------------------------
+fire.steam      | 42 Campfire, Putting Out Fire                | at=2.0 len=0.8 raw fi=0.04 fo=0.35
+fire.steam      | 42 Campfire, Putting Out Fire                | at=6.0 len=0.8 raw fi=0.04 fo=0.35
+fire.boom       | EXPLReal_Medium Realistic Explosion 15       | max=1.2 fo=0.5
+fire.boom       | DESTRCrsh_Designed Car Explosion             | max=1.2 fo=0.5
+fire.boom       | Bluezone_BC0296_steampunk_weapon_cannon_shot | max=1.2 fo=0.5
+fire.boom.small | Bluezone_BC0296_steampunk_weapon_gun_shot    | ev=0 max=0.6
+fire.boom.small | Bluezone_BC0294_modern_cinematic_impact_percussion | max=0.6
+fire.lightning  | THUN_InsJ_Thunder_Extremely-Close_03         | ev=0 max=1.6 fo=0.7
+fire.lightning  | THUN_InsJ_Thunder_Very-Close_Rain_03         | ev=1 max=1.6 fo=0.7
+fire.lightning  | STORM_Texas Rain Thunder Initial Crash       | ev=3 max=1.6 fo=0.7
+
+# ---- building --------------------------------------------------------------------------------------------------------
+build.wood      | WOODImpt_Impact Wood 23                      | ev=0 max=0.5 rate=0.84
+build.wood      | DOORCreak_Wooden Door, Door Slams            | ev=3 max=0.5
+build.wood      | DOORCreak_Wooden Door, Door Slams            | ev=5 max=0.5
+build.stone     | Bluezone_BC0297_stone_impact_041             | ev=0 max=0.6
+build.stone     | Drop Rock On Rock Debris_RBD 03              | ev=1 max=0.6
+build.stone     | Bluezone_BC0297_stone_impact_hammer_015      | max=0.6 rate=0.88
+build.metal     | Metal Shelf Hit 02                           | max=0.6
+build.metal     | EFX SD Metal plate bang 01                   | max=0.6
+build.metal     | Toolbox - DROP                               | ev=3
+build.soft      | FOLYClth_ClothMovement24                     | ev=0 max=0.6
+build.soft      | FOLYClth_ClothMovement29                     | max=0.5 rate=0.9
+build.wire      | Bluezone_BC0302_industrial_lever_switch_small | rate=1.15
+build.wire      | Bluezone_BC0299_electricity_electronic_lighter | max=0.4
+build.upgrade   | Bluezone_BC0282_steampunk_mechanical_mechanism_metal_008 | ev=0
+build.upgrade   | Bluezone_BC0282_steampunk_mechanical_gear_chain
+build.repair    | Iron - Thick - HIT - Hammer                  | ev=1 pat=0:1,0.22:0.85
+build.repair    | Iron - Thick - HIT - Hammer                  | ev=5 pat=0:0.9,0.2:1,0.42:0.8
+build.reclaim   | DESTRCrsh_rummaging through compact wood dry | max=0.8
+build.reclaim   | DESTRCrsh_scrap wood falling                 | max=0.8
+build.hit       | DOORCreak_Wooden Door, Door Slams            | ev=0 max=0.25
+build.hit       | DOORCreak_Wooden Door, Door Slams            | ev=1 max=0.25
+build.hit       | DOORCreak_Wooden Door, Door Slams            | ev=2 max=0.25
+build.hit       | DOORCreak_Wooden Door, Door Slams            | ev=4 max=0.25
+build.break     | WOODCrsh_Designed Wood Crash And Debris 13   | max=1.0 rate=0.92
+build.break     | Debris Brick_RBD 02                          | max=1.0
+build.break     | DESTRCrsh_Smashing a ceramics tile           | ev=0
+build.collapse  | Bluezone_BC0279_forest_wood_log_debris_falling | rate=0.85
+
+# ---- doors -----------------------------------------------------------------------------------------------------------
+door.wood.open  | DOORCreak_Wooden Door, Opening and Closing   | at=0.65 len=0.55 raw fi=0.02 fo=0.15
+door.wood.open  | EFX INT HOUSE DOOR Bedroom Wood              | ev=0 max=0.5
+door.wood.close | DOORCreak_Wooden Door, Opening and Closing   | at=4.5 len=0.45 fo=0.12
+door.wood.close | EFX INT HOUSE DOOR Bedroom Wood              | ev=2 max=0.4
+door.iron.open  | EFX EXT Bulkhead Door                        | ev=0 max=0.6
+door.iron.open  | EFX EXT Bulkhead Door                        | ev=2 max=0.6
+door.iron.close | EFX EXT Bulkhead Door                        | ev=1 max=0.6
+door.iron.close | EFX EXT Bulkhead Door                        | ev=3 max=0.6
+door.powered    | MACHElev-INT_Elevator Door Open Close        | ev=0 max=0.8 fo=0.3
+door.powered    | MACHElev-INT_Elevator Door Open Close        | ev=4 max=0.8 fo=0.3
+door.auto.close | MACHElev-INT_Elevator Door Open Close        | ev=1 max=0.8 fo=0.3
+door.locked     | VEHMech_Kawasaki Ninja ZX 10R Keys In Out    | ev=0 max=0.4
+door.locked     | MECHLtch_Click Deep Mechanism Latch          | pat=0:1,0.16:0.7 rate=0.9
+
+# ---- containers ------------------------------------------------------------------------------------------------------
+box.chest.open  | EFX INT HOUSE Kitchen Cupbord                | ev=0
+box.chest.open  | EFX INT HOUSE Kitchen Cupbord                | ev=3
+box.chest.close | EFX INT HOUSE Kitchen Cupbord                | ev=1 max=0.4
+box.chest.close | EFX INT HOUSE Kitchen Cupbord                | ev=4 max=0.4
+box.bag.open    | Zipper Case_VS 02                            | ev=0 max=0.4
+box.bag.open    | Zipper Case_VS 02                            | ev=2 max=0.4
+box.machine.open | Bluezone_BC0301_tiny_gears_small_mechanism_sequence_045 | max=0.4
+box.rag.open    | CHAINImpt_InsJ_Chains_Metal_Dropping_Close   | max=1.5
+box.cash.open   | falling_coins_rotation_1                     | max=1.0
+box.airdrop.signal | Bluezone_BC0286_invader_alien_scifi_transmission | ev=0
+box.airdrop.descent | AEROHeli_InsJ_Helicopter_Flyby_Close_03  | at=9 len=4 raw fi=1.2 fo=1.6
+box.airdrop.land | OBJLug_CaseDown_Concrete12                  | rate=0.8
+box.airdrop.land | Toolbox - DROP                              | ev=5 rate=0.75
+
+# ---- stations --------------------------------------------------------------------------------------------------------
+station.craft   | Iron - Thick - HIT - Hammer                  | ev=2 pat=0:1,0.2:0.8
+station.craft   | Toolbox - DROP                               | ev=6
+station.craft   | Bluezone_BC0305_steampunk_machine_mechanical_texture_053
+station.queue   | MACHMech_Mechanism Counting Machine
+station.queue   | Bluezone_BC0302_industrial_lever_switch_small | rate=0.9
+station.done    | Spade - HIT - Drumstick                      | ev=3
+station.done    | Spade - HIT - Drumstick                      | ev=1
+station.done.campfire | FIREBurn_Loop Elements Fire Crackling  | at=2 len=0.8 raw fi=0.05 fo=0.3
+station.done.furnace | Bluezone_BC0305_steampunk_machine_mechanical_texture_heavy_impact | max=0.8
+station.done.workbench | Iron - Thick - HIT - Hammer           | ev=6 pat=0:1,0.18:0.8,0.4:1
+station.on      | Bluezone_BC0302_industrial_lever_switch_014  | ev=0 max=0.8
+station.on      | Bluezone_BC0302_industrial_lever_switch_039  | max=0.8
+station.off     | Bluezone_BC0282_steampunk_mechanical_mechanism_metal_008 | ev=1
+station.off     | Bluezone_BC0302_industrial_lever_switch_039  | max=0.8 rate=0.82
+station.switch  | EFX INT HOUSE Wall Light Switch              | ev=0
+station.switch  | EFX INT HOUSE Wall Light Switch              | ev=7
+station.recycle.start | Bluezone_BC0282_steampunk_mechanical_gear_chain | max=0.8
+station.trap.set | Bluezone_BC0282_steampunk_mechanical_mechanism_metal_008 | ev=1 max=0.6 rate=1.1
+station.trap.snap | Chain Metal Drop On Floor_VS 02            | max=0.4
+station.trap.snap | Bluezone_BC0302_industrial_lever_switch_small | rate=1.2
+station.turret  | Bluezone_BC0296_steampunk_weapon_gun_shot    | ev=0 max=0.25
+station.turret  | Bluezone_BC0296_steampunk_weapon_gun_shot    | ev=0 max=0.25 rate=1.1
+station.turret  | Bluezone_BC0296_steampunk_weapon_gun_shot    | ev=0 max=0.25 rate=0.92
+
+# ---- farm, rides, people ---------------------------------------------------------------------------------------------
+farm.plant      | DESTRCrsh_sand falling on scrapwood          | max=0.6
+farm.plant      | DESTRCrsh_sand falling on scrapwood          | at=0.7 len=0.6 raw fi=0.03
+farm.water      | Stream - LIGHT - Medium Speed                | at=4 len=0.9 raw fi=0.12 fo=0.35
+farm.water      | Stream - LIGHT - Medium Speed                | at=15 len=0.9 raw fi=0.12 fo=0.35
+farm.lead       | CHAINMvmt_InsJ_Chains_Metal_Movement         | max=0.4
+farm.rest.start | FOLYClth_ClothMovement29
+farm.rest.end   | FOLYClth_ClothMovement24                     | ev=0
+ride.cart.grab  | EFX INT HOUSE Clean Wood Creek 01            | ev=1 max=0.4
+ride.cart.grab  | EFX INT HOUSE Clean Wood Creek 01            | ev=2 max=0.4
+ride.bike.mount | MOVEMisc_Honda CB750 Hornet Get On Bike      | ev=10
+ride.bike.exit  | MOVEMisc_Honda CB750 Hornet Get On Bike      | ev=11
+ride.evac.open  | VEHHorn_Honda CB500F Horn Long 02            | rate=0.38 lp=3000 fo=0.5 raw fi=0.08
+ride.evac.depart | VEHHorn_Kawasaki Ninja ZX 10R Horn Single   | rate=0.36 lp=3000 fo=0.2 pat=0:1,0.95:1
+ride.evac.board | SQUEAKS AND CREAKS Hardwood Floor Creaks     | ev=0 max=1.5
+
+# ---- ambience one-shots ----------------------------------------------------------------------------------------------
+amb.bird        | AMBSwmp_Meadow Pipits                        | at=10 len=70 hp=1800 grain=0/6 glen=1.1 sep=3 pre=0.25 fi=0.2 fo=0.4 raw
+amb.bird        | AMBSwmp_Meadow Pipits                        | at=10 len=70 hp=1800 grain=1/6 glen=1.1 sep=3 pre=0.25 fi=0.2 fo=0.4 raw
+amb.bird        | AMBSwmp_Meadow Pipits                        | at=10 len=70 hp=1800 grain=2/6 glen=1.1 sep=3 pre=0.25 fi=0.2 fo=0.4 raw
+amb.bird        | AMBSwmp_Meadow Pipits                        | at=10 len=70 hp=1800 grain=3/6 glen=1.1 sep=3 pre=0.25 fi=0.2 fo=0.4 raw
+amb.bird        | AMBSwmp_Meadow Pipits                        | at=10 len=70 hp=1800 grain=4/6 glen=1.1 sep=3 pre=0.25 fi=0.2 fo=0.4 raw
+amb.bird        | AMBSwmp_Meadow Pipits                        | at=10 len=70 hp=1800 grain=5/6 glen=1.1 sep=3 pre=0.25 fi=0.2 fo=0.4 raw
+amb.gust        | WHSH_Airy-Whoosh Wind Gust 11                | max=3.0 fi=0.4 fo=1.2 lp=5000
+amb.gust        | Wind - Aspen - Gusts                         | at=14 len=3 raw fi=0.8 fo=1.2
+amb.gust        | Wind - Aspen - Gusts                         | at=66 len=3 raw fi=0.8 fo=1.2
+amb.gust        | Wind - Aspen - Gusts                         | at=100 len=3 raw fi=0.8 fo=1.2
+amb.creak       | Metal Shelf Creaking 01                      | at=0.3 len=2.0 raw fi=0.05 fo=0.6
+amb.creak       | Metal Shelf Creaking 01                      | at=3.0 len=2.2 raw fi=0.05 fo=0.6
+amb.creak       | Metal Moans 04                               | max=2.5 fo=0.8
+amb.creak       | Metal Moans 04                               | at=2.0 len=2.3 raw fi=0.1 fo=0.8
+amb.house       | SQUEAKS AND CREAKS Hardwood Floor Creaks     | ev=2
+amb.house       | SQUEAKS AND CREAKS Hardwood Floor Creaks     | ev=4 max=2.0
+amb.house       | EFX INT HOUSE Clean Wood Creek 01            | ev=0 max=2.0
+amb.house       | EFX INT HOUSE Clean Wood Creek 01            | ev=7
+amb.thunder     | THUN_InsJ_Thunder_Extremely-Close_03         | ev=0 max=5 fo=2.2 T=-16
+amb.thunder     | THUN_InsJ_Thunder_Very-Close_Rain_03         | ev=1 max=5 fo=2.2 T=-16
+amb.thunder     | THUN_InsJ_Thunder_Distant_01                 | at=2 len=5 raw fi=0.6 fo=2.2 T=-20
+amb.thunder     | THUN_Interior Thunder Rumble                 | at=1 len=5 raw fi=0.6 fo=2.2 T=-20
+amb.volcano     | EffectiveTrailer_Booms_Vol2_075              | max=4 fo=2.0 lp=1200 T=-18
+amb.volcano     | Bluezone_BC0294_modern_cinematic_impact_022  | max=4 fo=2.0 lp=1200 T=-18
+amb.twig        | Celery,Bite,Crunch,Slow                      | rate=1.15 T=-27
+amb.twig        | Bluezone_BC0279_forest_tree_branch_texture_1 | at=1.0 len=0.5 raw fi=0.02 fo=0.2 T=-27
+amb.rag         | Scree Rock_RBD 06                            | at=1 len=4.5 raw fi=0.5 fo=2 lp=1500 T=-19
+amb.rag         | MagicPack2_Earth_MeteorShower003             | at=3 len=4.5 raw fi=0.5 fo=2 lp=2500 T=-19
+amb.rag         | MagicPack2_Earth_MeteorShower003             | at=14 len=4.5 raw fi=0.5 fo=2 lp=2500 T=-19
+amb.rag         | DSGNTonl_Metal Scrape Low Tonal LFE 4        | max=5 fi=0.3 fo=2 T=-19
+amb.rain.start  | RAINVege_InsJ_Ambience_Rain_Moderate         | at=0 len=4 raw fi=1.6 fo=1.8
+amb.storm.start | STORM_Texas Rain Thunder Initial Crash       | ev=3 max=5 fo=2.2 T=-16
+amb.dawn        | AMBSwmp_Meadow Pipits                        | at=40 len=4 raw hp=1200 fi=1.2 fo=1.5
+amb.dusk        | Country Night Front_MB 01                    | at=20 len=4 raw fi=1.4 fo=1.6 T=-26
+
+# ---- background beds (stereo, seamless) --------------------------------------------------------------------------------
+bed.meadow      | AMBSwmp_Meadow Pipits                        | at=28 len=26 hp=120
+bed.forest      | Wind - Aspen - Gusts                         | at=64 len=26
+bed.night       | Country Night Front_MB 01                    | at=8 len=26
+bed.marsh       | AMBTrop_Loop Ambience Jungle Night           | at=2 len=26
+bed.snow        | WINDInt_ChimneyWind05                        | at=22 len=26
+bed.ash         | WINDInt_Loop Weather Wind Whipping           | at=0 len=7.5 xf=1.0
+bed.ruins       | AMBRoom_Factory Loop Heavy Machinery         | at=4 len=24
+bed.rain        | RAINVege_InsJ_Ambience_Rain_Moderate         | at=0 len=20 xf=1.5
+bed.rain.roof   | RAINInt_Heavy Rain on Window                 | at=2 len=26
+bed.wind        | Wind - Aspen - Gusts                         | at=2 len=26
+bed.surf        | California Beaches, San Simeon               | at=10 len=28 xf=3
+bed.sea         | California Beaches, San Simeon               | at=84 len=28 xf=3 lp=6000
+bed.ragnarok    | CREAEthr_Aztec Death Whistle Drone_05        | at=1 len=16 xf=2.5
+bed.title       | 157 Urban_island_small town_harbour          | at=1 len=22
+
+# ---- looping machines and states (mono, seamless) -------------------------------------------------------------------
+loop.campfire   | FIREBurn_Loop Elements Fire Crackling        | at=0 len=10.5
+loop.wildfire   | FIREBurn_Loop Elements Fire Crackling        | at=1.5 len=10.5 rate=0.78
+loop.furnace    | 23 Industrial Gas  Boiler room               | at=10 len=8.5
+loop.refinery   | AMBRoom_Factory Loop Heavy Machinery         | at=30 len=8.5
+loop.pump       | MACHInd_Steampunk Large Factory Machine 09   | at=3 len=8.5
+loop.generator  | Bluezone_BC0299_electricity_transformer_hum  | at=5 len=8.5
+loop.recycler   | Bluezone_BC0301_tiny_gears_small_mechanism_sequence_045 | at=0.1 len=3.1 xf=0.3
+loop.bike.run   | VEHAtv-Mono_Medium Steady Rpm Loop           | at=2 len=8.5
+loop.bike.idle  | VEHAtv-Mono_Medium Steady Rpm Loop           | at=11 len=5.5 rate=0.62
+loop.heartbeat  | Seq 2.1 Hit #3                               | max=0.25 lp=550 fo=0.12 pat=0:1,0.3:0.7 pad=1.0 xf=0
+loop.geiger     | Bluezone_BC0299_electricity_texture_sizzling | at=0.1 len=2.5 xf=0.3

@@ -1,8 +1,8 @@
 /**
  * SFX slots (2026-11-28): the catalogue of every sound the game asks for, and the wiring that asks for it.
  *
- * The game ships with no sound files. Each slot plays a delivered file when one exists and otherwise the synthesized
- * stand-in the game always had. These tests hold the promises the hand-over depends on:
+ * Each slot plays a delivered file when one exists and otherwise the synthesized stand-in the game always had
+ * (which files are delivered, and how they load, is the business of sfx-bank.test.ts). These tests hold the promises the hand-over depends on:
  *   1. the catalogue is well formed (unique names, a folder per group, stand-ins that exist);
  *   2. every effect the simulation reports is either routed to a slot or silent ON PURPOSE;
  *   3. every slot has something that triggers it: no placeholder waits for a sound nothing would ever play;

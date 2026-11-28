@@ -159,8 +159,10 @@ if (cmd === 'table') {
     // a per-file loudness trim set by hand ({ "f": "...", "g": 0.8 }) survives a re-index
     const gains = {};
     try { for (const list of Object.values(JSON.parse(fs.readFileSync(path.join(PUB, 'index.json'), 'utf8')).slots ?? {})) for (const v of list) if (v && typeof v === 'object' && typeof v.g === 'number') gains[v.f] = v.g; } catch { /* no index yet */ }
-    const sorted = Object.fromEntries(Object.keys(slots).sort().map(id => [id, slots[id].sort().map(f => (f in gains ? { f, g: gains[f] } : f))]));
-    fs.writeFileSync(path.join(PUB, 'index.json'), JSON.stringify({ version: 1, slots: sorted }, null, 1) + '\n');
+    // b = size in bytes: the game plans its loading and shows its budget from it
+    const ids = Object.keys(slots).sort();
+    const line = id => ` ${JSON.stringify(id)}: [${slots[id].sort().map(f => JSON.stringify({ f, ...(f in gains ? { g: gains[f] } : {}), b: fs.statSync(path.join(PUB, f)).size })).join(', ')}]`;
+    fs.writeFileSync(path.join(PUB, 'index.json'), `{"version": 1, "slots": {\n${ids.map(line).join(',\n')}\n}}\n`);
   }
   const n = Object.values(slots).reduce((a, l) => a + l.length, 0);
   console.log(`${cmd === 'index' ? 'index.json written: ' : ''}${Object.keys(slots).length} of ${SFX_SLOTS.length} slots have files (${n} files)`);
@@ -174,7 +176,12 @@ if (cmd === 'table') {
   }
   if (strangers.length) { console.log(`files in public/sfx that match no slot name (ignored by the game): ${strangers.length}`); for (const f of strangers.slice(0, 30)) console.log('  ' + f); }
   if (notes.length) { console.log(`notes: ${notes.length}`); for (const t of notes.slice(0, 40)) console.log('  ' + t); }
+} else if (cmd === 'dump') {
+  // The slot facts the audio build (scripts/sfx-build/make.py) needs, as JSON on stdout.
+  const out = {};
+  for (const s of SFX_SLOTS) out[s.id] = { group: s.group, mode: s.mode, len: s.len, vol: s.vol, prio: s.prio, n: s.n, spatial: s.spatial, borrow: s.borrow ?? null, synth: s.synth ?? null };
+  process.stdout.write(JSON.stringify(out));
 } else {
-  console.log('usage: node scripts/sfx.mjs table | folders | sort <folder> | apply <plan.tsv> | index | status');
+  console.log('usage: node scripts/sfx.mjs table | folders | sort <folder> | apply <plan.tsv> | index | status | dump');
   process.exit(cmd ? 2 : 0);
 }

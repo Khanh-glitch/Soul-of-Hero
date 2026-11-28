@@ -46,3 +46,4 @@ vuvvu_lyric_video/
 
 # local HTTP build output
 web/dist-http/
+__pycache__/
