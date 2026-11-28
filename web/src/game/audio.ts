@@ -19,10 +19,16 @@
 //     and long silent gaps during ordinary gathering. Clearly a prototype, not
 //     a finished orchestral score.
 //
-// Licensing: 100% synthesis in this file. No Kenney / RPG Essentials WAV is
-// loaded by the Web runtime (those files remain in assets/audio, unused here).
+// Sound files: every cue also has a named SLOT (sfx/slots.ts). A slot that has a
+// file in public/sfx plays the file; a slot without one plays the synthesized
+// cue below, exactly as before. With no files delivered the game is 100%
+// synthesis. The Kenney / RPG Essentials files in assets/audio belong to the
+// Godot project and are not loaded here.
 // ============================================================================
 import { getPrefs, subscribePrefs } from '../visual/direction';
+import { SFX_SLOT, type SfxBus } from './sfx/slots';
+import { SfxBank, synthOf, type SlotStatus } from './sfx/bank';
+import { fxRoute, stepSurface, type RouteCtx, type SfxPlay } from './sfx/route';
 
 type Bus = 'music' | 'ambience' | 'world' | 'combat' | 'ui';
 let ctx: AudioContext | null = null;
@@ -65,6 +71,8 @@ export function initAudio() {
   for (let i = 0; i < pd.length; i++) { const w = Math.random() * 2 - 1; b0 = 0.99765 * b0 + w * 0.0990460; b1 = 0.96300 * b1 + w * 0.2965164; b2 = 0.57000 * b2 + w * 1.0526913; pd[i] = (b0 + b1 + b2 + w * 0.1848) * 0.22; }
   buildAmbience();
   applyMix(0.01);
+  const device = ctx;
+  void bank.load(bytes => new Promise<AudioBuffer>((resolve, reject) => { void device.decodeAudioData(bytes, resolve, reject); }));
 }
 
 export function setVolume(v: number, m: boolean) { vol = v; muted = m; applyMix(); }
@@ -144,9 +152,11 @@ function buildAmbience() {
   mkBed('room', 120, 0.9, 'lowpass', true);
   mkBed('rag', 70, 1.2, 'lowpass', true);
 }
+/** Synthesized layers whose role is currently played by a delivered file (see setBeds). */
+const bedFromFile = new Set<string>();
 function bedTo(name: string, v: number, tc = 1.4) {
   const b = beds[name]; if (!b || !ctx) return;
-  b.gain.gain.setTargetAtTime(Math.max(0, v), ctx.currentTime, tc);
+  b.gain.gain.setTargetAtTime(bedFromFile.has(name) ? 0 : Math.max(0, v), ctx.currentTime, tc);
 }
 /** Legacy signature preserved: Game.tsx already calls this once per second. */
 export function setAmbience(rain: number, wind: number) { bedTo('rain', rain * 0.2); bedTo('wind', wind * 0.1); }
@@ -171,9 +181,16 @@ export function setEnvironment(e: EnvState, rain: number, wind: number) {
 interface MachineVoice { osc: OscillatorNode; sub: OscillatorNode; gain: GainNode; filt: BiquadFilterNode; on: boolean }
 const machines = new Map<string, MachineVoice>();
 /** kind: furnace | refinery | generator | pump. `running` must come from burn/queue/power. */
+const SYNTH_MACHINES = new Set(['furnace', 'refinery', 'generator', 'pump']);
 export function machineState(id: string, kind: string, running: boolean, x: number, y: number) {
   if (!ctx || !buses.world) return;
   let m = machines.get(id);
+  // A delivered loop file owns the sound; the synthesized hum stays off for that machine.
+  if (loopLevel(`m:${id}`, `loop.${kind}`, running ? 1 : 0, { x, y })) {
+    if (m?.on) { m.gain.gain.setTargetAtTime(0, ctx.currentTime, 0.35); m.on = false; }
+    return;
+  }
+  if (!SYNTH_MACHINES.has(kind)) return;
   const sp = spatial({ x, y }, 'world');
   if (!running || !sp) {
     if (m?.on) { m.gain.gain.setTargetAtTime(0, ctx.currentTime, 0.35); m.on = false; }
@@ -249,13 +266,14 @@ export function tickMusic(now: number) {
 // ---------------------------------------------------------------------------
 // one-shot cues. Names are the engine's existing FX event types — unchanged.
 // ---------------------------------------------------------------------------
-export function sfx(e: any) {
-  if (!ctx) return;
+/** The synthesized stand-in for a cue. Returns false when it knows no cue of that name. */
+function synth(e: any): boolean {
+  if (!ctx) return false;
   const now = performance.now();
   const k = e.type + (e.mat || '') + (e.core || '');
   const win = e.type === 'step' ? 130 : e.type === 'mhit' || e.type === 'chip' ? 45 : 35;
-  if (last[k] && now - last[k] < win) return; last[k] = now;
-  const sp = spatial(e, 'world'); if (!sp) return;
+  if (last[k] && now - last[k] < win) return true; last[k] = now;
+  const sp = spatial(e, 'world'); if (!sp) return true;
   const { g, pan } = sp;
   const W: Bus = 'world', C: Bus = 'combat', U: Bus = 'ui';
 
@@ -273,13 +291,14 @@ export function sfx(e: any) {
     case 'clank': tone(1650, 1480, 0.05, 'square', 0.05 * g, W, 0, pan); break;
     case 'step': {
       if (Math.random() > 0.72) break;
-      const t = e.t;
-      // 9 sand, 12 road, 4 snow, 7 marsh, water 15/16/17 — material-specific
-      if (t === 4) noise(0.07, 2600, 0.03 * g, W, 'highpass', 0, 1, pan);
-      else if (t === 9) noise(0.06, 1400, 0.03 * g, W, 'bandpass', 0, 0.8, pan);
-      else if (t === 12 || t === 13) { noise(0.035, 1100, 0.035 * g, W, 'bandpass', 0, 1.4, pan); tone(220, 160, 0.03, 'triangle', 0.02 * g, W, 0, pan); }
-      else if (t === 7) noise(0.1, 420, 0.035 * g, W, 'lowpass', 0, 1, pan, true);
-      else if (t === 15 || t === 16 || t === 17) noise(0.09, 1800, 0.035 * g, W, 'bandpass', 0, 0.7, pan);
+      // By surface NAME. (This used to compare raw tile numbers against the wrong ids, so meadow sounded like snow
+      // and real snow, sand, marsh and water all fell through to the plain step.)
+      const surf: string = e.surf ?? stepSurface(e.t);
+      if (surf === 'snow' || surf === 'ice') noise(0.07, 2600, 0.03 * g, W, 'highpass', 0, 1, pan);
+      else if (surf === 'sand' || surf === 'ash') noise(0.06, 1400, 0.03 * g, W, 'bandpass', 0, 0.8, pan);
+      else if (surf === 'road' || surf === 'wood' || surf === 'stone' || surf === 'metal') { noise(0.035, 1100, 0.035 * g, W, 'bandpass', 0, 1.4, pan); tone(220, 160, 0.03, 'triangle', 0.02 * g, W, 0, pan); }
+      else if (surf === 'mud') noise(0.1, 420, 0.035 * g, W, 'lowpass', 0, 1, pan, true);
+      else if (surf === 'water') noise(0.09, 1800, 0.035 * g, W, 'bandpass', 0, 0.7, pan);
       else noise(0.045, 520, 0.028 * g, W, 'lowpass', 0, 1, pan, true);
       break;
     }
@@ -362,6 +381,183 @@ export function sfx(e: any) {
     case 'jrelic': tone(311, 311, 0.6, 'sine', 0.06, U); tone(466, 466, 0.7, 'sine', 0.05, U, 0.18); tone(698, 698, 0.9, 'triangle', 0.06, U, 0.36); tone(1396, 1396, 1.2, 'sine', 0.02, U, 0.5); noise(1.2, 7000, 0.02, U, 'highpass', 0.4, 1); break;
     case 'jepic': noise(0.9, 140, 0.22, U, 'lowpass', 0, 1, 0, true); tone(65, 49, 1.4, 'sine', 0.2, U); tone(131, 131, 1.6, 'sawtooth', 0.04, U, 0.5); tone(196, 196, 1.6, 'triangle', 0.06, U, 0.5); tone(262, 262, 1.8, 'triangle', 0.06, U, 0.9); tone(392, 392, 2.2, 'sine', 0.05, U, 1.3); break;
     case 'death': tone(220, 55, 1.4, 'sawtooth', 0.12, C); tone(110, 40, 1.8, 'sine', 0.1, C, 0.1); noise(1.2, 260, 0.07, C, 'lowpass', 0, 1, 0, true); break;
-    default: break;
+    default: return false;
+  }
+  return true;
+}
+
+// ---------------------------------------------------------------------------
+// SLOTS — the one way every sound is asked for.
+//
+// sfx(event)     an effect the simulation or a screen reports; routed to slots by sfx/route.ts
+// play(slot)     a slot by name
+// loopLevel(...) something that keeps sounding while a state holds
+// setBeds(...)   the background layers
+//
+// Each of them plays a delivered file when the slot has one and the synthesized
+// stand-in when it has none. Nothing here decides anything about the game.
+// ---------------------------------------------------------------------------
+const bank = new SfxBank(`${import.meta.env.BASE_URL}sfx/`);
+const NO_CTX: RouteCtx = {
+  creatureNear: () => null, heldKey: () => null, floorAt: () => null, itemClass: () => null, consumeKind: () => 'eat',
+  structMaterial: () => 'wood', entity: () => null, human: () => null, player: () => ({ x: listener.x, y: listener.y, character: 'male' }),
+};
+let routeCtx: RouteCtx = NO_CTX;
+/** The running game hands over read-only lookups (which creature is at a point, what a structure is made of). */
+export function setSfxContext(c: RouteCtx | null) { routeCtx = c ?? NO_CTX; }
+export function sfxContext(): RouteCtx { return routeCtx; }
+
+const slotAt: Record<string, number> = {};
+const slotLive: Record<string, number> = {};
+function placed(slot: { spatial: boolean; range: number }, x: number | undefined, y: number | undefined): { g: number; pan: number } | null {
+  if (!slot.spatial || x === undefined || y === undefined) return { g: 1, pan: 0 };
+  const dx = x - listener.x, d = Math.hypot(dx, y - listener.y);
+  if (d > slot.range) return null;
+  const ref = slot.range * 0.33;
+  return { g: 1 / (1 + (d / ref) * (d / ref)), pan: Math.max(-0.8, Math.min(0.8, dx / 300)) };
+}
+function playOne(p: SfxPlay, orig: any): 'file' | 'synth' | 'none' {
+  const slot = SFX_SLOT[p.slot];
+  if (!ctx || !slot || slot.mode !== 'shot') return 'none';
+  if (p.chance !== undefined && Math.random() > p.chance) return 'none';
+  const now = performance.now();
+  const sample = bank.take(p.slot, Math.random());
+  if (sample) {
+    if (slotAt[p.slot] && now - slotAt[p.slot] < slot.cd) return 'none';
+    if ((slotLive[p.slot] ?? 0) >= slot.voices) return 'none';
+    const sp = placed(slot, p.x, p.y); if (!sp) return 'none';
+    const src = ctx.createBufferSource(); src.buffer = sample.buffer;
+    const rate = (p.rate ?? 1) * (1 + (Math.random() * 2 - 1) * slot.pitch);
+    src.playbackRate.value = rate;
+    const out = route(src, slot.bus, sp.pan); if (!out) return 'none';
+    out.gain.value = slot.vol * sample.gain * sp.g * (p.gain ?? 1) * (0.92 + Math.random() * 0.08);
+    slotAt[p.slot] = now; slotLive[p.slot] = (slotLive[p.slot] ?? 0) + 1;
+    src.onended = () => { slotLive[p.slot] = Math.max(0, (slotLive[p.slot] ?? 1) - 1); };
+    src.start(); release(slot.bus, sample.buffer.duration / rate);
+    return 'file';
+  }
+  if (p.layer) return 'none';
+  // No file yet. An event the synthesizer always knew keeps its exact old cue; anything else uses the slot's stand-in.
+  if (p.legacy && orig && synth(p.slot.startsWith('step.') ? { ...orig, surf: p.slot.slice(5) } : orig)) { slotAt[p.slot] = now; return 'synth'; }
+  const cue = synthOf(p.slot);
+  if (!cue) return 'none';
+  if (slotAt[p.slot] && now - slotAt[p.slot] < slot.cd) return 'none';
+  slotAt[p.slot] = now;
+  return synth({ type: cue, x: slot.spatial ? p.x : undefined, y: slot.spatial ? p.y : undefined }) ? 'synth' : 'none';
+}
+/** One-shot cue by event. Event names are the engine's FX types and the names the screens already used. */
+export function sfx(e: any) {
+  if (!ctx || !e) return;
+  const plays = fxRoute(e, routeCtx);
+  if (e.x === undefined) directAt = performance.now();
+  if (!plays.length) { synth(e); return; }
+  for (const p of plays) playOne(p, e);
+}
+let directAt = 0;
+/** Milliseconds since a screen or an action last asked for a sound (world effects do not count). */
+export function directSoundAge(): number { return performance.now() - directAt; }
+/** One-shot cue by slot name, optionally at a world position. */
+export function play(slot: string, at?: { x?: number; y?: number; gain?: number; rate?: number }) { if (at?.x === undefined && SFX_SLOT[slot]?.bus === 'ui') directAt = performance.now(); playOne({ slot, ...at }, null); }
+/** Plays each of them. Returns false when none of them CAN sound (no file and no stand-in), so the caller may
+ *  give its own plain acknowledgement instead. */
+export function playAll(plays: readonly SfxPlay[]): boolean {
+  let audible = false;
+  if (plays.length) directAt = performance.now();
+  for (const p of plays) { playOne(p, null); if (!p.layer && bank.status(p.slot) !== 'silent') audible = true; }
+  return audible;
+}
+
+// --- loops and beds ---------------------------------------------------------
+interface LoopVoice { slot: string; src: AudioBufferSourceNode; gain: GainNode; pan: StereoPannerNode | null; stopAt: number; seen: number }
+const loops = new Map<string, LoopVoice>();
+/** Hold a looping file at `level` (0..1) under a caller-chosen key. Returns false when the slot has no file ready:
+ *  the caller then keeps its synthesized stand-in, if it has one. Level 0 fades the loop out and frees it. */
+export function loopLevel(key: string, slotId: string, level: number, at?: { x: number; y: number }, rate = 1, fade = 0.4): boolean {
+  const slot = SFX_SLOT[slotId];
+  if (!ctx || !slot || slot.mode === 'shot') return false;
+  let v = loops.get(key);
+  if (v && v.slot !== slotId) { v.gain.gain.setTargetAtTime(0, ctx.currentTime, 0.15); v.src.stop(ctx.currentTime + 0.8); loops.delete(key); v = undefined; }
+  const sp = at ? placed(slot, at.x, at.y) : { g: 1, pan: 0 };
+  const target = Math.max(0, Math.min(1, level)) * (sp ? sp.g : 0) * slot.vol;
+  if (!v) {
+    if (target <= 0.0005) return bank.status(slotId) === 'file' || bank.status(slotId) === 'borrowed';
+    const sample = bank.take(slotId, Math.random());
+    if (!sample) return false;
+    const bus = buses[slot.bus]; if (!bus) return false;
+    const src = ctx.createBufferSource(); src.buffer = sample.buffer; src.loop = true;
+    const gain = ctx.createGain(); gain.gain.value = 0;
+    const pan = ctx.createStereoPanner ? ctx.createStereoPanner() : null;
+    if (pan) src.connect(pan).connect(gain); else src.connect(gain);
+    gain.connect(bus);
+    src.start(0, Math.random() * sample.buffer.duration);
+    v = { slot: slotId, src, gain, pan, stopAt: 0, seen: 0 }; loops.set(key, v);
+  }
+  v.seen = performance.now();
+  v.src.playbackRate.setTargetAtTime(rate, ctx.currentTime, 0.2);
+  if (v.pan && sp) v.pan.pan.setTargetAtTime(sp.pan, ctx.currentTime, 0.2);
+  v.gain.gain.setTargetAtTime(target, ctx.currentTime, fade);
+  if (target <= 0.0005) {
+    // let it fade, then free the voice; a later call with a level starts it again
+    if (!v.stopAt) v.stopAt = performance.now() + fade * 5000;
+    else if (performance.now() > v.stopAt) { try { v.src.stop(); } catch { /* already stopped */ } v.gain.disconnect(); loops.delete(key); }
+  } else v.stopAt = 0;
+  return true;
+}
+/** Fade out and free every loop whose key starts with `prefix` (all of them when omitted). */
+export function stopLoops(prefix = '') {
+  if (!ctx) return;
+  for (const [key, v] of loops) {
+    if (!key.startsWith(prefix)) continue;
+    v.gain.gain.setTargetAtTime(0, ctx.currentTime, 0.2);
+    try { v.src.stop(ctx.currentTime + 1.2); } catch { /* already stopped */ }
+    loops.delete(key);
   }
 }
+/** Fade out loops under `prefix` that nobody has refreshed for `maxAgeMs` (the thing they belonged to is gone or out of reach). */
+export function sweepLoops(prefix: string, maxAgeMs: number) {
+  if (!ctx) return;
+  const now = performance.now();
+  for (const [key, v] of loops) {
+    if (!key.startsWith(prefix) || now - v.seen < maxAgeMs) continue;
+    v.gain.gain.setTargetAtTime(0, ctx.currentTime, 0.3);
+    try { v.src.stop(ctx.currentTime + 1.6); } catch { /* already stopped */ }
+    loops.delete(key);
+  }
+}
+/** Background layers by slot id -> level 0..1. A layer with a delivered file plays it and silences the synthesized
+ *  layer of the same role; a layer without a file leaves the synthesized one (set by setEnvironment) alone. */
+export function setBeds(levels: Readonly<Record<string, number>>) {
+  for (const id in levels) {
+    const slot = SFX_SLOT[id]; if (!slot || slot.mode !== 'bed') continue;
+    const fromFile = loopLevel(`bed:${id}`, id, levels[id], undefined, 1, 1.6);
+    if (slot.synth) { if (fromFile) { if (!bedFromFile.has(slot.synth)) { bedFromFile.add(slot.synth); bedTo(slot.synth, 0, 1.6); } } else bedFromFile.delete(slot.synth); }
+  }
+}
+/** Leaving the game: nothing of the world may keep sounding on the title screen. */
+export function stopWorldAudio() {
+  stopAllMachines(); stopLoops();
+  for (const name in beds) bedTo(name, 0, 0.3);
+  setMood('silence', Date.now());   // the music clock is the wall clock, as in the game loop
+}
+
+// --- for the sound test board ------------------------------------------------
+export function slotStatus(id: string): SlotStatus { return bank.status(id); }
+/** Read the list of delivered files without opening the audio device (the board shows it before the first click). */
+export function loadSfxIndex() { return bank.loadIndex(); }
+export function bankCounts() { return { loaded: bank.loaded, ...bank.counts(), failures: bank.failures() }; }
+export function onBankChange(fn: () => void) { return bank.onChange(fn); }
+/** Audition a slot from the board: one-shots play once, loops and beds sound for three seconds. */
+export function audition(id: string): 'file' | 'synth' | 'none' | 'loading' {
+  const slot = SFX_SLOT[id]; if (!ctx || !slot) return 'none';
+  const hasFile = bank.status(id) === 'file' || bank.status(id) === 'borrowed';
+  if (slot.mode === 'shot') {
+    delete slotAt[id];
+    if (hasFile && !bank.take(id, Math.random())) return 'loading';   // asked for; the board tries again when it arrives
+    return playOne({ slot: id }, null);
+  }
+  const key = `audition:${id}`;
+  if (!loopLevel(key, id, 1, undefined, 1, 0.15)) return hasFile ? 'loading' : 'none';
+  setTimeout(() => { loopLevel(key, id, 0, undefined, 1, 0.3); setTimeout(() => stopLoops(key), 1500); }, 3000);
+  return 'file';
+}
+export type { SfxBus };

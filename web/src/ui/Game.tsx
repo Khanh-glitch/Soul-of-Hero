@@ -27,14 +27,16 @@ const SAVE_TOAST: Record<string, string> = {
   'idb-transaction': 'Save database write failed; the local copy was written.',
 };
 import { getWorld, ZONES } from '../game/world';
-import { sfx, setAmbience, initAudio, setVolume } from '../game/audio';
+import { sfx, initAudio, setVolume, play, playAll, setSfxContext, sfxContext, stopWorldAudio, directSoundAge } from '../game/audio';
+import { routeContext, receiptSounds, watchSecond, watchFast, newWatch } from '../game/sfx/director';
+import { receiptHasRoute, receiptRoute, intentRoute, refusalRoute, panelSound, QUIET_INTENTS } from '../game/sfx/route';
 import { save, saveSync, saveDetailed, lastSaveOutcome } from '../game/persist';
 import { prebuildRegions, regionPrebuildStats } from '../veyra05/region-prebuild';
 import { autosaveDecision, AUTOSAVE_MIN_MS, AUTOSAVE_STILL_MS } from '../game/autosave-policy';
 import { Slot, Bar, Icon, Mark, PanelGuard, mkIntent, type Api, type PanelState } from './common';
 import { gameDrew } from './veil';
 import { Vitals, UrgentAlerts, WorldClock, Hotbar, RigStatus, ThreatBar, PresentationPanel, useVisualPrefs, Glyph } from './hud';
-import { setListener, setEnvironment, machineState, setMood, tickMusic, stopAllMachines } from '../game/audio';
+import { setListener, tickMusic } from '../game/audio';
 import { getPrefs, setPrefs, applyCssTheme, computeStageView, isTouchDevice, resolveHudScale } from '../visual/direction';
 import { TouchControls, TouchScreens, type TouchApi } from './TouchControls';
 import { HomeStatusCard } from './HomeStatus';
@@ -114,6 +116,29 @@ export default function Game({
   const fieldMerge = useRef<Map<string, { id: string; t: number }>>(new Map());
   const seenCores = useRef<Set<string>>(new Set());
   const lastCueSeq = useRef<number>(gs.run?.receipts.at(-1)?.seq ?? 0);
+  // SOUND: its own receipt cursor (every routed receipt sounds once), the once-a-second watch, and read-only lookups.
+  const lastSfxSeq = useRef<number>(gs.run?.receipts.at(-1)?.seq ?? 0);
+  const sfxWatch = useRef(newWatch());
+  const sfxSpoken = useRef<Set<string>>(new Set());
+  useEffect(() => { setSfxContext(routeContext(() => gs.run)); return () => { setSfxContext(null); stopWorldAudio(); }; }, [gs]);
+  // Every button answers a press. One listener for the whole screen: when the press already produced a sound of its
+  // own (an action, a panel opening) nothing is added; otherwise a tab gives the tab sound and a button the click.
+  useEffect(() => {
+    const onClick = (e: MouseEvent) => {
+      const el = e.target instanceof Element ? e.target.closest('button, [role="tab"], [data-sfx]') : null;
+      if (!el || (el as HTMLButtonElement).disabled || el.closest('.touch-btn, [data-sfx="off"]')) return;
+      window.setTimeout(() => { if (directSoundAge() > 120) play(el.getAttribute('role') === 'tab' || el.getAttribute('data-sfx') === 'tab' ? 'ui.tab' : 'ui.click'); }, 30);
+    };
+    document.addEventListener('click', onClick); return () => document.removeEventListener('click', onClick);
+  }, []);
+  const sfxPanel = useRef<{ kind: string | null; eid?: string; build: boolean } | null>(null);
+  useEffect(() => {
+    const next = { kind: panel?.kind ?? null, eid: panel?.eid, build: buildMode };
+    const prev = sfxPanel.current; sfxPanel.current = next;
+    if (!prev) return;   // the first render: nothing was opened by the player
+    const seen = (id?: string) => { const e = id ? gs.run?.entities[id] : undefined; return e ? { kind: e.kind, station: !!e.station } : null; };
+    playAll(panelSound(prev, next, seen(prev.eid), seen(next.eid)));
+  }, [panel?.kind, panel?.eid, buildMode, gs]);
   const phaseWatch = useRef<{ runId: string; phase: string } | null>(null);
   // ---------------- JOURNEY + ATTENTION state ----------------
   const [journey, setJourneyState] = useState<JourneyStore>(() => loadJourney(gs, qaMode));
@@ -174,7 +199,7 @@ export default function Game({
     setFieldNoteStore(gs.run ? readFieldNoteStore(gs.run, qaMode) : { dismissed: [], resolved: [], triggered: [], muted: false });
     fieldActionsRef.current.clear();
     setExperiences([]); setFieldPickups([]);
-    lastCueSeq.current = gs.run?.receipts.at(-1)?.seq ?? 0;
+    lastCueSeq.current = gs.run?.receipts.at(-1)?.seq ?? 0; lastSfxSeq.current = lastCueSeq.current;
     seenCores.current = new Set(gs.run ? C(gs.run, 'inv').slots.filter(s => s && ITEMS[s.key]?.creatorCore).map(s => s!.uid) : []);
     phaseWatch.current = gs.run ? { runId: gs.run.id, phase: phaseOf(gs.run, Date.now()) } : null;
     feedbackSeen.current.clear(); fieldMerge.current.clear();
@@ -224,7 +249,7 @@ export default function Game({
     setUpgradeMode(t === 'upgrade'); setRepairMode(t === 'repair'); setReclaim(t === 'reclaim');
     setBuildType((BUILD_KIT as readonly string[]).includes(t) ? t : null);
   }, []);
-  const enterBuild = useCallback((t?: BuildTool) => { setPanel(null); setBuildMode(true); applyTool(t ?? lastPieceRef.current); sfx({ type: 'ui' }); }, [applyTool]);
+  const enterBuild = useCallback((t?: BuildTool) => { setPanel(null); setBuildMode(true); applyTool(t ?? lastPieceRef.current); }, [applyTool]);
   const exitBuild = useCallback(() => { setBuildMode(false); setBuildType(null); setReclaim(false); setRepairMode(false); setUpgradeMode(false); }, []);
   const dismissExperience = useCallback((id: string) => setExperiences(current => current.filter(v => v.id !== id)), []);
   useEffect(() => {
@@ -265,14 +290,20 @@ export default function Game({
       // not the last receipt in the log (which may belong to an achievement).
       const committed = gs.run?.receipts.find(v => v.id === res.receipt);
       const projected = committed && gs.run ? deriveCues([committed], committed.seq - 1).some(c => !!experienceFromCue(c, gs.run!)) : false;
-      scheduleSave(); if (res.msg && !projected) toast(res.msg, 'ok'); sfx({ type: type === 'build' ? 'build' : type === 'craft' ? 'craft' : type === 'deposit' || type === 'buy' ? 'coin' : 'ui' });
+      scheduleSave(); if (res.msg && !projected) toast(res.msg, 'ok');
+      // SOUND: the committed receipt names the sound; a request about a person is named by the request itself.
+      // When that slot has neither a file nor a stand-in yet, the plain acknowledgement the game always gave stays.
+      const asked = intentRoute(type);
+      const plays = asked.length ? asked : committed && receiptHasRoute(committed.kind) ? receiptRoute(committed.kind, String(committed.detail ?? ''), sfxContext()) : [];
+      if (committed) sfxSpoken.current.add(committed.id);   // spoken here, at once; the frame loop skips it
+      if (!QUIET_INTENTS.includes(type) && !playAll(plays)) sfx({ type: type === 'build' ? 'build' : type === 'craft' ? 'craft' : type === 'deposit' || type === 'buy' ? 'coin' : 'ui' });
       if (sourceBefore && committed?.kind === 'move') {
         const after = gs.run?.custody[payload.from]?.slots[payload.fs];
         const moved = Math.max(0, sourceBefore.qty - (after?.uid === sourceBefore.uid ? after.qty : 0));
         if (moved) floatItem(sourceBefore.key, moved, sourceBefore.x, sourceBefore.y, committed.id);
       }
     }
-    else if (!(res as any).dup) { toast((res as any).reason, 'bad'); sfx({ type: 'deny' }); }
+    else if (!(res as any).dup) { toast((res as any).reason, 'bad'); playAll(refusalRoute(type, String((res as any).reason ?? ''))); }
     rerender(); return res;
   }, [gs, floatItem]);
   const api: Api = { gs, now: () => Date.now(), act, toast, open: (p) => { setPanel(p); setSel(null); }, panel, sel, setSel, setBuild: setBuildType, buildType, reclaim, setReclaim, repairMode, setRepairMode, setUpgradeMode, sfx: (t) => sfx({ type: t }), rerender };
@@ -358,15 +389,15 @@ export default function Game({
     const e = t.eid ? r.entities[t.eid] : null;
     switch (t.kind) {
       case 'fire': act('douseTree', { tx: Math.floor(t.x/16), ty: Math.floor(t.y/16) }); return;
-      case 'water': act('drink', { x: t.x, y: t.y }); sfx({ type: 'eat' }); return;
-      case 'loot': act('observeLoot', { eid: t.eid }); setPanel({ kind: 'container', eid: t.eid }); sfx({ type: 'ui' }); return;
-      case 'recycler': case 'bag': case 'cart': case 'vehicle': setPanel({ kind: 'container', eid: t.eid }); sfx({ type: 'ui' }); return;
-      case 'airdrop': { const res=act('openAirdrop',{eid:t.eid}); if(res.ok){setPanel({kind:'container',eid:t.eid});sfx({type:'ui'});} return; }
-      case 'cash': { const res = act('openCash', { eid: t.eid }); if (res.ok) { setPanel({ kind: 'container', eid: t.eid }); sfx({ type: 'coin' }); } return; }
+      case 'water': act('drink', { x: t.x, y: t.y }); return;
+      case 'loot': act('observeLoot', { eid: t.eid }); setPanel({ kind: 'container', eid: t.eid }); return;
+      case 'recycler': case 'bag': case 'cart': case 'vehicle': setPanel({ kind: 'container', eid: t.eid }); return;
+      case 'airdrop': { const res=act('openAirdrop',{eid:t.eid}); if(res.ok){setPanel({kind:'container',eid:t.eid});} return; }
+      case 'cash': { const res = act('openCash', { eid: t.eid }); if (res.ok) { setPanel({ kind: 'container', eid: t.eid }); } return; }
       case 'vendor': setPanel({ kind: 'vendor', eid: t.eid }); return;
       case 'door': act('door', { eid: t.eid }); act('observeGate', { eid: t.eid }); return;
-      case 'drop': { const res = act('pickup', { eid: t.eid }); if (res.ok) sfx({ type: 'pickup' }); return; }
-      case 'g1b:chest': case 'g1b:card': { const res = act('g1bOpen', { eid: t.eid }); if (res.ok) { setPanel({ kind: 'container', eid: t.eid }); sfx({ type: 'ui' }); } return; }
+      case 'drop': act('pickup', { eid: t.eid }); return;
+      case 'g1b:chest': case 'g1b:card': { const res = act('g1bOpen', { eid: t.eid }); if (res.ok) { setPanel({ kind: 'container', eid: t.eid }); } return; }
       case 'g1b:gen': act('g1bGenerator', { eid: t.eid }); return;
       case 'gen': act('generator', { eid: t.eid }); act('observeGate', { eid: t.eid }); return;
       case 'evac': setPanel({ kind: 'evac', eid: t.eid }); return;
@@ -390,7 +421,7 @@ export default function Game({
   // input
   useEffect(() => {
     const keyMap: Record<string, keyof Input> = { KeyW: 'up', ArrowUp: 'up', KeyS: 'down', ArrowDown: 'down', KeyA: 'left', ArrowLeft: 'left', KeyD: 'right', ArrowRight: 'right' };
-    const toggle = (k: PanelState['kind']) => { coreAimRef.current=null; setCoreAim(null); inp.current.skill=undefined; inp.current.cancel=true; setPanel(p => (p?.kind === k ? null : { kind: k })); setSel(null); sfx({ type: 'ui' }); };
+    const toggle = (k: PanelState['kind']) => { coreAimRef.current=null; setCoreAim(null); inp.current.skill=undefined; inp.current.cancel=true; setPanel(p => (p?.kind === k ? null : { kind: k })); setSel(null); };
     const down = (e: KeyboardEvent) => {
       if (e.target instanceof HTMLElement && (e.target.matches('input, textarea, select') || e.target.isContentEditable)) { if (e.code === 'Escape') e.target.blur(); return; }
       initAudio(); const r = gs.run; if (!r) return;
@@ -549,14 +580,13 @@ export default function Game({
         for (const cue of cues) {
           const event = dir.absorb.has(cue.receiptId) ? null : experienceFromCue(cue, gs.run);
           if (event) present(event);
-          if (cue.kind === 'station_job_done' || cue.kind === 'hand_craft' || cue.kind === 'recycle_finished' || cue.kind === 'oil_extracted') { sfx({ type: 'craft' }); }
-          else if (cue.kind === 'station_state_changed' && cue.detail.includes('fuel_out')) { sfx({ type: 'machineOff' }); }
-          else if (cue.kind === 'heat_out') { sfx({ type: 'machineOff' }); }
-          else if (cue.kind === 'tool_broke') { sfx({ type: 'break' }); }
-          else if (cue.kind === 'elder_defeated') { /* the L5 cinematic owns this sound */ }
-          else if (cue.kind === 'airdrop_landed') { sfx({ type: 'airdropImpact' }); }
-          else if (cue.kind === 'cash_secured') { sfx({ type: 'coin' }); }
         }
+      }
+      // SOUND: every receipt written since the last frame speaks once (game/sfx/route.ts says which slot). This is
+      // where job-done, fuel-out, tool-broke, airdrop and cash sounds now come from, along with all the others.
+      if ((gs.run.receipts.at(-1)?.seq ?? 0) > lastSfxSeq.current) {
+        lastSfxSeq.current = receiptSounds(gs.run, lastSfxSeq.current, sfxContext(), sfxSpoken.current);
+        sfxSpoken.current.clear();
       }
       // JOURNEY: receipt-cursor ingestion (immediately after new receipts, otherwise ~2.5 Hz for observed discoveries).
       journeyAcc.current += dt; if (cues.length || journeyAcc.current > 400) { journeyAcc.current = 0; runJourney(now); }
@@ -578,7 +608,7 @@ export default function Game({
       // VISUAL ARENA audio: listener follows the camera; music is scheduled at
       // 10 Hz and ambience/machines/mood are re-derived at 1 Hz from real state.
       setListener(cam.x + viewInsetX() + VIEW_W / 2, cam.y + viewInsetY() + VIEW_H / 2);
-      uiAcc += dt; if (uiAcc > 100) { uiAcc = 0; rerender(); tickMusic(now); }
+      uiAcc += dt; if (uiAcc > 100) { uiAcc = 0; rerender(); tickMusic(now); watchFast(gs.run, sfxWatch.current); }
       { const clock = performance.now(); frameGap += (Math.min(250, clock - frameAt) - frameGap) * 0.05; frameAt = clock; }   // smoothed real time between frames; above ~20 ms the game is missing its frame rate
       prebuildAcc += dt; if (prebuildAcc > 1000) { prebuildAcc = 0; prebuildRegions(gs.run, now, frameGap > 20); }
       // Timed autosave: taken at a quiet moment, at the latest AUTOSAVE_MAX_MS after the previous one (autosave-policy.ts).
@@ -593,34 +623,10 @@ export default function Game({
           if (when !== 'wait') { autosavedAt = t; if (!qaMode) void saveDetailed(gs, { light: when === 'light' }).then(reportSave); }
         } }
       ambAcc += dt; if (ambAcc > 1000) {
-        ambAcc = 0; const rr = gs.run; const pp = rr.player; setIssues(standingIssues(rr));
-        const w = weatherAt(rr, now); const idx = Math.floor(pp.y / 16) * WW + Math.floor(pp.x / 16);
-        const z = getWorld().zone[idx] ?? 0; const world = getWorld();
-        const rain = w === 'storm' ? 1 : w === 'rain' ? 0.6 : 0;
-        const wind = (z === 5 ? 0.9 : 0.25) + (w === 'storm' ? 0.6 : 0);
-        setAmbience(rain, wind);
-        const rag = isRagnarok(rr, now); const ph2 = phaseOf(rr, now);
-        const dtm2 = dayTime(rr, now);
-        let nearMachine = 0;
-        for (const eid in rr.entities) {
-          const en = rr.entities[eid];
-          if (Math.abs(en.x - pp.x) > 420 || Math.abs(en.y - pp.y) > 420) continue;
-          let run = false, kind = '';
-          if (en.station) { run = en.station.burn > 0 && en.station.queue.length > 0; kind = en.type === 'refinery' ? 'refinery' : en.type === 'oil_pump' ? 'pump' : 'furnace'; }
-          else if (en.basePower) { run = !!en.basePower.enabled && en.basePower.energy > 0; kind = 'generator'; }
-          if (!kind) continue;
-          if (run) nearMachine++;
-          machineState(eid, kind, run, en.x, en.y);
-        }
-        setEnvironment({ zone: z, indoors: !!pp.sheltered, sheltered: !!pp.sheltered, night: dtm2 < 0.25 || dtm2 > 0.78, rag, phase: ph2, nearMachine: Math.min(3, nearMachine), coast: world.seaDist[idx] ?? 9 }, rain, wind);
-        // adaptive score: authentic state only, and it still allows silence
-        const threat = rr.creatures.some(m => m.state !== 'dead' && m.state !== 'sleep' && (m.state === 'chase' || m.state === 'attack' || m.state === 'tell') && Math.hypot(m.x - pp.x, m.y - pp.y) < 190);
-        const elder = rr.creatures.some(m => m.elder && m.state !== 'sleep' && m.state !== 'dead' && Math.hypot(m.x - pp.x, m.y - pp.y) < 260);
-        const moving = Math.hypot(pp.vx, pp.vy) > 6;
-        if (moving || threat) idleAcc.current = 0; else idleAcc.current += 1000;
-        setMood(pp.dead ? 'aftermath' : rag ? 'ragnarok' : elder ? 'elder' : threat ? 'combat'
-          : pp.sheltered ? 'home' : z === 7 || z === 6 ? 'ruins' : (dtm2 < 0.25 || dtm2 > 0.78) ? 'night'
-            : idleAcc.current > 22000 ? 'silence' : 'wild', now);
+        ambAcc = 0; setIssues(standingIssues(gs.run));
+        // SOUND: background layers, machine and fire loops, body warnings, wildlife and the music mood, all re-derived
+        // once a second from the real state of the run (game/sfx/director.ts).
+        watchSecond(gs.run, now, sfxWatch.current);
       }
     };
     raf = requestAnimationFrame(loop);
@@ -741,7 +747,7 @@ export default function Game({
     r.qaUsed = true;
     r.clock.lastSimAt = now - 6.5 * HOUR;
     const result = settleWithReturn(gs, now);
-    lastCueSeq.current = r.receipts.at(-1)?.seq ?? lastCueSeq.current;
+    lastCueSeq.current = r.receipts.at(-1)?.seq ?? lastCueSeq.current; lastSfxSeq.current = lastCueSeq.current;
     if (result.report) setReturnHistory(recordReturnHistory(r, qaMode, result.report));
     const sev = result.report ? classifyOfflineReturn(result.report) : 'notable';
     if (sev === 'minimal' && result.report) {
@@ -868,7 +874,7 @@ export default function Game({
   const blocked = trackView?.anchor?.kind === 'struct' && !anchor && !trackView.done ? (lang === 'vi' ? `Cần ${STRUCTS[trackView.anchor.types[0]]?.name ?? 'trạm'} của chính bạn trước — Xây [B].` : `Needs your own ${STRUCTS[trackView.anchor.types[0]]?.name ?? 'station'} first — Build [B].`) : null;
   const shownIssues = issues.filter(i => snoozed[i.id] !== i.sig);
   const unseenCount = journey.chronicle.filter(c => !c.seen).length;
-  const track = (t: TrackRef) => { setJourney({ ...journeyRef.current, tracked: t, trackQuiet: !t }); sfx({ type: 'ui' }); };
+  const track = (t: TrackRef) => { setJourney({ ...journeyRef.current, tracked: t, trackQuiet: !t }); sfx({ type: t ? 'pin' : 'ui' }); };
   const showBeacon = wmVisible && !panel && calmish && !!trackView && !trackView.done; // world-space guidance never collides with the HUD stamp
   const cine0 = cines[0] ?? null;
 
@@ -974,7 +980,7 @@ export default function Game({
         {!fullScreen && !!toasts.filter(t => now - t.t < 3200).length && <div className="toast-rail" style={{ pointerEvents: 'none' }}>{toasts.filter(t => now - t.t < 3200).map(t => <div key={t.id} className={`toast toastin ${t.tone === 'bad' ? 'bad' : t.tone === 'ok' ? 'ok' : ''}`}><span className="toast__mark">{t.tone === 'bad' ? '✕' : t.tone === 'ok' ? '✓' : '•'}</span><span>{t.text}</span></div>)}</div>}
         {!buildMode && !panel && coreAim && <CoreReserveStrip r={r} />}
         {buildMode ? <BuildBar gs={gs} tool={buildTool} onPick={applyTool} hoverX={hoverX} hoverY={hoverY} />
-          : !panel && !p.dead && <Hotbar r={r} onPick={i => { p.active = i; sfx({ type: 'ui' }); rerender(); }} onUse={i => act('useItem', { slot: i })} onOpenPack={() => { fieldActionsRef.current.add('survivor'); setPanel({ kind: 'inv' }); sfx({ type: 'ui' }); }} />}
+          : !panel && !p.dead && <Hotbar r={r} onPick={i => { p.active = i; rerender(); /* the hotbar sound follows the change itself: sfx/director.ts watchFast */ }} onUse={i => act('useItem', { slot: i })} onOpenPack={() => { fieldActionsRef.current.add('survivor'); setPanel({ kind: 'inv' }); sfx({ type: 'ui' }); }} />}
       </div>
 
       {/* panels: a panel that throws is closed with a notice; the island keeps running underneath */}

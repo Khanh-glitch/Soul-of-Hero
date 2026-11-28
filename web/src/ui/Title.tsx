@@ -5,7 +5,7 @@ import { getMapCanvas, resetRenderCaches } from '../game/render';
 import { setActiveLayout } from '../game/world';
 import { U05_WORLD_LAYOUT_ID } from '../veyra05/scenes';
 import { ACHIEVEMENTS } from '../game/catalog';
-import { initAudio, sfx } from '../game/audio';
+import { initAudio, sfx, play, setBeds, onBankChange } from '../game/audio';
 import { QA_BUILD } from '../game/build-flags';
 import { QA_PRESETS, type QaPresetId } from '../game/qa-sandbox';
 import { computeStageView, isTouchDevice } from '../visual/direction';
@@ -131,7 +131,11 @@ export default function Title({
   const census = (id: string) => pf.humanRunHistory?.find(row => row.runId === id)?.outcomes;
   const shown = summary ?? viewed;
   const outcomes = shown && census(shown.runId);
-  const click = () => { initAudio(); sfx({ type: 'ui' }); };
+  // SOUND: the title has its own background layer (slot bed.title). It starts with the first click, because a
+  // browser gives no sound before one, and it stops when the title leaves the screen.
+  useEffect(() => { const off = onBankChange(() => setBeds({ 'bed.title': 1 })); return () => { off(); setBeds({ 'bed.title': 0 }); }; }, []);
+  const click = () => { initAudio(); setBeds({ 'bed.title': 1 }); sfx({ type: 'ui' }); };
+  const confirm = () => { initAudio(); play('ui.title.start'); };
   const activeRegions = selectedLayout === U05_WORLD_LAYOUT_ID ? [] : CLASSIC_REGIONS;
   const heroName = (h: string) => (h === 'female' ? 'Adventurer ♀' : 'Adventurer ♂');
   const now = Date.now();
@@ -139,7 +143,7 @@ export default function Title({
   // Dates follow the language chosen in the game, not the browser's (a Vietnamese player reads day/month/year).
   const dateText = (at: number) => new Date(at).toLocaleDateString(lang === 'vi' ? 'vi-VN' : 'en-GB');
   const openSelect = () => { click(); setActiveLayout(selectedLayout); resetRenderCaches(); setMode('select'); };
-  const begin = () => { click(); onStart(hero, region, selectedLayout); };
+  const begin = () => { confirm(); onStart(hero, region, selectedLayout); };
   const closeChronicle = () => { click(); if (summary) clearSummary(); else setViewed(null); };
   const achievementKeys = Object.keys(ACHIEVEMENTS);
   const achieved = achievementKeys.filter(k => pf.achievements[k]).length;
@@ -218,7 +222,7 @@ export default function Title({
           <div style={{ fontSize: 13, color: '#e0c8a8', marginTop: -2, textShadow: '1px 1px 0 #000' }}>fourteen days · one island · the end of the world</div>
         </div>}
         {mode === 'menu' && <nav aria-label="Main menu" className="absolute flex flex-col items-center fadein" style={{ left: 0, right: 0, top: 112, gap: 5 }}>
-          {run && <button data-primary className="btn gold title-play" onClick={() => { click(); onContinue(); }}>
+          {run && <button data-primary className="btn gold title-play" onClick={() => { confirm(); onContinue(); }}>
             <span className="title-play__main">{`Continue — ${heroName(run.character)}`}</span>
             <span className="title-play__sub">{savedRunLine(runHours(run, now), now - run.clock.lastSimAt, Math.round(BAL.run.maxRunHours / 24))}</span>
           </button>}

@@ -82,10 +82,10 @@ export function FieldNotesPanel({
       onClose={onClose}
     >
       <div style={{ display: 'flex', gap: 4, alignItems: 'center', marginBottom: 5 }}>
-        <button className={`btn sm ${tab === 'situational' ? 'gold' : 'ghost'}`} onClick={() => setTab('situational')}>
+        <button className={`btn sm ${tab === 'situational' ? 'gold' : 'ghost'}`} data-sfx="tab" onClick={() => setTab('situational')}>
           Active &amp; Seen ({triggeredList.length})
         </button>
-        <button className={`btn sm ${tab === 'reference' ? 'gold' : 'ghost'}`} onClick={() => setTab('reference')}>
+        <button className={`btn sm ${tab === 'reference' ? 'gold' : 'ghost'}`} data-sfx="tab" onClick={() => setTab('reference')}>
           Field Reference
         </button>
         <button className={`btn sm ${store.muted ? 'gold' : 'ghost'}`} style={{ marginLeft: 'auto' }} onClick={onToggleMute}>

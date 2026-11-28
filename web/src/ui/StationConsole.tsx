@@ -150,9 +150,9 @@ export function StationConsole({ api, eid, initialTab = 'make' }: { api: Api; ei
 
     {/* ---- tabs ---------------------------------------------------------- */}
     {research && <div style={{ display: 'flex', gap: 3, marginBottom: 4, flexWrap: 'wrap' }}>
-      <button className={`btn sm ${tab === 'make' ? 'gold' : ''}`} onClick={() => setTab('make')}>Blueprints</button>
-      <button className={`btn sm ${tab === 'study' ? 'gold' : ''}`} onClick={() => setTab('study')}>Specimens &amp; Cores</button>
-      <button className={`btn sm ${tab === 'families' ? 'gold' : ''}`} data-testid="research-tab-families" onClick={() => setTab('families')}>Technology</button>
+      <button className={`btn sm ${tab === 'make' ? 'gold' : ''}`} data-sfx="tab" onClick={() => setTab('make')}>Blueprints</button>
+      <button className={`btn sm ${tab === 'study' ? 'gold' : ''}`} data-sfx="tab" onClick={() => setTab('study')}>Specimens &amp; Cores</button>
+      <button className={`btn sm ${tab === 'families' ? 'gold' : ''}`} data-testid="research-tab-families" data-sfx="tab" onClick={() => setTab('families')}>Technology</button>
     </div>}
     {hasService && <div className="station-service-tabs"><button className={`btn sm ${view === 'work' ? 'gold' : ''}`} onClick={() => setView('work')}>Production</button><button className={`btn sm ${view === 'service' ? 'gold' : ''}`} onClick={() => setView('service')}>Service · Upgrades</button></div>}
     {hasService && view === 'service' && <StationService api={api} e={e} />}

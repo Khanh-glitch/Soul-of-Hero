@@ -901,7 +901,7 @@ export function ExpeditionMap({ api, onTeleportSelect, teleportTarget, qaSession
     const set = storeDestination(r, qaSession, id);
     setDestId(set);
     setStatusMsg(set ? 'Destination set. Close the chart: the arrow on screen points the way.' : id ? 'That place cannot be set as a destination.' : 'Destination cleared.');
-    api.sfx(set ? 'jtick' : 'ui');
+    api.sfx(set ? 'pin' : 'ui');
   };
   const offscreenCount = isVeyra && r.veyraOffscreenEntities
     ? Object.values(r.veyraOffscreenEntities).filter(oe => oe.type === 'claim' || isOwnBag(oe as any) || oe.kind === 'cart' || oe.kind === 'vehicle').length

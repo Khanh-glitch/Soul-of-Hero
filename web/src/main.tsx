@@ -6,6 +6,7 @@ import { loadItemAtlas } from "./game/item-atlas";
 import { startDomI18n, setI18nAudit } from "./ui/i18n-dom";
 import { ScreenFit } from "./ui/ScreenFit";
 import { Veil } from "./ui/veil";
+import { SfxBoard } from "./ui/SfxBoard";
 
 if (import.meta.env.VITE_SOH_QA === '1') setI18nAudit(true);
 startDomI18n();
@@ -21,8 +22,6 @@ if (import.meta.env.VITE_SOH_QA === '1') {
 // The approved item art is decoded before the first frame, so no screen ever shows a placeholder for a mapped item.
 void loadItemAtlas().finally(() => createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <App />
-    <Veil />
-    <ScreenFit />
+    {location.hash === '#sfx' ? <SfxBoard /> : <><App /><Veil /><ScreenFit /></>}
   </StrictMode>
 ));
