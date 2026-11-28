@@ -607,9 +607,25 @@ export function markDirty() { blockDirty = true; tileIndex = null; roomCache = n
 /** 0 free, 1 terrain wall, 2 source, 3 structure, 4 shallow/river (wade), 5 lava, 6 ladder over a cliff (foot only) */
 let baseGrid: Uint8Array | null = null; let baseGridLayout = '';
 function tileClass(t: number) { return (t === T.DEEP || t === T.CLIFF || t === T.PWALL) ? 1 : t === T.LAVA ? 5 : (t === T.SHALLOW || t === T.RIVER) ? 4 : 0; }
+/** On the ground floor of a Veyra window the tile on screen decides where feet, carts and wheels may go, not the economy masks.
+ *  The masks (`walkable`, `cargoPassable`, `slope`) are compiled against the generic kit layout of every place, and all 81
+ *  places are hand-authored now: the kit building is never drawn, yet its wall ring stayed in the masks as a closed box of
+ *  open-looking ground nobody could enter (2,755 such cells around the places, 141 of them on roads). The masks cannot simply be
+ *  repaired: `mapDigest` covers them and a changed digest refuses every existing save. So movement asks here instead.
+ *  True = this cell shows open ground (not deep water, cliff, wall, lava or wadeable water), so a mask must not block it.
+ *  Other storeys keep the mask: there it is the only thing that stops a walk off the edge of the floor. */
+export function veyraOpenGround(r: RunState | null, i: number): boolean {
+  if (!r?.layoutId || !isVeyra05Layout(r.layoutId) || activeFloor(r) !== 0) return false;
+  return tileClass(getWorld().tiles[i]) === 0;
+}
+/** veyraOpenGround for a cell of the global frame (any window): ground storey, and the compiled tile shows open ground. */
+export function globalOpenGround(cell: { tile: number }, floor: number): boolean { return floor === 0 && tileClass(cell.tile) === 0; }
 function cellClass(r: RunState | null, tx: number, ty: number) {
   const w = getWorld(); const i = ty * WW + tx; const t = r ? effTile(r, tx, ty) : w.tiles[i]; let c = tileClass(t);
-  if (c === 0 && !(t === T.ICE && [T.DEEP,T.SHALLOW,T.RIVER].includes(w.tiles[i])) && (w.packageContract || w.enforceMasks) && !w.economyMap.walkable[i] && !w.statics.some(s => s.kind === 'door' && s.tx === tx && s.ty === ty)) c = 1;
+  if (c === 0 && !(t === T.ICE && [T.DEEP,T.SHALLOW,T.RIVER].includes(w.tiles[i])) && (w.packageContract || w.enforceMasks) && !w.economyMap.walkable[i] && !veyraOpenGround(r, i) && !w.statics.some(s => s.kind === 'door' && s.tx === tx && s.ty === ty)) c = 1;
+  // Off the floor of an upper or lower storey nothing is standable, and the ground far below still shows: where that ground
+  // is a river, the wade class used to win over the mask and a walk off the deck carried on along the river, one storey up.
+  if (c === 4 && r?.layoutId && isVeyra05Layout(r.layoutId) && activeFloor(r) !== 0 && !w.economyMap.walkable[i]) c = 1;
   if (c === 0) { if (r) { const s = sourceAt(r, tx, ty); if (s && s.def.block && (s.stock > 0 || s.key === 'wreck')) c = 2; } else if (w.src[i] >= 0 && SOURCES[SRC_KEYS[w.src[i]]].block) c = 2; }
   if ((c === 0 || c === 4) && r?.layoutId && isVeyra05Layout(r.layoutId)) {
     const ww = getWindowWorld(r.layoutId);
@@ -4098,7 +4114,11 @@ export function globalCellTileAndClass(
   const tile = tm && (!tm.until || tm.until > r.clock.simMs) ? tm.t : baseTile;
   let cls = tileClass(tile);
   const isAuthoredDoor = base.statics.some(s => s.kind === 'door');
-  if (cls === 0 && !(tile === T.ICE && [T.DEEP, T.SHALLOW, T.RIVER].includes(baseTile)) && !base.walkable && !isAuthoredDoor) cls = 1;
+  // Same two rules as cellClass, for cells outside the loaded window: on the ground the tile decides, not the mask
+  // (see veyraOpenGround), and off the floor of another storey the water below is no way out. A resident who walked
+  // into a former kit box while it was on screen must still find the way out once the window has moved on.
+  if (cls === 0 && !(tile === T.ICE && [T.DEEP, T.SHALLOW, T.RIVER].includes(baseTile)) && !base.walkable && !globalOpenGround(base, fl) && !isAuthoredDoor) cls = 1;
+  if (cls === 4 && fl !== 0 && !base.walkable) cls = 1;
   if (cls === 0) {
     let srcKey = base.source;
     const sst = activeRunDirect

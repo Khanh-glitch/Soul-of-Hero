@@ -770,6 +770,8 @@ export default function Game({
     preparePack: () => qaPrepareFullPack(gs.run!), fillPack: () => qaFillPack(gs.run!), setSecuredCash: (n: number) => qaSetSecuredCash(gs, n),
   };
   (window as any).__sohJourney = () => journeyRef.current; // read-only QA view, no authority
+  // QA builds only, read-only: the collision grid the player is moved against (one digit per tile of the current window), for a driver that draws it over a screenshot.
+  if (import.meta.env.VITE_SOH_QA === '1') (window as any).__sohBlock = () => gs.run ? Array.from(vfxBlockGrid(gs.run)).join('') : '';
   // A dispatched ending clears gs.run before the next animation frame.
   // Keep the same hooks even during that one render before the title takes over.
   const r = gs.run, now = Date.now();

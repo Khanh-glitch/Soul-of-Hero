@@ -1,6 +1,6 @@
 import {BAL,TILE,WW,WH,T,angDiff,dist,clamp,type RunState,type Haz} from './core';
 import {getWorld} from './world';
-import {blockGrid,clearPhysicalLine,effTile,entsAt} from './engine';
+import {blockGrid,clearPhysicalLine,effTile,entsAt,veyraOpenGround} from './engine';
 import {activeFloor} from '../veyra05/floors';
 const tileOf=(v:number)=>Math.floor(v/TILE);
 export function solidFor(r: RunState, x: number, y: number, who: 'player' | 'creature' | 'cart') {
@@ -10,7 +10,7 @@ export function solidFor(r: RunState, x: number, y: number, who: 'player' | 'cre
   // Authored cargo constraints are additional to live collision, not a
   // substitute for opening a physical door or clearing a physical object.
   const w = getWorld(); const i=ty*WW+tx;
-  if (who === 'cart' && (w.packageContract || w.enforceMasks) && !w.economyMap.cargoPassable[i] && !w.statics.some(s=>s.kind==='door' && s.tx===tx && s.ty===ty)) return true;
+  if (who === 'cart' && (w.packageContract || w.enforceMasks) && !w.economyMap.cargoPassable[i] && !veyraOpenGround(r, i) && !w.statics.some(s=>s.kind==='door' && s.tx===tx && s.ty===ty)) return true;
   if (b === 4) return who === 'cart' || (who === 'creature' && false);
   if (b === 6) return who !== 'player' || !!r.player.vehicle;
   return b === 1 || b === 2 || b === 3 || b === 5;

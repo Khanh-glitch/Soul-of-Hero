@@ -2,13 +2,16 @@
 // can authorize deployment. External/diagnostic maps have no inferred permission.
 import { BAL, TILE, WW, WH, T, type RunState } from './core';
 import { getWorld } from './world';
-import { blockGrid, effTile, clearPhysicalLine } from './engine';
+import { blockGrid, effTile, clearPhysicalLine, veyraOpenGround } from './engine';
 
 export function vehicleCell(r:RunState,x:number,y:number,mode:'passable'|'parking'|'exit'='passable'):boolean {
   const w=getWorld(r.layoutId||'shipping'),v=w.vehicleGeometry,tx=Math.floor(x/TILE),ty=Math.floor(y/TILE);
   if(!v || v.version!=='vehicle-geometry-v1'||v.mapId!==w.economyMap.id||v.mapRevision!==w.economyMap.revision||v.width!==WW||v.height!==WH||v.tileSize!==TILE||[v.passable,v.road,v.slope,v.parking,v.exit].some(a=>!a||a.length!==WW*WH)||tx<0||ty<0||tx>=WW||ty>=WH)return false;
   const i=ty*WW+tx,b=blockGrid(r)[i],t=effTile(r,tx,ty);
-  return !!v[mode][i] && Number.isFinite(v.slope[i]) && v.slope[i]<=BAL.motorbike.maxSlope && ![1,2,3,5].includes(b) && ![T.DEEP,T.SHALLOW,T.RIVER,T.ICE,T.LAVA].includes(t);
+  // A mask that says "no" over open-looking ground is the wall of a kit building that is never drawn (see veyraOpenGround):
+  // its "no" and its wall slope of 1 do not apply. The slope then comes from the tile, by the compiler's own rule.
+  const phantom=!v[mode][i]&&veyraOpenGround(r,i), slope=phantom?(getWorld(r.layoutId||'shipping').tiles[i]===T.HILL?0.3:0.05):v.slope[i];
+  return (!!v[mode][i]||phantom) && Number.isFinite(slope) && slope<=BAL.motorbike.maxSlope && ![1,2,3,5].includes(b) && ![T.DEEP,T.SHALLOW,T.RIVER,T.ICE,T.LAVA].includes(t);
 }
 export function vehicleClear(r:RunState,x:number,y:number,ignore?:string,mode:'passable'|'parking'='passable'):boolean {
   const radius=BAL.motorbike.radius;
