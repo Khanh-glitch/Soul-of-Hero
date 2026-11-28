@@ -5,6 +5,9 @@ import App from "./App";
 import { loadItemAtlas } from "./game/item-atlas";
 import { startDomI18n, setI18nAudit } from "./ui/i18n-dom";
 import { ScreenFit } from "./ui/ScreenFit";
+import { Veil } from "./ui/veil";
+import { SfxBoard } from "./ui/SfxBoard";
+import { prefetchSfx } from './game/audio';
 
 if (import.meta.env.VITE_SOH_QA === '1') setI18nAudit(true);
 startDomI18n();
@@ -20,7 +23,8 @@ if (import.meta.env.VITE_SOH_QA === '1') {
 // The approved item art is decoded before the first frame, so no screen ever shows a placeholder for a mapped item.
 void loadItemAtlas().finally(() => createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <App />
-    <ScreenFit />
+    {location.hash === '#sfx' ? <SfxBoard /> : <><App /><Veil /><ScreenFit /></>}
   </StrictMode>
 ));
+// Sound for the first minute of play is fetched once the page is idle; nothing on screen waits for it.
+if (location.hash !== '#sfx') prefetchSfx();

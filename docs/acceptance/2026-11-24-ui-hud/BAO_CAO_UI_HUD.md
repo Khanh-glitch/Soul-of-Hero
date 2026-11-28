@@ -555,16 +555,328 @@ Cả màn chờ trên trình duyệt (Chromium không màn hình, 2 nhân, bản
 - Chưa đo trên máy thật hay điện thoại. Chưa mở trang QA sau khi triển khai.
 - Chưa xử lý đoạn 5–8 giây sau khi tính xong và đoạn dựng đất ở đầu màn chờ (khoảng 18 giây cho 20% đầu ở mức vắng 3 giờ).
 
+## Vòng 11: giữ lại phần đất đã dựng giữa các lần mở game; so cách tính thưa với cách tính hiện nay (nhánh `arena/1fe1361c-soul-of-hero`)
+
+Sau khi gộp vòng 10, người làm game thử trên máy tính thật: vắng hơn một giờ, bấm Chơi tiếp, sau 30 giây thanh mới ở 6%. Mức trần đặt ra là 30 giây cho cả đoạn từ lúc bấm đến lúc vào game. Vòng này làm một việc không đổi luật và đo một việc cần người làm game quyết định.
+
+### Đã sửa: phần đất đã dựng được giữ lại cho lần mở game sau
+
+Mỗi lần Chơi tiếp, cư dân hỏi về khoảng 180 vùng đất ngay trong những phút đầu được tính, và mỗi vùng phải dựng lại từ đầu (0,1–0,3 giây một vùng). Trên máy kiểm đoạn này chiếm khoảng 18–25 giây, bất kể vắng bao lâu. Một vùng đất chỉ phụ thuộc vào bản đồ và mã của game, không phụ thuộc vào ván chơi, nên dựng một lần là đủ.
+
+- `web/src/veyra05/region-store.ts` (mới): kho giữ các vùng đã dựng trong bộ nhớ lưu trữ của trình duyệt (IndexedDB, kho `soh.regions.v1`).
+- `web/src/veyra05/region-prebuild.worker.ts`: luồng dựng đất chạy nền hỏi kho trước; có thì lấy ra, chưa có thì dựng rồi cất vào kho.
+- `web/src/game/offline-return-worker.ts`, `web/src/App.tsx`, `web/src/veyra05/region-prebuild.ts`: luồng tính bù lúc Chơi tiếp đọc từ kho những vùng nó cần mà màn hình chính chưa kịp đưa sang. Luồng này chỉ đọc kho, không ghi.
+
+Kho chỉ dùng được cho đúng bản mã đã tạo ra nó. Tên của kho lấy từ tên tệp của luồng dựng đất trong bản dựng (`region-prebuild.worker-<mã>.js`); tên tệp này đổi khi và chỉ khi phần mã dựng đất đổi. Bản cập nhật chỉ sửa giao diện hay phần mô phỏng cư dân thì kho vẫn dùng được (đã thử: sửa luồng tính bù, tên tệp luồng dựng đất giữ nguyên). Bản cập nhật có sửa phần dựng đất thì kho tự xoá và lần Chơi tiếp đầu tiên sau đó chậm như trước. Mỗi vùng trong kho còn được ghi kèm tên bản mã, để hai thẻ trình duyệt chạy hai bản khác nhau không lấy nhầm đất của nhau.
+
+Mọi trục trặc của bộ nhớ lưu trữ (trình duyệt không cho dùng, hết chỗ, đọc lỗi, bản ghi hỏng) chỉ dẫn đến "không có sẵn": vùng đó được dựng lại như trước.
+
+**Kết quả tính không đổi.** Trong trình duyệt, cùng một bản lưu và cùng một thời điểm, bản lưu sau khi tính bù có cùng dấu vân tay (`e5d7124cd89c5e3e`) ở cả ba trường hợp: dựng toàn bộ tại chỗ (0 vùng có sẵn), 173 vùng do màn hình chính đưa sang, và 118 vùng đọc từ kho.
+
+### Đo trong trình duyệt
+
+Máy kiểm: 2 nhân, Chromium không màn hình, vẽ bằng phần mềm. Bản lưu: ván mới, hạt giống 5, 286 cư dân, đã chơi 20 giây. Bấm Chơi tiếp 3 giây sau khi màn hình chính hiện. Số đo là từ lúc bấm đến lúc vào game.
+
+| Vắng | Trước (bản `cb28d27`) | Sau, lần đầu (kho rỗng) | Sau, các lần kế (kho đã có đất) |
+|---|---|---|---|
+| 0,3 giờ | 38,0 và 39,6 giây | chưa đo | 18,2 và 18,3 giây |
+| 1,5 giờ | 49,6 – 50,1 giây (3 lượt) | 45,2 – 55,3 giây (5 lượt, 4 lượt trong khoảng 45–48) | 25,6 – 32,1 giây (8 lượt) |
+| 3 giờ | 51,3 và 58,5 giây | chưa đo | 41,7 và 43,3 giây |
+
+- Lần đầu không nhanh hơn: kho rỗng, đất vẫn phải dựng.
+- Kho đầy dần: luồng dựng đất chạy trong lúc màn hình chính đang hiện và trong lúc chơi. Trên máy 2 nhân nó dừng trong lúc tính bù, nên sau một lần Chơi tiếp bấm sớm kho mới có khoảng 50 vùng, sau hai lần khoảng 90, sau ba lần khoảng 130. Để màn hình chính hiện 45–60 giây thì kho có đủ khoảng 275 vùng.
+- Ở lượt mà kho đang được làm đầy (đợi 45–60 giây ở màn hình chính rồi mới bấm): 37,6 – 39,6 giây (4 lượt).
+- Đọc 115 vùng từ kho mất 0,14 giây.
+- Với kho đầy, ở mức vắng 1,5 giờ: khoảng 4–6 giây đến 1%, khoảng 19–25 giây tính phần còn lại, 2–5 giây từ 99% đến lúc vào game. Phần còn lại gần như toàn bộ là mô phỏng cư dân, khoảng 11–13 giây cho mỗi giờ vắng trên máy kiểm.
+
+Kho chiếm chỗ: mỗi vùng khoảng 0,34 MB, một ván cần khoảng 280 vùng, tức gần 100 MB bộ nhớ lưu trữ của trình duyệt trên máy người chơi. Kho tự xoá khi vượt 600 vùng. Nén thử bằng gzip thì còn khoảng 1/12 (0,029 MB một vùng); chưa làm.
+
+### So cách tính thưa với cách tính hiện nay (chỉ đo, chưa đưa vào game)
+
+Hiện nay trong lúc vắng mặt, cứ mỗi giây được tính game cho một cư dân ở xa nghĩ xem nên làm gì. 15 giờ vắng là 54.000 lượt như vậy và 62.136 bước tính. Thử nghiệm: giãn khoảng cách giữa hai lượt nghĩ, và mỗi lượt cho nhiều cư dân nghĩ hơn để tổng số lần nghĩ không đổi. Đo bằng công cụ `web/scripts/absence-bench/` (Node, cùng bản lưu, kho đất có sẵn, mỗi dòng một hoặc hai lượt).
+
+Vắng 15 giờ:
+
+| Cách tính | Thời gian | Chết | Gục | Cư dân ở chỗ khác so với cách hiện nay | Tổng hàng trong kho | `berries` trong kho | `crop` trong kho |
+|---|---|---|---|---|---|---|---|
+| Hiện nay (1 giây, 1 người mỗi lượt) | 148,5 – 152,2 giây | 36 | 10 | – | 3.770 | 185 | 0 |
+| Phép thử độ nhạy: 1,001 giây | 172,0 giây | 33 | 12 | 102 | 3.808 | 195 | 0 |
+| 15 giây, 15 người mỗi lượt | 42,5 – 46,9 giây | 27 | 8 | 134 | 3.727 | 122 | 33 |
+| 60 giây, 60 người mỗi lượt | 37,0 – 38,9 giây | 34 | 8 | 135 | 3.767 | 116 | 46 |
+| 60 giây, 8 người mỗi lượt | 25,3 giây | 28 | 12 | 168 | chưa đo | chưa đo | chưa đo |
+| 60 giây, 1 người mỗi lượt | 21,4 giây | 43 | 5 | 209 | chưa đo | chưa đo | chưa đo |
+
+Vắng 1,5 giờ: hiện nay 22,2 – 23,8 giây; 5 giây và 5 người mỗi lượt 16,6 – 17,5 giây (83 cư dân ở chỗ khác, tổng hàng 3.230 → 3.213, `crop` 0 → 9); phép thử độ nhạy 25,3 giây (49 cư dân ở chỗ khác, tổng hàng 3.230 → 3.179).
+
+Đọc bảng:
+
+1. **Số phận từng cư dân vốn đã không ổn định.** Chỉ đổi bước tính từ 1 giây thành 1,001 giây, sau 15 giờ đã có 102 cư dân đứng ở chỗ khác, số chết 33 thay vì 36. Vậy không thể đòi cách tính thưa cho đúng từng người; chỉ so được các con số tổng.
+2. Với cách "giãn khoảng nghĩ, giữ nguyên số lần nghĩ" (15 hoặc 60 giây), số chết (27, 34), số gục và tổng hàng nằm cùng cỡ với mức dao động ở dòng độ nhạy. Có hai chỗ lệch rõ, lặp lại ở cả hai mức thử 15 giờ: `berries` trong kho ít hơn (185 → 116–122) và có `crop` trong kho (0 → 33–46; ở mức 1,5 giờ cũng đã thấy 0 → 9). Dòng độ nhạy không có hai chỗ lệch này. Chưa tìm nguyên nhân.
+3. Cách "nghĩ ít lần hơn" (60 giây, 1 người mỗi lượt) nhanh nhất nhưng làm cư dân sống tệ hơn rõ: 43 chết thay vì 36, chỉ số no trung bình 33 thay vì 44 (cao là no). Không nên dùng.
+4. Cách tính thưa giúp nhiều cho lần vắng dài (15 giờ: nhanh gấp 3–4 lần) và ít cho lần vắng ngắn (1,5 giờ: nhanh hơn khoảng 25%).
+5. Ngoài lề: ở mọi cách tính, 27–43 trong 286 cư dân chết sau 15 giờ vắng và 20–25 người gục sau 1,5 giờ. Đây là kết quả của luật hiện có, không phải của vòng này.
+
+Chưa đổi gì trong luật: nhịp tính lúc vắng mặt vẫn là 1 giây (`OFFLINE_HUMAN_BEAT_MS`), theo quyết định ngày 21/11/2026. Mã thử nghiệm đã gỡ khỏi kho mã.
+
+### Công cụ đo đưa vào kho mã
+
+`web/scripts/absence-bench/`: `scn.ts` (tính bù một lần vắng đúng như luồng Chơi tiếp, in thời gian, số bước và dấu vân tay; có chế độ ghi bảng thống kê cư dân và kho hàng), `build.sh` (dựng công cụ từ mã hiện tại), `census-diff.mjs` (so hai bảng thống kê). Vòng 9 và 10 dùng công cụ tạm ngoài kho mã và đã mất; từ nay phép so dấu vân tay làm lại được.
+
+### Kiểm thử
+
+- Mới: `web/tests/region-store.test.ts`, 11 bài. Vùng lấy từ kho giống hệt vùng đã cất, kể cả sau khi bản gốc đã chuyển sang luồng khác; bản mã khác không dùng được kho cũ; hai thẻ chạy hai bản mã không lấy nhầm của nhau; không có tên bản mã thì không giữ gì; mọi kiểu lỗi lưu trữ đều thành "không có sẵn"; bản ghi hỏng hay sai vùng không bao giờ được trả ra; luồng dựng đất trả lời từ kho mà không dựng lại; luồng tính bù nhận thêm vùng từ kho. IndexedDB trong bài kiểm thử do gói `fake-indexeddb` (mới thêm, chỉ dùng khi kiểm thử) đóng vai.
+- Chạy lại 5 tệp: `region-store`, `region-prebuild`, `continue-wait`, `resident-catchup-speed`, `npc-offline-beat`: 34 bài đạt. (Lượt chạy này có trước khi thêm bài "hai thẻ" và việc ghi tên bản mã vào từng bản ghi; sau thay đổi đó chạy lại `region-store` và `region-prebuild`: 26 bài đạt.)
+- `tsc` và `typecheck:tests`: không lỗi.
+
+### Chưa làm, chưa kiểm ở vòng này
+
+- **Chưa biết vì sao máy của người làm game mới được 6% sau 30 giây.** Trên máy kiểm, bản cũ ở cùng mức vắng đạt khoảng 20–25% sau 30 giây. Chưa có bản lưu thật hay số đo từ máy đó, nên chưa biết kho đất giúp được bao nhiêu ở đó.
+- Trần 30 giây chưa đạt cho lần vắng dài: trên máy kiểm 3 giờ vẫn mất khoảng 42 giây, lần đầu sau khi kho bị xoá mất 45–55 giây ở mức 1,5 giờ.
+- Chưa đo trên máy thật, điện thoại, Firefox, Safari. Chưa thử trình duyệt ở chế độ riêng tư hay khi bộ nhớ lưu trữ đầy (chỉ có bài kiểm thử tự động cho các trường hợp đó).
+- Chưa nén kho (gần 100 MB mỗi người chơi).
+- Luồng tính bù không ghi vào kho; vùng nào chỉ nó dựng thì phải đợi luồng dựng đất dựng lại trong lúc chơi mới vào kho.
+- Bảng so cách tính thưa chỉ làm trên một bản lưu (ván mới, hạt giống 5), mỗi dòng một hoặc hai lượt; chưa thử bản lưu của ván đã chơi lâu.
+- Không chạy lại toàn bộ bộ kiểm thử; chỉ chạy 5 tệp nêu trên.
+- Chưa xử lý đoạn 2–8 giây từ 99% đến lúc vào game.
+
+## Vòng 12: các màn hình trước khi vào game (nhánh `arena/1fe1361c-soul-of-hero`, cùng PR #71)
+
+Vòng này chỉ sửa giao diện của những màn người chơi gặp trước khi cầm được nhân vật: lúc trang đang tải, màn hình chính, chọn nhân vật, hồ sơ và lịch sử, nhật ký ván chơi, cài đặt, màn chờ khi Chơi tiếp, màn báo lỗi bản lưu. Không đổi luật, không đổi cách tính, không đổi bản lưu.
+
+Máy kiểm vẫn là Chromium không màn hình, vẽ bằng phần mềm, 2 nhân. Các con số thời gian dưới đây chỉ dùng để so hai bản dựng trên cùng máy đó, không phải thời gian trên máy người chơi.
+
+### Trước khi sửa (bản `c3a72b5`)
+
+| Màn | Điều thấy được | Ảnh |
+|---|---|---|
+| Mở trang | Trắng trơn đến 2,8 giây, rồi một dòng chữ thường; màn hình chính hiện ở 4,9 giây | (không chụp) |
+| Màn hình chính khi có ván dang dở | Nút Chơi tiếp bị xuống dòng, không cho biết ngày thứ mấy hay đã vắng bao lâu; "Ván mới" bị mờ mà lý do chỉ nằm trong chú thích rê chuột | `shots/r12-before-title-vi.png` |
+| Hồ sơ & lịch sử | Bảng đè lên dòng phụ đề; các dòng lịch sử in nguyên chữ tiếng Anh của mã | `shots/r12-before-profile-vi.png` |
+| Chờ khi Chơi tiếp | Một bảng trơ trên nền đen, nằm ngoài khung game; thanh tiến độ màu xám mặc định của trình duyệt; nút quay lại rất nhỏ | `shots/r12-before-wait-vi.png`, `shots/r12-before-wait-vi-844.png` |
+| Bấm "Bắt đầu 14 ngày" hoặc Chơi tiếp | Không có phản hồi nào trong lúc hình đứng yên nhiều giây | (xem bảng thời gian) |
+| Lỗi bản lưu | Chữ HTML thô, chỉ có tiếng Anh | (không chụp) |
+| Cài đặt | Chưa vào game thì không mở được | |
+
+Màn chọn nhân vật vốn đã đọc được (`shots/r12-before-setup-vi.png`); chỉ thu gọn lại cho vừa cửa sổ nhỏ.
+
+### Đã sửa
+
+- **Lúc trang đang tải** (`web/index.html`): trang tự vẽ tên game, một thanh chạy và dòng "Đang tải…" / "Loading…" theo ngôn ngữ đã chọn, trước khi bất kỳ đoạn mã nào tải xong. Đo được: hiện sau 82–99 mili giây kể từ lúc mở trang. Ảnh `shots/r12-splash-vi.png`.
+- **Màn hình chính** (`web/src/ui/Title.tsx`): nút chính lớn ở giữa. Chưa có ván thì là "Ván mới". Có ván dang dở thì là "Chơi tiếp — tên nhân vật", dòng dưới ghi ngày thứ mấy và đã vắng bao lâu; lý do "Ván mới" bị khoá hiện thành chữ ngay dưới nút. Thêm "Hồ sơ & lịch sử", "Cài đặt", dòng tiền đã cất và số ván, và chân trang ghi các phím. Ảnh `shots/r12-title-new-vi.png`, `shots/r12-title-continue-vi.png`, `shots/r12-title-continue-en.png`, `shots/r12-title-continue-vi-844.png`.
+- **Chọn nhân vật**: vừa ở 640 × 360 và 844 × 390, nút "Bắt đầu 14 ngày" không còn bị che. Ảnh `shots/r12-setup-vi.png`, `shots/r12-setup-vi-844.png`, `shots/r12-setup-vi-640.png`.
+- **Hồ sơ & lịch sử**: thành tựu ghi số đã đạt trên tổng số; mỗi ván một dòng có ngày tháng, cách kết thúc (màu riêng), điểm và tiền; bấm vào một dòng thì mở lại nhật ký của ván đó. Nhãn ghi rõ đây là điểm lưu trên trình duyệt này, không phải bảng xếp hạng chung. Ảnh `shots/r12-profile-vi.png`, `shots/r12-chronicle-vi.png`.
+- **Cài đặt trước khi chơi**: cùng bảng cài đặt như trong game. Ảnh `shots/r12-settings-vi.png`.
+- **Màn chờ khi Chơi tiếp** (`web/src/App.tsx`): nằm trong khung game, trên nền của màn hình chính; số phần trăm lớn, thanh tiến độ cùng màu với giao diện, dòng trạng thái, nút "Về màn hình chính" lớn hơn. Ảnh `shots/r12-wait-vi.png`, `shots/r12-wait-vi-844.png`.
+- **Tấm che lúc game đứng hình** (`web/src/ui/veil.tsx`, mới): bấm "Bắt đầu 14 ngày" hoặc khi tính bù xong, một màn có tên game và dòng "Đang dựng hòn đảo…" / "Đang mở hòn đảo…" phủ lên cho đến khi game vẽ được khung hình đầu tiên (`web/src/ui/Game.tsx` báo). Nếu game không báo thì tấm che tự hạ sau 30 giây. Bấm lần hai trong lúc tấm che đang hiện thì bị bỏ qua.
+- **Màn báo lỗi bản lưu**: cùng kiểu với màn tải, có tiếng Việt và nút "Thử lại". Ảnh `shots/r12-load-error-vi-844.png`.
+- **Bàn phím**: vào màn nào thì nút chính của màn đó được chọn sẵn; Enter để chơi, phím mũi tên chuyển nút, trái / phải đổi nhân vật, Esc quay lại và trả tiêu điểm về nút đã bấm.
+- **Dòng "Cửa sổ nhỏ"**: ở các màn trước game, dòng này nằm một hàng ở đáy và chân trang của màn hình chính nhường chỗ cho nó. Trong game dòng này giữ nguyên như bản trước.
+- **Chữ tiếng Việt**: 30 câu mới trong `web/i18n/vi/10-before-game.txt`; sách câu hiện có 2097 câu.
+
+### Thời gian, bản mới so với `c3a72b5`, cùng máy kiểm
+
+| Trường hợp | Bản mới | `c3a72b5` |
+|---|---|---|
+| Ván mới, từ lúc bấm "Bắt đầu" | Tấm che hiện sau khoảng 0,08 giây; hình đứng 4,4 + 6,8 + 1,1 giây ở dưới tấm che; thấy game ở 12,2–12,8 giây | Không có phản hồi; hình game đứng 4,2 + 11,6 + 1,4 giây; hình chạy đều từ khoảng 17 giây |
+| Chơi tiếp, vắng 1 phút | Tấm che hiện sau 0,1–0,2 giây; hình đứng 8,2–8,9 + 4,1–4,3 + 0,7–0,8 giây ở dưới tấm che; thấy game ở 13,7–14,4 giây | Hình game đứng 10,9–11,7 + 4,8–5,6 + 1,0–1,3 giây; hình chạy đều từ khoảng 17–18 giây |
+| Chơi tiếp, vắng 1,6 giờ | Tấm che hiện ở 40,6–48,1 giây; thấy game ở 50,4–59,0 giây | Thấy hình game ở 40,7–55,3 giây, rồi hình đứng thêm 7,7 giây |
+
+Cách đọc bảng:
+
+- **Tấm che chỉ che chỗ đứng hình, không làm nó ngắn đi.** Việc nặng vẫn chạy trên luồng chính như trước.
+- Hai trường hợp chờ ngắn đến được game sớm hơn khoảng 4 giây. Nguyên nhân chưa được tách riêng.
+- Trường hợp vắng 1,6 giờ không nhanh hơn: hai bản ngang nhau trong mức dao động 5–10 giây giữa các lượt chạy. Mức trần 30 giây vẫn chưa đạt, như đã ghi ở vòng 11.
+- Mỗi ô là 2–3 lượt chạy.
+
+### Đã thử rồi bỏ
+
+- **Dòng "còn khoảng … nữa" trên màn chờ.** Ước lượng theo đường thẳng báo "còn khoảng 5 phút" khi thực tế còn 25 giây, vì tiến độ đi rất chậm trong lúc đất còn đang dựng (0–4% trong 22 giây đầu, rồi 6% → 97% trong 25 giây). Một con số sai tệ hơn không có số, nên đã gỡ. Màn chờ giữ phần trăm, số vùng đã dựng và thời gian đã chạy.
+- **Hạ tấm che khi "hình đã chạy đều".** Trên máy kiểm, phút đầu hình không bao giờ đều, nên tấm che đứng đủ 30 giây trên một game đã chơi được. Đổi sang cách game tự báo khi đã vẽ.
+- Bỏ hiệu ứng trượt của thanh tiến độ và đổi thanh chạy của màn tải sang nhảy bậc, để không tốn công vẽ trong lúc máy đang bận. Đo lại không thấy khác biệt; giữ vì không hại.
+
+### Kiểm thử
+
+- `web/tests/pregame.test.ts` (mới, 15 bài): cách viết thời gian vắng và ngày, tên cách kết thúc ván, đủ câu tiếng Việt, tên các nút mà kịch bản trình duyệt bấm, màn tải trong `index.html`, vị trí dòng "Cửa sổ nhỏ", hành vi của tấm che.
+- `web/tests/ui-readability.test.ts`: bài "tắt chữ ghép ở mọi nơi" **đã hỏng sẵn trên `main` (`cb28d27`)**, không do vòng này: tệp kiểu dáng ghi `font-variant-ligatures: none !important` còn bài kiểm tìm dạng không có `!important`. Đã sửa bài kiểm cho khớp với quy tắc đang có (quy tắc mạnh hơn, không yếu đi).
+- Đã chạy và qua: `pregame`, `continue-wait`, `i18n-vi`, `item-ontology-v2`, `ui-readability`, `viewport`, `map-atlas`, `map-feel`, `ui-round3`, `final-item-set`, `qa-sandbox-veyra`, `region-store`, `region-prebuild`; `npx tsc --noEmit` và `npm run typecheck:tests` sạch.
+- Bằng trình duyệt: chụp các màn ở 1280 × 720 (hai ngôn ngữ), 844 × 390 và 640 × 360 (tiếng Việt); đi hết các màn bằng bàn phím, không có lỗi trang; bản lưu hỏng ra màn báo lỗi; bản lưu không có ván dang dở ra màn hình chính với "Ván mới".
+
+### Chưa làm, chưa kiểm ở vòng này
+
+- **Không có ảnh của tấm che.** Trình duyệt kiểm không chụp được khi trang đang đứng hình. Việc tấm che hiện và hạ được xác nhận bằng nhật ký trạng thái ghi trong trang, không phải bằng mắt.
+- Không chạy lại toàn bộ bộ kiểm thử; chỉ các tệp nêu trên.
+- Chưa thử trên máy thật, điện thoại, Firefox, Safari.
+- Trong game, sau khoảng 27 giây của một ván mới, máy kiểm có những lần khựng 1,1–2,8 giây, cách nhau khoảng 2 giây, ở cả `cb28d27` lẫn `c3a72b5`. **Chưa rõ nguyên nhân** và chưa biết có xảy ra trên máy thật hay không; vòng này không đụng tới.
+- Nhãn "Language" trong bảng cài đặt cố ý giữ tiếng Anh (người không đọc được ngôn ngữ đang hiện vẫn tìm ra chỗ đổi).
+- Trong bản dựng QA, ba dòng "Full-Gear QA Sandbox [F9]", "Creator Inspector · world viewer", "VEYRA" còn tiếng Anh; lượt kiểm này làm trước các chỉnh sửa cuối và chưa chạy lại.
+- Màn báo lỗi bản lưu chỉ thử với một kiểu hỏng (bản lưu bị cắt nửa).
+
+## Vòng 13: năm chức năng còn thiếu ở màn hình chính (nhánh `arena/1fe1361c-soul-of-hero`, cùng PR #71)
+
+Yêu cầu ngày 27/11/2026: màn hình chính còn thiếu chức năng. Người chơi đã chọn làm cả năm: hướng dẫn chơi, sao lưu và khôi phục bản lưu, bỏ ván ngay từ màn hình chính, nút toàn màn hình, số phiên bản và ghi công.
+
+Vòng này không đổi luật chơi, không đổi cách tính, không đổi định dạng bản lưu. Bỏ ván từ màn hình chính dùng đúng lệnh "bỏ ván" mà menu Esc trong game vẫn dùng.
+
+Máy kiểm vẫn là Chromium không màn hình, 2 nhân. Trước vòng này (bản `d78a36d`), màn hình chính chỉ có Chơi tiếp, Ván mới, Hồ sơ & lịch sử, Cài đặt (ảnh `shots/r12-title-continue-vi.png`).
+
+### Đã làm
+
+| Chức năng | Người chơi thấy gì | Ảnh |
+|---|---|---|
+| Màn hình chính | Thêm hàng nút "Hướng dẫn chơi" và "Bản lưu". Góc trên bên trái có nút "Toàn màn hình" và dòng "Bản dựng …". Khi đang có ván: dưới nút "Ván mới" (bị khóa) có câu "Mỗi lần chỉ chơi một ván." và nút "Bỏ ván này…". | `r13-01-menu-chua-co-van.png`, `r13-02-menu-co-van.png` |
+| Hướng dẫn chơi | Sáu điều về 14 ngày (ván dài bao lâu, làm gì, Ragnarok, mất gì khi hết ván, giữ được gì, gục thì sao), bảng 14 phím, phần điều khiển cảm ứng, và mục "Về game này". Bảng dài hơn khung nên có thanh "Còn nữa ở dưới". | `r13-03-huong-dan.png`, `r13-17-huong-dan-cuoi-trang-640.png` |
+| Sao lưu | Bảng "Bản lưu" → "Tải tệp sao lưu về": trình duyệt tải một tệp `soul-of-hero-save-<ngày>-<giờ>.json`. Tệp chứa ván đang chơi, hồ sơ, ghi chú bản đồ và sổ ghi của ván đó. Cài đặt âm thanh, màn hình, ngôn ngữ không nằm trong tệp. | `r13-04-ban-luu.png` |
+| Khôi phục | "Khôi phục từ tệp sao lưu…" → chọn tệp → game đọc và kiểm tệp, hiện tóm tắt (nhân vật, ngày thứ mấy, tiền đã cất, sao lưu lúc nào) và hỏi lại. Bấm "Thay bản lưu của tôi bằng tệp này" thì trang tải lại và báo "Đã khôi phục từ tệp sao lưu." | `r13-08-hoi-lai-khoi-phuc.png`, `r13-09-da-khoi-phuc.png` |
+| Tệp không hợp lệ | Bị từ chối bằng một câu nói rõ lý do; bản lưu trong trình duyệt không bị đụng tới. | `r13-05-tep-bi-tu-choi.png` |
+| Bỏ ván từ màn hình chính | "Bỏ ván này…" → bảng hỏi lại nói rõ mất gì, giữ gì → "Xác nhận bỏ ván" → nhật ký ván chơi ghi "Đã bỏ ván". Nút mặc định của bảng là "Quay lại": bấm Enter không bao giờ bỏ ván. | `r13-06-hoi-lai-bo-van.png`, `r13-07-nhat-ky-da-bo-van.png` |
+| Ván đã hết 14 ngày | Không còn nút bỏ ván; thay bằng câu "14 ngày của ván này đã hết. Bấm Chơi tiếp để xem nó kết thúc ra sao." | `r13-13-van-da-het-14-ngay.png` |
+| Toàn màn hình | Nút ở góc trên bên trái, đổi thành "Thoát toàn màn hình" khi đang bật. | `r13-02-menu-co-van.png` |
+| Phiên bản và ghi công | Game chưa có số phiên bản, nên hiện ngày giờ dựng (giờ UTC) và mã commit. Mục "Về game này" ghi công ba phông chữ (giấy phép SIL OFL 1.1) và ghi rõ mọi hình, tiếng đều do mã của game tạo ra. | `r13-17-huong-dan-cuoi-trang-640.png` |
+| Cửa sổ nhỏ, tiếng Anh, bản QA | Các bảng dừng phía trên dòng "Cửa sổ nhỏ". | `r13-10-menu-640.png`, `r13-11-huong-dan-640.png`, `r13-12-khoi-phuc-640.png`, `r13-14-en-menu.png`, `r13-15-en-how-to-play.png`, `r13-16-ban-qa-640.png` |
+
+Sửa kèm: nhật ký của một ván bị bỏ trước đây mang tiêu đề "ĐÃ KẾT THÚC 14 NGÀY" dù ván mới ở ngày 1. Nay tiêu đề đó chỉ dùng cho ván hết hạn; các ván khác ghi "VÁN ĐÃ KẾT THÚC".
+
+### Hai điều người chơi cần biết
+
+1. **Khôi phục không quay ngược thời gian.** Đồng hồ của ván chạy theo giờ thật. Một ván khôi phục từ tệp sao lưu ba ngày trước sẽ tiếp tục từ bây giờ, như thể người chơi đã vắng ba ngày. Tệp sao lưu của một ván đã quá 14 ngày chỉ mở ra phần kết thúc của ván đó. Bảng hỏi lại có ghi điều này.
+2. **Bỏ ván sau khi vắng lâu vẫn phải chờ.** Game tính xong quãng thời gian vắng mặt (như khi bấm Chơi tiếp) rồi mới kết thúc ván, để kết quả giống hệt bỏ ván từ trong game. Trên máy kiểm: vắng 30 phút thì từ lúc xác nhận tới lúc hiện nhật ký là 23 giây (một lần đo). Vắng nhiều giờ sẽ lâu như Chơi tiếp. Trong lúc chờ có nút "Về màn hình chính" để thôi; khi đó ván chưa bị bỏ.
+
+### Kiểm thử
+
+- `web/tests/title-functions.test.ts` (mới, 14 bài):
+  - tệp sao lưu chứa đúng từng ký tự của bản lưu, và chỉ kèm các mục thuộc ván đó (mục của ván khác, cài đặt máy, khóa lạ đều bị loại, kể cả khi ai đó cài vào tệp);
+  - các tệp sai bị từ chối đúng lý do: không phải JSON, mảng, `null`, sai dạng, thiếu phần bản lưu, bản lưu bị cắt nửa, một con số bị sửa tay (sai mã kiểm), bản của phiên bản mới hơn, tệp quá lớn;
+  - khôi phục thắng bản lưu mới hơn đang nằm trong trình duyệt, ở cả hai nơi lưu, và trạng thái sau khôi phục giống bản sao lưu trừ số thứ tự lần lưu;
+  - văn bản không phải bản lưu thì không ghi gì cả;
+  - bỏ ván từ màn hình chính cho cùng kết cục, điểm và tiền đã cất như bỏ ván bằng lệnh của menu Esc ở cùng thời điểm; gọi lần hai không đổi gì;
+  - nút xác nhận bỏ ván không phải nút mặc định;
+  - mọi câu trên các bảng mới đều có dòng tiếng Việt và thật sự có trong mã giao diện.
+- `web/tests/pregame.test.ts`: một dòng kiểm câu cũ "Muốn chơi lại từ đầu, hãy … menu Esc" được thay bằng các câu mới, vì câu cũ không còn đúng (nay bỏ ván được ngay tại màn hình chính).
+- Đã chạy trên mã cuối cùng và qua, 112 bài trong 10 tệp: `title-functions` 14, `pregame` 15, `ui-round3` 24, `i18n-vi` 7, `ui-readability` 5, `viewport` 12, `continue-wait` 3, `b1-storage` 10, `b1-integrity` 16, `b05-save-diagnostics` 6. `npx tsc --noEmit` và `npm run typecheck:tests` sạch.
+- Bằng trình duyệt, tiếng Việt ở 1280 × 720 và 640 × 360, tiếng Anh ở 1280 × 720 (cả ba lượt trên bản dựng cuối), không có lỗi trang:
+  - chơi một ván, lưu, tải tệp sao lưu về (tệp khoảng 0,87 MB);
+  - đưa bốn tệp sai vào: cả bốn bị từ chối, số thứ tự bản lưu không đổi;
+  - bỏ ván từ màn hình chính: hồ sơ ghi một ván "đã bỏ", không còn ván dang dở;
+  - khôi phục tệp sao lưu: đúng ván cũ trở lại, lịch sử trở về như lúc sao lưu, bấm Chơi tiếp vào được game.
+- Một lượt riêng ở 1280 × 720: nút toàn màn hình bật rồi tắt được; phím mũi tên đi qua các nút mới; Esc ở bảng hỏi lại quay về đúng nơi đã mở nó (màn hình chính hoặc bảng "Bản lưu"); tệp 33 MB bị từ chối; bỏ ván sau 30 phút vắng; ván quá 14 ngày không có nút bỏ ván.
+- Bản dựng QA, bật công cụ soát chữ chưa dịch, mở hết các bảng mới: không có câu mới nào thiếu tiếng Việt. Các mục còn tiếng Anh là hai nút QA và tên riêng trong game ("VEYRA", tên vật phẩm, tên cây), vốn giữ tiếng Anh theo quy ước.
+
+### Chưa làm, chưa kiểm ở vòng này
+
+- **Chưa thử tải và chọn tệp trên máy thật, điện thoại, Firefox, Safari.** Riêng Safari trên iPhone có cách xử lý tệp tải về khác; chưa biết ở đó nút "Tải tệp sao lưu về" có ra tệp hay không.
+- Chưa thử bỏ ván từ màn hình chính khi nhân vật đang nằm nghỉ (mã có xử lý: đánh thức rồi mới bỏ), và chưa thử sau khi vắng hơn 30 phút.
+- Chưa bấm Chơi tiếp trên ván đã quá 14 ngày ở vòng này; chỉ xem màn hình chính và bảng "Bản lưu" của nó.
+- Chưa thử khôi phục trên một trình duyệt đang có ván khác. Khi đó các ghi chú bản đồ của ván cũ vẫn nằm lại trong trình duyệt (không ai đọc tới, không gây lỗi), chưa dọn.
+- Chưa thử trường hợp bộ nhớ trình duyệt đầy lúc khôi phục.
+- Ở 844 × 390 có một lượt chụp bị dừng giữa chừng vì trang đứng hình lúc quay về màn hình chính (hiện tượng đã ghi ở vòng 12); các lượt 844 × 390 sau đó chạy hết, nhưng không phải trên bản dựng cuối cùng.
+- Các câu trong "Hướng dẫn chơi" được đối chiếu với mã (bảng phím, luật khi gục, Escrow Chest), không phải bằng cách chơi thử từng điều.
+- Tệp ZIP trong `web/releases` được dựng trước khi tạo commit nên dòng "Bản dựng" của nó chỉ có ngày giờ, không có mã commit. Bản trên Vercel được viết để có cả hai (lấy mã commit từ Vercel); máy kiểm không mở được địa chỉ đó nên chưa tự xem.
+- Không chạy lại toàn bộ bộ kiểm thử; chỉ 10 tệp nêu trên.
+
+## Vòng 14: rà soát trước khi phát hành (nhánh `arena/1fe1361c-soul-of-hero`, cùng PR #71)
+
+Yêu cầu ngày 27/11/2026: làm tiếp cho tới khi sẵn sàng phát hành thì dừng. Vòng này không thêm chức năng. Việc đã làm: chạy lại toàn bộ bộ kiểm thử, kiểm nốt các đường chưa kiểm ở vòng 13, tìm nguyên nhân hiện tượng đứng hình, sửa mấy chỗ nhỏ còn nợ, rồi kết luận.
+
+Vòng này không đổi luật chơi, không đổi cách tính, không đổi định dạng bản lưu.
+
+### Kết luận
+
+**Chưa nên phát hành rộng.** Mã hiện tại qua bộ kiểm thử (chi tiết và phần chưa chạy lại ở mục "Kiểm thử") và qua mọi đường đã thử bằng trình duyệt, nhưng còn một điểm chặn cần người quyết định, và có những thứ máy kiểm không thử được.
+
+1. **Điểm chặn: vắng lâu thì bấm Chơi tiếp phải chờ rất lâu.** Số đo ở vòng này:
+
+   | Thời gian vắng | Thời gian chờ | Cách đo |
+   |---|---|---|
+   | 18 phút (lần Chơi tiếp đầu tiên) | 24,3 giây | trình duyệt, máy rảnh, một lần đo |
+   | 1 giờ 30 phút | 22,6 giây | như trên |
+   | 3 giờ | 28,0 giây | như trên |
+   | 24 giờ | 233 giây và 382 giây (4 đến 6 phút) | chỉ phần tính, chạy ngoài trình duyệt, cùng lúc với bộ kiểm thử; lần đo sau máy bận hơn |
+   | 15 ngày (ván đã hết hạn) | 2.814 giây (47 phút) | trình duyệt, cùng lúc máy đang chạy bộ kiểm thử và một phép đo khác; thời gian xử lý của riêng trang ước khoảng 28 phút |
+
+   Trong lúc chờ, nếu người chơi đóng trang hoặc bấm "Về màn hình chính" thì phải tính lại từ đầu. Bỏ ván từ màn hình chính cũng phải chờ đúng như vậy, còn ván đã hết 14 ngày thì không có nút bỏ. Nghĩa là một người vắng nhiều ngày chỉ có cách để trang mở cho tới khi tính xong. Ở lần vắng 15 ngày, trang dùng tới 1,3 GB bộ nhớ lúc tính được 88%; trên máy ít bộ nhớ hoặc điện thoại, chưa biết có tính xong được không.
+
+   Các cách xử lý đều đổi kết quả tính hoặc đổi luật, nên chưa làm khi chưa có ý kiến:
+   - tính thưa hơn cho lần vắng dài (đã thử ở vòng 11: nhanh gấp 3–4 lần, nhưng lượng `berries` và `crop` trong kho lệch đi);
+   - cho bỏ ván ngay từ màn hình chính mà không tính phần vắng mặt (số phận cư dân trong nhật ký ván sẽ là số lúc rời game, không phải số lúc bỏ);
+   - lưu lại giữa chừng để lần sau tính tiếp (chưa thử; phải chứng minh kết quả không đổi).
+
+2. **Chưa thử được ở đây:** máy thật có card đồ họa, điện thoại thật, Firefox, Safari (nhất là tải tệp sao lưu trên iPhone), và địa chỉ chơi thật trên Vercel. Máy kiểm chỉ có Chromium không màn hình.
+
+3. **Còn nợ từ các vòng trước, chưa ai chơi thử bằng tay:** các cảnh B (tám lần đổi hàng), C (thu nhận, đi theo, cho đi), D (mặc cả bị từ chối, dọa, cướp), F, I; sổ tay chương 3–11; mở rương sau lần sửa luật rương; màn tử trận. Danh sách đầy đủ ở `docs/acceptance/2026-11-21-25e24231/TIEN_DO_SUA_LOI.md`.
+
+Nếu chấp nhận điểm 1 như một giới hạn đã biết (đã ghi rõ trên màn hình chờ) thì, theo những gì thử được ở đây, bản này đủ để đưa cho một nhóm nhỏ chơi thử trên máy tính. Đợt đó cũng sẽ là lần đầu game chạy trên máy thật.
+
+### Hiện tượng đứng hình 1–3 giây trong game: do máy kiểm, không do game
+
+Vòng 12 và 13 ghi nhận game đứng hình từng đợt 1–3 giây. Vòng này đo lại trên ván mới, nhân vật đứng yên, 1280 × 720, theo dõi 75 giây sau khi vào game:
+
+| Lượt | Cách trình duyệt vẽ | Số lần đứng từ 1 giây trở lên | Tổng thời gian đứng trong 75 giây |
+|---|---|---|---|
+| A | giả lập card đồ họa bằng phần mềm (cách các vòng trước vẫn dùng) | 21 | 55,1 giây |
+| B | như A, chờ 110 giây ở màn hình chính trước | 29 | 45,0 giây |
+| C | như B | 30 | 50,3 giây |
+| D | không giả lập card đồ họa | 0 | 0,6 giây (ba lần ngắt 200–217 ms) |
+
+- Ở các lượt A–C, luồng chính của game rảnh 70–76% thời gian; hai luồng của chính trình duyệt chiếm gần hết cả hai nhân (khoảng 100% mỗi luồng ở màn hình chính, 70% trong game). Đó là phần giả lập card đồ họa.
+- Một lượt khác không giả lập, đứng yên trong game 17 phút: 13 phút liền không có lần ngắt nào quá 250 ms, dù bộ kiểm thử đang chạy bên cạnh. (Bốn phút đầu của lượt này có ngắt dài; lúc đó máy đang chạy thêm phép kiểm kiểu dữ liệu (`tsc`) cho bộ kiểm thử, nên không tính.)
+- Hệ quả: các số đo thời gian bằng trình duyệt ở vòng 10–13 (thời gian chờ Chơi tiếp, 2–8 giây từ 99% tới lúc vào game, các lượt chụp ảnh mất nhiều phút) đều bị phần giả lập này làm xấu đi. Số ở bảng trên của vòng này đo khi không giả lập. Vòng 11 đo vắng 3 giờ là 41,7–43,3 giây; nay là 28,0 giây.
+- Chưa đo trên máy có card đồ họa thật, nên đây là kết luận "không phải do mã game", chưa phải số đo tốc độ trên máy người chơi.
+
+### Đã kiểm nốt các đường còn nợ của vòng 13
+
+| Việc | Kết quả | Cách kiểm |
+|---|---|---|
+| Bỏ ván từ màn hình chính khi nhân vật đang nằm nghỉ | Nhân vật được đánh thức, ván kết thúc là "đã bỏ" | kiểm thử tự động mới, dựng lều, giường, rương thật bằng lệnh của game |
+| Bỏ ván sau khi vắng 40 phút | Tính phần vắng mặt trước rồi mới kết thúc; số phận cư dân và điểm giống hệt cách bỏ bằng menu Esc tại cùng thời điểm | kiểm thử tự động mới |
+| Chơi tiếp trên ván đã quá 14 ngày | Tính xong thì hiện nhật ký "Bị Ragnarok nuốt chửng"; bản lưu không còn ván, lịch sử ghi "hết hạn"; không lỗi trang | trình duyệt, vắng 15 ngày; ảnh `shots/r14-06-van-het-14-ngay-sau-khi-choi-tiep.png` |
+| Khôi phục khi trình duyệt đang có một ván khác | Ván trong tệp thay cho ván đang có; ghi chú của ván trong tệp trở lại; ghi chú của ván bị thay nằm lại, không ai đọc tới | kiểm thử tự động mới |
+| Khôi phục khi một trong hai nơi lưu bị đầy | Vẫn khôi phục được qua nơi còn lại, và lần mở sau nạp đúng bản vừa khôi phục; ghi chú không lưu được thì có báo | kiểm thử tự động mới |
+| Khôi phục khi cả hai nơi lưu đều không ghi được | Không có gì thay đổi; hiện câu "Không ghi được tệp sao lưu vào trình duyệt này. Bản lưu của bạn vẫn nguyên." | kiểm thử tự động mới |
+| Các bảng của màn hình chính ở 844 × 390 và 640 × 360, bản dựng cuối | Bốn bảng đều nằm trên dòng "Cửa sổ nhỏ" và trong cửa sổ; Esc quay về màn hình chính | trình duyệt; ảnh `shots/r14-04-huong-dan-640.png` |
+| HUD ban đêm (nợ từ vòng 3) | Đọc được, không bảng nào vỡ; thẻ "Lạnh và phơi sương" hiện khi trời tối (từ 20:16 giờ game) | trình duyệt, 22:18 giờ game; ảnh `shots/r14-03-hud-ban-dem.png` |
+
+### Đã sửa
+
+| Chỗ | Trước | Sau |
+|---|---|---|
+| Dòng "Cửa sổ nhỏ" trong game | Nằm đè lên thanh đồ và thanh xây cho tới khi người chơi bấm "Ẩn" | Trong game, dòng này tự biến mất sau 12 giây (đo được 10–11 giây sau khi vào game); trước khi vào game vẫn như cũ. Ảnh `shots/r14-01-cua-so-nho-luc-vao-game-844.png`, `shots/r14-02-thanh-xay-sau-12-giay-844.png` |
+| Màn hình chờ khi vắng lâu | Luôn ghi "có thể mất vài phút", kể cả khi phải chờ 47 phút | Vắng từ 36 giờ trở lên thì ghi: lâu hơn vài phút nhiều, có thể gần một giờ nếu vắng trọn 14 ngày; hãy để trang mở vì quay về màn hình chính là tính lại từ đầu. Ảnh `shots/r14-05-man-cho-vang-2-ngay-640.png` |
+| Thanh xây khi chọn Nâng cấp / Sửa / Tháo | Thẻ "Nền" vẫn sáng như đang được chọn | Thẻ của trang đang hiện chỉ còn viền, không sáng |
+| Chữ còn tiếng Anh | "Put in pack", "Ragnarok chest", "Open relevant action for …", câu báo ván kết thúc sau 336 giờ | Đã có tiếng Việt. "Parts" là tên vật phẩm nên giữ nguyên |
+| Từ "lượt chơi" / "lượt này" | 19 câu dùng "lượt", trong khi màn hình chính dùng "ván" | Thống nhất là "ván" |
+
+Hai mục trong danh sách nợ cũ hóa ra đã xong từ trước: bảng nghỉ không còn câu nào thiếu tiếng Việt (nay có bài kiểm thử dựng bảng ở ba trạng thái để giữ như vậy), và nút chọn số giờ nghỉ đã hiện "giờ" trong tiếng Việt.
+
+### Kiểm thử
+
+- **Toàn bộ bộ kiểm thử**, mỗi tệp một tiến trình riêng, có đồng hồ canh bên ngoài: 278 tệp (bốn bộ bị loại theo quy ước từ trước), 126 phút. 1.808 bài đạt, 28 bài bị bỏ qua sẵn trong mã, 4 bài không đạt, 1 tệp bị đồng hồ canh dừng.
+  - Tệp bị dừng là `tests/arena1-round2-newgame-routes.test.ts` (giới hạn 25 phút, lúc đó máy đang chạy thêm ba việc nặng). Chạy lại riêng: 4 trên 4 bài đạt, mất 23 phút.
+  - 4 bài không đạt đều ở `tests/pa1-rev1-queued-jobs.test.ts`, và **không phải lỗi của game**. Bản lưu mẫu của bài này bắt đầu ván lúc 09:00 ngày 13/11/2026 (giờ UTC); bài gửi lệnh theo đồng hồ thật, nên từ 09:00 ngày 27/11/2026 ván mẫu đã quá 14 ngày và mọi lệnh bị từ chối với câu "Run has expired.". Đã sửa bài kiểm thử: gửi lệnh tại một thời điểm cố định giữa ván (20/11/2026). Không nới điều kiện nào. Sau khi sửa: 10 trên 10 bài đạt.
+- Lượt chạy toàn bộ diễn ra trong lúc các thay đổi của vòng này đang được viết, nên không phải mọi tệp đều chạy trên đúng bản mã cuối. Sau thay đổi cuối cùng đã chạy lại 14 tệp có liên quan tới phần mã bị đổi (`title-functions` 18 bài, `continue-wait` 3, `vi-rest-panel` 4, `pa1-rev1-queued-jobs` 10, `rest-supply` 14, `pregame` 15, `i18n-vi` 7, `ui-round2` 12, `ui-round3` 24, `ui-readability` 5, `viewport` 12, `map-atlas` 22, `map-feel` 22, `b05-save-diagnostics` 6): 174 bài đạt. Chưa chạy lại toàn bộ sau thay đổi cuối.
+- `npm run typecheck` và `npm run typecheck:tests`: cả hai kết thúc với mã 0, trên bản mã cuối.
+- Bài kiểm thử mới: `tests/vi-rest-panel.test.tsx` (4 bài: bảng nghỉ ở ba trạng thái không còn câu thiếu tiếng Việt; bỏ ván khi đang nằm nghỉ), bốn bài thêm vào `tests/title-functions.test.ts` (khôi phục đè lên ván khác, một nơi lưu đầy, cả hai nơi không ghi được, bỏ ván sau 40 phút vắng), `tests/helpers/shelter.ts` (dựng lều thật để dùng chung).
+- Bằng trình duyệt, không giả lập card đồ họa, bản dựng của vòng này: đi hết các bảng của màn hình chính, vào ván mới, mở thanh xây, thoát về màn hình chính ở 844 × 390, 640 × 360 và 1280 × 720; màn hình chờ khi vắng 1 ngày và 2 ngày ở 640 × 360 và 844 × 390; thanh xây khi chọn Nâng cấp. Không có lỗi trang.
+
+### Chưa làm, chưa kiểm ở vòng này
+
+- Ba cách xử lý việc chờ lâu nêu ở phần kết luận.
+- Bộ nhớ lúc tính một lần vắng dài: 0,78 GB ở lần vắng 24 giờ (đo ngoài trình duyệt), 1,3 GB trong trang ở lần vắng 15 ngày. Phép đo ngoài trình duyệt cho 340 giờ bị hệ điều hành dừng vì máy (3,9 GB) hết bộ nhớ khi bốn việc nặng chạy cùng lúc, nên không có số đo sạch cho trường hợp này. Chưa tìm xem phần nào giữ bộ nhớ, và chưa biết mức trần.
+- Tên phím trên máy cảm ứng trong thẻ gợi ý và sổ tay; cột phải của bảng trạm phải cuộn; lời nhắc "Chop" / "Mine"; chú thích loại lò sưởi; 22 câu của nhật ký trở về chưa rà bằng công cụ.
+- Màn tử trận vẫn chưa được xem.
+- Ở 640 × 360 và 844 × 390, trong 12 giây đầu dòng "Cửa sổ nhỏ" vẫn che thanh đồ.
+- Bốn bộ kiểm thử bị loại theo quy ước từ trước (`audit-closure`, `review-r2-acceptance`, `economic-network-m2`, `ecosystem-full`) không chạy.
+- Khi chạy, một số bài kiểm thử ghi lại các tệp trong `web/evidence` và `web/reports`. Bản ghi lại khác bản đang lưu trong kho (ví dụ `evidence/item-network/manifest.json` đang lưu ghi 114 công thức, bản mới ghi số khác). Vòng này không đưa các tệp đó vào commit; các tệp đang lưu là bản cũ.
+- Tệp ZIP trong `web/releases` lần này được dựng sau khi tạo commit chứa mã của vòng này, từ cây mã sạch, nên dòng "Bản dựng" của nó có cả mã commit đó. Tệp ZIP nằm ở commit kế tiếp.
+
 ## Chưa làm, chưa kiểm
 
 - Chưa thử trên điện thoại thật, Firefox, Safari. Máy kiểm chỉ có Chromium không màn hình và không truy cập được địa chỉ chơi thật.
 - Trên máy cảm ứng, các thẻ gợi ý và sổ tay vẫn nhắc tên phím (E, B, I, Q…). Mới đổi được chuột trái, Space, WASD ở dòng bước đang theo dõi.
 - Cột phải của bảng trạm vẫn phải cuộn mới thấy khối thành phẩm; đã có thanh báo nhưng chưa bố trí lại.
-- Nút chọn số giờ nghỉ ghi "1 h / 8 h / 24 h" ở cả hai ngôn ngữ.
 - Tên vùng và địa danh giữ tiếng Anh.
 - Chú thích khi rê chuột (`title`) không hiện trong ảnh chụp nên chỉ được kiểm bằng cách đọc chữ.
-- **HUD ban đêm và màn tử trận chưa được xem trong vòng 3.** Mọi lượt chạy trình duyệt đều nằm trong khoảng 07:30–09:11 giờ game. (Bản báo cáo gộp ở PR #67 ghi nhầm là đã xem; dòng này sửa lại.)
-- Ở cửa sổ rất nhỏ (640 × 360, 844 × 390) thông báo "Cửa sổ nhỏ" của game nằm đè lên thanh xây; chưa xử lý.
-- Khi chọn Nâng cấp / Sửa / Tháo, thẻ "Nền" vẫn sáng vì hàng ô đang hiện trang Nền.
-- Còn tiếng Anh, đã biết: ở thương nhân "Parts: {n}", "{n} Parts", "Put in pack", tiêu đề Parcel; "Ragnarok chest"; trạng thái tháp canh ("No generator", "Connection blocked", "No power", "No arrows", "Capacity allocated elsewhere"); "Open relevant action for Hunger & Thirst"; lời nhắc "Chop", "Mine"; chú thích loại lò sưởi. Danh sách câu thiếu do công cụ ghi lại ở bảng nghỉ (16 câu) và nhật ký trở về (22 câu) chưa được rà.
+- **Màn tử trận chưa được xem.** HUD ban đêm đã xem ở vòng 14 (22:18 giờ game, 1280 × 720). (Bản báo cáo gộp ở PR #67 ghi nhầm là cả hai đã xem từ vòng 3; dòng này sửa lại.)
+- Ở cửa sổ rất nhỏ (640 × 360, 844 × 390) thông báo "Cửa sổ nhỏ" nằm đè lên thanh đồ trong 12 giây đầu sau khi vào game rồi tự biến mất (sửa ở vòng 14).
+- Còn tiếng Anh, đã biết: lời nhắc "Chop", "Mine"; chú thích loại lò sưởi. Danh sách câu thiếu do công cụ ghi lại ở nhật ký trở về (22 câu) chưa được rà. ("Parts" là tên vật phẩm, giữ tiếng Anh theo quy ước.)
 - Bảng nghỉ mới xem ở trạng thái thiếu rương; luồng chọn đồ rồi nằm ngủ chỉ được kiểm bằng các bài kiểm thử tự động có sẵn, chưa xem bằng mắt.
+- **Chờ lâu khi vắng nhiều giờ hoặc nhiều ngày** (số đo và ba hướng xử lý ở "Vòng 14"): chưa xử lý, chờ quyết định.

@@ -80,14 +80,14 @@ Offline · single-player · saves in this browser only => Chơi một mình, kh�
 Saved in this browser · not a global leaderboard => Lưu trên trình duyệt này · không phải bảng xếp hạng chung
 You land at a random safe spot on the mainland. There is no starter shelter. => Bạn đáp xuống một chỗ an toàn ngẫu nhiên trên đất liền. Không có sẵn chỗ trú nào.
 one open world: 81 places to find, animals to raise, 4 side bosses and 6 Primordials. => một thế giới mở: 81 nơi để tìm, thú để nuôi, 4 trùm phụ và 6 Primordial.
-All gear from this run, Creator Cores, learned recipes, shelter, vehicles, cargo & unsecured cash have been wiped. => Toàn bộ đồ của lượt này, Creator Core, công thức đã học, nhà, xe, hàng và tiền chưa cất đều đã mất.
+All gear from this run, Creator Cores, learned recipes, shelter, vehicles, cargo & unsecured cash have been wiped. => Toàn bộ đồ của ván này, Creator Core, công thức đã học, nhà, xe, hàng và tiền chưa cất đều đã mất.
 Local score only: it never converts into cash. => Điểm chỉ để xem trên máy này: không bao giờ đổi được ra tiền.
-Parts Barter (this run only) => Đổi Parts (chỉ trong lượt này)
-Purchases belong to this run and are wiped when it ends. => Đồ mua thuộc về lượt này và mất khi lượt kết thúc.
+Parts Barter (this run only) => Đổi Parts (chỉ trong ván này)
+Purchases belong to this run and are wiped when it ends. => Đồ mua thuộc về ván này và mất khi ván kết thúc.
 Coins carried (not yet secured) / coins secured => Xu đang mang (chưa cất) / xu đã cất
 Outfitting · paid from secured cash => Sắm đồ · trả bằng tiền đã cất
 Secured in your profile => Đã cất trong hồ sơ
-Depositing transfers all carried Ragnarok Cash into your permanent Profile balance at once. The run continues; only secured cash survives when the run ends. => Gửi là chuyển toàn bộ Ragnarok Cash đang mang vào hồ sơ, một lần. Lượt chơi vẫn tiếp tục; khi lượt kết thúc chỉ còn lại tiền đã cất.
+Depositing transfers all carried Ragnarok Cash into your permanent Profile balance at once. The run continues; only secured cash survives when the run ends. => Gửi là chuyển toàn bộ Ragnarok Cash đang mang vào hồ sơ, một lần. Ván vẫn tiếp tục; khi ván kết thúc chỉ còn lại tiền đã cất.
 Fixed drive => Ổ đã sửa
 Condition {n}% => Tình trạng {1}%
 Utility motorbike => Xe máy đa dụng
@@ -163,7 +163,7 @@ Warm broth simmered with Bitterleaf from garden Sunroot or from Grouse Eggs: res
 A restorative cooked meal; Bitterleaf could instead become medicine. => Bữa chín giúp hồi sức; Bitterleaf cũng có thể để dành làm thuốc.
 Roast meat seasoned with gathered salt; a hearty field meal. => Thịt nướng nêm muối nhặt được; một bữa no giữa đồng.
 Volcanic sulfur. Volatile. => Lưu huỳnh núi lửa. Dễ bốc cháy.
-Progression resource. Cannot be crafted: found in loot and wrecks or recovered at the Recycler. Pays for research and trader barter and goes into Cores and powered machines. Run-local. => Tài nguyên để tiến lên. Không chế được: nhặt trong đồ rơi, xác xe hoặc thu lại ở Recycler. Dùng để trả nghiên cứu, đổi hàng với thương nhân, làm Core và máy chạy điện. Chỉ có trong lượt này.
+Progression resource. Cannot be crafted: found in loot and wrecks or recovered at the Recycler. Pays for research and trader barter and goes into Cores and powered machines. Run-local. => Tài nguyên để tiến lên. Không chế được: nhặt trong đồ rơi, xác xe hoặc thu lại ở Recycler. Dùng để trả nghiên cứu, đổi hàng với thương nhân, làm Core và máy chạy điện. Chỉ có trong ván này.
 Smelted iron. => Sắt đã luyện.
 Twisted fiber. => Sợi bện.
 Cure at a workbench into leather. => Thuộc ở bàn chế tạo thành da.
@@ -257,10 +257,10 @@ Calm and lead a tamable wild animal (Boar, Deer, Hare, or Black Grouse) into an 
 Bundled fiber and seeds for penned livestock in a Feed & Water Trough. => Bó sợi và hạt cho thú nuôi trong chuồng, đặt vào Feed & Water Trough.
 Flight feather shed by Black Grouse; improves arrow fletching. => Lông cánh Black Grouse rụng ra; làm tên bay tốt hơn.
 Nutritious speckled egg laid by fed penned Black Grouse. => Trứng đốm bổ dưỡng của Black Grouse nuôi trong chuồng, được cho ăn đủ.
-Run-local crystal-veined quarry carapace taken from Greyback Shaleheart (-38% damage). => Giáp vỏ đá có vân tinh thể, lấy từ Greyback Shaleheart (giảm 38% sát thương). Chỉ có trong lượt này.
-Run-local long-bladed nodachi claimed from the Oathless Ronin. => Thanh nodachi lưỡi dài, lấy từ Oathless Ronin. Chỉ có trong lượt này.
-Run-local brine-tempered polearm of the Saltwick Tidemarshal. => Cây giáo dài tôi nước mặn của Saltwick Tidemarshal. Chỉ có trong lượt này.
-Run-local silver-violet ward lantern of the Pale Custodian. Steady wide light. => Đèn hộ vệ ánh bạc tím của Pale Custodian. Sáng đều và rộng. Chỉ có trong lượt này.
+Run-local crystal-veined quarry carapace taken from Greyback Shaleheart (-38% damage). => Giáp vỏ đá có vân tinh thể, lấy từ Greyback Shaleheart (giảm 38% sát thương). Chỉ có trong ván này.
+Run-local long-bladed nodachi claimed from the Oathless Ronin. => Thanh nodachi lưỡi dài, lấy từ Oathless Ronin. Chỉ có trong ván này.
+Run-local brine-tempered polearm of the Saltwick Tidemarshal. => Cây giáo dài tôi nước mặn của Saltwick Tidemarshal. Chỉ có trong ván này.
+Run-local silver-violet ward lantern of the Pale Custodian. Steady wide light. => Đèn hộ vệ ánh bạc tím của Pale Custodian. Sáng đều và rộng. Chỉ có trong ván này.
 
 # --- structure descriptions
 Place on your foundation. 24 physical slots fund upkeep within 25 SOH tiles. => Đặt trên nền của bạn. 24 ô chứa vật liệu để trả bảo trì trong vòng 25 ô.
@@ -283,7 +283,7 @@ Triangular overhead silhouette, top-down one-tile cover until half-cell support 
 Sloping roof silhouette. Does not provide a climbable ramp. => Mảng mái dốc. Không dùng làm dốc để leo.
 Corner roof silhouette with cover, not independent roof physics. => Mảng mái góc, có che.
 Durable roof. => Mái bền.
-Respawn point within this run. => Điểm hồi sinh trong lượt này.
+Respawn point within this run. => Điểm hồi sinh trong ván này.
 12-slot storage. => Chứa được 12 ô.
 24-slot storage. => Chứa được 24 ô.
 Cooks with fuel. Warmth + light while burning. => Nấu ăn bằng chất đốt. Tỏa ấm và sáng khi đang cháy.

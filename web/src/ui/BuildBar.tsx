@@ -39,7 +39,7 @@ export function BuildBar({ gs, tool, onPick, hoverX, hoverY }: {
     <div className="plate buildbar__frame">
       <div className="buildbar__pages" role="group" aria-label="Building geometry categories">
         {Object.entries(BUILD_PAGES).map(([name,parts])=><button
-          key={name} type="button" className={page===name?'on':''}
+          key={name} type="button" className={page===name?(isPiece?'on':'shown'):''} aria-pressed={isPiece&&page===name}
           title={name+' · '+parts.length+' build shapes'}
           onClick={()=>onPick(parts[0] as BuildTool)}
         >{name} <small>{parts.length}</small></button>)}

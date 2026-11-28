@@ -320,7 +320,7 @@ export function QaSandboxDrawer({
     >
       <div style={{ display: 'flex', gap: 3, marginBottom: 4 }}>
         {([['presets', 'Presets'], ['events', 'Events'], ['anim', 'Anim'], ['assets', 'Assets'], ['npcs', 'NPCs']] as const).map(([k, lbl]) => (
-          <button key={k} className={`btn sm ${tab === k ? 'gold' : ''}`} style={{ flex: 1 }} onClick={() => setTab(k)}>{lbl}</button>
+          <button key={k} className={`btn sm ${tab === k ? 'gold' : ''}`} style={{ flex: 1 }} data-sfx="tab" onClick={() => setTab(k)}>{lbl}</button>
         ))}
       </div>
 

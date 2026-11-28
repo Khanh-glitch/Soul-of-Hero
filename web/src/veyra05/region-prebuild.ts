@@ -57,6 +57,19 @@ const released = new Set<string>();
  * copied and the pool keeps its own. */
 export const waitingRegionPacks = (): GeometryRegionPack[] => [...pool.values()];
 
+/** The name this build's kept regions go by (region-store.ts), told by the prebuild worker when it starts; '' until
+ * then, and for good when nothing is kept. */
+let keptBuild = '';
+/** For a thread about to replay an absence of `r`: which kept regions to read back before it starts. They are the
+ * regions residents stand on or near and that are not among `have` (packs it is handed anyway). */
+export function keptRegionsWanted(r: RunState | null | undefined, have: readonly GeometryRegionPack[]): { build: string; wanted: [string, VeyraPlacementRules][] } | undefined {
+  if (!keptBuild || !r?.layoutId || !isVeyra05Layout(r.layoutId) || !r.humanWorld) return undefined;
+  const rules: VeyraPlacementRules = r.sourceMap?.rules === 4 ? 4 : 3, skip = new Set(have.map(p => keyOf(p.layoutId, p.rules)));
+  const { urgent, nearby } = regionsWanted(r), wanted: [string, VeyraPlacementRules][] = [];
+  for (const lid of [...urgent, ...nearby]) if (!skip.has(keyOf(lid, rules))) wanted.push([lid, rules]);
+  return { build: keptBuild, wanted };
+}
+
 /** While the player waits for the Continue worker to replay an absence, a machine with two cores or fewer pauses
  * prebuilding, so that worker is not slowed by this one (measured in a 2-core browser, 3 h away, Continue pressed
  * 5 s after the page opened: 57 s without the pause, 45 s with it). The prebuild worker keeps its list and carries
@@ -79,6 +92,7 @@ function start(): Worker | null {
     if (typeof Worker === 'undefined') return worker = null;
     const w = new Worker(new URL('./region-prebuild.worker.ts', import.meta.url), { type: 'module' });
     w.onmessage = ({ data }: MessageEvent<PrebuildReply>) => {
+      if ('build' in data) { keptBuild = data.build; return; }
       stats.received++; pending.delete(keyOf(data.layoutId, data.rules));
       if (!data.pack || hasGeometryRegion(data.layoutId, data.rules)) { stats.dropped++; return; }
       const key = keyOf(data.layoutId, data.rules); drop(key);

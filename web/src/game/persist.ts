@@ -1325,6 +1325,44 @@ export async function saveDetailed(gs: GameState, opts: { light?: boolean } = {}
   const category: SaveCategory = idbStatus === 'idb-init' || idbStatus === 'idb-transaction' ? idbStatus : localStatus === 'local-write' ? 'local-write' : 'readback-conflict';
   return record({ ok: false, category, revision: null, localStatus, idbStatus });
 }
+/**
+ * Put a backup in the place of the stored save (the title screen's "Restore from a backup file").
+ *
+ * `text` is a snapshot as stored, or the bare state text of an old save. It is checked here with the same reader a page
+ * load uses; nothing is written unless it passes. Its sequence number is raised above `above` (the sequence of the save
+ * being replaced): a page load continues the copy with the highest sequence, so if only one of the two stores accepts
+ * this write, the next load still opens the backup and not the copy it was meant to replace. Nothing else in the backup
+ * is changed. The caller reloads the page afterwards, so the backup goes through the whole of `load()`.
+ */
+export async function restoreSnapshot(text: string, above: number): Promise<SaveOutcome> {
+  const refused = (category: SaveCategory): SaveOutcome => ({ ok: false, category, revision: null, localStatus: 'skipped', idbStatus: 'skipped' });
+  let stored: string, revision: number;
+  try {
+    const outer = JSON.parse(text);
+    const state = outer?.format === FORMAT && typeof outer.payload === 'string' && outer.checksum === checksum(outer.payload) ? JSON.parse(outer.payload) : outer?.format === undefined ? outer : null;
+    if (!obj(state) || !Number.isSafeInteger(state.revision)) return refused('invalid-state');
+    revision = Math.max(state.revision, Number.isSafeInteger(above) ? above : 0) + 1;
+    if (!Number.isSafeInteger(revision)) return refused('invalid-state');
+    stored = wrapSnapshot(JSON.stringify({ ...state, revision }));
+  } catch { return refused('invalid-state'); }
+  const checked = selectSnapshots([stored]);
+  if (!checked.gs || checked.gs.revision !== revision) return refused('invalid-state');
+  let localStatus: SaveOutcome['localStatus'] = 'skipped';
+  if (localReadable) { try { localStorage.setItem(LS, stored); localStatus = localStorage.getItem(LS) === stored ? 'ok' : 'readback-conflict'; } catch { localStatus = 'local-write'; } }
+  const write = async (): Promise<SaveOutcome['idbStatus']> => {
+    if (!idbReadable) return 'idb-init';
+    const viaWriter = await writeInBackground({ text: stored });
+    if (viaWriter) return viaWriter;
+    const d = await db(); if (!d) return 'idb-init';
+    return await new Promise<SaveOutcome['idbStatus']>(res => { try { const tx = d.transaction(STORE, 'readwrite'); tx.objectStore(STORE).put(stored, KEY); tx.oncomplete = () => res('ok'); tx.onerror = () => res('idb-transaction'); tx.onabort = () => res('idb-transaction'); } catch { res('idb-transaction'); } });
+  };
+  const result = writeTail.then(write, write) as Promise<SaveOutcome['idbStatus']>; writeTail = result;
+  const idbStatus = await result;
+  idbHealthy = idbStatus === 'ok';
+  const ok = localStatus === 'ok' || idbStatus === 'ok';
+  const category: SaveCategory = ok ? 'ok' : idbStatus === 'idb-init' || idbStatus === 'idb-transaction' ? idbStatus : localStatus === 'local-write' ? 'local-write' : 'readback-conflict';
+  return { ok, category, revision: ok ? revision : null, localStatus, idbStatus };
+}
 export async function save(gs: GameState): Promise<boolean> { return (await saveDetailed(gs)).ok; }
 export function saveSync(gs: GameState): boolean { if ((gs as any).__ephemeralInspect) return true; try { if (!localReadable) return false; localStorage.setItem(LS, serializeSnapshot(gs)); return true; } catch { return false; } }
 export async function wipeAll() { try { localStorage.removeItem(LS); } catch { /* */ } const d = await db(); if (d) await new Promise<void>(res => { const tx = d.transaction(STORE, 'readwrite'); tx.objectStore(STORE).delete(KEY); tx.oncomplete = () => res(); tx.onerror = () => res(); }); }

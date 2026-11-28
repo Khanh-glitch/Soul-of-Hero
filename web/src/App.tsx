@@ -3,13 +3,15 @@ import type { GameState } from './game/core';
 import { dispatch, markDirty, mkStack, startRun } from './game/engine';
 import { settleWithReturn, type OfflineReturnV1 } from './game/return-report';
 import type { ReturnMessage, ReturnRequest } from './game/offline-return-worker';
-import { load, save, selectSnapshots, serializeSnapshot } from './game/persist';
+import { load, restoreSnapshot, save, selectSnapshots, serializeSnapshot } from './game/persist';
+import { backupProblemLine, writeSide, type ReadBackup } from './game/backup';
+import { abandonSavedRun } from './game/title-actions';
 import { getArt } from './game/art';
 import { getActiveLayout, getWorld, setActiveLayout } from './game/world';
 import { U05_WORLD_LAYOUT_ID, isVeyra05Layout } from './veyra05/scenes';
 import { getWindowWorld } from './veyra05/window';
 import { syncFloor } from './veyra05/floors';
-import { holdRegionPrebuild, prebuildRegions, waitingRegionPacks, warmNewGameRegions } from './veyra05/region-prebuild';
+import { holdRegionPrebuild, keptRegionsWanted, prebuildRegions, waitingRegionPacks, warmNewGameRegions } from './veyra05/region-prebuild';
 import Inspector from './veyra05/inspector/Inspector';
 import { resetRenderCaches, cam } from './game/render';
 import { setVolume, initAudio } from './game/audio';
@@ -17,9 +19,16 @@ import { mkIntent } from './ui/common';
 import { ITEMS } from './game/catalog';
 import { QA_BUILD } from './game/build-flags';
 import { buildQaSandbox, resetQaSandboxFlags, type QaPresetId } from './game/qa-sandbox';
-import Title from './ui/Title';
+import Title, { TitleShell } from './ui/Title';
+import { awayLabel, clockLabel } from './ui/pregame';
+import { afterPaint, behindVeil, hideVeil, settleVeil, showVeil, veilLine } from './ui/veil';
 import Game from './ui/Game';
 
+/** One line carried across the reload that follows a restore, shown once on the title. */
+const RESTORED_NOTE = 'soh.restored-note';
+
+/** Time away from which the wait screen stops promising "a few minutes". Measured on the test machine: 24 h away takes about 4 minutes; 15 days took 47 minutes with the test suite running beside it. */
+const LONG_ABSENCE_MS=36*3600_000;
 export default function App() {
   const gsRef = useRef<GameState | null>(null);
   const qaGsRef = useRef<GameState | null>(null);
@@ -45,7 +54,9 @@ export default function App() {
       setActiveLayout(gs.run?.layoutId || U05_WORLD_LAYOUT_ID);
       getWorld();
       gsRef.current = gs;
-      setNote(note);
+      let restored: string | null = null;
+      try { restored = sessionStorage.getItem(RESTORED_NOTE); sessionStorage.removeItem(RESTORED_NOTE); } catch { /* no session storage */ }
+      setNote([restored, note].filter(Boolean).join(' ') || undefined);
       setVolume(gs.profile.settings.volume, gs.profile.settings.muted);
       setScreen('title');
     })();
@@ -71,8 +82,21 @@ export default function App() {
     return () => clearInterval(timer);
   }, [screen]);
   const gs = qaMode ? qaGsRef.current : (inspectionGs ?? savedGs);
-  if (loadError) return <div style={{ padding: 24, color: '#ffd98a', background: '#120c18', minHeight: '100vh' }}><h1>Save recovery required</h1><p>{loadError}</p><p>No new game was started and the original save copies were not overwritten.</p><button onClick={() => window.location.reload()}>Retry</button></div>;
-  if (screen === 'loading' || !gs || !savedGs) return <div style={{ position: 'fixed', inset: 0, display: 'grid', placeItems: 'center', color: '#ffd98a', fontSize: 22 }} className="title-font">Raising the island…</div>;
+  // Same look as the splash index.html shows while the code loads, so the three steps read as one screen.
+  if (loadError) return <div className="boot" role="alert">
+    <div className="boot__name" data-notr>SOUL OF HERO</div>
+    <div className="panel" style={{ maxWidth: 520, padding: 16, textAlign: 'left', fontSize: 18, lineHeight: 1.25 }}>
+      <div className="panel-h" style={{ fontSize: 18, marginBottom: 6 }}>Save recovery required</div>
+      <div style={{ color: 'var(--warn)', overflowWrap: 'anywhere' }}>{loadError}</div>
+      <div style={{ marginTop: 6 }}>No new game was started and the original save copies were not overwritten.</div>
+      <button className="btn gold" style={{ fontSize: 18, padding: '8px 18px 9px', marginTop: 12 }} onClick={() => window.location.reload()}>Retry</button>
+    </div>
+  </div>;
+  if (screen === 'loading' || !gs || !savedGs) return <div className="boot" role="status">
+    <div className="boot__name" data-notr>SOUL OF HERO</div>
+    <div className="boot__bar"><i /></div>
+    <div className="boot__line">Raising the island…</div>
+  </div>;
 
   const enter = (targetGs: GameState, dirty = true) => {
     if (targetGs.run?.layoutId) {
@@ -152,18 +176,97 @@ export default function App() {
     setScreen('game');
   };
 
+  /** Continue, or end the run from the title. Both first work out the time the player was away (the same way, with the
+   *  same wait screen); 'play' then opens the game, 'abandon' ends the run instead and shows its chronicle. */
+  const resume = (purpose: 'play' | 'abandon') => {
+    if (veilLine() !== null) return;   // a second press while the first is still opening the game
+    initAudio();
+    resetQaSandboxFlags();
+    setQaMode(false);
+    setInitialBanner(null);
+    const now=Date.now();
+    const finish=(next:GameState,rep:ReturnType<typeof settleWithReturn>)=>{
+      gsRef.current=next;save(next);
+      if(!next.run){hideVeil();setSummary(next.profile.history[0]);return;}
+      if(purpose==='abandon'){
+        // The run is up to date now; end it with the same command the Esc menu sends (game/title-actions.ts).
+        const done=abandonSavedRun(next,Date.now());
+        hideVeil();
+        if(done.ok){save(next);setNote(undefined);setSummary(next.profile.history[0]||null);}
+        else setNote(`The run was not abandoned. It is saved as it stands now. ${done.reason}`);
+        return;
+      }
+      setReport(rep.lines.length||(rep.report&&!rep.report.away.quiet)?rep:null);enter(next);
+    };
+    if(!savedGs.run || now-savedGs.run.clock.lastSimAt<120000 || typeof Worker==='undefined'){
+      behindVeil(purpose==='abandon'?'Ending the run…':'Opening the island…',()=>finish(savedGs,settleWithReturn(savedGs,now)));return;
+    }
+    if(catchUp.current)return;
+    const fail=(reason:string)=>{stopCatchUp();setNote(purpose==='abandon'?`The run was not abandoned. Your previous save is unchanged. ${reason}`:`Continue did not finish. Your previous save is unchanged. ${reason}`);};
+    try {
+      const w=new Worker(new URL('./game/offline-return-worker.ts',import.meta.url),{type:'module'});catchUp.current=w;
+      setProgress({fraction:0,regions:0,startedAt:Date.now(),awayMs:now-savedGs.run.clock.lastSimAt});
+      w.onerror=e=>{if(catchUp.current===w)fail(e.message);};
+      w.onmessage=({data}:{data:ReturnMessage})=>{
+        if(catchUp.current!==w)return;
+        if(data.kind==='progress'){setProgress(p=>p&&{...p,fraction:data.fraction,regions:data.regions});return;}
+        if(data.kind==='failed'){fail(data.reason);return;}
+        // The result is in. Opening it holds the page for a few seconds (the world is put together and its
+        // first frame drawn), so the cover goes up and is painted before that starts.
+        showVeil(purpose==='abandon'?'Ending the run…':'Opening the island…');
+        afterPaint(()=>{
+          if(catchUp.current!==w){hideVeil();return;}   // the player went back to the title meanwhile
+          try{const next=selectSnapshots([data.snapshot]).gs;if(!next)throw Error('Invalid return snapshot.');
+            stopCatchUp();finish(next,data.result);settleVeil();
+          }catch(e){hideVeil();fail(String(e));}
+        });
+      };
+      // Regions the title screen has compiled ahead of need go along. They are copied: the pool keeps its own
+      // for the game that starts afterwards. On a two-core machine the prebuild worker stands down meanwhile.
+      const packs=waitingRegionPacks();
+      const request:ReturnRequest={snapshot:serializeSnapshot(savedGs),now,packs,kept:keptRegionsWanted(savedGs.run,packs)};
+      holdRegionPrebuild(true);
+      w.postMessage(request);
+    }catch(e){fail(String(e));}
+  };
+
+  /** Put a checked backup in place of the save (Title → Saved game), then load the page again so it goes through
+   *  the whole of load(). Resolves to null when the page is about to reload, or to the line to show when nothing was
+   *  written. */
+  const restore = async (backup: Extract<ReadBackup, { ok: true }>): Promise<string | null> => {
+    if (veilLine() !== null || catchUp.current) return 'Wait for the current step to finish.';
+    const outcome = await restoreSnapshot(backup.saveText, savedGs.revision);
+    if (!outcome.ok) return outcome.category === 'invalid-state' ? backupProblemLine('not-a-save') : 'The backup could not be written to this browser. Your save is unchanged.';
+    let lost = 0;
+    try { lost = writeSide(backup.side, localStorage); } catch { lost = Object.keys(backup.side).length; }
+    try { sessionStorage.setItem(RESTORED_NOTE, lost ? 'Backup restored. Some notes in it could not be stored: the storage of this browser is full.' : 'Backup restored.'); } catch { /* the note is a courtesy */ }
+    window.location.reload();
+    return null;
+  };
+
   if(progress!==null){
-    const away=Math.max(0,Math.round(progress.awayMs/60000)),awayText=away>=2880?`${Math.floor(away/1440)} d ${Math.floor(away%1440/60)} h`:away>=60?`${Math.floor(away/60)} h ${away%60} min`:`${away} min`;
-    const ran=Math.max(0,Math.floor((Date.now()-progress.startedAt)/1000)),ranText=`${Math.floor(ran/60)}:${String(ran%60).padStart(2,'0')}`;
+    const awayText=awayLabel(progress.awayMs),ranText=clockLabel(Date.now()-progress.startedAt);
     // Each line is one string, so the Vietnamese phrase book sees whole sentences.
-    return <main className="panel" aria-label="Returning to the island" style={{maxWidth:430,margin:'12vh auto',padding:16}}>
-      <h1 className="title-font">While you were away</h1>
-      <p>{`You were away for ${awayText}. The island kept living: its food, work and travel for that time are being worked out now.`}</p>
-      <p>A long absence can take a few minutes. Your saved game stays as it was until this finishes.</p>
-      <progress aria-label="Island time resolved" value={progress.fraction} max={1} style={{width:'100%'}} />
-      <p data-testid="return-status" style={{margin:'6px 0 12px'}}>{`${Math.floor(progress.fraction*100)}% of the time away worked out · ${progress.regions} regions of land made ready · running for ${ranText}`}</p>
-      <button className="btn" onClick={stopCatchUp}>Back to title</button>
-    </main>;
+    // The backdrop stands still here: the processor belongs to the work the player is waiting for.
+    return <TitleShell still layout={savedGs.run?.layoutId||''}>
+      <main className="panel absolute fadein" aria-label="Returning to the island" style={{left:120,top:progress.awayMs>=LONG_ABSENCE_MS?40:54,width:400,padding:14}}>
+        <h1 className="panel-h" style={{fontSize:15,margin:0}}>While you were away</h1>
+        <p style={{fontSize:13,lineHeight:1.2,margin:'6px 0 10px'}}>{`You were away for ${awayText}. The island kept living: its food, work and travel for that time are being worked out now.`}</p>
+        <div style={{display:'flex',alignItems:'center',gap:10}}>
+          <div className="wait-pct" data-notr aria-hidden="true">{`${Math.floor(progress.fraction*100)}%`}</div>
+          <progress className="wait-bar" aria-label="Island time resolved" value={progress.fraction} max={1} />
+        </div>
+        {/* No "time left" line: the speed is not steady (land is still being built at the start), and a straight-line
+            estimate said "about 5 minutes" when 25 seconds were left (measured, report round 12). */}
+        <p data-testid="return-status" style={{fontSize:12,lineHeight:1.2,margin:'8px 0 0'}}>{`${Math.floor(progress.fraction*100)}% of the time away worked out · ${progress.regions} regions of land made ready · running for ${ranText}`}</p>
+        <div className="rule" style={{margin:'10px 0 8px'}} />
+        {/* Past a day and a half "a few minutes" is no longer true (figures at LONG_ABSENCE_MS, report round 14), and the player must know that leaving this screen starts the work over. */}
+        <p data-testid="return-advice" style={{fontSize:11,lineHeight:1.2,margin:'0 0 9px',color:'var(--muted)'}}>{progress.awayMs>=LONG_ABSENCE_MS
+          ? 'After days away this takes much longer than a few minutes: up to most of an hour after the full 14 days. Keep this page open: going back to the title starts it over. Your saved game stays as it was until this finishes.'
+          : 'A long absence can take a few minutes. Your saved game stays as it was until this finishes.'}</p>
+        <button className="btn" style={{fontSize:12,padding:'5px 12px 6px'}} onClick={stopCatchUp}>Back to title</button>
+      </main>
+    </TitleShell>;
   }
   if (QA_BUILD && screen === 'inspector') {
     return <Inspector gs={savedGs} initialMode="creator" onClose={closeInspector} onLaunchCreatorInspect={launchInspection} />;
@@ -176,43 +279,10 @@ export default function App() {
         summary={summary}
         clearSummary={() => setSummary(null)}
         onInspect={QA_BUILD ? openInspector : undefined}
-        onContinue={() => {
-          initAudio();
-          resetQaSandboxFlags();
-          setQaMode(false);
-          setInitialBanner(null);
-          const now=Date.now();
-          const finish=(next:GameState,rep:ReturnType<typeof settleWithReturn>)=>{
-            gsRef.current=next;save(next);
-            if(!next.run){setSummary(next.profile.history[0]);return;}
-            setReport(rep.lines.length||(rep.report&&!rep.report.away.quiet)?rep:null);enter(next);
-          };
-          if(!savedGs.run || now-savedGs.run.clock.lastSimAt<120000 || typeof Worker==='undefined'){
-            finish(savedGs,settleWithReturn(savedGs,now));return;
-          }
-          if(catchUp.current)return;
-          const fail=(reason:string)=>{stopCatchUp();setNote(`Continue did not finish. Your previous save is unchanged. ${reason}`);};
-          try {
-            const w=new Worker(new URL('./game/offline-return-worker.ts',import.meta.url),{type:'module'});catchUp.current=w;
-            setProgress({fraction:0,regions:0,startedAt:Date.now(),awayMs:now-savedGs.run.clock.lastSimAt});
-            w.onerror=e=>{if(catchUp.current===w)fail(e.message);};
-            w.onmessage=({data}:{data:ReturnMessage})=>{
-              if(catchUp.current!==w)return;
-              if(data.kind==='progress'){setProgress(p=>p&&{...p,fraction:data.fraction,regions:data.regions});return;}
-              if(data.kind==='failed'){fail(data.reason);return;}
-              try{const next=selectSnapshots([data.snapshot]).gs;if(!next)throw Error('Invalid return snapshot.');
-                stopCatchUp();finish(next,data.result);
-              }catch(e){fail(String(e));}
-            };
-            // Regions the title screen has compiled ahead of need go along. They are copied: the pool keeps its own
-            // for the game that starts afterwards. On a two-core machine the prebuild worker stands down meanwhile.
-            const request:ReturnRequest={snapshot:serializeSnapshot(savedGs),now,packs:waitingRegionPacks()};
-            holdRegionPrebuild(true);
-            w.postMessage(request);
-          }catch(e){fail(String(e));}
-        }}
-        onStart={(c, region, layoutId) => {
-          initAudio();
+        onContinue={() => resume('play')}
+        onAbandon={() => resume('abandon')}
+        onRestore={restore}
+        onStart={(c, region, layoutId) => { if (veilLine() !== null) return; initAudio(); behindVeil('Raising the island…', () => {
           resetQaSandboxFlags();
           setQaMode(false);
           setInitialBanner(null);
@@ -232,8 +302,8 @@ export default function App() {
             save(savedGs);
             setReport(null);
             enter(savedGs);
-          } else setNote(res.reason);
-        }}
+          } else { hideVeil(); setNote(res.reason); }
+        }); }}
         onStartQa={QA_BUILD ? launchQa : undefined}
       />
     : <Game

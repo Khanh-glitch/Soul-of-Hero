@@ -24,8 +24,13 @@ const FX = JSON.parse(readFileSync(new URL('./fixtures/pa1-rev1-queued-jobs.json
 };
 
 let serial = 0;
+// The fixture's run started on 2026-11-13 09:00 UTC and, like every run, ends 14 days later. Commands used to be
+// sent at the real clock time, so from 2026-11-27 09:00 UTC on every one of them was refused with "Run has expired."
+// and four tests failed by the calendar alone (found by the full run of 2026-11-27). The commands are now sent at a
+// fixed moment in the middle of that run; nothing else about the tests changes.
+const NOW = Date.UTC(2026, 10, 20, 9);
 const act = (g: GameState, type: string, p: object = {}) =>
-  dispatch(g, { id: 'rev1-' + ++serial, type, ...p }, Math.max(Date.now(), g.run!.clock.lastSimAt + 1));
+  dispatch(g, { id: 'rev1-' + ++serial, type, ...p }, Math.max(NOW, g.run!.clock.lastSimAt + 1));
 
 /** The production load path: the same selectSnapshots a restart uses (quarantine + revision migration). */
 function loadPack(snapshot: string): GameState {

@@ -1,0 +1,9 @@
+# Round 14 (release check): lines that were still shown in English.
+# "Parts" is an item name and stays as it is.
+Parts: {n} => Parts: {1}
+{n} Parts => {1} Parts
+Put in pack => Cho vào túi
+Ragnarok chest => Rương Ragnarok
+Open relevant action for {} => Mở thao tác liên quan đến: {1}
+The run reached its 336-hour end while you were away. => Ván đã đi hết 336 giờ trong lúc bạn vắng mặt.
+After days away this takes much longer than a few minutes: up to most of an hour after the full 14 days. Keep this page open: going back to the title starts it over. Your saved game stays as it was until this finishes. => Vắng nhiều ngày thì việc này lâu hơn vài phút nhiều: có thể gần một giờ nếu vắng trọn 14 ngày. Hãy để trang này mở: quay về màn hình chính là phải tính lại từ đầu. Bản lưu của bạn giữ nguyên cho tới khi tính xong.

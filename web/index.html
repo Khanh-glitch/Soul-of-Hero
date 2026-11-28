@@ -3,11 +3,30 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#05070a" />
     <title>Soul of Hero — VEYRA Living World</title>
+    <!-- The first thing on screen: shown by the page itself while the game's code and art are still loading, and
+         used again by the "Raising the island…" screen, so the two look the same. Kept here (not in index.css) so
+         it never waits for a script. The bar moves in ten steps a cycle, not smoothly: a smooth one makes the
+         browser redraw the screen sixty times a second while the game's own work wants the processor. -->
+    <style>
+      html, body { margin: 0; background: #05070a; }
+      .boot { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 24px; box-sizing: border-box; text-align: center; background: radial-gradient(ellipse at 50% 38%, #1c1420 0%, #0a0c12 55%, #05070a 100%); }
+      .boot__name { font: 700 clamp(30px, 7vw, 72px)/1 'Pixelify Sans', 'VT323', monospace; letter-spacing: .07em; color: #ffe8b0; text-shadow: 0 .06em 0 #6a2a0a, 0 .1em 0 #2a0a04, 0 0 .4em #ff7a2a; }
+      .boot__line { font: clamp(16px, 2.4vw, 26px)/1.2 'VT323', monospace; color: #e0c8a8; min-height: 1.2em; }
+      .boot__bar { position: relative; width: min(300px, 62vw); height: 6px; overflow: hidden; background: #05070a; box-shadow: 0 0 0 1px #39464f; }
+      .boot__bar i { position: absolute; left: 0; top: 0; bottom: 0; width: 40%; background: linear-gradient(90deg, transparent, #f4d089, transparent); animation: boot-run 1.2s steps(10) infinite; will-change: transform; }
+      @keyframes boot-run { from { transform: translateX(-100%); } to { transform: translateX(250%); } }
+      @media (prefers-reduced-motion: reduce) { .boot__bar i { animation: none; width: 100%; opacity: .5; } }
+    </style>
   </head>
   <body>
     <div id="vfx-pack" hidden></div>
-    <div id="root"></div>
+    <div id="root"><div class="boot" data-notr><div class="boot__name">SOUL OF HERO</div><div class="boot__bar"><i></i></div><div class="boot__line" id="boot-line">Loading…</div></div></div>
+    <script>
+      // Same rule as src/game/i18n.ts: the saved choice, else the browser's language.
+      try { var l = localStorage.getItem('soh.lang.v1'); if (l !== 'vi' && l !== 'en') l = String(navigator.language || ''); if (/^vi/i.test(l)) { document.documentElement.lang = 'vi'; document.getElementById('boot-line').textContent = 'Đang tải…'; } } catch (e) {}
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

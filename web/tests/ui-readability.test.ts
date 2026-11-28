@@ -31,7 +31,9 @@ describe('UI readability guards', () => {
   });
 
   it('ligatures are off everywhere ("find" must not render as "And")', () => {
-    expect(read('index.css')).toMatch(/\*, \*::placeholder \{ font-variant-ligatures: none; \}/);
+    // The rule carries !important, so no narrower rule can switch ligatures back on. This check had been left
+    // expecting the older form without it and was failing on main; it now asks for the rule as it stands.
+    expect(read('index.css')).toMatch(/\*, \*::placeholder \{ font-variant-ligatures: none !important; \}/);
   });
 
   it('every symbol the source prints is covered by the bundled symbol font', () => {
